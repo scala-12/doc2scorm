@@ -1,0 +1,81 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:t='urn:import:com.github.gwtbootstrap.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	ui:generateLocales='default'>
+
+	<g:HTMLPanel>
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen" />
+		<link href="css/main.css" rel="stylesheet" media="screen" />
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<div class="container-narrow">
+			<t:PageHeader>i.Logos Course Generator</t:PageHeader>
+			<t:Form styleName="form-horizontal" action="/rest/file/form"
+				method="post" ui:field="sourceDocUploadForm">
+				<t:ControlGroup>
+					<t:ControlLabel for="sourceDocFile">Выберите файл MS Word (.doc,
+						.docx):</t:ControlLabel>
+					<t:Controls>
+						<t:FileUpload ui:field="sourceDocFile" name="sourceDocFile"></t:FileUpload>
+					</t:Controls>
+				</t:ControlGroup>
+			</t:Form>
+			<t:Form styleName="form-horizontal" action="" method="get">
+				<g:Hidden ui:field="fileUuid"></g:Hidden>
+				<t:ControlGroup>
+					<t:ControlLabel for="headerLevel">Создавать разделы для заголовков
+						не ниже уровня:</t:ControlLabel>
+					<t:Controls>
+						<t:ListBox ui:field="headerLevel">
+							<g:item value="1">Заголовок 1</g:item>
+							<g:item value="2">Заголовок 2</g:item>
+							<g:item value="3">Заголовок 3</g:item>
+							<g:item value="4">Заголовок 4</g:item>
+							<g:item value="5">Заголовок 5</g:item>
+							<g:item value="6">Заголовок 6</g:item>
+							<g:item value="7">Заголовок 7</g:item>
+							<g:item value="8">Заголовок 8</g:item>
+							<g:item value="9">Заголовок 9</g:item>
+						</t:ListBox>
+					</t:Controls>
+				</t:ControlGroup>
+				<t:ControlGroup>
+					<t:ControlLabel for="templateForCoursePages">Выберите шаблон страниц курса:</t:ControlLabel>
+					<t:Controls>
+						<t:ListBox ui:field="templateForCoursePages">
+							<g:item value="default">iLogos default</g:item>
+						</t:ListBox>
+					</t:Controls>
+				</t:ControlGroup>
+				<t:ControlGroup>
+					<t:ControlLabel for="courseName">Название курса:</t:ControlLabel>
+					<t:Controls>
+						<t:TextBox ui:field="courseName" placeholder="Название курса"></t:TextBox>
+					</t:Controls>
+				</t:ControlGroup>
+				<t:ControlGroup>
+					<t:Controls>
+						<t:CheckBox ui:field="useFilenameAsCourseName" inline="true">Использовать
+							имя файла в качестве названия курса</t:CheckBox>
+					</t:Controls>
+				</t:ControlGroup>
+				<!-- <div class="control-group"> <label class="control-label" for="sourceCourseFile">Курс, 
+					к которому необходимо добавить новые элементы:</label> <div class="controls"> 
+					<input type="file" placeholder="Путь к файлу" id="sourceCourseFile" /> </div> 
+					</div> -->
+				<t:ControlGroup>
+					<t:Controls>
+						<t:SubmitButton styleName="btn" ui:field="generateButton">Сгенерировать</t:SubmitButton>
+					</t:Controls>
+				</t:ControlGroup>
+			</t:Form>
+			<hr />
+			<t:Footer>&copy; i.Point 2012</t:Footer>
+		</div>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

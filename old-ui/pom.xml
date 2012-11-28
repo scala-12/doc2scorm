@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ilogos-course-generator</artifactId>
+
+	<groupId>com.ipoint</groupId>
+	<packaging>war</packaging>
+	<name>iLogos Course Generator</name>
+
+	<build>
+		<outputDirectory>target/ilogos-course-generator-0.0.1-SNAPSHOT/WEB-INF/classes</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<configuration>
+					<logLevel>INFO</logLevel>
+					<style>${gwt.style}</style>
+					<server>com.google.appengine.tools.development.gwt.AppEngineLauncher</server>
+					<hostedWebapp>${webappDirectory}</hostedWebapp>
+					<copyWebapp>true</copyWebapp>
+					<appEngineVersion>${gae.version}</appEngineVersion>
+					<appEngineHome>${gae.home}</appEngineHome>
+					<runTarget>Coursegenerator.html</runTarget>
+					<module>com.ipoint.coursegenerator.client.CourseGeneratorEntryPoint</module>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<useProjectReferences>false</useProjectReferences>
+					<additionalBuildcommands>
+						<buildcommand>com.google.gwt.eclipse.core.gwtProjectValidator</buildcommand>
+					</additionalBuildcommands>
+					<additionalProjectnatures>
+						<projectnature>com.google.appengine.eclipse.core.gaeNature</projectnature>
+						<projectnature>com.google.gwt.eclipse.core.gwtNature</projectnature>
+					</additionalProjectnatures>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.gwtplatform</groupId>
+						<artifactId>gwtp-build-tools</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-archetype-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
+		<!-- Google Web Toolkit dependencies -->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<!-- AppEngine dependencies -->
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-1.0-sdk</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<!-- DI dependencies -->
+		<dependency>
+			<groupId>com.google.gwt.inject</groupId>
+			<artifactId>gin</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.1.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>3.1.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtbootstrap</groupId>
+			<artifactId>gwt-bootstrap</artifactId>
+			<version>2.0.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>3.1.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>3.1.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+		</dependency>
+	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<!-- Activate this profile to compile the sample including just the adequate 
+				GWTP dependencies -->
+			<id>default-samples</id>
+			<activation>
+				<property>
+					<name>!gwtp-all</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.gwtplatform</groupId>
+					<artifactId>gwtp-mvp-client</artifactId>
+					<version>0.7</version>
+				</dependency>
+				<dependency>
+					<groupId>com.gwtplatform</groupId>
+					<artifactId>gwtp-dispatch-client</artifactId>
+					<version>0.7</version>
+				</dependency>
+				<dependency>
+					<groupId>com.gwtplatform</groupId>
+					<artifactId>gwtp-dispatch-server-spring</artifactId>
+					<version>0.7</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<!-- Activate this profile to compile the sample using the compound GWTP 
+				dependency (gwtp-all) -->
+			<id>gwtp-all-samples</id>
+			<activation>
+				<property>
+					<name>gwtp-all</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>gwtp-all</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+</project>
