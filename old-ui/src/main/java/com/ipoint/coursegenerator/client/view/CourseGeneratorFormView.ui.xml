@@ -25,7 +25,8 @@
 				</t:ControlGroup>
 			</t:Form>
 			<t:Form styleName="form-horizontal" action="" method="get">
-				<g:Hidden ui:field="fileUuid"></g:Hidden>
+				<g:Hidden ui:field="uuidFileName"></g:Hidden>
+				<g:Hidden ui:field="sourceFileName"></g:Hidden>
 				<t:ControlGroup>
 					<t:ControlLabel for="headerLevel">Создавать разделы для заголовков
 						не ниже уровня:</t:ControlLabel>

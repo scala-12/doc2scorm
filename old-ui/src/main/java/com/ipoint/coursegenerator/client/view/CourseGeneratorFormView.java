@@ -11,6 +11,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -22,7 +25,6 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
 import com.ipoint.coursegenerator.client.presenter.FileSelectUIHandler;
-import com.ipoint.coursegenerator.shared.GenerateCourse;
 
 public class CourseGeneratorFormView extends
 	ViewWithUiHandlers<FileSelectUIHandler> implements
@@ -49,7 +51,10 @@ public class CourseGeneratorFormView extends
     Form sourceDocUploadForm;
     
     @UiField
-    Hidden fileUuid;
+    Hidden uuidFileName;
+    
+    @UiField
+    Hidden sourceFileName;
 
     public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
     }
@@ -100,14 +105,16 @@ public class CourseGeneratorFormView extends
     @Override
     public void onSubmitComplete(SubmitCompleteEvent event) {
 	String body = event.getResults();
-	fileUuid.setValue(body);
+	JSONObject response = (JSONObject)JSONParser.parseStrict(body);	
+	uuidFileName.setValue(((JSONString)response.get("uuidFileName")).stringValue());
+	sourceFileName.setValue(((JSONString)response.get("sourceFileName")).stringValue());
     }
 
     @Override
     public String getSourceDocFileUuid() {
-	return fileUuid.getValue();
+	return uuidFileName.getValue();
     }
-
+    
     @Override
     public String getHeaderLevel() {
 	return headerLevel.getValue();
@@ -120,6 +127,9 @@ public class CourseGeneratorFormView extends
 
     @Override
     public String getCourseName() {
+	if (useFilenameAsCourseName.getValue()) {
+	    return sourceFileName.getValue().substring(0, sourceFileName.getValue().lastIndexOf('.'));
+	}
 	return courseName.getValue();
     }   
     
