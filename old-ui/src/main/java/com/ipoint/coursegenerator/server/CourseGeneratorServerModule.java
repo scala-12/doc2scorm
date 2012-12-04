@@ -21,5 +21,4 @@ public class CourseGeneratorServerModule extends HandlerModule {
     public GenerateCourseActionHandler getGenerateCourseActionHandler() {
         return new GenerateCourseActionHandler();
     }
-
 }

@@ -1,10 +1,16 @@
 package com.ipoint.coursegenerator.server;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.ServletContextAware;
 
 import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
@@ -14,9 +20,11 @@ import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
 public class GenerateCourseActionHandler implements
-	ActionHandler<GenerateCourse, GenerateCourseResult> {
+	ActionHandler<GenerateCourse, GenerateCourseResult>, ServletContextAware  {
     
-    private final ApplicationContext context;
+    private final ApplicationContext context;    
+    
+    private ServletContext servletContext; 
 
     public GenerateCourseActionHandler() {
 	context = new ClassPathXmlApplicationContext("beans.xml");
@@ -27,9 +35,14 @@ public class GenerateCourseActionHandler implements
     	ExecutionContext context) throws ActionException {	
 	Parser parser = this.context.getBean("parser", Parser.class);
 	try {
-	    parser.parse(new FileInputStream(action.getSourceDocFileUuid()), action.getHeaderLevel(),
-	    	action.getTemplateForCoursePages(), action.getCourseName());
+	    String tmpPath = servletContext.getRealPath(File.separator + "tmp");
+	    parser.parse(new FileInputStream(tmpPath + File.separator +
+		    action.getSourceDocFileUuid()), action.getHeaderLevel(),
+	    	action.getTemplateForCoursePages(), action.getCourseName(), 
+	    	tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir");
 	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
 	    e.printStackTrace();
 	}
         return null;
@@ -43,5 +56,11 @@ public class GenerateCourseActionHandler implements
     @Override
     public Class<GenerateCourse> getActionType() {
         return GenerateCourse.class;
+    }
+    
+    
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+	this.servletContext = servletContext;	
     }
 }
