@@ -131,6 +131,11 @@ public class CourseGeneratorFormView extends
 	    return sourceFileName.getValue().substring(0, sourceFileName.getValue().lastIndexOf('.'));
 	}
 	return courseName.getValue();
-    }   
+    }
+
+    @Override
+    public String getFileType() {
+	return sourceFileName.getValue().substring(sourceFileName.getValue().lastIndexOf('.'));
+    }
     
 }

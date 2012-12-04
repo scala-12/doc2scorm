@@ -26,6 +26,7 @@ public class CourseGeneratorFormPresenter
 	public String getHeaderLevel();
 	public String getTemplateForCoursePages();
 	public String getCourseName();
+	public String getFileType();
     }
 
     @ProxyCodeSplit
@@ -61,6 +62,7 @@ public class CourseGeneratorFormPresenter
 	generateCourse.setHeaderLevel(getView().getHeaderLevel());
 	generateCourse.setTemplateForCoursePages(getView().getTemplateForCoursePages());
 	generateCourse.setCourseName(getView().getCourseName());
+	generateCourse.setFileType(getView().getFileType());
 	dispatcher.execute(generateCourse, 
 		new AsyncCallback<GenerateCourseResult>() {
 		    @Override

@@ -12,6 +12,8 @@ public class GenerateCourse extends UnsecuredActionImpl<GenerateCourseResult> {
     private String templateForCoursePages;
 
     private String courseName;
+    
+    private String fileType;
 
     public GenerateCourse() {
     }
@@ -46,5 +48,13 @@ public class GenerateCourse extends UnsecuredActionImpl<GenerateCourseResult> {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }

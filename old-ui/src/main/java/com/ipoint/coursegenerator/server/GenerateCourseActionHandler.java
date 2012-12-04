@@ -3,7 +3,6 @@ package com.ipoint.coursegenerator.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
@@ -20,11 +19,12 @@ import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
 public class GenerateCourseActionHandler implements
-	ActionHandler<GenerateCourse, GenerateCourseResult>, ServletContextAware  {
-    
-    private final ApplicationContext context;    
-    
-    private ServletContext servletContext; 
+	ActionHandler<GenerateCourse, GenerateCourseResult>,
+	ServletContextAware {
+
+    private final ApplicationContext context;
+
+    private ServletContext servletContext;
 
     public GenerateCourseActionHandler() {
 	context = new ClassPathXmlApplicationContext("beans.xml");
@@ -32,35 +32,37 @@ public class GenerateCourseActionHandler implements
 
     @Override
     public GenerateCourseResult execute(GenerateCourse action,
-    	ExecutionContext context) throws ActionException {	
+	    ExecutionContext context) throws ActionException {
 	Parser parser = this.context.getBean("parser", Parser.class);
 	try {
 	    String tmpPath = servletContext.getRealPath(File.separator + "tmp");
-	    parser.parse(new FileInputStream(tmpPath + File.separator +
-		    action.getSourceDocFileUuid()), action.getHeaderLevel(),
-	    	action.getTemplateForCoursePages(), action.getCourseName(), 
-	    	tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir");
+	    parser.parse(
+		    new FileInputStream(tmpPath + File.separator
+			    + action.getSourceDocFileUuid()),
+		    action.getHeaderLevel(),
+		    action.getTemplateForCoursePages(), action.getCourseName(),
+		    tmpPath + File.separator + action.getSourceDocFileUuid()
+			    + "_dir", action.getFileType());
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-        return null;
+	return null;
     }
 
     @Override
     public void undo(GenerateCourse action, GenerateCourseResult result,
-    	ExecutionContext context) throws ActionException {
+	    ExecutionContext context) throws ActionException {
     }
 
     @Override
     public Class<GenerateCourse> getActionType() {
-        return GenerateCourse.class;
+	return GenerateCourse.class;
     }
-    
-    
+
     @Override
     public void setServletContext(ServletContext servletContext) {
-	this.servletContext = servletContext;	
+	this.servletContext = servletContext;
     }
 }
