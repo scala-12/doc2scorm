@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
+import java.util.ArrayList;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
@@ -15,6 +17,7 @@ public class ParagraphParser extends AbstractElementParser {
 	    PicturesTable pictures = doc.getPicturesTable();
 	    Paragraph par = (Paragraph) paragraph;
 	    Element element = html.createElement("p");
+	    ArrayList<Element> imgsToAppend = new ArrayList<Element>();
 	    for (int i = 0; i < par.numCharacterRuns(); i++) {
 		CharacterRun run = par.getCharacterRun(i);
 		if (run.isSpecialCharacter()) {
@@ -23,7 +26,7 @@ public class ParagraphParser extends AbstractElementParser {
 			VectorGraphicsParser.parse(
 				pictures.extractPicture(run, true), path,
 				imgElement);
-			element.appendChild(imgElement);
+			imgsToAppend.add(imgElement);
 		    }
 		    // FIXME: delete it
 		    element.setTextContent(element.getTextContent()
@@ -34,6 +37,9 @@ public class ParagraphParser extends AbstractElementParser {
 		}
 	    }
 	    html.getElementsByTagName("body").item(0).appendChild(element);
+	    for (Element el : imgsToAppend) {
+		html.getElementsByTagName("body").item(0).appendChild(el);
+	    }
 	}
 	return null;
     }
