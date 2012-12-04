@@ -6,8 +6,13 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Picture;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
+import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
+import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
 
 public class ParagraphParser extends AbstractElementParser {
     public static String parse(Object paragraph, Document html,
@@ -23,15 +28,15 @@ public class ParagraphParser extends AbstractElementParser {
 		if (run.isSpecialCharacter()) {
 		    if (pictures.hasPicture(run)) {
 			Element imgElement = html.createElement("img");
-			VectorGraphicsParser.parse(
-				pictures.extractPicture(run, true), path,
-				imgElement);
+			Picture picture = pictures.extractPicture(run, true);
+			if (picture.getMimeType().equals(AbstractGraphicsParser.IMAGE_WMF)) {
+			    VectorGraphicsParser.parse(picture, path, imgElement);
+			} else {
+			    RasterGraphicsParser.parse(picture, path, imgElement);
+			}
 			imgsToAppend.add(imgElement);
 		    }
-		    // FIXME: delete it
-		    element.setTextContent(element.getTextContent()
-			    + run.text());
-		} else {
+		} else if (!run.text().contains("EMBED Equation.3") && !run.text().equals(Character.toString((char)13))){
 		    element.setTextContent(element.getTextContent()
 			    + run.text());
 		}
