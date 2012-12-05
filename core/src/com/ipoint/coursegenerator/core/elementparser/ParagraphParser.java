@@ -25,12 +25,13 @@ import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsPars
 
 public class ParagraphParser extends AbstractElementParser {
     public static String parse(Object paragraph, Document html,
-	    Object document, String path) {
+	    Object document, String path, int headerLevel) {
+	String headerText = null;
 	if (paragraph instanceof Paragraph && document != null) {
 	    HWPFDocument doc = (HWPFDocument) document;
 	    PicturesTable pictures = doc.getPicturesTable();
 	    Paragraph par = (Paragraph) paragraph;
-	    Element element = html.createElement("p");
+	    Element element = createTextElement(par, html, headerLevel);
 	    ArrayList<Element> imgsToAppend = new ArrayList<Element>();
 	    for (int i = 0; i < par.numCharacterRuns(); i++) {
 		CharacterRun run = par.getCharacterRun(i);
@@ -131,4 +132,27 @@ public class ParagraphParser extends AbstractElementParser {
 
 	return null;
     }
+    
+
+    private static Element createTextElement(Paragraph par, Document html,
+	    int headerLevel) {
+	Element element = null;
+	if (par.getStyleIndex() > 0 && par.getStyleIndex() <= headerLevel) {
+	    element = html.createElement("h1");
+	} else if (par.getStyleIndex() > headerLevel
+		&& par.getStyleIndex() < 10
+		&& (par.getStyleIndex() - headerLevel + 1) < 7) {
+	    element = html.createElement("h"
+		    + (par.getStyleIndex() - headerLevel + 1));
+	} else if (par.getStyleIndex() > headerLevel
+		&& par.getStyleIndex() < 10
+		&& (par.getStyleIndex() - headerLevel + 1) > 6) {
+	    element = html.createElement("h6");
+	} else {
+	    element = html.createElement("p");
+	}
+	return element;
+    }
+
+
 }
