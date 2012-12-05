@@ -1,12 +1,21 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
+import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,14 +38,18 @@ public class ParagraphParser extends AbstractElementParser {
 		    if (pictures.hasPicture(run)) {
 			Element imgElement = html.createElement("img");
 			Picture picture = pictures.extractPicture(run, true);
-			if (picture.getMimeType().equals(AbstractGraphicsParser.IMAGE_WMF)) {
-			    VectorGraphicsParser.parse(picture, path, imgElement);
+			if (picture.getMimeType().equals(
+				AbstractGraphicsParser.IMAGE_WMF)) {
+			    VectorGraphicsParser.parse(picture, path,
+				    imgElement);
 			} else {
-			    RasterGraphicsParser.parse(picture, path, imgElement);
+			    RasterGraphicsParser.parse(picture, path,
+				    imgElement);
 			}
 			imgsToAppend.add(imgElement);
 		    }
-		} else if (!run.text().contains("EMBED Equation.3") && !run.text().equals(Character.toString((char)13))){
+		} else if (!run.text().contains("EMBED Equation.3")
+			&& !run.text().equals(Character.toString((char) 13))) {
 		    element.setTextContent(element.getTextContent()
 			    + run.text());
 		}
@@ -45,7 +58,77 @@ public class ParagraphParser extends AbstractElementParser {
 	    for (Element el : imgsToAppend) {
 		html.getElementsByTagName("body").item(0).appendChild(el);
 	    }
+	} else if (paragraph instanceof XWPFParagraph && document != null) {
+	    XWPFDocument doc = (XWPFDocument) document;
+	    final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
+	    XWPFParagraph par = (XWPFParagraph) paragraph;
+	    Element element = html.createElement("p");
+	    ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
+	    element.setTextContent(par.getText());
+	    html.getElementsByTagName("body").item(0).appendChild(element);
+	    for (int i = 0; i < par.getRuns().size(); i++) {
+		XWPFRun run = par.getRuns().get(i);
+		if (run.getEmbeddedPictures() != null) {
+		    for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
+			Element imageElement = html.createElement("img");
+			XWPFPicture picture = run.getEmbeddedPictures().get(j);
+			if (picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG) {
+			    RasterGraphicsParser.parse(picture, path,
+				    imageElement);
+			} else {
+
+			    VectorGraphicsParser.parse(picture, path,
+				    imageElement);
+			}
+			imagesElementsToAppend.add(imageElement);
+
+		    }
+
+		}
+		if (run.getCTR().sizeOfObjectArray() > 0) {
+		    for (CTObject picture : run.getCTR().getObjectArray()) {
+			XmlObject[] objs = picture
+				.selectPath("declare namespace v='urn:schemas-microsoft-com:vml' "
+					+ ".//v:imagedata");
+
+			if (objs.length > 0) {
+			    Element imageElement = html.createElement("img");
+			    String rId = ((XmlAnyTypeImpl) ((XmlAnyTypeImpl) objs[0])
+				    .selectAttribute(
+					    "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+					    "id")).getStringValue();
+			    XWPFPictureData pdata = null;
+			    for (XWPFPictureData pic : pictures) {
+				if (pic.getPackageRelationship().getId()
+					.equals(rId)) {
+				    pdata = pic;
+				    break;
+				}
+			    }
+			    if (pdata != null){
+
+				    VectorGraphicsParser.parse(pdata, path,
+					    imageElement);
+				}
+			}
+
+		    }
+		}
+			
+		 /* element.setTextContent(element.getTextContent() +
+		  run.getText(0)); */
+		 
+
+		
+		for (Element el : imagesElementsToAppend) {
+		    html.getElementsByTagName("body").item(0).appendChild(el);
+		}
+
+	    }
+	    
 	}
+
 	return null;
     }
 }
