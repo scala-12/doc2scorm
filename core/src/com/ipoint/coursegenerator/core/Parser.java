@@ -96,7 +96,6 @@ public class Parser {
     }
 
     public Parser() {
-	createImsManifestFile();
     }
 
     public void createImsManifestFile() {
@@ -140,6 +139,7 @@ public class Parser {
 
     public void parse(InputStream stream, String headerLevel, String template,
 	    String courseName, String path, String fileType) throws IOException {
+	createImsManifestFile();
 	File directory = new File(path);
 	directory.mkdirs();
 	Object doc = null;
@@ -190,7 +190,7 @@ public class Parser {
 			html = createNewHTMLDocument();
 
 		    }
-		    ParagraphParser.parse(paragraph, html, document, path);
+		    ParagraphParser.parse(paragraph, html, document, path, headerLevelNumber);
 		}
 		
 	    } else if (bodyElements.get(i).getElementType()
