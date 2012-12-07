@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.elementparser.ParagraphParser;
 import com.ipoint.coursegenerator.core.utils.FileUtils;
+import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
@@ -113,18 +114,7 @@ public class Parser {
 	organizationProcessor.createOrganization(manifest.getManifest());
 	// Add Resources for Manifest
 	ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
-	try {
-	    resourcesProcessor.createResources(manifest.getManifest());
-	} catch (UnsupportedEncodingException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (FileNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (ParserException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	resourcesProcessor.createResources(manifest.getManifest());
     }
 
     private String tuneManifest(ManifestDocument manifestDocument) {
@@ -188,7 +178,7 @@ public class Parser {
 				    + Integer.toString(htmlFileCounter)
 				    + ".htm");
 			}
-			// html = createNewHTMLDocument();
+			html = createNewHTMLDocument();
 		    } else if (html == null) {
 			html = createNewHTMLDocument();
 
@@ -199,10 +189,6 @@ public class Parser {
 
 	    } else if (bodyElements.get(i).getElementType()
 		    .equals(BodyElementType.TABLE)) {
-		XWPFTable table = (XWPFTable) bodyElements.get(i);
-		for(XWPFTableRow row: table.getRows())
-		    System.out.println(row.getTable().getText());
-		
 
 	    }
 
@@ -220,33 +206,21 @@ public class Parser {
 	Range range = document.getRange();
 	Document html = null;
 	int htmlFileCounter = 0;
+	String filename = null;
 	for (int i = 0; i < range.numParagraphs(); i++) {
 	    Paragraph par = range.getParagraph(i);
 	    if (par.getStyleIndex() <= headerLevelNumber
 		    && par.getStyleIndex() > 0) {
 		if (html != null) {
-		    ItemType parentItem = null;
-		    for (int j = items.size() - 1; j >= 0; j--) {
-			if (items.get(j).getStyleId() > par.getStyleIndex()) {
-			    parentItem = items.get(j).getItem();
-			    break;
-			}
-		    }
-		    ItemType item = null;
-		    if (parentItem == null) {
-			OrganizationProcessor.createItem(manifest.getManifest()
-				.getOrganizations(), par.text(), "");
-		    } else {
-			OrganizationProcessor.createItem(parentItem, "", "");
-		    }
-		    ItemStyle itemStyle = new ItemStyle(item,
-			    par.getStyleIndex());
-		    items.add(itemStyle);
-
-		    FileUtils.saveHTMLDocument(html,
-			    path + File.separator + FileUtils.HTML_PREFIX
-				    + Integer.toString(htmlFileCounter)
-				    + ".htm");
+		    String itemText = TransliterationTool
+			    .convertRU2ENString(par.text());
+		    itemText = itemText.replaceAll("[\\W&&[^-]]", "");
+		    filename = FileUtils.HTML_PREFIX
+			    + Integer.toString(htmlFileCounter) + "_"
+			    + itemText + ".htm";
+		    createItem(items, par.text(), par.getStyleIndex(), filename, itemText);
+		    FileUtils.saveHTMLDocument(html, path + File.separator
+			    + filename);
 		}
 		html = this.createNewHTMLDocument();
 	    } else if (html == null) {
@@ -254,9 +228,9 @@ public class Parser {
 	    }
 	    ParagraphParser.parse(par, html, document, path, headerLevelNumber);
 	}
-	FileUtils.saveHTMLDocument(html, path + File.separator
-		+ FileUtils.HTML_PREFIX + Integer.toString(htmlFileCounter)
-		+ ".htm");
+	if (filename != null) {
+	    FileUtils.saveHTMLDocument(html, path + File.separator + filename);
+	}
 
 	String res = tuneManifest(manifest);
 	File f = new File(path, "imsmanifest.xml");
@@ -270,5 +244,35 @@ public class Parser {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+    }
+
+    public void createItem(ArrayList<ItemStyle> items, String scoName,
+	    int styleIndex, String url, String itemText) {
+
+	ItemType parentItem = null;
+	for (int j = items.size() - 1; j >= 0; j--) {
+	    if (items.get(j).getStyleId() > styleIndex) {
+		parentItem = items.get(j).getItem();
+		if (j == (items.size() - 1)) {
+		    String resid = parentItem.getIdentifierref();
+		    parentItem.getDomNode().getAttributes().removeNamedItem("identifierref");
+		    OrganizationProcessor.createItem(parentItem, parentItem.getTitle(), resid,
+			    "ITEM_" + java.util.UUID.randomUUID().toString());
+		}
+		break;
+	    }
+	}
+	String itemid = "ITEM_" + java.util.UUID.randomUUID().toString();
+	String resid = "RES_" + java.util.UUID.randomUUID().toString();
+	ItemType item = null;
+	if (parentItem == null) {
+	    OrganizationProcessor.createItem(manifest.getManifest()
+		    .getOrganizations(), scoName, resid, itemid);
+	} else {
+	    OrganizationProcessor.createItem(parentItem, scoName, resid, itemid);
+	}
+	ResourcesProcessor.createResource(manifest.getManifest(), url, resid);
+	ItemStyle itemStyle = new ItemStyle(item, styleIndex);
+	items.add(itemStyle);
     }
 }
