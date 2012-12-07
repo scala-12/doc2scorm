@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.htmlparser.util.ParserException;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
+import org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -42,6 +43,7 @@ import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
+import com.ipoint.coursegenerator.core.elementparser.TableParser;
 
 public class Parser {
 
@@ -143,52 +145,76 @@ public class Parser {
 	    parseXWPF((XWPFDocument) doc, headerLevel, template, courseName,
 		    path);
 	}
+	String res = tuneManifest(manifest);
+	File f = new File(path, "imsmanifest.xml");
+	try {
+	    f.createNewFile();
+
+	    FileWriter fr = new FileWriter(f);
+	    fr.write(res);
+	    fr.close();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     private void parseXWPF(XWPFDocument doc, String headerLevel,
 	    String template, String courseName, String path) {
-	int headerLevelNumber = Integer.parseInt(headerLevel);
-	String level = "";
-	XWPFDocument document = doc;
+	int headerLevelNumber = Integer.parseInt(headerLevel);	
 	Document html = null;
 	int htmlFileCounter = 0;
 	int paragraphStyle = 0;
-	final List<IBodyElement> bodyElements = document.getBodyElements();
-
-	for (int i = 0; i < bodyElements.size(); i++) {
-	    if (bodyElements.get(i).getElementType()
+	String fileName = null;
+	ArrayList<ItemStyle> items = new ArrayList<Parser.ItemStyle>();
+	for (IBodyElement bodyElement : doc.getBodyElements()) {
+	    if (bodyElement.getElementType()
 		    .equals(BodyElementType.PARAGRAPH)) {
-		XWPFParagraph paragraph = (XWPFParagraph) bodyElements.get(i);
-		if (paragraph.getStyle() != null) {
+		XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
+		if (paragraph.getStyleID() != null) {
 		    try {
-			if (paragraph.getStyle().equals("a3")) {
-			    paragraphStyle = (int) 3;
-			} //else
-			  //  paragraphStyle = Integer.valueOf(paragraph
-			//	    .getStyleID());
-			
+			if (paragraph.getStyleID().equals("a3")) {
+			    paragraphStyle = (int)100;
+			} else {
+			    paragraphStyle = Integer.valueOf(paragraph
+				    .getStyleID());
+			}
 			System.out.println(paragraph.getStyle());
-		    } catch (NumberFormatException e) { // paragraphStyle = 0;
+		    } catch (NumberFormatException e) {  paragraphStyle = 100;
 		    }
 		    if (paragraphStyle > 0
 			    && paragraphStyle <= headerLevelNumber) {
 			if (html != null) {
+			    
+			    
+			    String itemText = TransliterationTool
+				    .convertRU2ENString(paragraph.getText());
+			    itemText = itemText.replaceAll("[\\W&&[^-]]", "");
+			    fileName = FileUtils.HTML_PREFIX
+				    + Integer.toString(htmlFileCounter) + "_"
+				    + itemText + ".htm";
+			    createItem(items, paragraph.getText(), paragraphStyle, fileName, itemText);
+			    
+			    
 			    FileUtils.saveHTMLDocument(html, path
 				    + File.separator + FileUtils.HTML_PREFIX
 				    + Integer.toString(htmlFileCounter)
 				    + ".htm");
+			    htmlFileCounter++;
 			}
 			html = createNewHTMLDocument();
 		    } else if (html == null) {
 			html = createNewHTMLDocument();
 
 		    }
-		    ParagraphParser.parse(paragraph, html, document, path,
+		    ParagraphParser.parse(paragraph, html, doc, path,
 			    headerLevelNumber);
 		}
 
-	    } else if (bodyElements.get(i).getElementType()
+	    } else if (bodyElement.getElementType()
 		    .equals(BodyElementType.TABLE)) {
+		XWPFTable table = (XWPFTable)bodyElement;
+		TableParser.parse(table, html, doc, path, headerLevelNumber);
 
 	    }
 
@@ -230,19 +256,6 @@ public class Parser {
 	}
 	if (filename != null) {
 	    FileUtils.saveHTMLDocument(html, path + File.separator + filename);
-	}
-
-	String res = tuneManifest(manifest);
-	File f = new File(path, "imsmanifest.xml");
-	try {
-	    f.createNewFile();
-
-	    FileWriter fr = new FileWriter(f);
-	    fr.write(res);
-	    fr.close();
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
 	}
     }
 
