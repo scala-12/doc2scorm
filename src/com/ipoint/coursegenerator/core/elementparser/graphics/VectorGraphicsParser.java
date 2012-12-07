@@ -22,13 +22,11 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 		imgElement.setAttribute("src", url);
 	    }
 	} else if (picture instanceof XWPFPictureData) {
-	    XWPFPictureData pic = (XWPFPictureData) picture;
-	    //if (pic.equals(IMAGE_WMF)) {		
+	    XWPFPictureData pic = (XWPFPictureData) picture;		
 		String url = "img" + File.separator + FileUtils.IMAGE_PREFIX + pic.hashCode() + ".png";
 		FileUtils.savePNGImage(ImageFormatConverter.transcodeWMFtoPNG(pic.getData()), 
 			path + File.separator + url);
 		imgElement.setAttribute("src", url);
-//	    }
 	}
     }
 }
