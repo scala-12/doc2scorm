@@ -73,10 +73,12 @@ public class Parser {
     private class ItemStyle {
 	ItemType item;
 	int styleId;
+	private String directoryPath;
 
-	public ItemStyle(ItemType item, int styleId) {
+	public ItemStyle(ItemType item, int styleId, String directoryPath) {
 	    this.item = item;
 	    this.styleId = styleId;
+	    this.directoryPath = directoryPath;
 	}
 
 	public ItemType getItem() {
@@ -93,6 +95,14 @@ public class Parser {
 
 	public void setStyleId(int styleId) {
 	    this.styleId = styleId;
+	}
+
+	public String getDirectoryPath() {
+	    return directoryPath;
+	}
+
+	public void setDirectoryPath(String directoryPath) {
+	    this.directoryPath = directoryPath;
 	}
     }
 
@@ -227,50 +237,95 @@ public class Parser {
     private void parseHWPF(HWPFDocument doc, String headerLevel,
 	    String template, String courseName, String path) {
 	int headerLevelNumber = Integer.parseInt(headerLevel);
+	String htmlPath = path;
 	ArrayList<ItemStyle> items = new ArrayList<ItemStyle>();
 	HWPFDocument document = doc;
 	Range range = document.getRange();
 	Document html = null;
 	int htmlFileCounter = 0;
 	String filename = null;
+	String headerText = "";
+	int headerStyleID = 0;
+	boolean isFirstHeader = true;
 	for (int i = 0; i < range.numParagraphs(); i++) {
 	    Paragraph par = range.getParagraph(i);
-	    if (par.getStyleIndex() <= headerLevelNumber
-		    && par.getStyleIndex() > 0) {
-		if (html != null) {
-		    String itemText = TransliterationTool
-			    .convertRU2ENString(par.text());
-		    itemText = itemText.replaceAll("[\\W&&[^-]]", "");
-		    filename = FileUtils.HTML_PREFIX
-			    + Integer.toString(htmlFileCounter) + "_"
-			    + itemText + ".htm";
-		    createItem(items, par.text(), par.getStyleIndex(), filename, itemText);
-		    FileUtils.saveHTMLDocument(html, path + File.separator
-			    + filename);
-		}
-		html = this.createNewHTMLDocument();
-	    } else if (html == null) {
+	    boolean createItemForHeader = par.getStyleIndex() <= headerLevelNumber
+		    && par.getStyleIndex() > 0;
+	    String url = "";
+	    if (html == null) {
 		html = this.createNewHTMLDocument();
 	    }
-	    ParagraphParser.parse(par, html, document, path, headerLevelNumber);
+
+	    if (createItemForHeader
+		    && !isFirstHeader
+		    && i > 0
+		    && range.getParagraph(i - 1).getStyleIndex() != par
+			    .getStyleIndex()) {
+		if (html != null) {
+		    FileUtils.saveHTMLDocument(html, htmlPath + File.separator
+			    + filename);
+		    htmlFileCounter++;
+		}
+		html = this.createNewHTMLDocument();
+	    }
+	    String paragraphText = ParagraphParser.parse(par, html, document,
+		    htmlPath, headerLevelNumber);
+	    if (createItemForHeader) {
+		if (i > 0
+			&& range.getParagraph(i - 1).getStyleIndex() == par
+				.getStyleIndex()) {
+		    headerText += paragraphText;
+		} else {
+		    headerText = paragraphText;
+		}
+		headerStyleID = par.getStyleIndex();
+	    }
+	    if (createItemForHeader
+		    && range.numParagraphs() > i + 1
+		    && range.getParagraph(i + 1).getStyleIndex() != par
+			    .getStyleIndex()) {
+		isFirstHeader = false;
+		headerText = headerText.length() > 127 ? headerText.substring(
+			0, 127) : headerText;
+		String itemText = TransliterationTool
+			.convertRU2ENString(headerText);
+		itemText = itemText.replaceAll(" ", "_");
+		itemText = itemText.replaceAll("[\\W&&[^-]]", "");
+		filename = FileUtils.HTML_PREFIX
+			+ Integer.toString(htmlFileCounter) + "_" + itemText
+			+ ".htm";
+		url = createItem(items, headerText, headerStyleID, filename,
+			itemText).replace('/', File.separatorChar);
+		htmlPath = path + File.separator + url;
+		File f = new File(htmlPath);
+		if (!f.exists()) {
+		    f.mkdirs();
+		}
+	    }
+
 	}
 	if (filename != null) {
-	    FileUtils.saveHTMLDocument(html, path + File.separator + filename);
+	    FileUtils.saveHTMLDocument(html, htmlPath + File.separator
+		    + filename);
 	}
     }
 
-    public void createItem(ArrayList<ItemStyle> items, String scoName,
+    public String createItem(ArrayList<ItemStyle> items, String scoName,
 	    int styleIndex, String url, String itemText) {
-
+	String path = "";
 	ItemType parentItem = null;
 	for (int j = items.size() - 1; j >= 0; j--) {
-	    if (items.get(j).getStyleId() > styleIndex) {
+	    if (items.get(j).getStyleId() < styleIndex) {
 		parentItem = items.get(j).getItem();
+		path = items.get(j).getDirectoryPath();
 		if (j == (items.size() - 1)) {
 		    String resid = parentItem.getIdentifierref();
-		    parentItem.getDomNode().getAttributes().removeNamedItem("identifierref");
-		    OrganizationProcessor.createItem(parentItem, parentItem.getTitle(), resid,
-			    "ITEM_" + java.util.UUID.randomUUID().toString());
+		    parentItem.getDomNode().getAttributes()
+			    .removeNamedItem("identifierref");
+
+		    OrganizationProcessor.createItem(parentItem,
+			    parentItem.getTitle(), resid, "ITEM_"
+				    + java.util.UUID.randomUUID().toString());
 		}
 		break;
 	    }
@@ -279,13 +334,16 @@ public class Parser {
 	String resid = "RES_" + java.util.UUID.randomUUID().toString();
 	ItemType item = null;
 	if (parentItem == null) {
-	    OrganizationProcessor.createItem(manifest.getManifest()
+	    item = OrganizationProcessor.createItem(manifest.getManifest()
 		    .getOrganizations(), scoName, resid, itemid);
 	} else {
-	    OrganizationProcessor.createItem(parentItem, scoName, resid, itemid);
+	    item = OrganizationProcessor.createItem(parentItem, scoName, resid,
+		    itemid);
 	}
 	ResourcesProcessor.createResource(manifest.getManifest(), url, resid);
-	ItemStyle itemStyle = new ItemStyle(item, styleIndex);
+	ItemStyle itemStyle = new ItemStyle(item, styleIndex, path
+		+ File.separator + url.substring(0, url.lastIndexOf('.')));
 	items.add(itemStyle);
+	return path;
     }
 }
