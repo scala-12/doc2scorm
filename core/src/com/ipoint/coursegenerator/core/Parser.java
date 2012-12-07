@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-
 import java.util.List;
 //import java.util.logging.Logger;
 
@@ -63,10 +62,9 @@ public class Parser {
 	return null;
     }
 
-
     private static final String PREFIX = "<manifest identifier=\"SingleSharableResource_MulitipleFileManifest\" version=\"1.1\" xmlns:ims=\"http://www.imsproject.org/xsd/imscp_rootv1p1p2\"><metadata/>";
     private static final String PREFIX_NEW = "<manifest xmlns=\"http://www.imsglobal.org/xsd/imscp_v1p1\" xmlns:imsmd=\"http://ltsc.ieee.org/xsd/LOM\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:adlcp=\"http://www.adlnet.org/xsd/adlcp_v1p3\" xmlns:imsss=\"http://www.imsglobal.org/xsd/imsss\" xmlns:adlseq=\"http://www.adlnet.org/xsd/adlseq_v1p3\" xmlns:adlnav=\"http://www.adlnet.org/xsd/adlnav_v1p3\" identifier=\"MANIFEST-5724A1B2-A6BE-F1BF-9781-706050DA4FC9\" xsi:schemaLocation=\"http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://ltsc.ieee.org/xsd/LOM lom.xsd http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd http://www.adlnet.org/xsd/adlseq_v1p3 adlseq_v1p3.xsd http://www.adlnet.org/xsd/adlnav_v1p3 adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th Edition</schemaversion></metadata>";
- 
+
     private ManifestDocument manifest;
 
     private class ItemStyle {
@@ -173,9 +171,14 @@ public class Parser {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElements.get(i);
 		if (paragraph.getStyle() != null) {
 		    try {
-			paragraphStyle = Integer.valueOf(paragraph.getStyleID());
+			if (paragraph.getStyle().equals("a3")) {
+			    paragraphStyle = (int) 3;
+			} //else
+			  //  paragraphStyle = Integer.valueOf(paragraph
+			//	    .getStyleID());
+			
 			System.out.println(paragraph.getStyle());
-		    } catch (NumberFormatException e) {		paragraphStyle = 0;
+		    } catch (NumberFormatException e) { // paragraphStyle = 0;
 		    }
 		    if (paragraphStyle > 0
 			    && paragraphStyle <= headerLevelNumber) {
@@ -185,16 +188,21 @@ public class Parser {
 				    + Integer.toString(htmlFileCounter)
 				    + ".htm");
 			}
-			html = createNewHTMLDocument();
+			// html = createNewHTMLDocument();
 		    } else if (html == null) {
 			html = createNewHTMLDocument();
 
 		    }
-		    ParagraphParser.parse(paragraph, html, document, path, headerLevelNumber);
+		    ParagraphParser.parse(paragraph, html, document, path,
+			    headerLevelNumber);
 		}
-		
+
 	    } else if (bodyElements.get(i).getElementType()
 		    .equals(BodyElementType.TABLE)) {
+		XWPFTable table = (XWPFTable) bodyElements.get(i);
+		for(XWPFTableRow row: table.getRows())
+		    System.out.println(row.getTable().getText());
+		
 
 	    }
 
