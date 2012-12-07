@@ -31,7 +31,7 @@ public class ParagraphParser extends AbstractElementParser {
 	    HWPFDocument doc = (HWPFDocument) document;
 	    PicturesTable pictures = doc.getPicturesTable();
 	    Paragraph par = (Paragraph) paragraph;
-	    Element element = createTextElement(par, html, headerLevel);
+	    Element element = createTextElement(par.getStyleIndex(), html, headerLevel);
 	    ArrayList<Element> imgsToAppend = new ArrayList<Element>();
 	    for (int i = 0; i < par.numCharacterRuns(); i++) {
 		CharacterRun run = par.getCharacterRun(i);
@@ -63,11 +63,20 @@ public class ParagraphParser extends AbstractElementParser {
 	    XWPFDocument doc = (XWPFDocument) document;
 	    final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
 	    XWPFParagraph par = (XWPFParagraph) paragraph;
-	    Element element = html.createElement("p");
+	    int styleIndex = 0;
+	    if(par.getStyleID().equals("a3")) {
+		styleIndex = 100;
+	    }
+	    else {
+		styleIndex = Integer.parseInt(par.getStyleID());
+	    }
+	    
+	    Element element = createTextElement(styleIndex, html, headerLevel);
 	    ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 	    element.setTextContent(par.getText());
 	    html.getElementsByTagName("body").item(0).appendChild(element);
 	    for (int i = 0; i < par.getRuns().size(); i++) {
+
 		XWPFRun run = par.getRuns().get(i);
 		if (run.getEmbeddedPictures() != null) {
 		    for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
@@ -111,17 +120,13 @@ public class ParagraphParser extends AbstractElementParser {
 
 				    VectorGraphicsParser.parse(pdata, path,
 					    imageElement);
+				    imagesElementsToAppend.add(imageElement);
 				}
 			}
 
 		    }
 		}
 			
-		 /* element.setTextContent(element.getTextContent() +
-		  run.getText(0)); */
-		 
-
-		
 		for (Element el : imagesElementsToAppend) {
 		    html.getElementsByTagName("body").item(0).appendChild(el);
 		}
@@ -133,26 +138,23 @@ public class ParagraphParser extends AbstractElementParser {
 	return null;
     }
     
-
-    private static Element createTextElement(Paragraph par, Document html,
+    public static Element createTextElement(int styleIndex, Document html,
 	    int headerLevel) {
 	Element element = null;
-	if (par.getStyleIndex() > 0 && par.getStyleIndex() <= headerLevel) {
+	if (styleIndex > 0 && styleIndex <= headerLevel) {
 	    element = html.createElement("h1");
-	} else if (par.getStyleIndex() > headerLevel
-		&& par.getStyleIndex() < 10
-		&& (par.getStyleIndex() - headerLevel + 1) < 7) {
+	} else if (styleIndex > headerLevel
+		&& styleIndex < 10
+		&& (styleIndex - headerLevel + 1) < 7) {
 	    element = html.createElement("h"
-		    + (par.getStyleIndex() - headerLevel + 1));
-	} else if (par.getStyleIndex() > headerLevel
-		&& par.getStyleIndex() < 10
-		&& (par.getStyleIndex() - headerLevel + 1) > 6) {
+		    + (styleIndex - headerLevel + 1));
+	} else if (styleIndex > headerLevel
+		&& styleIndex < 10
+		&& (styleIndex - headerLevel + 1) > 6) {
 	    element = html.createElement("h6");
 	} else {
 	    element = html.createElement("p");
 	}
 	return element;
     }
-
-
 }
