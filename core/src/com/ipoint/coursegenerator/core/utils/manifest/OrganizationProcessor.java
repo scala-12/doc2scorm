@@ -8,6 +8,8 @@ import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.imsproject.xsd.imscpRootv1P1P2.OrganizationType;
 import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
 
+import com.ipoint.coursegenerator.core.utils.TransliterationTool;
+
 public class OrganizationProcessor {
 
     public OrganizationProcessor() {
@@ -40,20 +42,20 @@ public class OrganizationProcessor {
      * @param itemType
      * @param sco
      */
-    public static void createItem(ItemType itemType, String scoName, String iref) {
-	itemType.setIdentifier(scoName);
+    public static void createItem(ItemType itemType, String scoName, String resid, String itemid) {	
+	itemType.setIdentifier(itemid);
 	itemType.setTitle(scoName);
-	if (iref != null)
-	    itemType.setIdentifierref(iref);
+	if (resid != null)
+	    itemType.setIdentifierref(resid);
     }
 
     public static ItemType createItem(OrganizationsType organizations, String scoName,
-	    String iref) {
+	    String resid, String itemid) {
 	ItemType item = organizations.getOrganizationArray(0).addNewItem();
-	if (iref != null)
-	    item.setIdentifierref(iref);
+	if (resid != null)
+	    item.setIdentifierref(resid);
 	item.setTitle(scoName);
-	item.setIdentifier(scoName);
+	item.setIdentifier(itemid);
 	return item;
     }
 }
