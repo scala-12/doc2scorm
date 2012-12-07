@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import org.htmlparser.Parser;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.TagFindingVisitor;
+import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Node;
@@ -52,4 +53,14 @@ public class ResourcesProcessor {
 	resource.addNewFile().setHref(path);
     }
 
+    public static String getResourceHrefForItem(ManifestType manifest, ItemType item) {
+	String href = null;
+	for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
+	    if (manifest.getResources().getResourceArray()[i].getIdentifier().equals(item.getIdentifierref())) {
+		href = manifest.getResources().getResourceArray()[i].getHref();
+		break;
+	    }	    
+	}
+	return href;
+    }
 }

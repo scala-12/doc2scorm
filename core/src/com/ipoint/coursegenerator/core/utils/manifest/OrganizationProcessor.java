@@ -42,11 +42,13 @@ public class OrganizationProcessor {
      * @param itemType
      * @param sco
      */
-    public static void createItem(ItemType itemType, String scoName, String resid, String itemid) {	
-	itemType.setIdentifier(itemid);
-	itemType.setTitle(scoName);
+    public static ItemType createItem(ItemType parentItem, String scoName, String resid, String itemid) {	
+	ItemType item = parentItem.addNewItem();
+	item.setIdentifier(itemid);
+	item.setTitle(scoName);
 	if (resid != null)
-	    itemType.setIdentifierref(resid);
+	    item.setIdentifierref(resid);
+	return item;
     }
 
     public static ItemType createItem(OrganizationsType organizations, String scoName,

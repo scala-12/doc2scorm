@@ -26,7 +26,7 @@ import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsPars
 public class ParagraphParser extends AbstractElementParser {
     public static String parse(Object paragraph, Document html,
 	    Object document, String path, int headerLevel) {
-	String headerText = null;
+	String headerText = "";
 	if (paragraph instanceof Paragraph && document != null) {
 	    HWPFDocument doc = (HWPFDocument) document;
 	    PicturesTable pictures = doc.getPicturesTable();
@@ -55,6 +55,7 @@ public class ParagraphParser extends AbstractElementParser {
 			    + run.text());
 		}
 	    }
+	    headerText = element.getTextContent();
 	    html.getElementsByTagName("body").item(0).appendChild(element);
 	    for (Element el : imgsToAppend) {
 		html.getElementsByTagName("body").item(0).appendChild(el);
@@ -135,7 +136,7 @@ public class ParagraphParser extends AbstractElementParser {
 	    
 	}
 
-	return null;
+	return headerText;
     }
     
     public static Element createTextElement(int styleIndex, Document html,
