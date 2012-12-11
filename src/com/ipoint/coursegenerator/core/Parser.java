@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+//import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -197,11 +202,11 @@ public class Parser {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 		if (paragraph.getStyleID() != null) {
 		    try {
-			if (paragraph.getStyleID().equals("a3")) {
-			    paragraphStyle = (int) 100;
-			} else {
+			if (ParagraphParser.isNumericParagraphStyle(paragraph.getStyleID())) {
 			    paragraphStyle = Integer.valueOf(paragraph
 				    .getStyleID());
+			} else {
+			    paragraphStyle = (int) 100;
 			}
 			System.out.println(paragraph.getStyle());
 		    } catch (NumberFormatException e) {
