@@ -34,21 +34,26 @@ public class GenerateCourseActionHandler implements
     public GenerateCourseResult execute(GenerateCourse action,
 	    ExecutionContext context) throws ActionException {
 	Parser parser = this.context.getBean("parser", Parser.class);
+	GenerateCourseResult generateCourseResult = null;
 	try {
 	    String tmpPath = servletContext.getRealPath(File.separator + "tmp");
-	    parser.parse(
-		    new FileInputStream(tmpPath + File.separator
-			    + action.getSourceDocFileUuid()),
-		    action.getHeaderLevel(),
-		    action.getTemplateForCoursePages(), action.getCourseName(),
+	    String templateDir = servletContext.getRealPath(File.separator
+		    + "templates" + File.separator
+		    + action.getTemplateForCoursePages());
+	    String courseFile = parser.parse(new FileInputStream(tmpPath
+		    + File.separator + action.getSourceDocFileUuid()),
+		    action.getHeaderLevel(), templateDir,
+		    action.getCourseName(),
 		    tmpPath + File.separator + action.getSourceDocFileUuid()
 			    + "_dir", action.getFileType());
+	    generateCourseResult = new GenerateCourseResult("/tmp/" + action.getSourceDocFileUuid()
+			    + "_dir/" + courseFile);
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-	return null;
+	return generateCourseResult;
     }
 
     @Override

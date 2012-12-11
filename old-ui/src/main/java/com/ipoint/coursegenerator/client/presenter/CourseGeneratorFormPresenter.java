@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.client.presenter;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -23,9 +24,13 @@ public class CourseGeneratorFormPresenter
 
     public interface MyView extends View, HasUiHandlers<FileSelectUIHandler> {
 	public String getSourceDocFileUuid();
+
 	public String getHeaderLevel();
+
 	public String getTemplateForCoursePages();
+
 	public String getCourseName();
+
 	public String getFileType();
     }
 
@@ -33,26 +38,27 @@ public class CourseGeneratorFormPresenter
     @NameToken(NameTokens.coursegeneratorform)
     public interface MyProxy extends ProxyPlace<CourseGeneratorFormPresenter> {
     }
-    
+
     private final DispatchAsync dispatcher;
-    
+
     @Inject
-    public CourseGeneratorFormPresenter(final EventBus eventBus, final MyView view,
-    	final MyProxy proxy, PlaceManager placeManager, DispatchAsync dispatcher) {
-        super(eventBus, view, proxy);
-        this.dispatcher = dispatcher;
+    public CourseGeneratorFormPresenter(final EventBus eventBus,
+	    final MyView view, final MyProxy proxy, PlaceManager placeManager,
+	    DispatchAsync dispatcher) {
+	super(eventBus, view, proxy);
+	this.dispatcher = dispatcher;
     }
 
     @Override
     protected void revealInParent() {
-        RevealContentEvent.fire(this,
-    	    CourseGeneratorMainPresenter.SLOT_mainContent, this);
+	RevealContentEvent.fire(this,
+		CourseGeneratorMainPresenter.SLOT_mainContent, this);
     }
 
     @Override
     protected void onBind() {
-        super.onBind();
-        getView().setUiHandlers(this);
+	super.onBind();
+	getView().setUiHandlers(this);
     }
 
     @Override
@@ -60,19 +66,20 @@ public class CourseGeneratorFormPresenter
 	GenerateCourse generateCourse = new GenerateCourse();
 	generateCourse.setSourceDocFileUuid(getView().getSourceDocFileUuid());
 	generateCourse.setHeaderLevel(getView().getHeaderLevel());
-	generateCourse.setTemplateForCoursePages(getView().getTemplateForCoursePages());
+	generateCourse.setTemplateForCoursePages(getView()
+		.getTemplateForCoursePages());
 	generateCourse.setCourseName(getView().getCourseName());
 	generateCourse.setFileType(getView().getFileType());
-	dispatcher.execute(generateCourse, 
+	dispatcher.execute(generateCourse,
 		new AsyncCallback<GenerateCourseResult>() {
 		    @Override
 		    public void onFailure(Throwable caught) {
-			
+
 		    }
 
 		    @Override
 		    public void onSuccess(GenerateCourseResult result) {
-			
+			Window.Location.replace(result.getCourseFileName());
 		    }
 		});
     }
