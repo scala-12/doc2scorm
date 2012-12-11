@@ -7,7 +7,7 @@ import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.utils.FileUtils;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 
 public class RasterGraphicsParser extends AbstractGraphicsParser {
 
@@ -15,16 +15,16 @@ public class RasterGraphicsParser extends AbstractGraphicsParser {
 	if (picture instanceof Picture) {
 	    Picture pic = (Picture) picture;
 	    if (pic.getMimeType().equals(IMAGE_PNG)) {		
-		String url = "img" + File.separator + FileUtils.IMAGE_PREFIX + pic.hashCode() + ".png";
-		FileUtils.savePNGImage(((Picture) picture).getRawContent(), 
+		String url = "img" + File.separator + FileWork.IMAGE_PREFIX + pic.hashCode() + ".png";
+		FileWork.savePNGImage(((Picture) picture).getRawContent(), 
 			path + File.separator + url);
 		imgElement.setAttribute("src", url);
 	    }
 	} else if (picture instanceof XWPFPicture) {
 	    XWPFPicture pic = (XWPFPicture) picture;
 	    if (pic.getPictureData().getPictureType() == Document.PICTURE_TYPE_PNG) {		
-		String url = "img" + File.separator + FileUtils.IMAGE_PREFIX + pic.hashCode() + ".png";
-		FileUtils.savePNGImage(((XWPFPicture) picture).getPictureData().getData(), 
+		String url = "img" + File.separator + FileWork.IMAGE_PREFIX + pic.hashCode() + ".png";
+		FileWork.savePNGImage(((XWPFPicture) picture).getPictureData().getData(), 
 			path + File.separator + url);
 		imgElement.setAttribute("src", url);
     }

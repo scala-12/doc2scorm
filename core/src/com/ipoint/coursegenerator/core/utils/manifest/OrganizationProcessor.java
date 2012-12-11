@@ -1,14 +1,9 @@
 package com.ipoint.coursegenerator.core.utils.manifest;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.imsproject.xsd.imscpRootv1P1P2.OrganizationType;
 import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
-
-import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 
 public class OrganizationProcessor {
 
@@ -22,10 +17,11 @@ public class OrganizationProcessor {
      * 
      * @param manifest
      */
-    public static void createOrganization(ManifestType manifest) {
+    public static void createOrganization(ManifestType manifest, String courseName) {
 	manifest.addNewOrganizations().setDefault("");
-	manifest.getOrganizations().addNewOrganization();
-	OrganizationType organization = OrganizationType.Factory.newInstance();
+	OrganizationType organization = manifest.getOrganizations().addNewOrganization();
+	organization.setTitle(courseName);
+	// = OrganizationType.Factory.newInstance();
 	organization.addNewMetadata();
 	// organization.setIdentifier(course.getSysName());
 	// organization.setTitle(course.getName());
