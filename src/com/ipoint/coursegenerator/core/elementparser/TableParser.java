@@ -19,11 +19,11 @@ public class TableParser {
 	    Element htmlTable = html.createElement("table");
 	    htmlTable.setAttribute("border", "1");
 	    for (XWPFTableRow tableRow : table.getRows()) {
-		Element tr = html.createElement("tr");
-		for (XWPFTableCell tableCell : tableRow.getTableCells()) {
+		Element tr = html.createElement("tr");				
+		for (XWPFTableCell tableCell : tableRow.getTableCells()) {		
 		    Element td = html.createElement("td");
 		    if(tableCell != null) {
-		    td.setTextContent(tableCell.getText()); 
+		    td.setTextContent(tableCell.getText());		
 		    tr.appendChild(td);
 		    }
 		}
