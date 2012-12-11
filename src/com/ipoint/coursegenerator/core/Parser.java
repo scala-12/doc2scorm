@@ -1,23 +1,17 @@
 package com.ipoint.coursegenerator.core;
 
-import java.io.InputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
 import java.util.ArrayList;
-
-import java.util.List;
-//import java.util.logging.Logger;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.htmlparser.util.ParserException;
-import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
-import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
-import org.apache.fop.render.rtf.rtflib.rtfdoc.IBorderAttributes;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -25,25 +19,20 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFPicture;
-import org.apache.poi.xwpf.usermodel.XWPFPictureData;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
+import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
+import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.elementparser.ParagraphParser;
-import com.ipoint.coursegenerator.core.utils.FileUtils;
+import com.ipoint.coursegenerator.core.elementparser.TableParser;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
+import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
 import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
-import com.ipoint.coursegenerator.core.elementparser.TableParser;
 
 public class Parser {
 
@@ -109,7 +98,7 @@ public class Parser {
     public Parser() {
     }
 
-    public void createImsManifestFile() {
+    public void createImsManifestFile(String courseName) {
 	manifest = ManifestDocument.Factory.newInstance();
 
 	ManifestDocument.Factory.newInstance();
@@ -123,7 +112,8 @@ public class Parser {
 	metadataProcessor.createMetadata(manifest.getManifest());
 	// Add Organization (default and root) to Manifest
 	OrganizationProcessor organizationProcessor = new OrganizationProcessor();
-	organizationProcessor.createOrganization(manifest.getManifest());
+	organizationProcessor.createOrganization(manifest.getManifest(),
+		courseName);
 	// Add Resources for Manifest
 	ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
 	resourcesProcessor.createResources(manifest.getManifest());
@@ -137,10 +127,14 @@ public class Parser {
 		.replace(":adl=", ":adlcp=");
     }
 
-    public void parse(InputStream stream, String headerLevel, String template,
-	    String courseName, String path, String fileType) throws IOException {
-	createImsManifestFile();
+    public String parse(InputStream stream, String headerLevel,
+	    String templateDir, String courseName, String path, String fileType)
+	    throws IOException {
+	createImsManifestFile(courseName);
 	File directory = new File(path);
+	if (directory.exists()) {
+	    FileUtils.deleteDirectory(directory);
+	}
 	directory.mkdirs();
 	Object doc = null;
 	if (fileType.toLowerCase().equals(FILETYPE_DOC)) {
@@ -149,10 +143,10 @@ public class Parser {
 	    doc = new XWPFDocument(stream);
 	}
 	if (doc instanceof HWPFDocument) {
-	    parseHWPF((HWPFDocument) doc, headerLevel, template, courseName,
+	    parseHWPF((HWPFDocument) doc, headerLevel, templateDir, courseName,
 		    path);
 	} else if (doc instanceof XWPFDocument) {
-	    parseXWPF((XWPFDocument) doc, headerLevel, template, courseName,
+	    parseXWPF((XWPFDocument) doc, headerLevel, templateDir, courseName,
 		    path);
 	}
 	String res = tuneManifest(manifest);
@@ -167,49 +161,69 @@ public class Parser {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+	File jsDir = new File(path + File.separator + "js");
+	File cssDir = new File(path + File.separator + "css");
+	if (!jsDir.exists()) {
+	    jsDir.mkdirs();
+	}
+	if (!cssDir.exists()) {
+	    cssDir.mkdirs();
+	}
+	FileUtils.copyFileToDirectory(new File(
+		templateDir + File.separator + "parser.js"), jsDir);
+	FileUtils.copyFileToDirectory(new File(
+		templateDir + File.separator + "APIWrapper.js"), jsDir);
+	FileUtils.copyFileToDirectory(new File(
+		templateDir + File.separator + "SCOFunctions.js"), jsDir);
+	FileUtils.copyFileToDirectory(new File(
+		templateDir + File.separator + "kurs.css"), cssDir);
+	String zipCourseFileName = getCourseZipFilename(courseName);
+	Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
+		directory.getPath());
+	zip.addToZip();
+	return zipCourseFileName;
     }
 
     private void parseXWPF(XWPFDocument doc, String headerLevel,
-	    String template, String courseName, String path) {
-	int headerLevelNumber = Integer.parseInt(headerLevel);	
+	    String templateDir, String courseName, String path) {
+	int headerLevelNumber = Integer.parseInt(headerLevel);
 	Document html = null;
 	int htmlFileCounter = 0;
 	int paragraphStyle = 0;
 	String fileName = null;
 	ArrayList<ItemStyle> items = new ArrayList<Parser.ItemStyle>();
 	for (IBodyElement bodyElement : doc.getBodyElements()) {
-	    if (bodyElement.getElementType()
-		    .equals(BodyElementType.PARAGRAPH)) {
+	    if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 		if (paragraph.getStyleID() != null) {
 		    try {
 			if (paragraph.getStyleID().equals("a3")) {
-			    paragraphStyle = (int)100;
+			    paragraphStyle = (int) 100;
 			} else {
 			    paragraphStyle = Integer.valueOf(paragraph
 				    .getStyleID());
 			}
 			System.out.println(paragraph.getStyle());
-		    } catch (NumberFormatException e) {  paragraphStyle = 100;
+		    } catch (NumberFormatException e) {
+			paragraphStyle = 100;
 		    }
 		    if (paragraphStyle > 0
 			    && paragraphStyle <= headerLevelNumber) {
 			if (html != null) {
-			    
-			    
+
 			    String itemText = TransliterationTool
 				    .convertRU2ENString(paragraph.getText());
 			    itemText = itemText.replaceAll("[\\W&&[^-]]", "");
-			    fileName = FileUtils.HTML_PREFIX
+			    fileName = FileWork.HTML_PREFIX
 				    + Integer.toString(htmlFileCounter) + "_"
 				    + itemText + ".htm";
-			    createItem(items, paragraph.getText(), paragraphStyle, fileName, itemText);
-			    
-			    
-			    FileUtils.saveHTMLDocument(html, path
-				    + File.separator + FileUtils.HTML_PREFIX
+			    createItem(items, paragraph.getText(),
+				    paragraphStyle, fileName, itemText);
+
+			    FileWork.saveHTMLDocument(html, templateDir, path
+				    + File.separator + FileWork.HTML_PREFIX
 				    + Integer.toString(htmlFileCounter)
-				    + ".htm");
+				    + ".htm", path);
 			    htmlFileCounter++;
 			}
 			html = createNewHTMLDocument();
@@ -221,25 +235,24 @@ public class Parser {
 			    headerLevelNumber);
 		}
 
-	    } else if (bodyElement.getElementType()
-		    .equals(BodyElementType.TABLE)) {
-		XWPFTable table = (XWPFTable)bodyElement;
+	    } else if (bodyElement.getElementType().equals(
+		    BodyElementType.TABLE)) {
+		XWPFTable table = (XWPFTable) bodyElement;
 		TableParser.parse(table, html, doc, path, headerLevelNumber);
 
 	    }
 
 	}
-	FileUtils.saveHTMLDocument(html, path + File.separator
-		+ FileUtils.HTML_PREFIX + Integer.toString(htmlFileCounter)
-		+ ".htm");
+	FileWork.saveHTMLDocument(html, templateDir, path + File.separator
+		+ FileWork.HTML_PREFIX + Integer.toString(htmlFileCounter)
+		+ ".htm", path);
     }
 
-    private void parseHWPF(HWPFDocument doc, String headerLevel,
-	    String template, String courseName, String path) {
+    private void parseHWPF(HWPFDocument document, String headerLevel,
+	    String templateDir, String courseName, String path) {
 	int headerLevelNumber = Integer.parseInt(headerLevel);
 	String htmlPath = path;
 	ArrayList<ItemStyle> items = new ArrayList<ItemStyle>();
-	HWPFDocument document = doc;
 	Range range = document.getRange();
 	Document html = null;
 	int htmlFileCounter = 0;
@@ -262,8 +275,8 @@ public class Parser {
 		    && range.getParagraph(i - 1).getStyleIndex() != par
 			    .getStyleIndex()) {
 		if (html != null) {
-		    FileUtils.saveHTMLDocument(html, htmlPath + File.separator
-			    + filename);
+		    FileWork.saveHTMLDocument(html, templateDir, htmlPath
+			    + File.separator + filename, path);
 		    htmlFileCounter++;
 		}
 		html = this.createNewHTMLDocument();
@@ -291,7 +304,7 @@ public class Parser {
 			.convertRU2ENString(headerText);
 		itemText = itemText.replaceAll(" ", "_");
 		itemText = itemText.replaceAll("[\\W&&[^-]]", "");
-		filename = FileUtils.HTML_PREFIX
+		filename = FileWork.HTML_PREFIX
 			+ Integer.toString(htmlFileCounter) + "_" + itemText
 			+ ".htm";
 		url = createItem(items, headerText, headerStyleID, filename,
@@ -305,8 +318,8 @@ public class Parser {
 
 	}
 	if (filename != null) {
-	    FileUtils.saveHTMLDocument(html, htmlPath + File.separator
-		    + filename);
+	    FileWork.saveHTMLDocument(html, templateDir, htmlPath
+		    + File.separator + filename, path);
 	}
     }
 
@@ -345,5 +358,20 @@ public class Parser {
 		+ File.separator + url.substring(0, url.lastIndexOf('.')));
 	items.add(itemStyle);
 	return path;
+    }
+
+    private String getCourseZipFilename(String courseName) {
+	String zipCourseFileName = TransliterationTool
+		.convertRU2ENString(courseName);
+	Calendar date = GregorianCalendar.getInstance();
+	zipCourseFileName = zipCourseFileName.replace(' ', '_');
+	String sdate = "_"
+		+ new Integer(date.get(GregorianCalendar.YEAR)).toString()
+		+ "-"
+		+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString()
+		+ "-"
+		+ new Integer(date.get(GregorianCalendar.DATE)).toString();
+	zipCourseFileName = zipCourseFileName + sdate + ".zip";
+	return zipCourseFileName;
     }
 }
