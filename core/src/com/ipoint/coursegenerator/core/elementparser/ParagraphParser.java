@@ -139,7 +139,6 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		}
 
-		// doc.getNumbering().getNum(par.getNumID()).getCTNum().getAbstractNumId().getVal();
 		for (POIXMLDocumentPart p : doc.getRelations()) {
 		    String relation = p.getPackageRelationship()
 			    .getRelationshipType();
@@ -147,17 +146,10 @@ public class ParagraphParser extends AbstractElementParser {
 			XWPFNumbering numbering = (XWPFNumbering) p;
 			if (par.getNumID() != null) {
 			    Element listElement = html.createElement("li");
-			   /* listMap.put(
-				    doc.getNumbering().getNum(par.getNumID())
-					    .getCTNum().getAbstractNumId()
-					    .getVal(), listElement);*/
-			    
 			    listMarkers.add(listElement);
 			    CTNum num = numbering.getNum(par.getNumID())
 				    .getCTNum();
 			    num.getNumId();		
-			   /* System.out.println(numbering.getNum(par.getNumID())
-				    .getCTNum().getAbstractNumId().getVal());*/
 			    numbering.getAbstractNum(
 				    numbering.getNum(par.getNumID()).getCTNum()
 					    .getAbstractNumId().getVal())
@@ -173,13 +165,13 @@ public class ParagraphParser extends AbstractElementParser {
 				System.out.println(secretField.getListStyle(numbering));  
 				
 			    } catch (SecurityException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			    } catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			    } catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			    }
 			}
@@ -227,5 +219,12 @@ public class ParagraphParser extends AbstractElementParser {
 	} 
 	return false;
     }
+    
+    public void parseParagraphRuns() {
+	    
+    }
 }
+
+
+
 
