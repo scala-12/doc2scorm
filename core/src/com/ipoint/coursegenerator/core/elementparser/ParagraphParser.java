@@ -1,12 +1,10 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
-import java.math.BigInteger;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -33,6 +31,8 @@ import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsPars
 import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
 
 public class ParagraphParser extends AbstractElementParser {
+    
+   
 
     public static String parse(Object paragraph, Document html,
 	    Object document, String path, int headerLevel) {
@@ -72,9 +72,10 @@ public class ParagraphParser extends AbstractElementParser {
 		html.getElementsByTagName("body").item(0).appendChild(el);
 	    }
 	} else if (paragraph instanceof XWPFParagraph && document != null) {
+	    SecretField secretField = new SecretField();		
 	    XWPFDocument doc = (XWPFDocument) document;
 	    final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
-	    final Map<BigInteger, Element> listMap = new HashMap<BigInteger, Element>();
+	    final ArrayList<Element> listMarkers = new ArrayList<Element>();
 	    XWPFParagraph par = (XWPFParagraph) paragraph;
 	    int styleIndex = 0;
 	    if (isNumericParagraphStyle(par.getStyleID())) {
@@ -146,20 +147,41 @@ public class ParagraphParser extends AbstractElementParser {
 			XWPFNumbering numbering = (XWPFNumbering) p;
 			if (par.getNumID() != null) {
 			    Element listElement = html.createElement("li");
-			    listMap.put(
+			   /* listMap.put(
 				    doc.getNumbering().getNum(par.getNumID())
 					    .getCTNum().getAbstractNumId()
-					    .getVal(), listElement);
+					    .getVal(), listElement);*/
+			    
+			    listMarkers.add(listElement);
 			    CTNum num = numbering.getNum(par.getNumID())
 				    .getCTNum();
-			    num.getNumId();
-			    System.out.println(numbering.getNum(par.getNumID())
-				    .getCTNum().getAbstractNumId().getVal());
+			    num.getNumId();		
+			   /* System.out.println(numbering.getNum(par.getNumID())
+				    .getCTNum().getAbstractNumId().getVal());*/
 			    numbering.getAbstractNum(
 				    numbering.getNum(par.getNumID()).getCTNum()
 					    .getAbstractNumId().getVal())
 				    .getCTAbstractNum();
-			    System.out.println(num);
+			    try {
+				String strCtNumbering = secretField.getListStyle(numbering);
+				if(strCtNumbering.contains("decimal")) {
+				System.out.println("Decimal");
+				}
+				else {
+				System.out.println("Bullet");    
+				}
+				System.out.println(secretField.getListStyle(numbering));  
+				
+			    } catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    } catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    } catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    }
 			}
 
 		    }
@@ -168,9 +190,13 @@ public class ParagraphParser extends AbstractElementParser {
 		for (Element el : imagesElementsToAppend) {
 		    html.getElementsByTagName("body").item(0).appendChild(el);
 		}
-
+		//Added
+		for(Element el:listMarkers) {
+		    html.getElementsByTagName("body").item(0).appendChild(el);  
+		}
+		
 	    }
-
+	    
 	}
 
 	return headerText;
@@ -202,3 +228,4 @@ public class ParagraphParser extends AbstractElementParser {
 	return false;
     }
 }
+
