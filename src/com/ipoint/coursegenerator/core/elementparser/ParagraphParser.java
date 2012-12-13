@@ -95,7 +95,9 @@ public class ParagraphParser extends AbstractElementParser {
 			Element imageElement = html.createElement("img");
 			XWPFPicture picture = run.getEmbeddedPictures().get(j);
 			if (picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG) {
+				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
 			    RasterGraphicsParser.parse(picture, path,
 				    imageElement);
 			} else {
@@ -155,6 +157,7 @@ public class ParagraphParser extends AbstractElementParser {
 					    .getAbstractNumId().getVal())
 				    .getCTAbstractNum();
 			    try {
+			
 				String strCtNumbering = secretField.getListStyle(numbering);
 				if(strCtNumbering.contains("decimal")) {
 				System.out.println("Decimal");
