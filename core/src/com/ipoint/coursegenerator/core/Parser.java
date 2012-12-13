@@ -322,6 +322,9 @@ public class Parser {
 	    }
 
 	}
+	filename = FileWork.HTML_PREFIX							//file name 
+		+ Integer.toString(htmlFileCounter) + "_"
+		+ paragraphStyle + ".htm";
 	if (filename != null) {
 	    FileWork.saveHTMLDocument(html, templateDir, htmlPath
 		    + File.separator + filename, path);
