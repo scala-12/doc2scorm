@@ -12,6 +12,9 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.Table;
+import org.apache.poi.hwpf.usermodel.TableCell;
+import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -25,6 +28,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
@@ -35,15 +39,17 @@ public class ParagraphParser extends AbstractElementParser {
    
 
     public static String parse(Object paragraph, Document html,
-	    Object document, String path, int headerLevel) {
+	    Object document, String path, int headerLevel, Node parent) {
 	String headerText = "";
 	if (paragraph instanceof Paragraph && document != null) {
 	    HWPFDocument doc = (HWPFDocument) document;
 	    PicturesTable pictures = doc.getPicturesTable();
 	    Paragraph par = (Paragraph) paragraph;
+
 	    Element element = createTextElement(par.getStyleIndex(), html,
 		    headerLevel);
 	    ArrayList<Element> imgsToAppend = new ArrayList<Element>();
+
 	    for (int i = 0; i < par.numCharacterRuns(); i++) {
 		CharacterRun run = par.getCharacterRun(i);
 		if (run.isSpecialCharacter()) {
@@ -60,17 +66,18 @@ public class ParagraphParser extends AbstractElementParser {
 			}
 			imgsToAppend.add(imgElement);
 		    }
-		} else if (!run.text().contains("EMBED Equation.3")
+		} else if (!run.text().startsWith("EMBED ")
 			&& !run.text().equals(Character.toString((char) 13))) {
 		    element.setTextContent(element.getTextContent()
 			    + run.text());
-		}
+		} 
 	    }
 	    headerText = element.getTextContent();
-	    html.getElementsByTagName("body").item(0).appendChild(element);
+	    parent.appendChild(element);
 	    for (Element el : imgsToAppend) {
-		html.getElementsByTagName("body").item(0).appendChild(el);
+		parent.appendChild(el);
 	    }
+
 	} else if (paragraph instanceof XWPFParagraph && document != null) {
 	    SecretField secretField = new SecretField();		
 	    XWPFDocument doc = (XWPFDocument) document;
@@ -86,7 +93,7 @@ public class ParagraphParser extends AbstractElementParser {
 	    Element element = createTextElement(styleIndex, html, headerLevel);
 	    ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 	    element.setTextContent(par.getText());
-	    html.getElementsByTagName("body").item(0).appendChild(element);
+	    parent.appendChild(element);
 	    for (int i = 0; i < par.getRuns().size(); i++) {
 
 		XWPFRun run = par.getRuns().get(i);
@@ -183,11 +190,11 @@ public class ParagraphParser extends AbstractElementParser {
 		}
 		headerText = element.getTextContent();
 		for (Element el : imagesElementsToAppend) {
-		    html.getElementsByTagName("body").item(0).appendChild(el);
+		    parent.appendChild(el);
 		}
 		//Added
 		for(Element el:listMarkers) {
-		    html.getElementsByTagName("body").item(0).appendChild(el);  
+		    parent.appendChild(el);  
 		}
 		
 	    }
@@ -219,7 +226,7 @@ public class ParagraphParser extends AbstractElementParser {
 	    Pattern pattern = Pattern.compile("[0-9]*");
 	    Matcher matcher = pattern.matcher(stringStyleID);
 	    return matcher.matches();
-	} 
+	}
 	return false;
     }
     

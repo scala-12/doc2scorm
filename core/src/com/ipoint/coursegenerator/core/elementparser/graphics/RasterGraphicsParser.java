@@ -19,7 +19,8 @@ public class RasterGraphicsParser extends AbstractGraphicsParser {
 			+ pic.hashCode() + ".png";
 		FileWork.savePNGImage(((Picture) picture).getRawContent(), path
 			+ File.separator + url);
-		imgElement.setAttribute("src", url);
+		imgElement.setAttribute("src",
+			url.replace(File.separatorChar, '/'));
 	    }
 	} else if (picture instanceof XWPFPicture) {
 	    XWPFPicture pic = (XWPFPicture) picture;
@@ -45,9 +46,8 @@ public class RasterGraphicsParser extends AbstractGraphicsParser {
 	    if (url != null) {
 		FileWork.savePNGImage(((XWPFPicture) picture).getPictureData()
 			.getData(), path + File.separator + url);
-		imgElement.setAttribute("src", url);
+		imgElement.setAttribute("src", url.replace(File.separatorChar, '/'));
 	    }
-
 	}
     }
 }

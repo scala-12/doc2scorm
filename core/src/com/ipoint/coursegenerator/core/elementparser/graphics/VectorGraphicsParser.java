@@ -18,14 +18,14 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 		String url = "img" + File.separator + FileWork.IMAGE_PREFIX + pic.hashCode() + ".png";
 		FileWork.savePNGImage(ImageFormatConverter.transcodeWMFtoPNG(pic.getRawContent()), 
 			path + File.separator + url);
-		imgElement.setAttribute("src", url);
+		imgElement.setAttribute("src", url.replace(File.separatorChar, '/'));
 	    }
 	} else if (picture instanceof XWPFPictureData) {
 	    XWPFPictureData pic = (XWPFPictureData) picture;		
 		String url = "img" + File.separator + FileWork.IMAGE_PREFIX + pic.hashCode() + ".png";
 		FileWork.savePNGImage(ImageFormatConverter.transcodeWMFtoPNG(pic.getData()), 
 			path + File.separator + url);
-		imgElement.setAttribute("src", url);
+		imgElement.setAttribute("src", url.replace(File.separatorChar, '/'));
 	}
     }
 }
