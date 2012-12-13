@@ -21,15 +21,9 @@ public class OrganizationProcessor {
 	manifest.addNewOrganizations().setDefault("");
 	OrganizationType organization = manifest.getOrganizations().addNewOrganization();
 	organization.setTitle(courseName);
-	// = OrganizationType.Factory.newInstance();
+	organization.setIdentifier(courseName.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") 
+		+ "_" + java.util.UUID.randomUUID());
 	organization.addNewMetadata();
-	// organization.setIdentifier(course.getSysName());
-	// organization.setTitle(course.getName());
-	// OrganizationType[] ota = manifest.getOrganizations()
-	// .getOrganizationArray();
-	// createItems(organization);
-	// ota[0] = organization;
-	// manifest.getOrganizations().setOrganizationArray(ota);
     }
 
     /**
