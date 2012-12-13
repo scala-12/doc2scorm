@@ -5,6 +5,10 @@
 	<artifactId>ilogos-course-generator-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>iLogos Course Generator Core</name>
+	<properties>
+	    <poi.version>3.9</poi.version>
+		<batik.version>1.7</batik.version>
+	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
@@ -16,23 +20,23 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-		</plugins>
+		</plugins>		
 	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>3.8</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
-			<version>3.8</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.8</version>
+			<version>${poi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.arnx</groupId>
@@ -42,12 +46,12 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
-			<version>1.7</version>
+			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
-			<version>1.7</version>
+			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.imsglobal</groupId>
