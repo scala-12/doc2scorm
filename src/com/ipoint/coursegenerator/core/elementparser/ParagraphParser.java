@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,9 +11,6 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Table;
-import org.apache.poi.hwpf.usermodel.TableCell;
-import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -22,183 +18,187 @@ import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import schemasMicrosoftComVml.CTImageData;
+
 import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
 
 public class ParagraphParser extends AbstractElementParser {
-    
-   
 
     public static String parse(Object paragraph, Document html,
 	    Object document, String path, int headerLevel, Node parent) {
+	if (paragraph instanceof Paragraph) {
+	    return parse((Paragraph) paragraph, html, (HWPFDocument) document,
+		    path, headerLevel, parent);
+	} else if (paragraph instanceof XWPFParagraph) {
+	    return parse((XWPFParagraph) paragraph, html,
+		    (XWPFDocument) document, path, headerLevel, parent);
+	}
+	return null;
+    }
+
+    public static String parse(Paragraph paragraph, Document html,
+	    HWPFDocument document, String path, int headerLevel, Node parent) {
 	String headerText = "";
-	if (paragraph instanceof Paragraph && document != null) {
-	    HWPFDocument doc = (HWPFDocument) document;
-	    PicturesTable pictures = doc.getPicturesTable();
-	    Paragraph par = (Paragraph) paragraph;
+	HWPFDocument doc = (HWPFDocument) document;
+	PicturesTable pictures = doc.getPicturesTable();
+	Paragraph par = (Paragraph) paragraph;
 
-	    Element element = createTextElement(par.getStyleIndex(), html,
-		    headerLevel);
-	    ArrayList<Element> imgsToAppend = new ArrayList<Element>();
+	Element element = createTextElement(par.getStyleIndex(), html,
+		headerLevel);
+	ArrayList<Element> imgsToAppend = new ArrayList<Element>();
 
-	    for (int i = 0; i < par.numCharacterRuns(); i++) {
-		CharacterRun run = par.getCharacterRun(i);
-		if (run.isSpecialCharacter()) {
-		    if (pictures.hasPicture(run)) {
-			Element imgElement = html.createElement("img");
-			Picture picture = pictures.extractPicture(run, true);
-			if (picture.getMimeType().equals(
-				AbstractGraphicsParser.IMAGE_WMF)) {
-			    VectorGraphicsParser.parse(picture, path,
-				    imgElement);
-			} else {
-			    RasterGraphicsParser.parse(picture, path,
-				    imgElement);
-			}
-			imgsToAppend.add(imgElement);
+	for (int i = 0; i < par.numCharacterRuns(); i++) {
+	    CharacterRun run = par.getCharacterRun(i);
+	    if (run.isSpecialCharacter()) {
+		if (pictures.hasPicture(run)) {
+		    Element imgElement = html.createElement("img");
+		    Picture picture = pictures.extractPicture(run, true);
+		    if (picture.getMimeType().equals(
+			    AbstractGraphicsParser.IMAGE_WMF)) {
+			VectorGraphicsParser.parse(picture, path, imgElement);
+		    } else {
+			RasterGraphicsParser.parse(picture, path, imgElement);
 		    }
-		} else if (!run.text().startsWith("EMBED ")
-			&& !run.text().equals(Character.toString((char) 13))) {
-		    element.setTextContent(element.getTextContent()
-			    + run.text());
-		} 
+		    imgsToAppend.add(imgElement);
+		}
+	    } else if (!run.text().startsWith(" EMBED ")
+		    && !run.text().equals(Character.toString((char) 13))) {
+		element.setTextContent(element.getTextContent() + run.text());
+	    }
+	}
+	headerText = element.getTextContent();
+	parent.appendChild(element);
+	for (Element el : imgsToAppend) {
+	    parent.appendChild(el);
+	}
+	return headerText;
+
+    }
+
+    public static String parse(XWPFParagraph paragraph, Document html,
+	    XWPFDocument document, String path, int headerLevel, Node parent) {
+	String headerText = "";
+	SecretField secretField = new SecretField();
+	XWPFDocument doc = (XWPFDocument) document;
+	final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
+	final ArrayList<Element> listMarkers = new ArrayList<Element>();
+	XWPFParagraph par = (XWPFParagraph) paragraph;
+	int styleIndex = 0;
+	if (isNumericParagraphStyle(par.getStyleID())) {
+	    styleIndex = Integer.parseInt(par.getStyleID());
+	} else {
+	    styleIndex = (int) 100;
+	}
+	Element element = createTextElement(styleIndex, html, headerLevel);
+	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
+	element.setTextContent(par.getText());
+	parent.appendChild(element);
+	for (int i = 0; i < par.getRuns().size(); i++) {
+
+	    XWPFRun run = par.getRuns().get(i);
+	    if (run.getEmbeddedPictures() != null) {
+		for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
+		    Element imageElement = html.createElement("img");
+		    XWPFPicture picture = run.getEmbeddedPictures().get(j);
+		    if (picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+			RasterGraphicsParser.parse(picture, path, imageElement);
+		    }
+		    imagesElementsToAppend.add(imageElement);
+
+		}
+
+	    }
+	    if (run.getCTR().sizeOfObjectArray() > 0) {
+		for (CTObject picture : run.getCTR().getObjectArray()) {
+		    CTImageData[] objs = (CTImageData[]) picture
+			    .selectPath("declare namespace v='urn:schemas-microsoft-com:vml' "
+				    + ".//v:imagedata");
+
+		    if (objs.length > 0) {
+			Element imageElement = html.createElement("img");
+			String rId = objs[0]
+				.selectAttribute(
+					"http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+					"id").getDomNode().getNodeValue();
+			XWPFPictureData pdata = null;
+			for (XWPFPictureData pic : pictures) {
+			    if (pic.getPackageRelationship().getId()
+				    .equals(rId)) {
+				pdata = pic;
+				break;
+			    }
+			}
+			if (pdata != null) {
+
+			    VectorGraphicsParser.parse(pdata, path,
+				    imageElement);
+			    imagesElementsToAppend.add(imageElement);
+			}
+		    }
+
+		}
+	    }
+
+	    for (POIXMLDocumentPart p : doc.getRelations()) {
+		String relation = p.getPackageRelationship()
+			.getRelationshipType();
+		if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
+		    XWPFNumbering numbering = (XWPFNumbering) p;
+		    if (par.getNumID() != null) {
+			Element listElement = html.createElement("li");
+			listMarkers.add(listElement);
+			CTNum num = numbering.getNum(par.getNumID()).getCTNum();
+			num.getNumId();
+			numbering.getAbstractNum(
+				numbering.getNum(par.getNumID()).getCTNum()
+					.getAbstractNumId().getVal())
+				.getCTAbstractNum();
+			try {
+
+			    String strCtNumbering = secretField
+				    .getListStyle(numbering);
+			    if (strCtNumbering.contains("decimal")) {
+				System.out.println("Decimal");
+			    } else {
+				System.out.println("Bullet");
+			    }
+			    System.out.println(secretField
+				    .getListStyle(numbering));
+
+			} catch (SecurityException e) {
+
+			    e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+
+			    e.printStackTrace();
+			} catch (IllegalAccessException e) {
+
+			    e.printStackTrace();
+			}
+		    }
+
+		}
 	    }
 	    headerText = element.getTextContent();
-	    parent.appendChild(element);
-	    for (Element el : imgsToAppend) {
+	    for (Element el : imagesElementsToAppend) {
+		parent.appendChild(el);
+	    }
+	    // Added
+	    for (Element el : listMarkers) {
 		parent.appendChild(el);
 	    }
 
-	} else if (paragraph instanceof XWPFParagraph && document != null) {
-	    SecretField secretField = new SecretField();		
-	    XWPFDocument doc = (XWPFDocument) document;
-	    final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
-	    final ArrayList<Element> listMarkers = new ArrayList<Element>();
-	    XWPFParagraph par = (XWPFParagraph) paragraph;
-	    int styleIndex = 0;
-	    if (isNumericParagraphStyle(par.getStyleID())) {
-		styleIndex = Integer.parseInt(par.getStyleID());
-	    } else {
-		styleIndex = (int) 100;
-	    }
-	    Element element = createTextElement(styleIndex, html, headerLevel);
-	    ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
-	    element.setTextContent(par.getText());
-	    parent.appendChild(element);
-	    for (int i = 0; i < par.getRuns().size(); i++) {
-
-		XWPFRun run = par.getRuns().get(i);
-		if (run.getEmbeddedPictures() != null) {
-		    for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
-			Element imageElement = html.createElement("img");
-			XWPFPicture picture = run.getEmbeddedPictures().get(j);
-			if (picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-				|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-			    RasterGraphicsParser.parse(picture, path,
-				    imageElement);
-			} else {
-
-			    VectorGraphicsParser.parse(picture, path,
-				    imageElement);
-			}
-			imagesElementsToAppend.add(imageElement);
-
-		    }
-
-		}
-		if (run.getCTR().sizeOfObjectArray() > 0) {
-		    for (CTObject picture : run.getCTR().getObjectArray()) {
-			XmlObject[] objs = picture
-				.selectPath("declare namespace v='urn:schemas-microsoft-com:vml' "
-					+ ".//v:imagedata");
-
-			if (objs.length > 0) {
-			    Element imageElement = html.createElement("img");
-			    String rId = ((XmlAnyTypeImpl) ((XmlAnyTypeImpl) objs[0])
-				    .selectAttribute(
-					    "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
-					    "id")).getStringValue();
-			    XWPFPictureData pdata = null;
-			    for (XWPFPictureData pic : pictures) {
-				if (pic.getPackageRelationship().getId()
-					.equals(rId)) {
-				    pdata = pic;
-				    break;
-				}
-			    }
-			    if (pdata != null) {
-
-				VectorGraphicsParser.parse(pdata, path,
-					imageElement);
-				imagesElementsToAppend.add(imageElement);
-			    }
-			}
-
-		    }
-		}
-
-		for (POIXMLDocumentPart p : doc.getRelations()) {
-		    String relation = p.getPackageRelationship()
-			    .getRelationshipType();
-		    if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
-			XWPFNumbering numbering = (XWPFNumbering) p;
-			if (par.getNumID() != null) {
-			    Element listElement = html.createElement("li");
-			    listMarkers.add(listElement);
-			    CTNum num = numbering.getNum(par.getNumID())
-				    .getCTNum();
-			    num.getNumId();		
-			    numbering.getAbstractNum(
-				    numbering.getNum(par.getNumID()).getCTNum()
-					    .getAbstractNumId().getVal())
-				    .getCTAbstractNum();
-			    try {
-			
-				String strCtNumbering = secretField.getListStyle(numbering);
-				if(strCtNumbering.contains("decimal")) {
-				System.out.println("Decimal");
-				}
-				else {
-				System.out.println("Bullet");    
-				}
-				System.out.println(secretField.getListStyle(numbering));  
-				
-			    } catch (SecurityException e) {
-				
-				e.printStackTrace();
-			    } catch (IllegalArgumentException e) {
-				
-				e.printStackTrace();
-			    } catch (IllegalAccessException e) {
-				
-				e.printStackTrace();
-			    }
-			}
-
-		    }
-		}
-		headerText = element.getTextContent();
-		for (Element el : imagesElementsToAppend) {
-		    parent.appendChild(el);
-		}
-		//Added
-		for(Element el:listMarkers) {
-		    parent.appendChild(el);  
-		}
-		
-	    }
-	    
 	}
 
 	return headerText;
@@ -229,12 +229,8 @@ public class ParagraphParser extends AbstractElementParser {
 	}
 	return false;
     }
-    
+
     public void parseParagraphRuns() {
-	    
+
     }
 }
-
-
-
-
