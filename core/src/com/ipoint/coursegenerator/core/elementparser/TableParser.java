@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
@@ -34,7 +35,7 @@ public class TableParser {
 	return 0;
     }
 
-    public static int parse(Table hwpfTable, Document html, Object document,
+    public static int parse(Table hwpfTable, Document html, HWPFDocument document,
 	    String path, int headerLevel) {
 	int parCounter = 0;
 	Element htmlTable = html.createElement("table");
