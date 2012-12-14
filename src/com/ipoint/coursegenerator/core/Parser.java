@@ -130,7 +130,7 @@ public class Parser {
 	String zipCourseFileName = getCourseZipFilename(courseName);
 	Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
 		directory.getPath());
-	zip.addToZip();
+	zip.addToZip(new String[]{zipCourseFileName});
 	return zipCourseFileName;
     }
 

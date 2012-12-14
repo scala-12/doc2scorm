@@ -19,8 +19,6 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 	if (picture.getMimeType().equals(IMAGE_WMF)) {
 	    String url = "img" + File.separator + FileWork.IMAGE_PREFIX
 		    + picture.hashCode() + ".png";
-	    System.out.println(picture.getDxaGoal() + "x"
-		    + picture.getDyaGoal());
 	    FileWork.savePNGImage(
 		    ImageFormatConverter.transcodeWMFtoPNG(
 			    picture.getRawContent(), 

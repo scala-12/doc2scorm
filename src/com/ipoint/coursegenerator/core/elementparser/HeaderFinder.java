@@ -74,7 +74,7 @@ public class HeaderFinder {
 	    itemInfo = createItem(items, headerInfo.getHeaderText(),
 		    headerInfo.getHeaderStyleID(), manifest);
 	    itemInfo.setHtmlPath(lastItem.getPath() + File.separator
-		    + itemInfo.getUrl());
+		    + itemInfo.getUrl().replace('/', File.separatorChar));
 	    itemInfo.setPath(lastItem.getPath());
 	    items.add(itemInfo);
 	    File f = new File(itemInfo.getHtmlPath());
