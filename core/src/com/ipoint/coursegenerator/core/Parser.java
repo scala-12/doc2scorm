@@ -219,9 +219,10 @@ public class Parser {
 		i += TableParser.parse(range.getTable(par), html, document,
 			items.get(items.size() - 1).getHtmlPath(),
 			headerInfo.getHeaderLevelNumber());
-	    } else if (par.isInList()) {
+	    } else if (par.isInList() && !isHeading(par.getStyleIndex(), headerInfo.getHeaderLevelNumber())) {
 		listParser.parse(par, html, document,
 			items.get(items.size() - 1).getHtmlPath());
+		headerInfo.setPreviousParStyleID(par.getStyleIndex());
 	    } else {
 		if (i < range.numParagraphs() - 1) {
 		    headerInfo.setNextParStyleID(range.getParagraph(i + 1)
@@ -231,6 +232,7 @@ public class Parser {
 		}
 		html = HeaderFinder.parse(par, html, headerInfo, items,
 			document, manifest.getManifest(), par.getStyleIndex());
+		listParser.reset();
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
@@ -255,5 +257,9 @@ public class Parser {
 		+ new Integer(date.get(GregorianCalendar.DATE)).toString();
 	zipCourseFileName = zipCourseFileName + sdate + ".zip";
 	return zipCourseFileName;
+    }
+    
+    public static boolean isHeading(int parStyleId, int headerLevel) {
+	return parStyleId <= headerLevel && parStyleId > 0;
     }
 }
