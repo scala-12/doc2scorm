@@ -4,9 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -40,7 +38,7 @@ public class Zipper {
     }
 
     private void addDir(ZipOutputStream out, FileOutputStream dest,
-	    File subDir, String root) {
+	    File subDir, String root, String[] ignoreList) {
 	try {
 	    String files[] = subDir.list();
 
@@ -48,22 +46,31 @@ public class Zipper {
 	    byte data[] = new byte[BUFFER];
 
 	    for (int i = 0; i < files.length; i++) {
-		String currentName = subDir.getPath() + File.separator
-			+ files[i];
-
-		if (isDir(currentName)) {
-		    addDir(out, dest, new File(currentName), root);
-		} else {
-		    FileInputStream fi = new FileInputStream(currentName);
-		    origin = new BufferedInputStream(fi, BUFFER);
-		    ZipEntry entry = new ZipEntry(currentName.substring(root
-			    .length() + 1));
-		    out.putNextEntry(entry);
-		    int count;
-		    while ((count = origin.read(data, 0, BUFFER)) != -1) {
-			out.write(data, 0, count);
+		String currentName = subDir.getPath().replace(
+			File.separatorChar, '/')
+			+ "/" + files[i];
+		boolean isInIgnoreList = false;
+		for (int j = 0; j < ignoreList.length; j++) {
+		    if (currentName.endsWith(ignoreList[j])) {
+			isInIgnoreList = true;
 		    }
-		    origin.close();
+		}
+		if (!isInIgnoreList) {
+		    if (isDir(currentName)) {
+			addDir(out, dest, new File(currentName), root,
+				ignoreList);
+		    } else {
+			FileInputStream fi = new FileInputStream(currentName);
+			origin = new BufferedInputStream(fi, BUFFER);
+			ZipEntry entry = new ZipEntry(
+				currentName.substring(root.length() + 1));
+			out.putNextEntry(entry);
+			int count;
+			while ((count = origin.read(data, 0, BUFFER)) != -1) {
+			    out.write(data, 0, count);
+			}
+			origin.close();
+		    }
 		}
 	    }
 
@@ -73,12 +80,12 @@ public class Zipper {
 
     }
 
-    public void addToZip() {
+    public void addToZip(String[] ignoreList) {
 	try {
 	    FileOutputStream dest = new FileOutputStream(zipFileName);
 	    ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
 		    dest));
-	    addDir(out, dest, zipDir, zipDir.getAbsolutePath());
+	    addDir(out, dest, zipDir, zipDir.getAbsolutePath(), ignoreList);
 	    out.close();
 	} catch (Exception e) {
 	    e.printStackTrace();
