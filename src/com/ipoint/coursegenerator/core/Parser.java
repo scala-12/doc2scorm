@@ -151,48 +151,53 @@ public class Parser {
 	    IBodyElement bodyElement = doc.getBodyElements().get(i);
 	    if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
-		if (paragraph.getStyleID() != null) {
+		if(paragraph.getStyleID() != null) {
+		doc.getStyles().getStyle(paragraph.getStyleID()).getCTStyle();
+		}
+		try {
+		    if (paragraph.getStyleID() != null
+			    && ParagraphParser
+				    .isNumericParagraphStyle(paragraph
+					    .getStyleID())) {
+			paragraphStyle = Integer
+				.valueOf(paragraph.getStyleID());
+		    } else {
+			paragraphStyle = (int) 100;
+		    }
+		} catch (NumberFormatException e) {
+		    paragraphStyle = 100;
+		}
+		if (doc.getBodyElements().size() > i + 1
+			&& doc.getBodyElements().get(i + 1) instanceof XWPFParagraph
+			&& ((XWPFParagraph) doc
+				.getBodyElements().get(i + 1)).getStyleID() != null) {
 		    try {
-			if (ParagraphParser.isNumericParagraphStyle(paragraph
-				.getStyleID())) {
-			    paragraphStyle = Integer.valueOf(paragraph
-				    .getStyleID());
+			String nextParagraphStyleID = ((XWPFParagraph) doc
+				.getBodyElements().get(i + 1)).getStyleID();
+			if (ParagraphParser
+				.isNumericParagraphStyle(nextParagraphStyleID)) {
+			    nextParagraphStyle = Integer
+				    .valueOf(nextParagraphStyleID);
 			} else {
-			    paragraphStyle = (int) 100;
+			    nextParagraphStyle = (int) 100;
 			}
 		    } catch (NumberFormatException e) {
-			paragraphStyle = 100;
-		    }
-		    if (doc.getBodyElements().size() > i + 1
-			    && doc.getBodyElements().get(i + 1) instanceof XWPFParagraph) {
-			try {
-			    String nextParagraphStyleID = ((XWPFParagraph) doc
-				    .getBodyElements().get(i + 1)).getStyleID();
-			    if (ParagraphParser
-				    .isNumericParagraphStyle(nextParagraphStyleID)) {
-				nextParagraphStyle = Integer
-					.valueOf(nextParagraphStyleID);
-			    } else {
-				nextParagraphStyle = (int) 100;
-			    }
-			} catch (NumberFormatException e) {
-			    nextParagraphStyle = 100;
-			}
-		    } else {
 			nextParagraphStyle = 100;
 		    }
-		    if (paragraph.getNumID() != null  && !isHeading(paragraphStyle,
-			    headerInfo.getHeaderLevelNumber())) {
-			listParser.parse(paragraph, html, doc, path);
-			headerInfo.setPreviousParStyleID(paragraphStyle);
-		    } else {
+		} else {
+		    nextParagraphStyle = 100;
+		}
+		if (paragraph.getNumID() != null
+			&& !isHeading(paragraphStyle,
+				headerInfo.getHeaderLevelNumber())) {
+		    listParser.parse(paragraph, html, doc, path);
+		    headerInfo.setPreviousParStyleID(paragraphStyle);
+		} else {
 
-			headerInfo.setNextParStyleID(nextParagraphStyle);
-			html = HeaderFinder.parse(paragraph, html, headerInfo,
-				items, doc, manifest.getManifest(),
-				paragraphStyle);
-			listParser.reset();
-		    }
+		    headerInfo.setNextParStyleID(nextParagraphStyle);
+		    html = HeaderFinder.parse(paragraph, html, headerInfo,
+			    items, doc, manifest.getManifest(), paragraphStyle);
+		    listParser.reset();
 		}
 	    } else if (bodyElement.getElementType().equals(
 		    BodyElementType.TABLE)) {
