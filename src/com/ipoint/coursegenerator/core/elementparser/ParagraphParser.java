@@ -5,20 +5,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,13 +39,11 @@ public class ParagraphParser extends AbstractElementParser {
 	}
 	return null;
     }
-
-    public static String parse(Paragraph paragraph, Document html,
-	    HWPFDocument document, String path, int headerLevel, Node parent) {
+    
+    public static String parse(Paragraph par, Document html, HWPFDocument doc,
+	    String path, int headerLevel, Node parent) {
 	String headerText = "";
-	HWPFDocument doc = (HWPFDocument) document;
 	PicturesTable pictures = doc.getPicturesTable();
-	Paragraph par = (Paragraph) paragraph;
 
 	Element element = createTextElement(par.getStyleIndex(), html,
 		headerLevel);
@@ -84,12 +78,9 @@ public class ParagraphParser extends AbstractElementParser {
     }
 
     public static String parse(XWPFParagraph paragraph, Document html,
-	    XWPFDocument document, String path, int headerLevel, Node parent) {
+	    XWPFDocument doc, String path, int headerLevel, Node parent) {
 	String headerText = "";
-	SecretField secretField = new SecretField();
-	XWPFDocument doc = (XWPFDocument) document;
 	final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
-	final ArrayList<Element> listMarkers = new ArrayList<Element>();
 	XWPFParagraph par = (XWPFParagraph) paragraph;
 	int styleIndex = 0;
 	if (isNumericParagraphStyle(par.getStyleID())) {
@@ -115,9 +106,7 @@ public class ParagraphParser extends AbstractElementParser {
 			RasterGraphicsParser.parse(picture, path, imageElement);
 		    }
 		    imagesElementsToAppend.add(imageElement);
-
 		}
-
 	    }
 	    if (run.getCTR().sizeOfObjectArray() > 0) {
 		for (CTObject picture : run.getCTR().getObjectArray()) {
@@ -149,58 +138,12 @@ public class ParagraphParser extends AbstractElementParser {
 
 		}
 	    }
-
-	    for (POIXMLDocumentPart p : doc.getRelations()) {
-		String relation = p.getPackageRelationship()
-			.getRelationshipType();
-		if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
-		    XWPFNumbering numbering = (XWPFNumbering) p;
-		    if (par.getNumID() != null) {
-			Element listElement = html.createElement("li");
-			listMarkers.add(listElement);
-			CTNum num = numbering.getNum(par.getNumID()).getCTNum();
-			num.getNumId();
-			numbering.getAbstractNum(
-				numbering.getNum(par.getNumID()).getCTNum()
-					.getAbstractNumId().getVal())
-				.getCTAbstractNum();
-			try {
-
-			    String strCtNumbering = secretField
-				    .getListStyle(numbering);
-			    if (strCtNumbering.contains("decimal")) {
-				System.out.println("Decimal");
-			    } else {
-				System.out.println("Bullet");
-			    }
-			    System.out.println(secretField
-				    .getListStyle(numbering));
-
-			} catch (SecurityException e) {
-
-			    e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-
-			    e.printStackTrace();
-			} catch (IllegalAccessException e) {
-
-			    e.printStackTrace();
-			}
-		    }
-
-		}
-	    }
 	    headerText = element.getTextContent();
 	    for (Element el : imagesElementsToAppend) {
 		parent.appendChild(el);
 	    }
-	    // Added
-	    for (Element el : listMarkers) {
-		parent.appendChild(el);
-	    }
-
+	  
 	}
-
 	return headerText;
     }
 
