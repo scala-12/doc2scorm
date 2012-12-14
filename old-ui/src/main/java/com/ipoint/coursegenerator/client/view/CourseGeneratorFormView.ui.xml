@@ -16,14 +16,16 @@
 			<t:PageHeader>i.Logos Course Generator</t:PageHeader>
 			<t:Form styleName="form-horizontal" action="/rest/file/form"
 				method="post" ui:field="sourceDocUploadForm">
-				<t:ControlGroup>
+				<t:ControlGroup ui:field="fileUploadControlGroup">
 					<t:ControlLabel for="sourceDocFile">Выберите файл MS Word (.doc,
 						.docx):</t:ControlLabel>
 					<t:Controls>
 						<t:FileUpload ui:field="sourceDocFile" name="sourceDocFile"></t:FileUpload>
+						<t:HelpBlock ui:field="helpBlock" visible="false"></t:HelpBlock>
 					</t:Controls>
-				</t:ControlGroup>
-			</t:Form>
+				</t:ControlGroup>				
+			</t:Form>			
+			<t:ProgressBar visible="false" type="ANIMATED" color="DEFAULT" percent="100" ui:field="fileUploadProgressBar"/>
 			<t:Form styleName="form-horizontal" action="" method="get">
 				<g:Hidden ui:field="uuidFileName"></g:Hidden>
 				<g:Hidden ui:field="sourceFileName"></g:Hidden>
@@ -74,6 +76,7 @@
 					</t:Controls>
 				</t:ControlGroup>
 			</t:Form>
+			<t:ProgressBar visible="false" type="ANIMATED" color="DEFAULT" percent="100" ui:field="generateProgressBar"/>
 			<hr />
 			<t:Footer>&copy; i.Point 2012</t:Footer>
 		</div>

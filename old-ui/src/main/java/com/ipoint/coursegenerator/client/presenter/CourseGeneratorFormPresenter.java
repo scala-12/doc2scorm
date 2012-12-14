@@ -32,6 +32,10 @@ public class CourseGeneratorFormPresenter
 	public String getCourseName();
 
 	public String getFileType();
+	
+	public void setGenerateProgressBarCompleted();
+	
+	public void setGenerateProgressBarFailed();
     }
 
     @ProxyCodeSplit
@@ -74,12 +78,13 @@ public class CourseGeneratorFormPresenter
 		new AsyncCallback<GenerateCourseResult>() {
 		    @Override
 		    public void onFailure(Throwable caught) {
-
+			getView().setGenerateProgressBarFailed();
 		    }
 
 		    @Override
 		    public void onSuccess(GenerateCourseResult result) {
 			Window.Location.replace(result.getCourseFileName());
+			getView().setGenerateProgressBarCompleted();
 		    }
 		});
     }
