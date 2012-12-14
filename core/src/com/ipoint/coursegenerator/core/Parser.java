@@ -146,6 +146,7 @@ public class Parser {
 	int nextParagraphStyle = 0;
 	HeaderInfo headerInfo = new HeaderInfo(Integer.parseInt(headerLevel));
 	headerInfo.setTemplateDir(templateDir);
+	ListParser listParser = new ListParser();
 	for (int i = 0; i < doc.getBodyElements().size(); i++) {
 	    IBodyElement bodyElement = doc.getBodyElements().get(i);
 	    if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
@@ -180,11 +181,19 @@ public class Parser {
 		    } else {
 			nextParagraphStyle = 100;
 		    }
-		    headerInfo.setNextParStyleID(nextParagraphStyle);
-		    html = HeaderFinder.parse(paragraph, html, headerInfo,
-			    items, doc, manifest.getManifest(), paragraphStyle);
-		}
+		    if (paragraph.getNumID() != null  && !isHeading(paragraphStyle,
+			    headerInfo.getHeaderLevelNumber())) {
+			listParser.parse(paragraph, html, doc, path);
+			headerInfo.setPreviousParStyleID(paragraphStyle);
+		    } else {
 
+			headerInfo.setNextParStyleID(nextParagraphStyle);
+			html = HeaderFinder.parse(paragraph, html, headerInfo,
+				items, doc, manifest.getManifest(),
+				paragraphStyle);
+			listParser.reset();
+		    }
+		}
 	    } else if (bodyElement.getElementType().equals(
 		    BodyElementType.TABLE)) {
 		XWPFTable table = (XWPFTable) bodyElement;
@@ -219,7 +228,9 @@ public class Parser {
 		i += TableParser.parse(range.getTable(par), html, document,
 			items.get(items.size() - 1).getHtmlPath(),
 			headerInfo.getHeaderLevelNumber());
-	    } else if (par.isInList() && !isHeading(par.getStyleIndex(), headerInfo.getHeaderLevelNumber())) {
+	    } else if (par.isInList()
+		    && !isHeading(par.getStyleIndex(),
+			    headerInfo.getHeaderLevelNumber())) {
 		listParser.parse(par, html, document,
 			items.get(items.size() - 1).getHtmlPath());
 		headerInfo.setPreviousParStyleID(par.getStyleIndex());
@@ -258,7 +269,7 @@ public class Parser {
 	zipCourseFileName = zipCourseFileName + sdate + ".zip";
 	return zipCourseFileName;
     }
-    
+
     public static boolean isHeading(int parStyleId, int headerLevel) {
 	return parStyleId <= headerLevel && parStyleId > 0;
     }
