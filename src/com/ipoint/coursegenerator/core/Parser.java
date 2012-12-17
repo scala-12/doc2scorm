@@ -161,6 +161,9 @@ public class Parser {
 					    .getStyleID())) {
 			paragraphStyle = Integer
 				.valueOf(paragraph.getStyleID());
+			if(paragraphStyle == 20) {
+			    paragraphStyle = 2;
+			}
 		    } else {
 			paragraphStyle = (int) 100;
 		    }
@@ -178,6 +181,9 @@ public class Parser {
 				.isNumericParagraphStyle(nextParagraphStyleID)) {
 			    nextParagraphStyle = Integer
 				    .valueOf(nextParagraphStyleID);
+			    if(nextParagraphStyle == 20) {
+				    nextParagraphStyle = 2;
+				}
 			} else {
 			    nextParagraphStyle = (int) 100;
 			}
