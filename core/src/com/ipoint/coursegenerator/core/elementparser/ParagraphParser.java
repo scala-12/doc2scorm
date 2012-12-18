@@ -105,6 +105,9 @@ public class ParagraphParser extends AbstractElementParser {
 			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
 			RasterGraphicsParser.parse(picture, path, imageElement);
 		    }
+		    else {	
+			VectorGraphicsParser.parse(picture.getPictureData(), path, imageElement);
+		    }
 		    imagesElementsToAppend.add(imageElement);
 		}
 	    }
