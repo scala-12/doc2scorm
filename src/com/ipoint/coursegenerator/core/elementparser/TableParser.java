@@ -24,9 +24,9 @@ public class TableParser {
 	    Element tr = html.createElement("tr");
 	    for (XWPFTableCell tableCell : tableRow.getTableCells()) {
 		Element td = html.createElement("td");
-		if (tableCell != null) {
+		if (tableCell != null) {		
 		    td.setTextContent(tableCell.getText());
-		    tr.appendChild(td);
+		    tr.appendChild(td);					
 		}
 	    }
 	    htmlTable.appendChild(tr);
