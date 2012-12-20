@@ -11,7 +11,6 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
@@ -40,7 +39,7 @@ public class ParagraphParser extends AbstractElementParser {
 	}
 	return null;
     }
-    
+
     public static String parse(Paragraph par, Document html, HWPFDocument doc,
 	    String path, int headerLevel, Node parent) {
 	String headerText = "";
@@ -104,10 +103,11 @@ public class ParagraphParser extends AbstractElementParser {
 			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
 			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
 			    || picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-			RasterGraphicsParser.parse(picture, path, imageElement);
-		    }
-		    else {	
-			VectorGraphicsParser.parse(picture.getPictureData(), path, imageElement);
+			RasterGraphicsParser.parse(picture.getPictureData(),
+				path, imageElement);
+		    } else {
+			VectorGraphicsParser.parse(picture.getPictureData(),
+				path, imageElement);
 		    }
 		    imagesElementsToAppend.add(imageElement);
 		}
@@ -133,20 +133,24 @@ public class ParagraphParser extends AbstractElementParser {
 			    }
 			}
 			if (pdata != null) {
-
-			    VectorGraphicsParser.parse(pdata, path,
-				    imageElement);
+			    if (pdata.getPackagePart().getContentType()
+				    .equals("image/png")) {
+				RasterGraphicsParser.parse(pdata, path,
+					imageElement);
+			    } else {
+				VectorGraphicsParser.parse(pdata, path,
+					imageElement);
+			    }
 			    imagesElementsToAppend.add(imageElement);
 			}
 		    }
-
 		}
 	    }
 	    headerText = element.getTextContent();
 	    for (Element el : imagesElementsToAppend) {
 		parent.appendChild(el);
 	    }
-	  
+
 	}
 	return headerText;
     }
