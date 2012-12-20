@@ -130,7 +130,7 @@ public class Parser {
 	String zipCourseFileName = getCourseZipFilename(courseName);
 	Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
 		directory.getPath());
-	zip.addToZip(new String[]{zipCourseFileName});
+	zip.addToZip(new String[] { zipCourseFileName });
 	return zipCourseFileName;
     }
 
@@ -151,45 +151,24 @@ public class Parser {
 	    IBodyElement bodyElement = doc.getBodyElements().get(i);
 	    if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
-		if(paragraph.getStyleID() != null) {
-		doc.getStyles().getStyle(paragraph.getStyleID()).getCTStyle();
+		if (paragraph.getStyleID() != null) {
+		    doc.getStyles().getStyle(paragraph.getStyleID())
+			    .getCTStyle();
 		}
-		try {
-		    if (paragraph.getStyleID() != null
-			    && ParagraphParser
-				    .isNumericParagraphStyle(paragraph
-					    .getStyleID())) {
-			paragraphStyle = Integer
-				.valueOf(paragraph.getStyleID());
-			if(paragraphStyle == 20) {
-			    paragraphStyle = 2;
-			}
-		    } else {
-			paragraphStyle = (int) 100;
-		    }
-		} catch (NumberFormatException e) {
-		    paragraphStyle = 100;
-		}
+		paragraphStyle = getCurrentParagraphStyleID(paragraph);
 		if (doc.getBodyElements().size() > i + 1
 			&& doc.getBodyElements().get(i + 1) instanceof XWPFParagraph
-			&& ((XWPFParagraph) doc
-				.getBodyElements().get(i + 1)).getStyleID() != null) {
-		    try {
-			String nextParagraphStyleID = ((XWPFParagraph) doc
+			&& ((XWPFParagraph) doc.getBodyElements().get(i + 1))
+				.getStyleID() != null) {
+		    String nextParagraphStyleID = null;
+		    if (((XWPFParagraph) doc.getBodyElements().get(i + 1))
+			    .getStyleID() != null) {
+			nextParagraphStyleID = ((XWPFParagraph) doc
 				.getBodyElements().get(i + 1)).getStyleID();
-			if (ParagraphParser
-				.isNumericParagraphStyle(nextParagraphStyleID)) {
-			    nextParagraphStyle = Integer
-				    .valueOf(nextParagraphStyleID);
-			    if(nextParagraphStyle == 20) {
-				    nextParagraphStyle = 2;
-				}
-			} else {
-			    nextParagraphStyle = (int) 100;
-			}
-		    } catch (NumberFormatException e) {
-			nextParagraphStyle = 100;
+		    } else {
+			nextParagraphStyleID = "100";
 		    }
+		    nextParagraphStyle = getNextParagraphStyleID(nextParagraphStyleID);
 		} else {
 		    nextParagraphStyle = 100;
 		}
@@ -199,7 +178,6 @@ public class Parser {
 		    listParser.parse(paragraph, html, doc, path);
 		    headerInfo.setPreviousParStyleID(paragraphStyle);
 		} else {
-
 		    headerInfo.setNextParStyleID(nextParagraphStyle);
 		    html = HeaderFinder.parse(paragraph, html, headerInfo,
 			    items, doc, manifest.getManifest(), paragraphStyle);
@@ -210,9 +188,7 @@ public class Parser {
 		XWPFTable table = (XWPFTable) bodyElement;
 		TableParser.parse(table, html, doc, path,
 			headerInfo.getHeaderLevelNumber());
-
 	    }
-
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
 	    FileWork.saveHTMLDocument(html, templateDir,
@@ -283,5 +259,41 @@ public class Parser {
 
     public static boolean isHeading(int parStyleId, int headerLevel) {
 	return parStyleId <= headerLevel && parStyleId > 0;
+    }
+
+    public static int getCurrentParagraphStyleID(XWPFParagraph xwpfParagraph) {
+	int resultVariable = 0;
+	try {
+	    if (xwpfParagraph.getStyleID() != null
+		    && ParagraphParser.isNumericParagraphStyle(xwpfParagraph
+			    .getStyleID())) {
+		resultVariable = Integer.valueOf(xwpfParagraph.getStyleID());
+		if (resultVariable == 20) {
+		    resultVariable = (int) 2;
+		}
+	    } else {
+		resultVariable = (int) 100;
+	    }
+	} catch (NumberFormatException e) {
+	    resultVariable = (int) 100;
+	}
+	return resultVariable;
+    }
+
+    public int getNextParagraphStyleID(String strStyleID) {
+	int resultVariable = 0;
+	try {
+	    if (ParagraphParser.isNumericParagraphStyle(strStyleID)) {
+		resultVariable = Integer.valueOf(strStyleID);
+		if (resultVariable == 20) {
+		    resultVariable = (int) 2;
+		}
+	    } else {
+		resultVariable = (int) 100;
+	    }
+	} catch (NumberFormatException e) {
+	    resultVariable = (int) 100;
+	}
+	return resultVariable;
     }
 }

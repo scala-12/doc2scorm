@@ -22,6 +22,7 @@ import org.w3c.dom.Node;
 
 import schemasMicrosoftComVml.CTImageData;
 
+import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
@@ -83,17 +84,12 @@ public class ParagraphParser extends AbstractElementParser {
 	final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
 	XWPFParagraph par = (XWPFParagraph) paragraph;
 	int styleIndex = 0;
-	if (isNumericParagraphStyle(par.getStyleID())) {
-	    styleIndex = Integer.parseInt(par.getStyleID());
-	} else {
-	    styleIndex = (int) 100;
-	}
+	styleIndex = Parser.getCurrentParagraphStyleID(par);
 	Element element = createTextElement(styleIndex, html, headerLevel);
 	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 	element.setTextContent(par.getText());
 	parent.appendChild(element);
 	for (int i = 0; i < par.getRuns().size(); i++) {
-
 	    XWPFRun run = par.getRuns().get(i);
 	    if (run.getEmbeddedPictures() != null) {
 		for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
