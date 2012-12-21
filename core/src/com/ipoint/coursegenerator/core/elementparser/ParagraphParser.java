@@ -88,6 +88,48 @@ public class ParagraphParser extends AbstractElementParser {
 	Element element = createTextElement(styleIndex, html, headerLevel);
 	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 	element.setTextContent(par.getText());
+	
+/*	for(int i = 0; i < par.getRuns().size(); i++) {
+	    XWPFRun paragraphRun = par.getRuns().get(i);
+	    if (paragraphRun.getColor() != null) {
+		    element.setAttribute("color", paragraphRun.getColor());
+		}
+	}*/
+	/*for (int i = 0; i < par.getRuns().size(); i++) {
+	    XWPFRun paragraphRun = par.getRuns().get(i);
+	    if (paragraphRun.isBold()) {
+		Element boldText = html.createElement("b");
+		boldText.setTextContent(paragraphRun.toString());
+		if (paragraphRun.getColor() != null) {
+		    boldText.setAttribute("color", paragraphRun.getColor());
+		}
+		//element.appendChild(boldText);
+		parent.appendChild(boldText);
+	    } else if (paragraphRun.isItalic()) {
+		Element italicText = html.createElement("i");
+		italicText.setTextContent(paragraphRun.toString());
+		if(paragraphRun.getColor() != null) {
+		    italicText.setAttribute("color", paragraphRun.getColor());
+		}
+		//element.appendChild(italicText);
+		parent.appendChild(italicText);
+	    
+	    } else {
+		//Element simpleText = html.createElement("");
+		//simpleText.setTextContent(paragraphRun.toString());
+		
+		//element.setTextContent(element.getTextContent()+par.getRuns().get(i).toString());
+		 element.setTextContent(paragraphRun.toString());
+		//parent.appendChild(element);
+		if(paragraphRun.getColor() != null) {
+		    element.setAttribute("color", paragraphRun.getColor());
+		parent.appendChild(element);
+		}
+	    }
+	    System.out.println(par.getRuns().get(i).isBold());
+	    System.out.println(par.getRuns().get(i).getColor());
+	}
+	*/
 	parent.appendChild(element);
 	for (int i = 0; i < par.getRuns().size(); i++) {
 	    XWPFRun run = par.getRuns().get(i);
