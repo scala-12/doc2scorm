@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
+import java.util.List;
+
 public class HeaderInfo {
     private String headerText = "";
     private int headerStyleID = 0;
@@ -10,9 +12,19 @@ public class HeaderInfo {
     private int nextParStyleID = 0;
 
     private String templateDir;
-
+    
+    private List<String> listPathToResources;
+   
     public HeaderInfo(int headerLevelNumber) {
 	this.setHeaderLevelNumber(headerLevelNumber);
+    }
+    
+    public List<String> getPathToResources() {
+	return listPathToResources;
+    }
+    
+    public void setPathToResources(String pathToAdd ) {
+	this.listPathToResources.add(pathToAdd);
     }
     
     public String getHeaderText() {
