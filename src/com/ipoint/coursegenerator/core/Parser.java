@@ -16,6 +16,7 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 import org.w3c.dom.Document;
@@ -264,12 +265,17 @@ public class Parser {
     public static int getCurrentParagraphStyleID(XWPFParagraph xwpfParagraph) {
 	int resultVariable = 0;
 	try {
-	    if (xwpfParagraph.getStyleID() != null
-		    && ParagraphParser.isNumericParagraphStyle(xwpfParagraph
-			    .getStyleID())) {
-		resultVariable = Integer.valueOf(xwpfParagraph.getStyleID());
-		if (resultVariable == 20) {
-		    resultVariable = (int) 2;
+	    if (xwpfParagraph.getStyleID() != null) {
+		if (ParagraphParser.isNumericParagraphStyle(xwpfParagraph
+			.getStyleID())) {
+		    resultVariable = Integer
+			    .valueOf(xwpfParagraph.getStyleID());
+		    if (resultVariable == 20) {
+			resultVariable = (int) 2;
+		    }
+		} else {
+		    resultVariable = getNonNumericHeaderParser(xwpfParagraph
+			    .getStyleID());
 		}
 	    } else {
 		resultVariable = (int) 100;
@@ -289,10 +295,34 @@ public class Parser {
 		    resultVariable = (int) 2;
 		}
 	    } else {
-		resultVariable = (int) 100;
+		resultVariable = getNonNumericHeaderParser(strStyleID);
 	    }
 	} catch (NumberFormatException e) {
 	    resultVariable = (int) 100;
+	}
+	return resultVariable;
+    }
+
+    public static int getNonNumericHeaderParser(String headId) {
+	int resultVariable = 0;
+	if (headId.equals("Heading1")) {
+	    resultVariable = 1;
+	} else if (headId.equals("Heading2")) {
+	    resultVariable = 2;
+	} else if (headId.equals("Heading3")) {
+	    resultVariable = 3;
+	} else if (headId.equals("Heading4")) {
+	    resultVariable = 4;
+	} else if (headId.equals("Heading5")) {
+	    resultVariable = 5;
+	} else if (headId.equals("Heading6")) {
+	    resultVariable = 6;
+	} else if (headId.equals("Heading7")) {
+	    resultVariable = 7;
+	} else if (headId.equals("Heading8")) {
+	    resultVariable = 8;
+	} else if (headId.equals("Heading9")) {
+	    resultVariable = 9;
 	}
 	return resultVariable;
     }
