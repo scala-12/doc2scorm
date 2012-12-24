@@ -16,7 +16,6 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFStyles;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 import org.w3c.dom.Document;
@@ -192,9 +191,11 @@ public class Parser {
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
-	    FileWork.saveHTMLDocument(html, templateDir,
-		    items.get(items.size() - 1).getHtmlPath() + File.separator
-			    + items.get(items.size() - 1).getFilename(), path);
+	    ItemInfo itemInfo = items.get(items.size() - 1);
+	    FileWork.saveHTMLDocument(html, templateDir, itemInfo.getHtmlPath()
+		    + File.separator + itemInfo.getFilename(), path);
+	    ResourcesProcessor.addFilesToResource(itemInfo.getUrl(),
+		    itemInfo.getResource(), headerInfo.getPathToResources());
 	}
     }
 
@@ -214,8 +215,7 @@ public class Parser {
 	    Paragraph par = range.getParagraph(i);
 	    if (par.isInTable()) {
 		i += TableParser.parse(range.getTable(par), html, document,
-			items.get(items.size() - 1).getHtmlPath(),
-			headerInfo.getHeaderLevelNumber());
+			items.get(items.size() - 1).getHtmlPath(), headerInfo);
 	    } else if (par.isInList()
 		    && !isHeading(par.getStyleIndex(),
 			    headerInfo.getHeaderLevelNumber())) {
@@ -235,9 +235,11 @@ public class Parser {
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
-	    FileWork.saveHTMLDocument(html, templateDir,
-		    items.get(items.size() - 1).getHtmlPath() + File.separator
-			    + items.get(items.size() - 1).getFilename(), path);
+	    ItemInfo itemInfo = items.get(items.size() - 1);
+	    FileWork.saveHTMLDocument(html, templateDir, itemInfo.getHtmlPath()
+		    + File.separator + itemInfo.getFilename(), path);
+	    ResourcesProcessor.addFilesToResource(itemInfo.getUrl(),
+		    itemInfo.getResource(), headerInfo.getPathToResources());
 	}
     }
 

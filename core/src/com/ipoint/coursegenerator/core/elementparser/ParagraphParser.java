@@ -30,24 +30,24 @@ import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsPars
 public class ParagraphParser extends AbstractElementParser {
 
     public static String parse(Object paragraph, Document html,
-	    Object document, String path, int headerLevel, Node parent) {
+	    Object document, String path, HeaderInfo headerInfo, Node parent) {
 	if (paragraph instanceof Paragraph) {
 	    return parse((Paragraph) paragraph, html, (HWPFDocument) document,
-		    path, headerLevel, parent);
+		    path, headerInfo, parent);
 	} else if (paragraph instanceof XWPFParagraph) {
 	    return parse((XWPFParagraph) paragraph, html,
-		    (XWPFDocument) document, path, headerLevel, parent);
+		    (XWPFDocument) document, path, headerInfo, parent);
 	}
 	return null;
     }
 
     public static String parse(Paragraph par, Document html, HWPFDocument doc,
-	    String path, int headerLevel, Node parent) {
+	    String path, HeaderInfo headerInfo, Node parent) {
 	String headerText = "";
 	PicturesTable pictures = doc.getPicturesTable();
 
 	Element element = createTextElement(par.getStyleIndex(), html,
-		headerLevel);
+		headerInfo.getHeaderLevelNumber());
 	ArrayList<Element> imgsToAppend = new ArrayList<Element>();
 
 	for (int i = 0; i < par.numCharacterRuns(); i++) {
@@ -64,7 +64,7 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		    imgsToAppend.add(imgElement);
 		}
-	    } else if (!run.text().startsWith(" EMBED ")
+	    } else if (!run.text().startsWith("EMBED ")
 		    && !run.text().equals(Character.toString((char) 13))) {
 		element.setTextContent(element.getTextContent() + run.text());
 	    }
@@ -73,63 +73,54 @@ public class ParagraphParser extends AbstractElementParser {
 	parent.appendChild(element);
 	for (Element el : imgsToAppend) {
 	    parent.appendChild(el);
+	    headerInfo.addResourceFile(el.getAttribute("src"));
 	}
 	return headerText;
 
     }
 
     public static String parse(XWPFParagraph paragraph, Document html,
-	    XWPFDocument doc, String path, int headerLevel, Node parent) {
+	    XWPFDocument doc, String path, HeaderInfo headerInfo, Node parent) {
 	String headerText = "";
 	final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
 	XWPFParagraph par = (XWPFParagraph) paragraph;
 	int styleIndex = 0;
 	styleIndex = Parser.getCurrentParagraphStyleID(par);
-	Element element = createTextElement(styleIndex, html, headerLevel);
+	Element element = createTextElement(styleIndex, html,
+		headerInfo.getHeaderLevelNumber());
 	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 	element.setTextContent(par.getText());
-	
-/*	for(int i = 0; i < par.getRuns().size(); i++) {
-	    XWPFRun paragraphRun = par.getRuns().get(i);
-	    if (paragraphRun.getColor() != null) {
-		    element.setAttribute("color", paragraphRun.getColor());
-		}
-	}*/
-	/*for (int i = 0; i < par.getRuns().size(); i++) {
-	    XWPFRun paragraphRun = par.getRuns().get(i);
-	    if (paragraphRun.isBold()) {
-		Element boldText = html.createElement("b");
-		boldText.setTextContent(paragraphRun.toString());
-		if (paragraphRun.getColor() != null) {
-		    boldText.setAttribute("color", paragraphRun.getColor());
-		}
-		//element.appendChild(boldText);
-		parent.appendChild(boldText);
-	    } else if (paragraphRun.isItalic()) {
-		Element italicText = html.createElement("i");
-		italicText.setTextContent(paragraphRun.toString());
-		if(paragraphRun.getColor() != null) {
-		    italicText.setAttribute("color", paragraphRun.getColor());
-		}
-		//element.appendChild(italicText);
-		parent.appendChild(italicText);
-	    
-	    } else {
-		//Element simpleText = html.createElement("");
-		//simpleText.setTextContent(paragraphRun.toString());
-		
-		//element.setTextContent(element.getTextContent()+par.getRuns().get(i).toString());
-		 element.setTextContent(paragraphRun.toString());
-		//parent.appendChild(element);
-		if(paragraphRun.getColor() != null) {
-		    element.setAttribute("color", paragraphRun.getColor());
-		parent.appendChild(element);
-		}
-	    }
-	    System.out.println(par.getRuns().get(i).isBold());
-	    System.out.println(par.getRuns().get(i).getColor());
-	}
-	*/
+
+	/*
+	 * for(int i = 0; i < par.getRuns().size(); i++) { XWPFRun paragraphRun
+	 * = par.getRuns().get(i); if (paragraphRun.getColor() != null) {
+	 * element.setAttribute("color", paragraphRun.getColor()); } }
+	 */
+	/*
+	 * for (int i = 0; i < par.getRuns().size(); i++) { XWPFRun paragraphRun
+	 * = par.getRuns().get(i); if (paragraphRun.isBold()) { Element boldText
+	 * = html.createElement("b");
+	 * boldText.setTextContent(paragraphRun.toString()); if
+	 * (paragraphRun.getColor() != null) { boldText.setAttribute("color",
+	 * paragraphRun.getColor()); } //element.appendChild(boldText);
+	 * parent.appendChild(boldText); } else if (paragraphRun.isItalic()) {
+	 * Element italicText = html.createElement("i");
+	 * italicText.setTextContent(paragraphRun.toString());
+	 * if(paragraphRun.getColor() != null) {
+	 * italicText.setAttribute("color", paragraphRun.getColor()); }
+	 * //element.appendChild(italicText); parent.appendChild(italicText);
+	 * 
+	 * } else { //Element simpleText = html.createElement("");
+	 * //simpleText.setTextContent(paragraphRun.toString());
+	 * 
+	 * //element.setTextContent(element.getTextContent()+par.getRuns().get(i)
+	 * .toString()); element.setTextContent(paragraphRun.toString());
+	 * //parent.appendChild(element); if(paragraphRun.getColor() != null) {
+	 * element.setAttribute("color", paragraphRun.getColor());
+	 * parent.appendChild(element); } }
+	 * System.out.println(par.getRuns().get(i).isBold());
+	 * System.out.println(par.getRuns().get(i).getColor()); }
+	 */
 	parent.appendChild(element);
 	for (int i = 0; i < par.getRuns().size(); i++) {
 	    XWPFRun run = par.getRuns().get(i);
@@ -185,10 +176,11 @@ public class ParagraphParser extends AbstractElementParser {
 		}
 	    }
 	    headerText = element.getTextContent();
-	    for (Element el : imagesElementsToAppend) {
-		parent.appendChild(el);
-	    }
 
+	}
+	for (Element el : imagesElementsToAppend) {
+	    parent.appendChild(el);
+	    headerInfo.addResourceFile(el.getAttribute("src"));
 	}
 	return headerText;
     }

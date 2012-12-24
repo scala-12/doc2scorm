@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HeaderInfo {
@@ -17,13 +18,18 @@ public class HeaderInfo {
    
     public HeaderInfo(int headerLevelNumber) {
 	this.setHeaderLevelNumber(headerLevelNumber);
+	listPathToResources = new ArrayList<String>();
     }
     
     public List<String> getPathToResources() {
 	return listPathToResources;
     }
     
-    public void setPathToResources(String pathToAdd ) {
+    public void resetPathToResources() {
+	listPathToResources = new ArrayList<String>();
+    }
+    
+    public void addResourceFile(String pathToAdd ) {
 	this.listPathToResources.add(pathToAdd);
     }
     

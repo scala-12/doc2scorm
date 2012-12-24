@@ -1,9 +1,11 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
+import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 
 public class ItemInfo {
     private ItemType item;
+    private ResourceType resource;
     private int styleId;
     private String directoryPath;
     private String htmlPath;
@@ -73,5 +75,13 @@ public class ItemInfo {
 
     public void setFilename(String filename) {
 	this.filename = filename;
+    }
+
+    public ResourceType getResource() {
+	return resource;
+    }
+
+    public void setResource(ResourceType resource) {
+	this.resource = resource;
     }
 }

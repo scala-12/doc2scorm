@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.w3c.dom.Document;
@@ -50,12 +49,15 @@ public class HeaderFinder {
 			headerInfo.getTemplateDir(),
 			lastItem.getHtmlPath() + File.separator
 				+ lastItem.getFilename(), lastItem.getPath());
+		ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
+			lastItem.getResource(), headerInfo.getPathToResources());
+		headerInfo.resetPathToResources();
 	    }
 	    html = createNewHTMLDocument();
 	}
 	String paragraphText = ParagraphParser.parse(paragraph, html, document,
-		lastItem.getHtmlPath(), headerInfo.getHeaderLevelNumber(), html
-			.getElementsByTagName("body").item(0));
+		lastItem.getHtmlPath(), headerInfo,
+		html.getElementsByTagName("body").item(0));
 	if (createItemForHeader) {
 	    if (headerInfo.getPreviousParStyleID() == parStyleId) {
 		headerInfo.setHeaderText(headerInfo.getHeaderText()
@@ -121,10 +123,12 @@ public class HeaderFinder {
 	}
 	String filename = FileWork.HTML_PREFIX + Integer.toString(items.size())
 		+ "_" + itemText + ".htm";
-	ResourcesProcessor.createResource(manifest, path + filename, resid);
+
 	ItemInfo itemInfo = new ItemInfo(item, styleIndex, path
 		+ FileWork.HTML_PREFIX + Integer.toString(items.size()) + "_"
 		+ itemText + '/', path, filename);
+	itemInfo.setResource(ResourcesProcessor.createResource(manifest, path
+		+ filename, resid));
 	return itemInfo;
     }
 }

@@ -36,7 +36,7 @@ public class TableParser {
     }
 
     public static int parse(Table hwpfTable, Document html, HWPFDocument document,
-	    String path, int headerLevel) {
+	    String path, HeaderInfo headerInfo) {
 	int parCounter = 0;
 	Element htmlTable = html.createElement("table");
 	for (int j = 0; j < hwpfTable.numRows(); j++) {
@@ -53,7 +53,7 @@ public class TableParser {
 		for (int i = 0; i < cell.numParagraphs(); i++) {
 		    parCounter++;
 		    ParagraphParser.parse(cell.getParagraph(i), html, document,
-			    path, headerLevel, td);
+			    path, headerInfo, td);
 		}
 		tr.appendChild(td);
 	    }
