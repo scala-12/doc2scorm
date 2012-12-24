@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.htmlparser.Parser;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.TagFindingVisitor;
+import org.imsproject.xsd.imscpRootv1P1P2.FileType;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
@@ -36,7 +38,7 @@ public class ResourcesProcessor {
 	manifest.addNewResources();
     }
 
-    public static void createResource(ManifestType manifest, String path,
+    public static ResourceType createResource(ManifestType manifest, String path,
 	    String iref) {
 	if (manifest.getResources() == null
 		|| manifest.getResources().getResourceArray() == null) {
@@ -51,6 +53,7 @@ public class ResourcesProcessor {
 	resource.getDomNode().getAttributes().setNamedItem(attNode);
 	resource.setHref(path);
 	resource.addNewFile().setHref(path);
+	return resource;
     }
 
     public static String getResourceHrefForItem(ManifestType manifest, ItemType item) {
@@ -62,5 +65,14 @@ public class ResourcesProcessor {
 	    }	    
 	}
 	return href;
+    }
+    
+
+    public static void addFilesToResource(String htmlPath,
+	    ResourceType resource, List<String> pathToResources) {
+	for (String path : pathToResources) {
+	    FileType fileType = resource.addNewFile();
+	    fileType.setHref(htmlPath + path);
+	}
     }
 }
