@@ -56,7 +56,7 @@ public class ListParser {
     }
 
     public void parse(Paragraph par, Document html, HWPFDocument document,
-	    String path) {
+	    HeaderInfo headerInfo, String path) {
 	HWPFList list = par.getList();
 	if (listsIds.values().size() > 0) {
 	    HashMap<Integer, ArrayList<Element>> map = (HashMap<Integer, ArrayList<Element>>) listsIds
@@ -72,7 +72,7 @@ public class ListParser {
 	    }
 	}
 	Element li = html.createElement("li");
-	li.setTextContent(par.text());
+	ParagraphParser.parse(par, html, document, path, headerInfo, li);
 	if (listsIds.get(list.getLsid()) == null) {
 	    Element htmlList = this.createHTMLList(
 		    list.getNumberFormat((char) 0), html);
@@ -112,7 +112,7 @@ public class ListParser {
     }
 
     public void parse(XWPFParagraph par, Document html, XWPFDocument document,
-	    String path) {
+	    HeaderInfo headerInfo, String path) {
 	// HWPFList list = par.getList();
 	if (listsIds.values().size() > 0) {
 	    HashMap<Integer, ArrayList<Element>> map = (HashMap<Integer, ArrayList<Element>>) listsIds
@@ -128,7 +128,7 @@ public class ListParser {
 	    }
 	}
 	Element li = html.createElement("li");
-	li.setTextContent(par.getText());
+	ParagraphParser.parse(par, html, document, path, headerInfo, li);
 	XWPFNumbering numbering = par.getDocument().getNumbering();
 	// numbering.get
 	CTNum num = numbering.getNum(par.getNumID()).getCTNum();
@@ -149,7 +149,8 @@ public class ListParser {
 	}
 
 	if (listsIds.get(par.getNumID().intValue()) != null) {
-	    ArrayList<Element> subLists = listsIds.get(par.getNumID().intValue()).get(
+	    ArrayList<Element> subLists = listsIds.get(
+		    par.getNumID().intValue()).get(
 		    par.getCTP().getPPr().getNumPr().getIlvl().getVal()
 			    .intValue());
 	    if (subLists != null && previousParIlvl >= parIlvl) {
@@ -163,9 +164,11 @@ public class ListParser {
 					.intValue() - 1, html);
 			subLists = new ArrayList<Element>();
 			subLists.add(htmlList);
-			listsIds.get(par.getNumID().intValue()).put(parIlvl, subLists);
+			listsIds.get(par.getNumID().intValue()).put(parIlvl,
+				subLists);
 			htmlList.appendChild(li);
-			subLists = listsIds.get(par.getNumID().intValue()).get(i);
+			subLists = listsIds.get(par.getNumID().intValue()).get(
+				i);
 			subLists.get(subLists.size() - 1).appendChild(htmlList);
 			break;
 		    }
