@@ -38,10 +38,6 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 	FileWork.savePNGImage(
 		ImageFormatConverter.transcodeWMFtoPNG(pic.getData()), path
 			+ File.separator + url);
-	
-	/*FileWork.savePNGImage(ImageFormatConverter.transcodeWMFtoPNG(
-		pic.getData(),
-		pic.get, height), path)*/
 	imgElement.setAttribute("src", url.replace(File.separatorChar, '/'));
     }
 }
