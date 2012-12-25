@@ -10,6 +10,7 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
@@ -96,58 +97,48 @@ public class ParagraphParser extends AbstractElementParser {
 	Element element = createTextElement(styleIndex, html,
 		headerInfo.getHeaderLevelNumber());
 	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
-	element.setTextContent(par.getText());
+	// element.setTextContent(par.getText());
 
-	/*	for(int i = 0; i < par.getRuns().size(); i++) {
+	/*
+	 * for(int i = 0; i < par.getRuns().size(); i++) { XWPFRun paragraphRun
+	 * = par.getRuns().get(i); if (paragraphRun.getColor() != null) {
+	 * element.setAttribute("color", paragraphRun.getColor()); } }
+	 */
+	for (int i = 0; i < par.getRuns().size(); i++) {
 	    XWPFRun paragraphRun = par.getRuns().get(i);
-	    if (paragraphRun.getColor() != null) {
-		    element.setAttribute("color", paragraphRun.getColor());
-		}
-	}*/
-	/*for (int i = 0; i < par.getRuns().size(); i++) {
-	    XWPFRun paragraphRun = par.getRuns().get(i);
-	    if (paragraphRun.isBold()) {
-		Element boldText = html.createElement("b");
-		boldText.setTextContent(paragraphRun.toString());
-		if (paragraphRun.getColor() != null) {
-		    boldText.setAttribute("color", paragraphRun.getColor());
-		}
-		//element.appendChild(boldText);
-		parent.appendChild(boldText);
-	    } else if (paragraphRun.isItalic()) {
-		Element italicText = html.createElement("i");
-		italicText.setTextContent(paragraphRun.toString());
-		if(paragraphRun.getColor() != null) {
-		    italicText.setAttribute("color", paragraphRun.getColor());
-		}
-		//element.appendChild(italicText);
-		parent.appendChild(italicText);
-	    
-	    } else {
-		if(styleIndex>9) {
-		Element simpleText = html.createElement("span");
-		simpleText.setTextContent(paragraphRun.toString());
-		
-		//element.setTextContent(element.getTextContent()+par.getRuns().get(i).toString());
-		 element.setTextContent(paragraphRun.toString()); 			
-		//parent.appendChild(element);
-		if(paragraphRun.getColor() != null) {
-		    simpleText.setAttribute("color", paragraphRun.getColor());
-		}
-		parent.appendChild(simpleText);
-		}
-		else if(styleIndex > 0 && styleIndex <10)
-		{
-		    element.setTextContent(paragraphRun.toString());
-		    parent.appendChild(element);
-		}
-	    }
-	    System.out.println(par.getRuns().get(i).isBold());
-	    System.out.println(par.getRuns().get(i).getColor());
+	    getTextFormat(paragraphRun, parent, html, styleIndex, element);
+	    /*
+	     * if (paragraphRun.isBold()) { Element boldText =
+	     * html.createElement("b");
+	     * boldText.setTextContent(paragraphRun.toString()); if
+	     * (paragraphRun.getColor() != null) { Element parentFontElement =
+	     * html.createElement("font");
+	     * parentFontElement.setAttribute("color", paragraphRun.getColor());
+	     * parentFontElement.appendChild(boldText);
+	     * parent.appendChild(parentFontElement); } else {
+	     * parent.appendChild(boldText); } } else if
+	     * (paragraphRun.isItalic()) { Element italicText =
+	     * html.createElement("i");
+	     * italicText.setTextContent(paragraphRun.toString()); if
+	     * (paragraphRun.getColor() != null) {
+	     * italicText.setAttribute("color", paragraphRun.getColor()); }
+	     * parent.appendChild(italicText);
+	     * 
+	     * } else { if (styleIndex > 9) { Element simpleText =
+	     * html.createElement("span");
+	     * simpleText.setTextContent(paragraphRun.toString());
+	     * 
+	     * element.setTextContent(paragraphRun.toString()); if
+	     * (paragraphRun.getColor() != null) {
+	     * simpleText.setAttribute("color", paragraphRun.getColor()); }
+	     * parent.appendChild(simpleText); } else if (styleIndex > 0 &&
+	     * styleIndex < 10) {
+	     * element.setTextContent(paragraphRun.toString());
+	     * parent.appendChild(element); } }
+	     */
 	}
-	*/
 
-	parent.appendChild(element);
+	// parent.appendChild(element);
 	for (int i = 0; i < par.getRuns().size(); i++) {
 	    XWPFRun run = par.getRuns().get(i);
 	    if (run.getEmbeddedPictures() != null) {
@@ -238,6 +229,71 @@ public class ParagraphParser extends AbstractElementParser {
     }
 
     public void parseParagraphRuns() {
+
+    }
+
+    public static void getTextFormat(XWPFRun run, Node parentElement,
+	    Document creatorTags, int styleNumber, Element el) {
+	if (run.isBold()) {
+	    Element boldText = creatorTags.createElement("b");
+	    boldText.setTextContent(run.toString());
+	    if (run.getColor() != null) {
+		Element parentFontElement = creatorTags.createElement("font");
+		parentFontElement.setAttribute("color", run.getColor());
+		parentFontElement.appendChild(boldText);
+		el.appendChild(parentFontElement);
+		parentElement.appendChild(el);
+	    } else {
+		el.appendChild(boldText);
+		parentElement.appendChild(el);
+	    }
+	} else if (run.isItalic()) {
+	    Element italicText = creatorTags.createElement("i");
+	    italicText.setTextContent(run.toString());
+	    if (run.getColor() != null) {
+		Element parentFontElement = creatorTags.createElement("font");
+		parentFontElement.setAttribute("color", run.getColor());
+		parentFontElement.appendChild(italicText);
+		el.appendChild(parentFontElement);
+		parentElement.appendChild(el);
+	    } else {
+		el.appendChild(italicText);
+		parentElement.appendChild(el);
+	    }
+	} else if (run.getUnderline() != UnderlinePatterns.NONE) {
+	    Element underlineText = creatorTags.createElement("u");
+	    underlineText.setTextContent(run.toString());
+	    if (run.getColor() != null) {
+		Element parentFontElement = creatorTags.createElement("font");
+		parentFontElement.setAttribute("color", run.getColor());
+		parentFontElement.appendChild(underlineText);
+		el.appendChild(parentFontElement);
+		parentElement.appendChild(el);
+	    } else {
+		el.appendChild(underlineText);
+		parentElement.appendChild(el);
+	    }
+	} else {
+	    if (styleNumber > 9) {
+		// Element simpleText = creatorTags.createElement("span");
+		Element simpleText = creatorTags.createElement("font");
+		simpleText.setTextContent(run.toString());
+
+		// el.setTextContent(run.toString());
+		if (run.getColor() != null) {
+		    simpleText.setAttribute("color", run.getColor());
+		    el.appendChild(simpleText);
+		    parentElement.appendChild(el);
+		} else {
+		    el.appendChild(simpleText);
+		    parentElement.appendChild(el);
+		}
+	    } else if (styleNumber > 0 && styleNumber < 10) {
+		el.setTextContent(run.toString());
+		parentElement.appendChild(el);
+	    }
+	    parentElement.appendChild(el);
+	}
 
     }
 }
