@@ -53,9 +53,10 @@ public class ImageFormatConverter {
 	    ByteArrayOutputStream out1 = new ByteArrayOutputStream();
 	    TranscoderOutput output = new TranscoderOutput(out1);
 	    PNGTranscoder transcoder = new PNGTranscoder();
-	    Map<TranscodingHints.Key, Float> hints = new HashMap<TranscodingHints.Key, Float>();
+	    Map<TranscodingHints.Key, Object> hints = new HashMap<TranscodingHints.Key, Object>();
 	    hints.put(PNGTranscoder.KEY_WIDTH, new Float(width));
 	    hints.put(PNGTranscoder.KEY_HEIGHT, new Float(height));
+	    hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(false));
 	    transcoder.setTranscodingHints(hints);
 	    transcoder.transcode(input, output);
 	    return out1.toByteArray();

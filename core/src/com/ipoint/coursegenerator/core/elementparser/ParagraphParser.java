@@ -64,8 +64,15 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		    imgsToAppend.add(imgElement);
 		}
-	    } else if (!run.text().startsWith("EMBED ")
-		    && !run.text().equals(Character.toString((char) 13))) {
+		int offset = i;
+		for (offset = i + 1; offset < par.numCharacterRuns(); offset++) {
+		    if (par.getCharacterRun(offset).text()
+			    .contains((char) 20 + "")) {
+			i = offset;
+			break;
+		    }
+		}
+	    } else if (!run.text().equals(Character.toString((char) 13))) {
 		element.setTextContent(element.getTextContent() + run.text());
 	    }
 	}

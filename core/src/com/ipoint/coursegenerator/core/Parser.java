@@ -175,7 +175,7 @@ public class Parser {
 		if (paragraph.getNumID() != null
 			&& !isHeading(paragraphStyle,
 				headerInfo.getHeaderLevelNumber())) {
-		    listParser.parse(paragraph, html, doc, path);
+		    listParser.parse(paragraph, html, doc, headerInfo, path);
 		    headerInfo.setPreviousParStyleID(paragraphStyle);
 		} else {
 		    headerInfo.setNextParStyleID(nextParagraphStyle);
@@ -219,7 +219,7 @@ public class Parser {
 	    } else if (par.isInList()
 		    && !isHeading(par.getStyleIndex(),
 			    headerInfo.getHeaderLevelNumber())) {
-		listParser.parse(par, html, document,
+		listParser.parse(par, html, document, headerInfo,
 			items.get(items.size() - 1).getHtmlPath());
 		headerInfo.setPreviousParStyleID(par.getStyleIndex());
 	    } else {
