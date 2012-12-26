@@ -17,6 +17,15 @@ import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
 
 public class HeaderFinder {
 
+    public static boolean hasNonHeading1Childs(Document html) {
+	return html.getElementsByTagName("body").item(0).getChildNodes()
+		.getLength() > 1
+		|| (html.getElementsByTagName("body").item(0).getChildNodes()
+			.getLength() == 1 && !html.getElementsByTagName("body")
+			.item(0).getChildNodes().item(0).getNodeName()
+			.equals("h1"));
+    }
+
     private static Document createNewHTMLDocument() {
 	try {
 	    Document html = DocumentBuilderFactory.newInstance()
@@ -44,13 +53,20 @@ public class HeaderFinder {
 	if (createItemForHeader && !headerInfo.isFirstHeader()
 		&& headerInfo.getPreviousParStyleID() != parStyleId) {
 	    if (html != null) {
-		FileWork.saveHTMLDocument(
-			html,
-			headerInfo.getTemplateDir(),
-			lastItem.getHtmlPath() + File.separator
-				+ lastItem.getFilename(), lastItem.getPath());
-		ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
-			lastItem.getResource(), headerInfo.getPathToResources());
+		if (hasNonHeading1Childs(html)) {
+		    FileWork.saveHTMLDocument(html,
+			    headerInfo.getTemplateDir(), lastItem.getHtmlPath()
+				    + File.separator + lastItem.getFilename(),
+			    lastItem.getPath());
+		} else {
+		    lastItem.getItem().getDomNode().getAttributes()
+			    .removeNamedItem("identifierref");
+		    ResourcesProcessor.removeResource(manifest, lastItem.getResource());
+		}
+		ResourcesProcessor
+			.addFilesToResource(lastItem.getUrl(),
+				lastItem.getResource(),
+				headerInfo.getPathToResources());
 		headerInfo.resetPathToResources();
 	    }
 	    html = createNewHTMLDocument();
@@ -101,12 +117,14 @@ public class HeaderFinder {
 		path = items.get(j).getDirectoryPath();
 		if (j == (items.size() - 1)) {
 		    String resid = parentItem.getIdentifierref();
-		    parentItem.getDomNode().getAttributes()
-			    .removeNamedItem("identifierref");
-
-		    OrganizationProcessor.createItem(parentItem,
-			    parentItem.getTitle(), resid, "ITEM_"
-				    + java.util.UUID.randomUUID().toString());
+		    if (parentItem.getDomNode().getAttributes().getNamedItem("identifierref") != null)
+			    parentItem.getDomNode().getAttributes().removeNamedItem("identifierref");
+		    if (resid != null && !resid.equals("")) {
+			OrganizationProcessor.createItem(parentItem,
+				parentItem.getTitle(), resid, "ITEM_"
+					+ java.util.UUID.randomUUID()
+						.toString());
+		    }
 		}
 		break;
 	    }

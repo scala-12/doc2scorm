@@ -229,9 +229,14 @@ public class Parser {
 		} else {
 		    headerInfo.setNextParStyleID(0);
 		}
+		String htmlHash = "";
+		if (html != null) {
+		    htmlHash = html.toString();
+		}
 		html = HeaderFinder.parse(par, html, headerInfo, items,
 			document, manifest.getManifest(), par.getStyleIndex());
-		listParser.reset();
+		if (!html.toString().equals(htmlHash))
+		    listParser.reset();
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {

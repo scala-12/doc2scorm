@@ -27,7 +27,7 @@ public class ListParser {
 	listsIds = new HashMap<Integer, HashMap<Integer, ArrayList<Element>>>();
     }
 
-    public Element createHTMLList(int numberFormat, Document html) {
+    public Element createHTMLList(int numberFormat, int startAt, Document html) {
 	Element htmlList;
 	switch (numberFormat) {
 	case 0:
@@ -75,7 +75,7 @@ public class ListParser {
 	ParagraphParser.parse(par, html, document, path, headerInfo, li);
 	if (listsIds.get(list.getLsid()) == null) {
 	    Element htmlList = this.createHTMLList(
-		    list.getNumberFormat((char) 0), html);
+		    list.getNumberFormat((char) 0), list.getListData().getLevel(1).getStartAt(), html);
 	    ArrayList<Element> subLists = new ArrayList<Element>();
 	    subLists.add(htmlList);
 	    HashMap<Integer, ArrayList<Element>> subListsMap = new HashMap<Integer, ArrayList<Element>>();
@@ -95,6 +95,7 @@ public class ListParser {
 		    if (listsIds.get(list.getLsid()).get(i) != null) {
 			Element htmlList = this.createHTMLList(
 				list.getNumberFormat((char) par.getIlvl()),
+				list.getListData().getLevel(par.getIlvl() + 1).getStartAt(),
 				html);
 			subLists = new ArrayList<Element>();
 			subLists.add(htmlList);
@@ -139,7 +140,7 @@ public class ListParser {
 		.intValue();
 	if (listsIds.get(par.getNumID().intValue()) == null) {
 	    Element htmlList = this.createHTMLList(abs.getLvlArray(0)
-		    .getNumFmt().getVal().intValue() - 1, html);
+		    .getNumFmt().getVal().intValue() - 1, 0, html);
 	    ArrayList<Element> subLists = new ArrayList<Element>();
 	    subLists.add(htmlList);
 	    HashMap<Integer, ArrayList<Element>> subListsMap = new HashMap<Integer, ArrayList<Element>>();
@@ -161,7 +162,7 @@ public class ListParser {
 		    if (listsIds.get(par.getNumID().intValue()).get(i) != null) {
 			Element htmlList = this.createHTMLList(
 				abs.getLvlArray(parIlvl).getNumFmt().getVal()
-					.intValue() - 1, html);
+					.intValue() - 1, 0, html);
 			subLists = new ArrayList<Element>();
 			subLists.add(htmlList);
 			listsIds.get(par.getNumID().intValue()).put(parIlvl,
@@ -176,7 +177,5 @@ public class ListParser {
 	    }
 	}
 	previousParIlvl = parIlvl;
-
     }
-
 }
