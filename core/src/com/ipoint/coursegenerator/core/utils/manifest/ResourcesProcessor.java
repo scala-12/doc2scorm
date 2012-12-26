@@ -75,4 +75,17 @@ public class ResourcesProcessor {
 	    fileType.setHref(htmlPath + path);
 	}
     }
+
+    public static void removeResource(ManifestType manifest,
+	    ResourceType resource) {
+	int i = manifest.getResources().getResourceArray().length;
+	for (i = 0; i < manifest.getResources().getResourceArray().length; i++) {
+	    if (manifest.getResources().getResourceArray(i).getIdentifier().equals(resource.getIdentifier())){
+		break;
+	    }
+	}
+	if (i < manifest.getResources().getResourceArray().length) {
+	    manifest.getResources().removeResource(i);
+	}
+    }
 }
