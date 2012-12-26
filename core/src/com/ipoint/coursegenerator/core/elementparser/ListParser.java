@@ -2,6 +2,8 @@ package com.ipoint.coursegenerator.core.elementparser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.HWPFList;
@@ -13,18 +15,23 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class ListParser {
-    private HashMap<Integer, HashMap<Integer, ArrayList<Element>>> listsIds = null;
+    private LinkedHashMap<Integer, HashMap<Integer, ArrayList<Element>>> listsIds = null;
     private int previousParIlvl = 0;
 
     public ListParser() {
 	reset();
     }
 
+    public void setPreviousParIlvl(int previousParIlvl) {
+	this.previousParIlvl = previousParIlvl;
+    }
+
     public void reset() {
 	previousParIlvl = 0;
-	listsIds = new HashMap<Integer, HashMap<Integer, ArrayList<Element>>>();
+	listsIds = new LinkedHashMap<Integer, HashMap<Integer, ArrayList<Element>>>();
     }
 
     public Element createHTMLList(int numberFormat, int startAt, Document html) {
@@ -52,6 +59,7 @@ public class ListParser {
 	    htmlList = html.createElement("ol");
 	    break;
 	}
+	htmlList.setAttribute("start", String.valueOf(startAt));
 	return htmlList;
     }
 
@@ -71,23 +79,49 @@ public class ListParser {
 		}
 	    }
 	}
+	int lastListId = getLastListId();
 	Element li = html.createElement("li");
 	ParagraphParser.parse(par, html, document, path, headerInfo, li);
-	if (listsIds.get(list.getLsid()) == null) {
-	    Element htmlList = this.createHTMLList(
-		    list.getNumberFormat((char) 0), list.getListData().getLevel(1).getStartAt(), html);
-	    ArrayList<Element> subLists = new ArrayList<Element>();
-	    subLists.add(htmlList);
-	    HashMap<Integer, ArrayList<Element>> subListsMap = new HashMap<Integer, ArrayList<Element>>();
-	    subListsMap.put(par.getIlvl(), subLists);
+	if (listsIds.get(list.getLsid()) == null
+		|| lastListId != list.getLsid() || previousParIlvl < 0) {
+	    Node parent = html.getElementsByTagName("body").item(0);
+	    HashMap<Integer, ArrayList<Element>> subListsMap = listsIds
+		    .get(list.getLsid()) != null ? listsIds.get(list.getLsid())
+		    : new HashMap<Integer, ArrayList<Element>>();
+	    for (int i = 0; i <= par.getIlvl(); i++) {
+
+		int startat = list.getListData().getLevel(i + 1).getStartAt();
+		ArrayList<Element> subLists = new ArrayList<Element>();
+		if ((lastListId != list.getLsid() || previousParIlvl < 0)
+			&& listsIds.get(list.getLsid()) != null
+			&& listsIds.get(list.getLsid()).get(i) != null) {
+		    Element ol = listsIds
+			    .get(list.getLsid())
+			    .get(i)
+			    .get(listsIds.get(list.getLsid()).get(i).size() - 1);
+		    if (ol.getAttribute("start") != null) {
+			startat = Integer.parseInt(ol.getAttribute("start"))
+				+ ol.getChildNodes().getLength();
+		    }
+		    subLists = listsIds.get(list.getLsid()).get(i);
+		}
+		Element htmlList = this.createHTMLList(
+			list.getNumberFormat((char) i), startat, html);
+
+		subLists.add(htmlList);
+		subListsMap.put(i, subLists);
+		parent.appendChild(htmlList);
+		parent = htmlList;
+	    }
+	    listsIds.remove(list.getLsid());
 	    listsIds.put(list.getLsid(), subListsMap);
-	    html.getElementsByTagName("body").item(0).appendChild(htmlList);
 	}
 
 	if (listsIds.get(list.getLsid()) != null) {
 	    ArrayList<Element> subLists = listsIds.get(list.getLsid()).get(
 		    par.getIlvl());
-	    if (subLists != null && previousParIlvl >= par.getIlvl()) {
+	    if (subLists != null
+		    && (previousParIlvl >= par.getIlvl() || previousParIlvl < 0)) {
 		subLists.get(subLists.size() - 1).appendChild(li);
 	    } else if (previousParIlvl < par.getIlvl()) {
 		int i = 100;
@@ -95,8 +129,8 @@ public class ListParser {
 		    if (listsIds.get(list.getLsid()).get(i) != null) {
 			Element htmlList = this.createHTMLList(
 				list.getNumberFormat((char) par.getIlvl()),
-				list.getListData().getLevel(par.getIlvl() + 1).getStartAt(),
-				html);
+				list.getListData().getLevel(par.getIlvl() + 1)
+					.getStartAt(), html);
 			subLists = new ArrayList<Element>();
 			subLists.add(htmlList);
 			listsIds.get(list.getLsid()).put(par.getIlvl(),
@@ -138,23 +172,50 @@ public class ListParser {
 			.getVal()).getCTAbstractNum();
 	int parIlvl = par.getCTP().getPPr().getNumPr().getIlvl().getVal()
 		.intValue();
-	if (listsIds.get(par.getNumID().intValue()) == null) {
-	    Element htmlList = this.createHTMLList(abs.getLvlArray(0)
-		    .getNumFmt().getVal().intValue() - 1, 0, html);
-	    ArrayList<Element> subLists = new ArrayList<Element>();
-	    subLists.add(htmlList);
-	    HashMap<Integer, ArrayList<Element>> subListsMap = new HashMap<Integer, ArrayList<Element>>();
-	    subListsMap.put(parIlvl, subLists);
+	int lastListId = getLastListId();
+	if (listsIds.get(par.getNumID().intValue()) == null
+		|| lastListId != par.getNumID().intValue()
+		|| previousParIlvl < 0) {
+	    Node parent = html.getElementsByTagName("body").item(0);
+	    HashMap<Integer, ArrayList<Element>> subListsMap = listsIds.get(par
+		    .getNumID().intValue()) != null ? listsIds.get(par
+		    .getNumID().intValue())
+		    : new HashMap<Integer, ArrayList<Element>>();
+	    for (int i = 0; i <= parIlvl; i++) {
+
+		int startat = 1;
+		ArrayList<Element> subLists = new ArrayList<Element>();
+		if ((lastListId != par.getNumID().intValue() || previousParIlvl < 0)
+			&& listsIds.get(par.getNumID().intValue()) != null
+			&& listsIds.get(par.getNumID().intValue()).get(i) != null) {
+		    Element ol = listsIds
+			    .get(par.getNumID().intValue())
+			    .get(i)
+			    .get(listsIds.get(par.getNumID().intValue()).get(i)
+				    .size() - 1);
+		    if (ol.getAttribute("start") != null) {
+			startat = Integer.parseInt(ol.getAttribute("start"))
+				+ ol.getChildNodes().getLength();
+		    }
+		    subLists = listsIds.get(par.getNumID().intValue()).get(i);
+		}
+		Element htmlList = this.createHTMLList(abs.getLvlArray(parIlvl)
+			.getNumFmt().getVal().intValue() - 1, startat, html);
+
+		subLists.add(htmlList);
+		subListsMap.put(i, subLists);
+		parent.appendChild(htmlList);
+		parent = htmlList;
+	    }
+	    listsIds.remove(par.getNumID().intValue());
 	    listsIds.put(par.getNumID().intValue(), subListsMap);
-	    html.getElementsByTagName("body").item(0).appendChild(htmlList);
 	}
 
 	if (listsIds.get(par.getNumID().intValue()) != null) {
 	    ArrayList<Element> subLists = listsIds.get(
-		    par.getNumID().intValue()).get(
-		    par.getCTP().getPPr().getNumPr().getIlvl().getVal()
-			    .intValue());
-	    if (subLists != null && previousParIlvl >= parIlvl) {
+		    par.getNumID().intValue()).get(parIlvl);
+	    if (subLists != null
+		    && (previousParIlvl >= parIlvl || previousParIlvl < 0)) {
 		subLists.get(subLists.size() - 1).appendChild(li);
 	    } else if (previousParIlvl < parIlvl) {
 		int i = 100;
@@ -162,7 +223,7 @@ public class ListParser {
 		    if (listsIds.get(par.getNumID().intValue()).get(i) != null) {
 			Element htmlList = this.createHTMLList(
 				abs.getLvlArray(parIlvl).getNumFmt().getVal()
-					.intValue() - 1, 0, html);
+					.intValue() - 1, 1, html);
 			subLists = new ArrayList<Element>();
 			subLists.add(htmlList);
 			listsIds.get(par.getNumID().intValue()).put(parIlvl,
@@ -177,5 +238,14 @@ public class ListParser {
 	    }
 	}
 	previousParIlvl = parIlvl;
+    }
+
+    private int getLastListId() {
+	int lastListId = 0;
+	for (Iterator<Integer> iter = listsIds.keySet().iterator(); iter
+		.hasNext();) {
+	    lastListId = iter.next();
+	}
+	return lastListId;
     }
 }

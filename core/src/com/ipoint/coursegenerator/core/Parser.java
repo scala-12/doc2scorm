@@ -179,9 +179,18 @@ public class Parser {
 		    headerInfo.setPreviousParStyleID(paragraphStyle);
 		} else {
 		    headerInfo.setNextParStyleID(nextParagraphStyle);
+		    String htmlHash = "";
+		    if (html != null) {
+			htmlHash = html.toString();
+		    }
 		    html = HeaderFinder.parse(paragraph, html, headerInfo,
 			    items, doc, manifest.getManifest(), paragraphStyle);
 		    listParser.reset();
+		    if (!html.toString().equals(htmlHash))
+			listParser.reset();
+		    else {
+			listParser.setPreviousParIlvl(-1);
+		    }
 		}
 	    } else if (bodyElement.getElementType().equals(
 		    BodyElementType.TABLE)) {
@@ -237,6 +246,9 @@ public class Parser {
 			document, manifest.getManifest(), par.getStyleIndex());
 		if (!html.toString().equals(htmlHash))
 		    listParser.reset();
+		else {
+		    listParser.setPreviousParIlvl(-1);
+		}
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
