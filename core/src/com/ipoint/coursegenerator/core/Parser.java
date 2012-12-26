@@ -185,7 +185,6 @@ public class Parser {
 		    }
 		    html = HeaderFinder.parse(paragraph, html, headerInfo,
 			    items, doc, manifest.getManifest(), paragraphStyle);
-		    listParser.reset();
 		    if (!html.toString().equals(htmlHash))
 			listParser.reset();
 		    else {
