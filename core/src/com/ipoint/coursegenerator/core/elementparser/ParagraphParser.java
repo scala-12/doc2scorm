@@ -55,7 +55,6 @@ public class ParagraphParser extends AbstractElementParser {
 
 	for (int i = 0; i < par.numCharacterRuns(); i++) {
 	    CharacterRun run = par.getCharacterRun(i);
-	  //  getTextFormatDOC(run, html, element, parent, par.getStyleIndex());
 	    if (run.isSpecialCharacter()) {
 		if (pictures.hasPicture(run)) {
 		    Element imgElement = html.createElement("img");
@@ -77,12 +76,14 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		}
 	    } else if (!run.text().equals(Character.toString((char) 13))) {
-		 element.setTextContent(element.getTextContent() +
-		 run.text());
+		getTextFormatDOC(run, html, element, parent,
+			par.getStyleIndex());
+		// element.setTextContent(element.getTextContent() +
+		// run.text());
 	    }
 	}
 	headerText = element.getTextContent();
-	 parent.appendChild(element);
+	parent.appendChild(element);
 	for (Element el : imgsToAppend) {
 	    parent.appendChild(el);
 	    headerInfo.addResourceFile(el.getAttribute("src"));
@@ -202,187 +203,98 @@ public class ParagraphParser extends AbstractElementParser {
 
     public static void getTextFormatDOCX(XWPFRun run, Node parentElement,
 	    Document creatorTags, int styleNumber, Element el) {
-	if (run.getSubscript() == null || run.getSubscript() == VerticalAlign.BASELINE) {				
-	    if (run.isBold()) {
-		Element boldText = creatorTags.createElement("b");
-		boldText.setTextContent(run.toString());
-		if (run.getColor() != null) {
-		    Element parentFontElement = creatorTags
-			    .createElement("font");
-		    parentFontElement.setAttribute("color", run.getColor());
-		    parentFontElement.appendChild(boldText);
-		    el.appendChild(parentFontElement);
-		    parentElement.appendChild(el);
-		} else {
-		    el.appendChild(boldText);
-		    parentElement.appendChild(el);
-		}
-	    } else if (run.isItalic()) {
-		Element italicText = creatorTags.createElement("i");
-		italicText.setTextContent(run.toString());
-		if (run.getColor() != null) {
-		    Element parentFontElement = creatorTags
-			    .createElement("font");
-		    parentFontElement.setAttribute("color", run.getColor());
-		    parentFontElement.appendChild(italicText);
-		    el.appendChild(parentFontElement);
-		    parentElement.appendChild(el);
-		} else {
-		    el.appendChild(italicText);
-		    parentElement.appendChild(el);
-		}
-	    } else if (run.getUnderline() != UnderlinePatterns.NONE) {
-		Element underlineText = creatorTags.createElement("u");
-		underlineText.setTextContent(run.toString());
-		if (run.getColor() != null) {
-		    Element parentFontElement = creatorTags
-			    .createElement("font");
-		    parentFontElement.setAttribute("color", run.getColor());
-		    parentFontElement.appendChild(underlineText);
-		    el.appendChild(parentFontElement);
-		    parentElement.appendChild(el);
-		} else {
-		    el.appendChild(underlineText);
-		    parentElement.appendChild(el);
-		}
-	    } else {
-		if (styleNumber > 9) {
-		    Element simpleText = creatorTags.createElement("font");
-		    simpleText.setTextContent(run.toString());
-		    if (run.getColor() != null) {
-			simpleText.setAttribute("color", run.getColor());
-			el.appendChild(simpleText);
-			parentElement.appendChild(el);
-		    } else {
-			el.appendChild(simpleText);
-			parentElement.appendChild(el);
-		    }
-		} else if (styleNumber > 0 && styleNumber < 10) {
-		    el.setTextContent(run.toString());
-		    parentElement.appendChild(el);
-		}
-		parentElement.appendChild(el);
-	    }
-	} else {
-	    getTextVerticalAlignDOCX(run, parentElement, creatorTags,
-		    styleNumber, el);
+	Element tempElement = el;
+
+	if (run.isBold()) {
+	    Element boldText = creatorTags.createElement("b");
+	    tempElement.appendChild(boldText);
+	    tempElement = boldText;
 	}
+	if (run.isItalic()) {
+	    Element italicText = creatorTags.createElement("i");
+	    tempElement.appendChild(italicText);
+	    tempElement = italicText;
+	}
+	if (run.getUnderline() != UnderlinePatterns.NONE) {
+	    Element underlineText = creatorTags.createElement("u");
+	    tempElement.appendChild(underlineText);
+	    tempElement = underlineText;
+	}
+	if (run.getSubscript() == VerticalAlign.SUPERSCRIPT) {
+	    Element supElement = creatorTags.createElement("sup");
+	    tempElement.appendChild(supElement);
+	    tempElement = supElement;
+	} else if (run.getSubscript() == VerticalAlign.SUBSCRIPT) {
+	    Element subElement = creatorTags.createElement("sub");
+	    tempElement.appendChild(subElement);
+	    tempElement = subElement;
+	}
+	if (styleNumber > 9 || styleNumber < 1) {
+	    Element simpleText = creatorTags.createElement("font");
+	    if (run.getColor() != null) {
+		simpleText.setAttribute("color", run.getColor());
+	    }
+	    tempElement.appendChild(simpleText);
+	    tempElement = simpleText;
+
+	} else if (styleNumber > 0 && styleNumber < 10) {
+	    tempElement = el;
+	}
+	if (!tempElement.equals(el)) {
+	    tempElement.setTextContent(run.toString());
+	} else {
+	    tempElement.setTextContent(tempElement.getTextContent()
+		    + run.toString());
+	}
+	parentElement.appendChild(el);
     }
 
     public static void getTextFormatDOC(CharacterRun run, Document creatorTags,
 	    Element el, Node parentElement, int styleNumber) {
-	if(run.getSubSuperScriptIndex() != 0) {
-	System.out.println(run.getSubSuperScriptIndex());
-	}
+	Element tempElement = el;
 	if (run.isBold()) {
 	    Element boldText = creatorTags.createElement("b");
-	    boldText.setTextContent(run.text());
-	    if (run.getColor() != 0) {
-		Element parentFontElement = creatorTags.createElement("font");
-		parentFontElement.setAttribute("color",
-			AbstractWordUtils.getColor(run.getColor()));
-		parentFontElement.appendChild(boldText);
-		el.appendChild(parentFontElement);
-		parentElement.appendChild(el);
-	    } else {
-		el.appendChild(boldText);
-		parentElement.appendChild(el);
-	    }
-	}  if (run.isItalic()) {
+	    tempElement.appendChild(boldText);
+	    tempElement = boldText;
+	}
+	if (run.isItalic()) {
 	    Element italicText = creatorTags.createElement("i");
-	    italicText.setTextContent(run.text());
-	    if (run.getColor() != 0) {
-		Element parentFontElement = creatorTags.createElement("font");
-		parentFontElement.setAttribute("color",
-			AbstractWordUtils.getColor(run.getColor()));
-		parentFontElement.appendChild(italicText);
-		el.appendChild(parentFontElement);
-		parentElement.appendChild(el);
-	    } else {
-		el.appendChild(italicText);
-		parentElement.appendChild(el);
-	    }
-	}  if (run.getUnderlineCode() != 0) {
+	    tempElement.appendChild(italicText);
+	    tempElement = italicText;
+	}
+	if (run.getUnderlineCode() != 0) {
 	    Element underlineText = creatorTags.createElement("u");
-	    underlineText.setTextContent(run.text());
-	    if (run.getColor() != 0) {
-		Element parenFontElement = creatorTags.createElement("font");
-		parenFontElement.setAttribute("color",
-			AbstractWordUtils.getColor(run.getColor()));
-		parenFontElement.appendChild(underlineText);
-		el.appendChild(parenFontElement);
-		parentElement.appendChild(el);
-	    } else {
-		el.appendChild(underlineText);
-		parentElement.appendChild(el);
-	    }
-	} else {
-	    if (styleNumber > 9) {
-		Element simpleText = creatorTags.createElement("font");
-		simpleText.setTextContent(run.text());
-		if (run.getColor() != 0) {
-		    simpleText.setAttribute("color",
-			    AbstractWordUtils.getColor(run.getColor()));
-		    el.appendChild(simpleText);
-		    parentElement.appendChild(el);
-		} else {
-		    el.appendChild(simpleText);
-		    parentElement.appendChild(el);
-		}
-	    } else if (styleNumber > 0 && styleNumber < 10) {
-		el.setTextContent(el.getTextContent()+run.text());
-		parentElement.appendChild(el);
-	    }
-	    parentElement.appendChild(el);
+	    tempElement.appendChild(underlineText);
+	    tempElement = underlineText;
 	}
-    }
-
-    public static void getTextVerticalAlignDOCX(XWPFRun run,
-	    Node parentElement, Document creatorTags, int styleNumber,
-	    Element el) {
-
-	switch (run.getSubscript()) {
-	case SUPERSCRIPT:
+	if (run.getSubSuperScriptIndex() == 1) {
 	    Element supElement = creatorTags.createElement("sup");
-	    supElement.setTextContent(run.toString());
-	    if (run.getColor() != null) {
-		Element parentFontElement = creatorTags.createElement("font");
-		parentFontElement.setAttribute("color", run.getColor());
-		parentFontElement.appendChild(supElement);
-		el.appendChild(parentFontElement);
-		parentElement.appendChild(el);
-	    } else {
-		el.appendChild(supElement);
-		parentElement.appendChild(el);
-	    }
-	    break;
-	case SUBSCRIPT:
+	    tempElement.appendChild(supElement);
+	    tempElement = supElement;
+	} else if (run.getSubSuperScriptIndex() == 2) {
 	    Element subElement = creatorTags.createElement("sub");
-	    subElement.setTextContent(run.toString());
-	    if (run.getColor() != null) {
-		Element parentFontElement = creatorTags.createElement("font");
-		parentFontElement.setAttribute("color", run.getColor());
-		parentFontElement.appendChild(subElement);
-		el.appendChild(parentFontElement);
-		parentElement.appendChild(el);
-	    } else {
-		el.appendChild(subElement);
-		parentElement.appendChild(el);
-	    }
-	    break;
+	    tempElement.appendChild(subElement);
+	    tempElement = subElement;
 	}
-    }
-    
-    public static void getTextVerticalAlignDOC(CharacterRun run, Document creatorTags,
-	    Element el, Node parentElement, int styleNumber) {
-	switch(run.getSubSuperScriptIndex()){
-	case 1:
-	    Element subElement = creatorTags.createElement("sub");
-	    subElement.setTextContent(run.text());
-	    if(run.getColor() != 0) {
-		//Element parentFontElement
+	if (styleNumber > 9 || styleNumber < 1) {
+	    Element simpleText = creatorTags.createElement("font");
+	    simpleText.setTextContent(run.text());
+	    if (run.getColor() != 0) {
+		simpleText.setAttribute("color",
+			AbstractWordUtils.getColor(run.getColor()));
 	    }
+	    tempElement.appendChild(simpleText);
+	    tempElement = simpleText;
+	} else if (styleNumber > 0 && styleNumber < 10) {
+	    tempElement = el;
 	}
-	
+	if (!tempElement.equals(el)) {
+	    tempElement.setTextContent(run.text());
+	} else {
+	    tempElement.setTextContent(tempElement.getTextContent()
+		    + run.text());
+	}
+
+	parentElement.appendChild(el);
     }
 }
