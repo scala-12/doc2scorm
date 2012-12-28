@@ -194,8 +194,8 @@ public class Parser {
 	    } else if (bodyElement.getElementType().equals(
 		    BodyElementType.TABLE)) {
 		XWPFTable table = (XWPFTable) bodyElement;
-		TableParser.parse(table, html, doc, path,
-			headerInfo.getHeaderLevelNumber());
+		TableParser.parse(table, html, doc, path, headerInfo,
+			listParser, html.getElementsByTagName("body").item(0));
 	    }
 	}
 	if (items.get(items.size() - 1).getFilename() != null) {
@@ -223,7 +223,8 @@ public class Parser {
 	    Paragraph par = range.getParagraph(i);
 	    if (par.isInTable()) {
 		i += TableParser.parse(range.getTable(par), html, document,
-			items.get(items.size() - 1).getHtmlPath(), headerInfo);
+			items.get(items.size() - 1).getHtmlPath(), headerInfo,
+			listParser, html.getElementsByTagName("body").item(0));
 	    } else if (par.isInList()
 		    && !isHeading(par.getStyleIndex(),
 			    headerInfo.getHeaderLevelNumber())) {
