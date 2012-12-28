@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
@@ -58,11 +59,6 @@ public class TableParser {
 		    if (bodyElement.getElementType().equals(
 			    BodyElementType.PARAGRAPH)) {
 			XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
-			if (paragraph.getStyleID() != null) {
-			    document.getStyles()
-				    .getStyle(paragraph.getStyleID())
-				    .getCTStyle();
-			}
 			if (paragraph.getNumID() != null) {
 			    listParser.parse(paragraph, html, document,
 				    headerInfo, path);
@@ -95,21 +91,47 @@ public class TableParser {
 	    for (int k = 0; k < row.numCells(); k++) {
 		TableCell cell = row.getCell(k);
 		Element td = html.createElement("td");
-		System.out.println("[" + j + "][" + k + "]" + cell.text()
-			+ "; " + cell.isFirstMerged() + "; "
-			+ cell.isFirstVerticallyMerged() + "; "
-			+ cell.isMerged() + "; " + cell.isVerticallyMerged()
-			+ "; ");
+		if (cell.isFirstVerticallyMerged()) {
+		    int rowspan = 1;
+		    for (int i = j + 1; i < hwpfTable.numRows(); i++) {
+			if (hwpfTable.getRow(i).numCells() > k
+				&& hwpfTable.getRow(i).getCell(k) != null
+				&& hwpfTable.getRow(i).getCell(k)
+					.isVerticallyMerged()
+				&& !hwpfTable.getRow(i).getCell(k)
+					.isFirstVerticallyMerged()) {
+			    rowspan++;
+			}
+		    }
+		    td.setAttribute("rowspan", String.valueOf(rowspan));
+		    tr.appendChild(td);
+		} else if (!cell.isVerticallyMerged()) {
+		    tr.appendChild(td);
+		}
 		for (int i = 0; i < cell.numParagraphs(); i++) {
 		    parCounter++;
-		    ParagraphParser.parse(cell.getParagraph(i), html, document,
-			    path, headerInfo, td);
+		    Paragraph par = cell.getParagraph(i);
+		    if (par.isInTable()
+			    && par.getTableLevel() != hwpfTable.getTableLevel()
+			    && !cell.getTable(par).toString()
+				    .equals(hwpfTable.toString())) {
+			i += TableParser.parse(cell.getTable(par), html,
+				document, path, headerInfo, listParser, td);
+		    } else if (par.isInList()) {
+			listParser.parse(par, html, document, headerInfo, path);
+		    } else {
+			String htmlHash = "";
+			if (html != null) {
+			    htmlHash = html.toString();
+			}
+			ParagraphParser.parse(par, html, document, path,
+				headerInfo, td);
+		    }
 		}
-		tr.appendChild(td);
 	    }
 	    htmlTable.appendChild(tr);
 	}
-	html.getElementsByTagName("body").item(0).appendChild(htmlTable);
+	parent.appendChild(htmlTable);
 	parCounter += hwpfTable.numRows() - 1;
 	return parCounter;
     }
