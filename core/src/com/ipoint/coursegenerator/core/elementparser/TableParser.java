@@ -120,10 +120,6 @@ public class TableParser {
 		    } else if (par.isInList()) {
 			listParser.parse(par, html, document, headerInfo, path);
 		    } else {
-			String htmlHash = "";
-			if (html != null) {
-			    htmlHash = html.toString();
-			}
 			ParagraphParser.parse(par, html, document, path,
 				headerInfo, td);
 		    }
