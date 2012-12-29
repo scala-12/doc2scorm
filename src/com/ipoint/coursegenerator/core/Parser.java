@@ -17,6 +17,7 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 import org.w3c.dom.Document;
 
@@ -213,6 +214,8 @@ public class Parser {
 	ItemInfo firstItem = new ItemInfo(null, 999, "", "", "");
 	firstItem.setPath(path);
 	firstItem.setHtmlPath(path);
+	firstItem.setParentItem(((XmlComplexContentImpl)manifest.getManifest()
+		.getOrganizations().getOrganizationArray(0)));
 	items.add(firstItem);
 	Range range = document.getRange();
 	Document html = null;

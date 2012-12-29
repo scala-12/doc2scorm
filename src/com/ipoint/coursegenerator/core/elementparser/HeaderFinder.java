@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.w3c.dom.Document;
@@ -18,12 +19,21 @@ import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
 public class HeaderFinder {
 
     public static boolean hasNonHeading1Childs(Document html) {
-	return html.getElementsByTagName("body").item(0).getChildNodes()
-		.getLength() > 1
-		|| (html.getElementsByTagName("body").item(0).getChildNodes()
-			.getLength() == 1 && !html.getElementsByTagName("body")
-			.item(0).getChildNodes().item(0).getNodeName()
-			.equals("h1"));
+	if (html.getElementsByTagName("body").item(0).getChildNodes()
+		.getLength() == 1
+		&& !html.getElementsByTagName("body").item(0).getChildNodes()
+			.item(0).getNodeName().equals("h1")) {
+	    return true;
+	} else if (html.getElementsByTagName("body").item(0).getChildNodes()
+		.getLength() > 1) {
+	    for(int i = 1; i < html.getElementsByTagName("body").item(0).getChildNodes().getLength(); i++) {
+		if (!html.getElementsByTagName("body").item(0).getChildNodes().item(i).getNodeName().equals("p") ||
+			!html.getElementsByTagName("body").item(0).getChildNodes().item(i).getTextContent().equals("")) {
+		    return true;
+		}
+	    }
+	}
+	return false;
     }
 
     private static Document createNewHTMLDocument() {
@@ -61,7 +71,8 @@ public class HeaderFinder {
 		} else {
 		    lastItem.getItem().getDomNode().getAttributes()
 			    .removeNamedItem("identifierref");
-		    ResourcesProcessor.removeResource(manifest, lastItem.getResource());
+		    ResourcesProcessor.removeResource(manifest,
+			    lastItem.getResource());
 		}
 		ResourcesProcessor
 			.addFilesToResource(lastItem.getUrl(),
@@ -107,23 +118,25 @@ public class HeaderFinder {
     public static ItemInfo createItem(ArrayList<ItemInfo> items,
 	    String scoName, int styleIndex, ManifestType manifest) {
 	String path = "";
-	ItemType parentItem = null;
+	XmlComplexContentImpl parentItem = null;
 	String itemText = TransliterationTool.convertRU2ENString(scoName);
 	itemText = itemText.replaceAll(" ", "_");
 	itemText = itemText.replaceAll("[\\W&&[^-]]", "");
 	for (int j = items.size() - 1; j >= 0; j--) {
 	    if (items.get(j).getStyleId() < styleIndex) {
-		parentItem = items.get(j).getItem();
+		parentItem = (XmlComplexContentImpl) items.get(j).getItem();
 		path = items.get(j).getDirectoryPath();
 		if (j == (items.size() - 1)) {
-		    String resid = parentItem.getIdentifierref();
-		    if (parentItem.getDomNode().getAttributes().getNamedItem("identifierref") != null)
-			    parentItem.getDomNode().getAttributes().removeNamedItem("identifierref");
+		    String resid = items.get(j).getItem().getIdentifierref();
+		    if (parentItem.getDomNode().getAttributes()
+			    .getNamedItem("identifierref") != null)
+			parentItem.getDomNode().getAttributes()
+				.removeNamedItem("identifierref");
 		    if (resid != null && !resid.equals("")) {
-			OrganizationProcessor.createItem(parentItem,
-				parentItem.getTitle(), resid, "ITEM_"
-					+ java.util.UUID.randomUUID()
-						.toString());
+			OrganizationProcessor.insertBeforeLast(items.get(j)
+				.getParentItem(), items.get(j).getItem()
+				.getTitle(), resid, "ITEM_"
+				+ java.util.UUID.randomUUID().toString());
 		    }
 		}
 		break;
@@ -135,9 +148,10 @@ public class HeaderFinder {
 	if (parentItem == null) {
 	    item = OrganizationProcessor.createItem(
 		    manifest.getOrganizations(), scoName, resid, itemid);
+	    parentItem = (XmlComplexContentImpl) items.get(0).getParentItem();
 	} else {
-	    item = OrganizationProcessor.createItem(parentItem, scoName, resid,
-		    itemid);
+	    item = OrganizationProcessor.createItem((ItemType) parentItem,
+		    scoName, resid, itemid);
 	}
 	String filename = FileWork.HTML_PREFIX + Integer.toString(items.size())
 		+ "_" + itemText + ".htm";
@@ -147,6 +161,7 @@ public class HeaderFinder {
 		+ itemText + '/', path, filename);
 	itemInfo.setResource(ResourcesProcessor.createResource(manifest, path
 		+ filename, resid));
+	itemInfo.setParentItem(parentItem);
 	return itemInfo;
     }
 }

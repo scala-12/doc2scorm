@@ -1,10 +1,12 @@
 package com.ipoint.coursegenerator.core.elementparser;
 
+import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 
 public class ItemInfo {
     private ItemType item;
+    private XmlComplexContentImpl parentItem;
     private ResourceType resource;
     private int styleId;
     private String directoryPath;
@@ -83,5 +85,13 @@ public class ItemInfo {
 
     public void setResource(ResourceType resource) {
 	this.resource = resource;
+    }
+
+    public XmlComplexContentImpl getParentItem() {
+        return parentItem;
+    }
+
+    public void setParentItem(XmlComplexContentImpl parentItem) {
+        this.parentItem = parentItem;
     }
 }
