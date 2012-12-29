@@ -66,6 +66,7 @@ public class ParagraphParser extends AbstractElementParser {
 			RasterGraphicsParser.parse(picture, path, imgElement);
 		    }
 		    imgsToAppend.add(imgElement);
+		    element.appendChild(imgElement);
 		}
 		int offset = i;
 		for (offset = i + 1; offset < par.numCharacterRuns(); offset++) {
@@ -85,7 +86,7 @@ public class ParagraphParser extends AbstractElementParser {
 	headerText = element.getTextContent();
 	parent.appendChild(element);
 	for (Element el : imgsToAppend) {
-	    parent.appendChild(el);
+	    //parent.appendChild(el);
 	    headerInfo.addResourceFile(el.getAttribute("src"));
 	}
 	return headerText;
@@ -102,14 +103,9 @@ public class ParagraphParser extends AbstractElementParser {
 	Element element = createTextElement(styleIndex, html,
 		headerInfo.getHeaderLevelNumber());
 	ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
-	// element.setTextContent(par.getText());
-	for (int i = 0; i < par.getRuns().size(); i++) {
-	    XWPFRun paragraphRun = par.getRuns().get(i);
-	    getTextFormatDOCX(paragraphRun, parent, html, styleIndex, element);
-	}
-	// parent.appendChild(element);
 	for (int i = 0; i < par.getRuns().size(); i++) {
 	    XWPFRun run = par.getRuns().get(i);
+	    getTextFormatDOCX(run, parent, html, styleIndex, element);
 	    if (run.getEmbeddedPictures() != null) {
 		for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
 		    Element imageElement = html.createElement("img");
@@ -125,6 +121,7 @@ public class ParagraphParser extends AbstractElementParser {
 				path, imageElement);
 		    }
 		    imagesElementsToAppend.add(imageElement);
+		    element.appendChild(imageElement);
 		}
 	    }
 	    if (run.getCTR().sizeOfObjectArray() > 0) {
@@ -157,15 +154,14 @@ public class ParagraphParser extends AbstractElementParser {
 					imageElement);
 			    }
 			    imagesElementsToAppend.add(imageElement);
+			    element.appendChild(imageElement);
 			}
 		    }
 		}
 	    }
 	    headerText = element.getTextContent();
-
 	}
 	for (Element el : imagesElementsToAppend) {
-	    parent.appendChild(el);
 	    headerInfo.addResourceFile(el.getAttribute("src"));
 	}
 	return headerText;
