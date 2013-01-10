@@ -4,8 +4,10 @@ import java.lang.reflect.Field;
 
 import org.apache.poi.xwpf.usermodel.XWPFNumbering;
 
+@Deprecated
 public class SecretField {
 
+    @Deprecated
     public String getListStyle(XWPFNumbering instance)
 	    throws IllegalArgumentException, IllegalAccessException {
 	String strResult = null;

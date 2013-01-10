@@ -28,6 +28,7 @@ import com.ipoint.coursegenerator.core.elementparser.ListParser;
 import com.ipoint.coursegenerator.core.elementparser.ParagraphParser;
 import com.ipoint.coursegenerator.core.elementparser.TableParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.GuardianCharacters;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -81,6 +82,7 @@ public class Parser {
     public String parse(InputStream stream, String headerLevel,
 	    String templateDir, String courseName, String path, String fileType)
 	    throws IOException {
+	GuardianCharacters.fillCharactersData();
 	createImsManifestFile(courseName);
 	File directory = new File(path);
 	if (directory.exists()) {
