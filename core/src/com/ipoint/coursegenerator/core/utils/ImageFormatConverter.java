@@ -24,6 +24,9 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ImageFormatConverter {
 
@@ -46,6 +49,36 @@ public class ImageFormatConverter {
 	    ByteArrayInputStream in = new ByteArrayInputStream(data);
 	    parser.parse(in, gdi);
 	    Document doc = gdi.getDocument();
+	    Document html = GuardianCharacters.getCharactersData();
+	    Node defs = html.getElementsByTagName("defs").item(0);
+	    doc.getElementsByTagName("svg").item(0)
+		    .appendChild(doc.importNode(defs, true));
+	    ((Element) doc.getElementsByTagName("g").item(0)).setAttribute(
+		    "style", "font-family:OpenSymbol; fill:black;");
+	    NodeList nl = doc.getElementsByTagName("text");
+	    for (int i = 0; i < nl.getLength(); i++) {
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC2,
+						(byte) 0xB3 }, "UTF-8"),
+					"\u2265"));
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC2,
+						(byte) 0xB6 }, "UTF-8"),
+					"\u2202"));
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC3,
+						(byte) 0xB2 }, "UTF-8"),
+					"\u222b"));
+	    }
 	    StreamResult sr = new StreamResult(out);
 	    getTransformer().transform(new DOMSource(doc), sr);
 	    TranscoderInput input = new TranscoderInput(
@@ -56,7 +89,8 @@ public class ImageFormatConverter {
 	    Map<TranscodingHints.Key, Object> hints = new HashMap<TranscodingHints.Key, Object>();
 	    hints.put(PNGTranscoder.KEY_WIDTH, new Float(width));
 	    hints.put(PNGTranscoder.KEY_HEIGHT, new Float(height));
-	    hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(false));
+	    hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(
+		    false));
 	    transcoder.setTranscodingHints(hints);
 	    transcoder.transcode(input, output);
 	    return out1.toByteArray();
@@ -82,6 +116,36 @@ public class ImageFormatConverter {
 	    ByteArrayInputStream in = new ByteArrayInputStream(data);
 	    parser.parse(in, gdi);
 	    Document doc = gdi.getDocument();
+	    Document html = GuardianCharacters.getCharactersData();
+	    Node defs = html.getElementsByTagName("defs").item(0);
+	    doc.getElementsByTagName("svg").item(0)
+		    .appendChild(doc.importNode(defs, true));
+	    ((Element) doc.getElementsByTagName("g").item(0)).setAttribute(
+		    "style", "font-family:OpenSymbol; fill:black;");
+	    NodeList nl = doc.getElementsByTagName("text");
+	    for (int i = 0; i < nl.getLength(); i++) {
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC2,
+						(byte) 0xB3 }, "UTF-8"),
+					"\u2265"));
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC2,
+						(byte) 0xB6 }, "UTF-8"),
+					"\u2202"));
+		nl.item(i).setTextContent(
+			nl.item(i)
+				.getTextContent()
+				.replaceAll(
+					new String(new byte[] { (byte) 0xC3,
+						(byte) 0xB2 }, "UTF-8"),
+					"\u222b"));
+	    }
 	    StreamResult sr = new StreamResult(out);
 	    getTransformer().transform(new DOMSource(doc), sr);
 	    TranscoderInput input = new TranscoderInput(

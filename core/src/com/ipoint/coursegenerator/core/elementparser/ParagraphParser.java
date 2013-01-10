@@ -243,6 +243,14 @@ public class ParagraphParser extends AbstractElementParser {
 		    + run.toString());
 	}
 	parentElement.appendChild(el);
+	
+	//new code
+/*	if(run.getParagraph().getCTP().getHyperlinkList().size()>0)	{
+	    Element hyperLinkElement = creatorTags.createElement("a");	
+	    hyperLinkElement.setAttribute("href", "http://google.ru");
+	    tempElement.appendChild(hyperLinkElement);
+	    tempElement = hyperLinkElement;
+	}*/
     }
 
     public static void getTextFormatDOC(CharacterRun run, Document creatorTags,
