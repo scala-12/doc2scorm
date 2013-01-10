@@ -7,17 +7,14 @@ import com.github.gwtbootstrap.client.ui.Form;
 import com.github.gwtbootstrap.client.ui.Form.SubmitCompleteEvent;
 import com.github.gwtbootstrap.client.ui.Form.SubmitCompleteHandler;
 import com.github.gwtbootstrap.client.ui.HelpBlock;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.google.gwt.aria.client.PressedValue;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.HumanInputEvent;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -68,15 +65,21 @@ public class CourseGeneratorFormView extends
 
     @UiField
     ProgressBar fileUploadProgressBar;
-    
+
     @UiField
     HelpBlock helpBlock;
-    
+
     @UiField
     ControlGroup fileUploadControlGroup;
-    
+
     @UiField
     ProgressBar generateProgressBar;
+
+    @UiField
+    Label waitMessageLabel;
+
+    @UiField
+    HelpBlock elementsPopup;
 
     public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
     }
@@ -104,7 +107,10 @@ public class CourseGeneratorFormView extends
     @UiHandler("generateButton")
     public void onClicked(ClickEvent event) {
 	getUiHandlers().generateButtonClicked();
-	generateProgressBar.setVisible(true);	
+	generateProgressBar.setVisible(true);
+	waitMessageLabel
+		.setText("Пожалуйста подождите, операция может занять несколько минут");
+	waitMessageLabel.setVisible(true);
     }
 
     @Override
@@ -141,7 +147,7 @@ public class CourseGeneratorFormView extends
 		    .stringValue());
 	    sourceFileName.setValue(((JSONString) response
 		    .get("sourceFileName")).stringValue());
-	    fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);	    
+	    fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
 	    fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
 	    helpBlock.setText("Файл успешно загружен!");
 	} catch (UmbrellaException e) {
@@ -186,12 +192,14 @@ public class CourseGeneratorFormView extends
     public void setGenerateProgressBarCompleted() {
 	generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 	generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
+	waitMessageLabel.setText("Конвертация документа успешно завершена");
     }
-    
+
     @Override
     public void setGenerateProgressBarFailed() {
 	generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 	generateProgressBar.setColor(ProgressBar.Color.DANGER);
+	waitMessageLabel.setText("Конвертация документа завершилась с ошибкой");
     }
 
 }

@@ -16,6 +16,7 @@
 			<t:PageHeader>i.Logos Course Generator</t:PageHeader>
 			<t:Form styleName="form-horizontal" action="/rest/file/form"
 				method="post" ui:field="sourceDocUploadForm">
+				<t:HelpBlock visible="true" ui:field="elementsPopup"></t:HelpBlock>
 				<t:ControlGroup ui:field="fileUploadControlGroup">
 					<t:ControlLabel for="sourceDocFile">Выберите файл MS Word (.doc,
 						.docx):</t:ControlLabel>
@@ -77,6 +78,7 @@
 				</t:ControlGroup>
 			</t:Form>
 			<t:ProgressBar visible="false" type="ANIMATED" color="DEFAULT" percent="100" ui:field="generateProgressBar"/>
+			<t:Label visible="false" ui:field="waitMessageLabel"></t:Label>
 			<hr />
 			<t:Footer>&copy; i.Point 2012</t:Footer>
 		</div>
