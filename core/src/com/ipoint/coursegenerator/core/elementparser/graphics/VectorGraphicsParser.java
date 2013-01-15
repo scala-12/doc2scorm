@@ -21,9 +21,8 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 		    + picture.hashCode() + ".png";
 	    FileWork.savePNGImage(
 		    ImageFormatConverter.transcodeWMFtoPNG(
-			    picture.getRawContent(), 
-			    picture.getDxaGoal() * DPI / TPI, 
-			    picture.getDyaGoal() * DPI / TPI),
+			    picture.getRawContent(), picture.getDxaGoal() * DPI
+				    / TPI, picture.getDyaGoal() * DPI / TPI),
 		    path + File.separator + url);
 	    imgElement
 		    .setAttribute("src", url.replace(File.separatorChar, '/'));
@@ -35,9 +34,20 @@ public class VectorGraphicsParser extends AbstractGraphicsParser {
 	XWPFPictureData pic = (XWPFPictureData) picture;
 	String url = "img" + File.separator + FileWork.IMAGE_PREFIX
 		+ pic.hashCode() + ".png";
-	FileWork.savePNGImage(
-		ImageFormatConverter.transcodeWMFtoPNG(pic.getData()), path
-			+ File.separator + url);
-	imgElement.setAttribute("src", url.replace(File.separatorChar, '/'));
+	if (!picture.getPackagePart().getContentType().equals("image/x-emf")
+		|| picture.getPackagePart().getContentType()
+			.equals("image/emf")) {
+	    FileWork.savePNGImage(
+		    ImageFormatConverter.transcodeWMFtoPNG(pic.getData()), path
+			    + File.separator + url);
+	    imgElement
+		    .setAttribute("src", url.replace(File.separatorChar, '/'));
+	} else {
+	    FileWork.savePNGImage(
+		    ImageFormatConverter.transcodeEMFtoPNG(pic.getData()), path
+			    + File.separator + url);
+	    imgElement
+		    .setAttribute("src", url.replace(File.separatorChar, '/'));
+	}
     }
 }
