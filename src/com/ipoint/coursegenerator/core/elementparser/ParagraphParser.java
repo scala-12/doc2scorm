@@ -86,7 +86,7 @@ public class ParagraphParser extends AbstractElementParser {
 	headerText = element.getTextContent();
 	parent.appendChild(element);
 	for (Element el : imgsToAppend) {
-	    //parent.appendChild(el);
+	    // parent.appendChild(el);
 	    headerInfo.addResourceFile(el.getAttribute("src"));
 	}
 	return headerText;
@@ -243,14 +243,15 @@ public class ParagraphParser extends AbstractElementParser {
 		    + run.toString());
 	}
 	parentElement.appendChild(el);
-	
-	//new code
-/*	if(run.getParagraph().getCTP().getHyperlinkList().size()>0)	{
-	    Element hyperLinkElement = creatorTags.createElement("a");	
-	    hyperLinkElement.setAttribute("href", "http://google.ru");
-	    tempElement.appendChild(hyperLinkElement);
-	    tempElement = hyperLinkElement;
-	}*/
+
+	// new code
+	/*
+	 * if(run.getParagraph().getCTP().getHyperlinkList().size()>0) { Element
+	 * hyperLinkElement = creatorTags.createElement("a");
+	 * hyperLinkElement.setAttribute("href", "http://google.ru");
+	 * tempElement.appendChild(hyperLinkElement); tempElement =
+	 * hyperLinkElement; }
+	 */
     }
 
     public static void getTextFormatDOC(CharacterRun run, Document creatorTags,

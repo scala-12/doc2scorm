@@ -12,6 +12,10 @@ import org.xml.sax.SAXException;
 public class GuardianCharacters {
 
     private static Document htmlSVGDocument;
+    
+    static {
+	fillCharactersData();
+    }
 
     public GuardianCharacters() {
 

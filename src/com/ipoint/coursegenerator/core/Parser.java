@@ -82,7 +82,6 @@ public class Parser {
     public String parse(InputStream stream, String headerLevel,
 	    String templateDir, String courseName, String path, String fileType)
 	    throws IOException {
-	GuardianCharacters.fillCharactersData();
 	createImsManifestFile(courseName);
 	File directory = new File(path);
 	if (directory.exists()) {

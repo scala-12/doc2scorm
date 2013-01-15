@@ -26,9 +26,13 @@ public class HeaderFinder {
 	    return true;
 	} else if (html.getElementsByTagName("body").item(0).getChildNodes()
 		.getLength() > 1) {
-	    for(int i = 1; i < html.getElementsByTagName("body").item(0).getChildNodes().getLength(); i++) {
-		if (!html.getElementsByTagName("body").item(0).getChildNodes().item(i).getNodeName().equals("p") ||
-			!html.getElementsByTagName("body").item(0).getChildNodes().item(i).getTextContent().equals("")) {
+	    for (int i = 1; i < html.getElementsByTagName("body").item(0)
+		    .getChildNodes().getLength(); i++) {
+		if (!html.getElementsByTagName("body").item(0).getChildNodes()
+			.item(i).getNodeName().equals("p")
+			|| !html.getElementsByTagName("body").item(0)
+				.getChildNodes().item(i).getTextContent()
+				.equals("")) {
 		    return true;
 		}
 	    }
@@ -68,16 +72,15 @@ public class HeaderFinder {
 			    headerInfo.getTemplateDir(), lastItem.getHtmlPath()
 				    + File.separator + lastItem.getFilename(),
 			    lastItem.getPath());
+		    ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
+			    lastItem.getResource(),
+			    headerInfo.getPathToResources());
 		} else {
 		    lastItem.getItem().getDomNode().getAttributes()
 			    .removeNamedItem("identifierref");
 		    ResourcesProcessor.removeResource(manifest,
 			    lastItem.getResource());
 		}
-		ResourcesProcessor
-			.addFilesToResource(lastItem.getUrl(),
-				lastItem.getResource(),
-				headerInfo.getPathToResources());
 		headerInfo.resetPathToResources();
 	    }
 	    html = createNewHTMLDocument();
