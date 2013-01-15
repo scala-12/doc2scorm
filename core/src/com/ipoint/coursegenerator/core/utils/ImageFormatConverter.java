@@ -26,6 +26,10 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.wmf.tosvg.WMFTranscoder;
+import org.apache.fop.image.EmfImage;
+import org.apache.poi.hslf.blip.EMF;
+import org.docx4j.model.images.WordXmlPictureE10;
+import org.docx4j.openpackaging.parts.WordprocessingML.MetafileEmfPart;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -181,9 +185,10 @@ public class ImageFormatConverter {
 	   
 	    TranscoderOutput transcoderOutput = new TranscoderOutput(out);	
 	    ByteArrayInputStream in = new ByteArrayInputStream(data);
-	    TranscoderInput transcoderInput = new TranscoderInput(in);	
-	    transcoder.transcode(transcoderInput, transcoderOutput);
-	    
+	    ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+	 //   TranscoderInput transcoderInput = new TranscoderInput(in);	
+	//    transcoder.transcode(transcoderInput, transcoderOutput);
+	    MetafileEmfPart.convertToPNG(in, out1, 100);
 	   // Document doc = transcoderOutput.getDocument();
 	    //Document html = GuardianCharacters.getCharactersData();
 	   /* Node defs = html.getElementsByTagName("defs").item(0);
@@ -218,29 +223,23 @@ public class ImageFormatConverter {
 	    //StreamResult sr = new StreamResult(out);
 	    //getTransformer().transform(new DOMSource(doc), sr);
 	    
-	    File t = new File("C:\\tmp" + out.hashCode() + ".svg");
-		try {
-		    FileOutputStream fos = new FileOutputStream(t);
-		    fos.write(data);
-		} catch (IOException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
+	  //  TranscoderInput input = new TranscoderInput(
+	//	    new ByteArrayInputStream(out.toByteArray()));
+	   // ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+	//    TranscoderOutput output = new TranscoderOutput(out1);
+	//    PNGTranscoder transcoderPNG = new PNGTranscoder();	
+	//    Map<TranscodingHints.Key, Object> hints = new HashMap<TranscodingHints.Key, Object>();
+	//    hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(
+	//	    false));
+	//    transcoder.setTranscodingHints(hints);
 	    
-	    
-	    TranscoderInput input = new TranscoderInput(
-		    new ByteArrayInputStream(out.toByteArray()));
-	    ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-	    TranscoderOutput output = new TranscoderOutput(out1);
-	    PNGTranscoder transcoderPNG = new PNGTranscoder();	
-	    Map<TranscodingHints.Key, Object> hints = new HashMap<TranscodingHints.Key, Object>();
-	    hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(
-		    false));
-	    transcoder.setTranscodingHints(hints);
-	    
-	    transcoderPNG.transcode(input, output);
+	//    transcoderPNG.transcode(input, output);
 	    return out1.toByteArray();
-	} catch (TranscoderException e) {
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (InterruptedException e) {
+	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	return null;
