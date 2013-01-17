@@ -12,56 +12,71 @@
 
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
 	</listener>
 
 	<servlet>
 		<servlet-name>dispatch</servlet-name>
-		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet
+		</servlet-class>
 	</servlet>
-	
-	<servlet>		       
-		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>		       
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>		       
-		<init-param>			           
-			<param-name>contextConfigLocation</param-name>			           
-			<param-value>META-INF/spring/spring-mvc.xml</param-value>			       
-		</init-param>		       
-		<load-on-startup>1</load-on-startup>		   
+
+	<servlet>
+		       
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		       
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		       
+		<init-param>
+			           
+			<param-name>contextConfigLocation</param-name>
+			           
+			<param-value>META-INF/spring/spring-mvc.xml</param-value>
+			       
+		</init-param>
+		       
+		<load-on-startup>1</load-on-startup>
+		   
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>dispatch</servlet-name>
 		<url-pattern>/dispatch/*</url-pattern>
 	</servlet-mapping>
 	 
-	<servlet-mapping>		       
-		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>		       
-		<url-pattern>/rest/*</url-pattern>		   
+	<servlet-mapping>
+		       
+		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
+		       
+		<url-pattern>/rest/*</url-pattern>
+		   
 	</servlet-mapping>
-	
-	<!-- Default page to serve -->
-	<welcome-file-list>
-		<welcome-file>Coursegenerator.html</welcome-file>
-	</welcome-file-list>
-	
-<!-- 	 <security-constraint>     -->
-<!--   <web-resource-collection> -->
-<!--    <web-resource-name>any</web-resource-name> -->
-<!--    <url-pattern>/*</url-pattern> -->
-<!--   </web-resource-collection> -->
-<!--   <auth-constraint> -->
-<!--    <role-name>*</role-name> -->
-<!--   </auth-constraint> -->
-<!--  </security-constraint> -->
- 
-<!-- 	 <servlet> -->
-<!--  <servlet-name>CourseGeneratorAuthorization</servlet-name> -->
-<!--   <servlet-class>com.ipoint.coursegenerator.server.authorization.CourseConverterServletAuth</servlet-class> -->
-<!-- </servlet> -->
-<!--  <servlet-mapping> -->
-<!--   <servlet-name>CourseGeneratorAuthorization</servlet-name> -->
-<!--   <url-pattern>/authorize</url-pattern> -->
-<!-- </servlet-mapping> -->
- 	 
+
+	<servlet>
+		<servlet-name>CourseGeneratorAuthorization</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseConverterServletAuth
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CourseGeneratorAuthorization</servlet-name>
+		<url-pattern>/Coursegenerator.html</url-pattern>
+
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
+		<url-pattern>/oauth2callback</url-pattern>
+
+	</servlet-mapping>
+
+
+
+
+	 
 </web-app>

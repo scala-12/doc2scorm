@@ -9,10 +9,16 @@
 	<packaging>war</packaging>
 	<name>iLogos Course Generator</name>
 	<properties>
-	    <gwt.version>2.5.0</gwt.version>
-	    <spring.version>3.1.3.RELEASE</spring.version>
-	    <gwtplatform.version>0.7</gwtplatform.version>  
+		<gwt.version>2.5.0</gwt.version>
+		<spring.version>3.1.3.RELEASE</spring.version>
+		<gwtplatform.version>0.7</gwtplatform.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>google-api-services</id>
+			<url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
+		</repository>
+	</repositories>
 	<build>
 		<outputDirectory>target/ilogos-course-generator-0.0.1-SNAPSHOT/WEB-INF/classes</outputDirectory>
 		<plugins>
@@ -164,10 +170,34 @@
 			<artifactId>google-api-client</artifactId>
 			<version>1.13.2-beta</version>
 		</dependency>
+
+
+
+
 		<dependency>
 			<groupId>com.google.http-client</groupId>
-			<artifactId>google-http-client-gson</artifactId>
+			<artifactId>
+		           		google-http-client-jackson
+		           	</artifactId>
 			<version>1.13.1-beta</version>
+		</dependency>
+		<dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-oauth2</artifactId>
+      <version>v2-rev27-1.12.0-beta</version>
+    </dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.datanucleus</groupId>
+			<artifactId>
+				datanucleus-accessplatform-jdo-rdbms
+			</artifactId>
+			<version>3.1.3</version>
+			<type>pom</type>
 		</dependency>
 	</dependencies>
 
