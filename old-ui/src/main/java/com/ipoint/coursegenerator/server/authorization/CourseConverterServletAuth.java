@@ -19,8 +19,6 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 
-
-
 public class CourseConverterServletAuth extends
 	AbstractAuthorizationCodeServlet {
 
@@ -76,6 +74,7 @@ public class CourseConverterServletAuth extends
     @Override
     protected String getUserId(HttpServletRequest req) throws ServletException,
 	    IOException {
-	return (String)req.getSession().getAttribute("userId") == null ? "notauser" : (String)req.getSession().getAttribute("userId");
+	return (String) req.getSession().getAttribute("userId") == null ? "notauser"
+		: (String) req.getSession().getAttribute("userId");
     }
 }

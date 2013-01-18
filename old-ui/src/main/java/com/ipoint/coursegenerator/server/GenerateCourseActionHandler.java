@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContext;
 
 import org.springframework.context.ApplicationContext;
@@ -15,6 +18,8 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.core.Parser;
+import com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack;
+import com.ipoint.coursegenerator.server.authorization.User;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
@@ -33,6 +38,15 @@ public class GenerateCourseActionHandler implements
     @Override
     public GenerateCourseResult execute(GenerateCourse action,
 	    ExecutionContext context) throws ActionException {
+	
+	PersistenceManagerFactory pInstance =
+		        JDOHelper.getPersistenceManagerFactory("transactions-optional");	
+	PersistenceManager pm = pInstance.getPersistenceManager();
+	Object o = pm.getUserObject("userEmail");
+	
+	
+	
+	
 	Parser parser = this.context.getBean("parser", Parser.class);
 	GenerateCourseResult generateCourseResult = null;
 	try {

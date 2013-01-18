@@ -5,18 +5,20 @@ import java.util.Collections;
 import java.util.UUID;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.annotations.Persistent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import sun.net.util.URLUtil;
+import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
-import com.google.api.client.googleapis.GoogleHeaders;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
@@ -24,25 +26,25 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.gwt.http.client.URL;
-
-import com.google.api.client.http.HttpRequest;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfo;
 
 public class CourseGeneratorServletCallBack extends
 	AbstractAuthorizationCodeCallbackServlet {
 
-    private static final String mainPartUrl = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=";
-
     private static final long serialVersionUID = -5536522035960228306L;
+    
+    @Persistent
+    private String persistentUserEmail;
 
+    public static final PersistenceManagerFactory pmfInstance =
+	        JDOHelper.getPersistenceManagerFactory("transactions-optional");
+    
     @Override
     protected void onSuccess(HttpServletRequest req, HttpServletResponse resp,
 	    final Credential credential) throws ServletException, IOException {
 	HttpRequestInitializer initializer = new HttpRequestInitializer() {
 	    public void initialize(HttpRequest request) throws IOException {
-		HttpHeaders httpHeaders = new HttpHeaders();
 		request.getHeaders().setAuthorization(
 			"Bearer " + credential.getAccessToken());
 	    }
@@ -53,11 +55,17 @@ public class CourseGeneratorServletCallBack extends
 	try {
 	    userInfo = userInfoService.userinfo().get().execute();
 	} catch (IOException e) {
-	    System.err.println("An error occurred: " + e);
+	    e.printStackTrace();
 	}
 	if (userInfo != null && userInfo.getId() != null) {
-	} else {
 	}
+	PersistenceManager pm = pmfInstance.getPersistenceManager();
+	User user = new User("iddd",userInfo.getEmail());
+	persistentUserEmail = userInfo.getEmail();
+	pm.putUserObject("userEmail",user);
+	//pm.flush();
+	//pm.close();
+	req.getSession().setAttribute("userEmail", userInfo.getEmail());
 	resp.sendRedirect("/Coursegenerator.html");
     }
 
