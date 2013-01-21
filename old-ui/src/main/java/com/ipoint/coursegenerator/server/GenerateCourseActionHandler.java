@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 
+import javax.jdo.Extent;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -42,9 +44,13 @@ public class GenerateCourseActionHandler implements
 	PersistenceManagerFactory pInstance =
 		        JDOHelper.getPersistenceManagerFactory("transactions-optional");	
 	PersistenceManager pm = pInstance.getPersistenceManager();
-	Object o = pm.getUserObject("userEmail");
-	
-	
+	Extent extent = pm.getExtent(User.class, false);
+	Iterator it = extent.iterator();
+	while(it.hasNext()) {
+	    User a = (User) it.next();
+	}
+	extent.closeAll();
+
 	
 	
 	Parser parser = this.context.getBean("parser", Parser.class);

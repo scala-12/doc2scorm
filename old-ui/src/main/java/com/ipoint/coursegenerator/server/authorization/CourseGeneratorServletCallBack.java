@@ -7,12 +7,9 @@ import java.util.UUID;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.annotations.Persistent;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
@@ -21,7 +18,6 @@ import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -33,13 +29,12 @@ public class CourseGeneratorServletCallBack extends
 	AbstractAuthorizationCodeCallbackServlet {
 
     private static final long serialVersionUID = -5536522035960228306L;
-    
-    @Persistent
-    private String persistentUserEmail;
 
-    public static final PersistenceManagerFactory pmfInstance =
-	        JDOHelper.getPersistenceManagerFactory("transactions-optional");
-    
+    private User user = new User();
+
+    public static final PersistenceManagerFactory pmfInstance = JDOHelper
+	    .getPersistenceManagerFactory("transactions-optional");
+
     @Override
     protected void onSuccess(HttpServletRequest req, HttpServletResponse resp,
 	    final Credential credential) throws ServletException, IOException {
@@ -57,15 +52,16 @@ public class CourseGeneratorServletCallBack extends
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-	if (userInfo != null && userInfo.getId() != null) {
+	if (userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()) {
+	    PersistenceManager pm = pmfInstance.getPersistenceManager();
+	   // User user = new User("iddd", userInfo.getEmail());
+	   user.setUserEmail(userInfo.getEmail());
+	    pm.makePersistent(user);
+	    // pm.putUserObject("userEmail",user);
+	    // pm.flush();
+	    pm.close();
+	    req.getSession().setAttribute("userEmail", userInfo.getEmail());
 	}
-	PersistenceManager pm = pmfInstance.getPersistenceManager();
-	User user = new User("iddd",userInfo.getEmail());
-	persistentUserEmail = userInfo.getEmail();
-	pm.putUserObject("userEmail",user);
-	//pm.flush();
-	//pm.close();
-	req.getSession().setAttribute("userEmail", userInfo.getEmail());
 	resp.sendRedirect("/Coursegenerator.html");
     }
 
@@ -104,6 +100,7 @@ public class CourseGeneratorServletCallBack extends
     protected String getUserId(HttpServletRequest req) throws ServletException,
 	    IOException {
 	String uuid = UUID.randomUUID().toString();
+	user.setUserId(uuid);
 	req.getSession().setAttribute("userId", uuid);
 	return uuid;
     }

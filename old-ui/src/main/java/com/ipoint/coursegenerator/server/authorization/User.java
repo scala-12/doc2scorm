@@ -1,14 +1,9 @@
 package com.ipoint.coursegenerator.server.authorization;
 
-import java.io.Serializable;
-
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
 @PersistenceCapable
-public class User implements Serializable {
-
-    private static final long serialVersionUID = -5401208538282914354L;
+public class User {
 
     public User(String userId, String userEmail) {
 	super();
@@ -16,10 +11,12 @@ public class User implements Serializable {
 	this.userEmail = userEmail;
     }
 
-    @Persistent
+    public User() {
+
+    }
+
     private String userId;
 
-    @Persistent
     private String userEmail;
 
     public String getUserId() {
