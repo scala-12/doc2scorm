@@ -8,15 +8,14 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 
 public class CourseGeneratorPlaceManager extends PlaceManagerImpl {
 
-    @Inject
-    public CourseGeneratorPlaceManager(EventBus eventBus,
-	    TokenFormatter tokenFormatter) {
-	super(eventBus, tokenFormatter);
-    }
-
-    @Override
-    public void revealDefaultPlace() {
-	revealPlace(new PlaceRequest(NameTokens.coursegeneratorform));
-    }
+	@Inject
+	public CourseGeneratorPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter) {
+		super(eventBus, tokenFormatter);
+	}
+	
+	@Override
+	public void revealDefaultPlace() {
+		revealPlace(new PlaceRequest(NameTokens.coursegeneratorform), false);
+	}
 
 }

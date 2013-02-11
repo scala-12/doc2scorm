@@ -9,6 +9,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.ipoint.coursegenerator.client.SourceGeneratorPresenterModule;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
+import com.ipoint.coursegenerator.client.presenter.OrderPresenter;
 
 @GinModules({ DispatchAsyncModule.class, SourceGeneratorPresenterModule.class })
 public interface CourseGeneratorGinjector extends Ginjector {
@@ -19,4 +20,6 @@ public interface CourseGeneratorGinjector extends Ginjector {
     AsyncProvider<CourseGeneratorMainPresenter> getCourseGeneratorMainPresenter();
 
     AsyncProvider<CourseGeneratorFormPresenter> getCourseGeneratorFormPresenter();
+    
+    AsyncProvider<OrderPresenter> getOrderPresenter();
 }

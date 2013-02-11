@@ -4,6 +4,7 @@ public class NameTokens {
 
     public static final String main = "main";
     public static final String coursegeneratorform = "coursegeneratorform";
+    public static final String order = "order";
 
     public static String getMain() {
         return main;
@@ -13,4 +14,7 @@ public class NameTokens {
         return coursegeneratorform;
     }
 
+    public static String getOrder() {
+        return order;
+    }
 }

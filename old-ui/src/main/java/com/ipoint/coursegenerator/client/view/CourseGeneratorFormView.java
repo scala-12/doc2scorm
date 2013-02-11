@@ -32,174 +32,167 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
 import com.ipoint.coursegenerator.client.presenter.FileSelectUIHandler;
 
-public class CourseGeneratorFormView extends
-	ViewWithUiHandlers<FileSelectUIHandler> implements
-	CourseGeneratorFormPresenter.MyView, ChangeHandler,
-	SubmitCompleteHandler {
+public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHandler> implements
+		CourseGeneratorFormPresenter.MyView, ChangeHandler, SubmitCompleteHandler {
 
-    private final Widget widget;
+	private final Widget widget;
 
-    @UiField
-    ListBox headerLevel;
+	@UiField
+	ListBox headerLevel;
 
-    @UiField
-    FileUpload sourceDocFile;
+	@UiField
+	FileUpload sourceDocFile;
 
-    @UiField
-    ListBox templateForCoursePages;
+	@UiField
+	ListBox templateForCoursePages;
 
-    @UiField
-    TextBox courseName;
+	@UiField
+	TextBox courseName;
 
-    @UiField
-    CheckBox useFilenameAsCourseName;
+	@UiField
+	CheckBox useFilenameAsCourseName;
 
-    @UiField
-    Form sourceDocUploadForm;
+	@UiField
+	Form sourceDocUploadForm;
 
-    @UiField
-    Hidden uuidFileName;
+	@UiField
+	Hidden uuidFileName;
 
-    @UiField
-    Hidden sourceFileName;
+	@UiField
+	Hidden sourceFileName;
 
-    @UiField
-    ProgressBar fileUploadProgressBar;
+	@UiField
+	ProgressBar fileUploadProgressBar;
 
-    @UiField
-    HelpBlock helpBlock;
+	@UiField
+	HelpBlock helpBlock;
 
-    @UiField
-    ControlGroup fileUploadControlGroup;
+	@UiField
+	ControlGroup fileUploadControlGroup;
 
-    @UiField
-    ProgressBar generateProgressBar;
+	@UiField
+	ProgressBar generateProgressBar;
 
-    @UiField
-    Label waitMessageLabel;
+	@UiField
+	Label waitMessageLabel;
 
-    @UiField
-    HelpBlock elementsPopup;
+	@UiField
+	HelpBlock elementsPopup;
 
-    public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
-    }
-
-    @Inject
-    public CourseGeneratorFormView(final Binder binder) {
-	widget = binder.createAndBindUi(this);
-	sourceDocUploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
-    }
-
-    @Override
-    public Widget asWidget() {
-	return widget;
-    }
-
-    @UiHandler("useFilenameAsCourseName")
-    public void onValueChanged(ValueChangeEvent<Boolean> event) {
-	if (useFilenameAsCourseName.getValue()) {
-	    courseName.setEnabled(false);
-	} else {
-	    courseName.setEnabled(true);
+	public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
 	}
-    }
 
-    @UiHandler("generateButton")
-    public void onClicked(ClickEvent event) {
-	getUiHandlers().generateButtonClicked();
-	generateProgressBar.setVisible(true);
-	waitMessageLabel
-		.setText("Пожалуйста подождите, операция может занять несколько минут");
-	waitMessageLabel.setVisible(true);
-    }
-
-    @Override
-    public void setUiHandlers(FileSelectUIHandler uiHandlers) {
-	super.setUiHandlers(uiHandlers);
-	sourceDocFile.addChangeHandler(this);
-	sourceDocUploadForm.addSubmitCompleteHandler(this);
-    }
-
-    @Override
-    public void onChange(ChangeEvent event) {
-	if (sourceDocFile.getFilename() != null
-		&& (sourceDocFile.getFilename().toLowerCase().endsWith(".doc") || sourceDocFile
-			.getFilename().toLowerCase().endsWith(".docx"))) {
-	    sourceDocUploadForm.submit();
-	    fileUploadProgressBar.setColor(ProgressBar.Color.DEFAULT);
-	    fileUploadProgressBar.setType(ProgressBar.Style.ANIMATED);
-	    fileUploadProgressBar.setVisible(true);
-	    fileUploadControlGroup.setType(ControlGroupType.NONE);
-	    helpBlock.setVisible(false);
-	} else {
-	    Window.alert("Выберите документ MS Word (файл с расширением doc или docx)!");
+	@Inject
+	public CourseGeneratorFormView(final Binder binder) {
+		widget = binder.createAndBindUi(this);
+		sourceDocUploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 	}
-    }
 
-    @Override
-    public void onSubmitComplete(SubmitCompleteEvent event) {
-	String body = event.getResults();
-	fileUploadProgressBar.setType(ProgressBar.Style.DEFAULT);
-	helpBlock.setVisible(true);
-	try {
-	    JSONObject response = (JSONObject) JSONParser.parseStrict(body);
-	    uuidFileName.setValue(((JSONString) response.get("uuidFileName"))
-		    .stringValue());
-	    sourceFileName.setValue(((JSONString) response
-		    .get("sourceFileName")).stringValue());
-	    fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
-	    fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
-	    helpBlock.setText("Файл успешно загружен!");
-	} catch (UmbrellaException e) {
-	    helpBlock.setText("Произошла ошибка при загрузке файла!");
-	    fileUploadProgressBar.setColor(ProgressBar.Color.DANGER);
-	    fileUploadControlGroup.setType(ControlGroupType.ERROR);
+	@Override
+	public Widget asWidget() {
+		return widget;
 	}
-	fileUploadProgressBar.setVisible(false);
-    }
 
-    @Override
-    public String getSourceDocFileUuid() {
-	return uuidFileName.getValue();
-    }
-
-    @Override
-    public String getHeaderLevel() {
-	return headerLevel.getValue();
-    }
-
-    @Override
-    public String getTemplateForCoursePages() {
-	return templateForCoursePages.getValue();
-    }
-
-    @Override
-    public String getCourseName() {
-	if (useFilenameAsCourseName.getValue()) {
-	    return sourceFileName.getValue().substring(0,
-		    sourceFileName.getValue().lastIndexOf('.'));
+	@UiHandler("useFilenameAsCourseName")
+	public void onValueChanged(ValueChangeEvent<Boolean> event) {
+		if (useFilenameAsCourseName.getValue()) {
+			courseName.setEnabled(false);
+		} else {
+			courseName.setEnabled(true);
+		}
 	}
-	return courseName.getValue();
-    }
 
-    @Override
-    public String getFileType() {
-	return sourceFileName.getValue().substring(
-		sourceFileName.getValue().lastIndexOf('.'));
-    }
+	@UiHandler("generateButton")
+	public void onClicked(ClickEvent event) {
+		getUiHandlers().generateButtonClicked();
+		generateProgressBar.setVisible(true);
+		waitMessageLabel.setText("Пожалуйста подождите, операция может занять несколько минут");
+		waitMessageLabel.setVisible(true);
+	}
 
-    @Override
-    public void setGenerateProgressBarCompleted() {
-	generateProgressBar.setType(ProgressBar.Style.DEFAULT);
-	generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
-	waitMessageLabel.setText("Конвертация документа успешно завершена");
-    }
+	@Override
+	public void setUiHandlers(FileSelectUIHandler uiHandlers) {
+		super.setUiHandlers(uiHandlers);
+		sourceDocFile.addChangeHandler(this);
+		sourceDocUploadForm.addSubmitCompleteHandler(this);
+	}
 
-    @Override
-    public void setGenerateProgressBarFailed() {
-	generateProgressBar.setType(ProgressBar.Style.DEFAULT);
-	generateProgressBar.setColor(ProgressBar.Color.DANGER);
-	waitMessageLabel.setText("Конвертация документа завершилась с ошибкой");
-    }
+	@Override
+	public void onChange(ChangeEvent event) {
+		if (sourceDocFile.getFilename() != null
+				&& (sourceDocFile.getFilename().toLowerCase().endsWith(".doc") || sourceDocFile.getFilename()
+						.toLowerCase().endsWith(".docx"))) {
+			sourceDocUploadForm.submit();
+			fileUploadProgressBar.setColor(ProgressBar.Color.DEFAULT);
+			fileUploadProgressBar.setType(ProgressBar.Style.ANIMATED);
+			fileUploadProgressBar.setVisible(true);
+			fileUploadControlGroup.setType(ControlGroupType.NONE);
+			helpBlock.setVisible(false);
+		} else {
+			Window.alert("Выберите документ MS Word (файл с расширением doc или docx)!");
+		}
+	}
+
+	@Override
+	public void onSubmitComplete(SubmitCompleteEvent event) {
+		String body = event.getResults();
+		fileUploadProgressBar.setType(ProgressBar.Style.DEFAULT);
+		helpBlock.setVisible(true);
+		try {
+			JSONObject response = (JSONObject) JSONParser.parseStrict(body);
+			uuidFileName.setValue(((JSONString) response.get("uuidFileName")).stringValue());
+			sourceFileName.setValue(((JSONString) response.get("sourceFileName")).stringValue());
+			fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
+			fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
+			helpBlock.setText("Файл успешно загружен!");
+		} catch (UmbrellaException e) {
+			helpBlock.setText("Произошла ошибка при загрузке файла!");
+			fileUploadProgressBar.setColor(ProgressBar.Color.DANGER);
+			fileUploadControlGroup.setType(ControlGroupType.ERROR);
+		}
+		fileUploadProgressBar.setVisible(false);
+	}
+
+	@Override
+	public String getSourceDocFileUuid() {
+		return uuidFileName.getValue();
+	}
+
+	@Override
+	public String getHeaderLevel() {
+		return headerLevel.getValue();
+	}
+
+	@Override
+	public String getTemplateForCoursePages() {
+		return templateForCoursePages.getValue();
+	}
+
+	@Override
+	public String getCourseName() {
+		if (useFilenameAsCourseName.getValue()) {
+			return sourceFileName.getValue().substring(0, sourceFileName.getValue().lastIndexOf('.'));
+		}
+		return courseName.getValue();
+	}
+
+	@Override
+	public String getFileType() {
+		return sourceFileName.getValue().substring(sourceFileName.getValue().lastIndexOf('.'));
+	}
+
+	@Override
+	public void setGenerateProgressBarCompleted() {
+		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
+		generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
+		waitMessageLabel.setText("Конвертация документа успешно завершена");
+	}
+
+	@Override
+	public void setGenerateProgressBarFailed() {
+		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
+		generateProgressBar.setColor(ProgressBar.Color.DANGER);
+		waitMessageLabel.setText("Конвертация документа завершилась с ошибкой");
+	}
 
 }
