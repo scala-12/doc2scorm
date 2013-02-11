@@ -15,6 +15,10 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener
 		</listener-class>
 	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener
+		</listener-class>
+	</listener>
 
 	<servlet>
 		<servlet-name>dispatch</servlet-name>
@@ -55,14 +59,38 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>PaypalResponseHandler</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.paypal.PaypalResponseHandler
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>		       
+		<servlet-name>PaypalResponseHandler</servlet-name>		       
+		<url-pattern>/success.html</url-pattern>		   
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>MarketplaceOrderHandler</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.marketplace.MarketplaceOrderHandler
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		       
+		<servlet-name>MarketplaceOrderHandler</servlet-name>
+		       
+		<url-pattern>/order*</url-pattern>
+		   
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
-		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseConverterServletAuth
+		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletAuth
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<url-pattern>/Coursegenerator.html</url-pattern>
-
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
@@ -72,11 +100,6 @@
 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
-
 	</servlet-mapping>
-
-
-
-
 	 
 </web-app>
