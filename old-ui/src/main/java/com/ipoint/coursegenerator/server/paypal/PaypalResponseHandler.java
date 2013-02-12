@@ -13,6 +13,10 @@ public class PaypalResponseHandler extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+		PaypalUtils paypal = new PaypalUtils();
+		String token = req.getParameter("token");
+		String payerID = req.getParameter("PayerID");
+		paypal.getCheckoutCode(token);
+		paypal.executeCheckoutCode(token, payerID, "10.0");
 	}
 }

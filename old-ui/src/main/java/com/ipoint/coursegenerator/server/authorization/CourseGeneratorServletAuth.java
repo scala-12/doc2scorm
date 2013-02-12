@@ -26,7 +26,6 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		request.getContextPath();
 		response.setContentType("text/html;charset=UTF-8");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -42,10 +41,7 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 		}
 		PrintWriter writer = response.getWriter();
 		writer.print(result.toString());
-		//writer.flush();
-		PaypalUtils paypal = new PaypalUtils();
-		String token = paypal.setCheckoutCode("http://env-9571171.j.rsnx.ru/success.html", "http://env-9571171.j.rsnx.ru/cancel.html", "10.0", "Any", "USD");
-		response.sendRedirect("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=" + token);
+		writer.flush();		
 	}
 
 	@Override

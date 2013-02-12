@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.client;
 
+import com.google.gwt.user.client.Window.Location;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
@@ -12,10 +13,14 @@ public class CourseGeneratorPlaceManager extends PlaceManagerImpl {
 	public CourseGeneratorPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter) {
 		super(eventBus, tokenFormatter);
 	}
-	
+
 	@Override
 	public void revealDefaultPlace() {
-		revealPlace(new PlaceRequest(NameTokens.coursegeneratorform), false);
+		if (Location.getHref().matches("^(https?)://[^\\s/$.?#].[^\\s]*/purchase(([\\?\\#].*)|)")) {
+			revealPlace(new PlaceRequest(NameTokens.purchase), false);
+		} else {
+			revealPlace(new PlaceRequest(NameTokens.coursegeneratorform), false);
+		}
 	}
 
 }

@@ -7,18 +7,29 @@
 	ui:generateLocales='default'>
 
 	<g:HTMLPanel>
+		<t:Modal ui:field="lockScreen">
+		<t:Well >Processing request in progress. Please, wait...</t:Well>
+			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
+				percent="100" />
+		</t:Modal>
 		<t:Form styleName="form-horizontal" action="" method="get">
 			<t:ControlGroup>
-				<t:ControlLabel>Выберите:</t:ControlLabel>
+				<t:ControlLabel>Make a choice:</t:ControlLabel>
 				<t:Controls>
-					<t:RadioButton name="aa1">Пробный</t:RadioButton>
+					<t:RadioButton name="group1" ui:field="trial" checked="true" >Trial (3 days) - Free</t:RadioButton>
+			
+					<t:RadioButton name="group1" ui:field="week">One week - N USD</t:RadioButton>
+				
+					<t:RadioButton name="group1" ui:field="month">One month - M USD</t:RadioButton>
 				</t:Controls>
-				<t:Controls>
-					<t:RadioButton  name="bb2">1 неделя</t:RadioButton>
-				</t:Controls>
-				<t:Controls>
-					<t:RadioButton  name="cc3">1 месяц</t:RadioButton>
-				</t:Controls>
+			</t:ControlGroup>
+			<t:ControlGroup>
+				<g:HTMLPanel>
+					<t:Controls>
+						<g:Image ui:field="paypalButton"
+							url="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></g:Image>
+					</t:Controls>
+				</g:HTMLPanel>
 			</t:ControlGroup>
 		</t:Form>
 	</g:HTMLPanel>

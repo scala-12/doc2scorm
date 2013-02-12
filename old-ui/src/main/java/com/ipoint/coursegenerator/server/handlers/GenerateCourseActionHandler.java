@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.server;
+package com.ipoint.coursegenerator.server.handlers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +42,6 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 
 	@Override
 	public GenerateCourseResult execute(GenerateCourse action, ExecutionContext context) throws ActionException {
-
 		PersistenceManagerFactory pInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 		PersistenceManager pm = pInstance.getPersistenceManager();
 		User user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ipoint.coursegenerator.server.UploadFileName;
 
 @Controller
 public class FileUploadController implements ServletContextAware {

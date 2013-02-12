@@ -106,7 +106,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	public void onClicked(ClickEvent event) {
 		getUiHandlers().generateButtonClicked();
 		generateProgressBar.setVisible(true);
-		waitMessageLabel.setText("Пожалуйста подождите, операция может занять несколько минут");
+		waitMessageLabel.setText("Please, wait a couple of minutes while the document is in a process...");
 		waitMessageLabel.setVisible(true);
 	}
 
@@ -129,7 +129,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 			fileUploadControlGroup.setType(ControlGroupType.NONE);
 			helpBlock.setVisible(false);
 		} else {
-			Window.alert("Выберите документ MS Word (файл с расширением doc или docx)!");
+			Window.alert("You should choose MS Word document (file with doc or docx extension)!");
 		}
 	}
 
@@ -144,9 +144,9 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 			sourceFileName.setValue(((JSONString) response.get("sourceFileName")).stringValue());
 			fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
 			fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
-			helpBlock.setText("Файл успешно загружен!");
+			helpBlock.setText("File has been uploaded successfully!");
 		} catch (UmbrellaException e) {
-			helpBlock.setText("Произошла ошибка при загрузке файла!");
+			helpBlock.setText("An error occured while loading file!");
 			fileUploadProgressBar.setColor(ProgressBar.Color.DANGER);
 			fileUploadControlGroup.setType(ControlGroupType.ERROR);
 		}
@@ -185,14 +185,14 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	public void setGenerateProgressBarCompleted() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
-		waitMessageLabel.setText("Конвертация документа успешно завершена");
+		waitMessageLabel.setText("The document was converted to course sucessfully.");
 	}
 
 	@Override
 	public void setGenerateProgressBarFailed() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.DANGER);
-		waitMessageLabel.setText("Конвертация документа завершилась с ошибкой");
+		waitMessageLabel.setText("The document was failed convert.");
 	}
 
 }

@@ -10,7 +10,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.ipoint.coursegenerator.client.NameTokens;
@@ -46,7 +45,7 @@ public class CourseGeneratorFormPresenter extends
 
 	@Inject
 	public CourseGeneratorFormPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-			PlaceManager placeManager, DispatchAsync dispatcher) {
+			DispatchAsync dispatcher) {
 		super(eventBus, view, proxy);
 		this.dispatcher = dispatcher;
 	}

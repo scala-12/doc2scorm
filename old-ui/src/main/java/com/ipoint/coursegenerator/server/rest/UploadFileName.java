@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.server;
+package com.ipoint.coursegenerator.server.rest;
 
 public class UploadFileName {
     
