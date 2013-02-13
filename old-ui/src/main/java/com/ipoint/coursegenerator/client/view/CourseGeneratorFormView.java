@@ -30,7 +30,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.UmbrellaException;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
-import com.ipoint.coursegenerator.client.presenter.FileSelectUIHandler;
+import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
 
 public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHandler> implements
 		CourseGeneratorFormPresenter.MyView, ChangeHandler, SubmitCompleteHandler {

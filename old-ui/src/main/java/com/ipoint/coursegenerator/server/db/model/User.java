@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.server.db;
+package com.ipoint.coursegenerator.server.db.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +7,7 @@ import java.util.List;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Unique;
 
 @PersistenceCapable
 public class User {
@@ -24,12 +25,13 @@ public class User {
 
 	@PrimaryKey
 	@Persistent(primaryKey="true")
-	private String userId;	
+	private String userId;
 
 	@Persistent
 	private List<PaypalTransaction> transactions;
 	
 	@Persistent
+	@Unique
 	private String userEmail;
 	
 	@Persistent

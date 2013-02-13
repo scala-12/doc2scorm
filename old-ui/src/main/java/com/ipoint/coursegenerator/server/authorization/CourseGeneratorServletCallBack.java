@@ -2,11 +2,13 @@ package com.ipoint.coursegenerator.server.authorization;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +26,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfo;
-import com.ipoint.coursegenerator.server.db.User;
+import com.ipoint.coursegenerator.server.db.model.User;
 
 public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCallbackServlet {
 
@@ -49,16 +51,26 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 			e.printStackTrace();
 		}
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
-		if (userInfo.getEmail() != null && !userInfo.getEmail().isEmpty() && pm.getUserObject(userInfo.getEmail()) == null) {
-			
-			User user = new User((String) req.getSession().getAttribute("userId"), userInfo.getEmail());
-			pm.makePersistent(user);
-			//pm.putUserObject(userInfo.getEmail(), user);
-			pm.flush();
-			pm.close();
+		if (userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()
+				&& pm.getUserObject(userInfo.getEmail()) == null) {
+			Query query = pm.newQuery(User.class);
+			query.setFilter("userEmail == userEmailParam");
+			query.declareParameters("String userEmailParam");
+			@SuppressWarnings("unchecked")
+			List<User> userList = (List<User>) query.execute(userInfo.getEmail());
+			User user = null;
+			if (userList == null || userList.size() == 0) {
+				user = new User((String) req.getSession().getAttribute("userId"), userInfo.getEmail());
+				pm.makePersistent(user);
+				pm.flush();
+				pm.close();
+			} else {
+				user = userList.get(0);
+			}
+			req.getSession().setAttribute("userId", user.getUserId());
 			req.getSession().setAttribute("userEmail", userInfo.getEmail());
 		}
-		resp.sendRedirect("/Coursegenerator.html#order");
+		resp.sendRedirect("/Coursegenerator.html");
 	}
 
 	@Override
@@ -77,11 +89,9 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
 		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(), new JacksonFactory(),
-				"788842293516-ubkjoslfcetkttrujqhpi1of743mkf7m.apps.googleusercontent.com",
-				"4WoW3NAIJBROYuQBBoo-wOcb", Collections.singleton("https://www.googleapis.com/auth/userinfo.email"))
-				.setCredentialStore(
-						new JdoCredentialStore(JDOHelper.getPersistenceManagerFactory("transactions-optional")))
-				.build();
+				"788842293516-ubkjoslfcetkttrujqhpi1of743mkf7m.apps.googleusercontent.com", "4WoW3NAIJBROYuQBBoo-wOcb",
+				Collections.singleton("https://www.googleapis.com/auth/userinfo.email")).setCredentialStore(
+				new JdoCredentialStore(JDOHelper.getPersistenceManagerFactory("transactions-optional"))).build();
 	}
 
 	@Override

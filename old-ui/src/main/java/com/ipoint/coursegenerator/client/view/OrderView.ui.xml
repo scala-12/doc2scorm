@@ -15,13 +15,7 @@
 		<t:Form styleName="form-horizontal" action="" method="get">
 			<t:ControlGroup>
 				<t:ControlLabel>Make a choice:</t:ControlLabel>
-				<t:Controls>
-					<t:RadioButton name="group1" ui:field="trial" checked="true" >Trial (3 days) - Free</t:RadioButton>
-			
-					<t:RadioButton name="group1" ui:field="week">One week - N USD</t:RadioButton>
-				
-					<t:RadioButton name="group1" ui:field="month">One month - M USD</t:RadioButton>
-				</t:Controls>
+				<t:Controls ui:field="radioGroup"></t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
 				<g:HTMLPanel>

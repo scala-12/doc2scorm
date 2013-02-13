@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.client.presenter;
+package com.ipoint.coursegenerator.client.presenter.uihandlers;
 
 import com.gwtplatform.mvp.client.UiHandlers;
 

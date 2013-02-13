@@ -9,15 +9,21 @@
 	<g:HTMLPanel>
 		<t:Form styleName="form-horizontal">
 			<t:ControlGroup>
+				<t:ControlLabel>Name:</t:ControlLabel>
+				<t:Controls>
+					<t:Container ui:field="name"></t:Container>
+				</t:Controls>
+			</t:ControlGroup>
+			<t:ControlGroup>
 				<t:ControlLabel>Description:</t:ControlLabel>
 				<t:Controls>
-					<t:ControlLabel ui:field="description"></t:ControlLabel>
+					<t:Container ui:field="description"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
 				<t:ControlLabel>Price:</t:ControlLabel>
 				<t:Controls>
-					<t:Heading ui:field="price" size="1"></t:Heading>
+					<t:Container ui:field="price"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>

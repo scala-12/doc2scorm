@@ -87,7 +87,7 @@ public class PaypalUtils {
 			ex.printStackTrace();
 		}
 
-		return decoder.get("TOKEN");
+		return decoder.get("ACK");
 	}
 
 	public String getCheckoutCode(String token) {

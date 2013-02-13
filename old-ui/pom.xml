@@ -117,7 +117,7 @@
 				<configuration>
 					<!-- Make sure this path contains your persistent classes! -->
 					<fork>false</fork>
-					<mappingIncludes>**/db/*.class</mappingIncludes>
+					<mappingIncludes>**/model/*.class</mappingIncludes>
 					<verbose>true</verbose>
 					<enhancerName>ASM</enhancerName>
 					<api>JDO</api>

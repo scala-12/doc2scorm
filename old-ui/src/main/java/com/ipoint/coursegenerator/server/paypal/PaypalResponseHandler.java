@@ -17,6 +17,6 @@ public class PaypalResponseHandler extends HttpServlet {
 		String token = req.getParameter("token");
 		String payerID = req.getParameter("PayerID");
 		paypal.getCheckoutCode(token);
-		paypal.executeCheckoutCode(token, payerID, "10.0");
+		
 	}
 }

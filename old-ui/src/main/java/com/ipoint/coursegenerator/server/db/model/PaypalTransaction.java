@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.server.db;
+package com.ipoint.coursegenerator.server.db.model;
 
 import java.util.Date;
 
@@ -22,6 +22,7 @@ public class PaypalTransaction {
 
 	@Persistent
 	private boolean successful;
+		
 
 	public double getAmount() {
 		return amount;

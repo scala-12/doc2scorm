@@ -26,7 +26,7 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		response.setContentType("text/html;charset=UTF-8");
+		//response.setContentType("text/html;charset=UTF-8");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				classLoader.getResourceAsStream("Coursegenerator.html")));

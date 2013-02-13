@@ -21,7 +21,7 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.core.Parser;
-import com.ipoint.coursegenerator.server.db.User;
+import com.ipoint.coursegenerator.server.db.model.User;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 

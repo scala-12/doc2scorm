@@ -13,6 +13,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.ipoint.coursegenerator.client.NameTokens;
+import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
