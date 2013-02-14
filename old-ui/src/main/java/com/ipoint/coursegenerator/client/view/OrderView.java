@@ -60,6 +60,11 @@ public class OrderView extends ViewWithUiHandlers<OrderUiHandlers> implements Or
     	}
     	this.getUiHandlers().onPayPalButtonClicked(checkId);
     }
+    
+    @UiHandler("trialButton")
+    public void onTrialButtonClicked(ClickEvent event) {
+    	this.getUiHandlers().onTrialButtonClicked();
+    }
 
 	@Override
 	public void showOrderPlanList(List<OrderPlan> orderPlanList) {

@@ -16,8 +16,9 @@ public class User {
 		super();
 		this.userId = userId;
 		this.userEmail = userEmail;
-		this.expirationDate = new Date();
+		this.expirationDate = new Date(0);
 		this.transactions = new ArrayList<PaypalTransaction>();
+		this.trialUsed = false;
 	}
 
 	public User() {
@@ -45,6 +46,9 @@ public class User {
 	
 	@Persistent
 	private int currentPlanCount;
+	
+	@Persistent
+	private boolean trialUsed;
 
 	public String getUserId() {
 		return userId;
@@ -104,5 +108,21 @@ public class User {
 	
 	public void addTransaction(PaypalTransaction transaction) {
 		this.transactions.add(transaction);
+	}
+	
+	public void increaseCurrentConvertionCount() {
+		this.currentConvertionCount++;
+	}
+	
+	public void increaseTotalConvertionCount() {
+		this.totalConvertionCount++;
+	}
+
+	public boolean isTrialUsed() {
+		return trialUsed;
+	}
+
+	public void setTrialUsed(boolean trialUsed) {
+		this.trialUsed = trialUsed;
 	}
 }

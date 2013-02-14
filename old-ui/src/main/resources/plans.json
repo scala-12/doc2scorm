@@ -5,7 +5,7 @@
 	"expiresIn" : 3,
 	"expiresAfter" : 0,
 	"description" : "It is free trial plan.",
-	"active" : true
+	"active" : false
 }, {
 	"name" : "One Week",
 	"type" : "TIME",

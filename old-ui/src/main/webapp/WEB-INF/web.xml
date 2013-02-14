@@ -19,7 +19,9 @@
 		<listener-class>org.springframework.web.context.request.RequestContextListener
 		</listener-class>
 	</listener>
-
+	<listener>
+	    <listener-class>com.ipoint.coursegenerator.server.handlers.CourseGeneratorServletContextListener</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>dispatch</servlet-name>
 		<servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -79,7 +81,7 @@
 		       
 		<servlet-name>MarketplaceOrderHandler</servlet-name>
 		       
-		<url-pattern>/order*</url-pattern>
+		<url-pattern>/purchase</url-pattern>
 		   
 	</servlet-mapping>
 
@@ -90,8 +92,13 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
+		<url-pattern>/orderchoice</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<url-pattern>/Coursegenerator.html</url-pattern>
 	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack
@@ -102,4 +109,12 @@
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
 	 
+	<filter>
+	    <filter-name>ExpirationFilter</filter-name>
+	    <filter-class>com.ipoint.coursegenerator.server.ExpirationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>ExpirationFilter</filter-name>
+	    <url-pattern>/Coursegenerator.html</url-pattern>
+	</filter-mapping>
 </web-app>

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jdoconfig xmlns="http://java.sun.com/xml/ns/jdo/jdoconfig"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdoconfig http://java.sun.com/xml/ns/jdo/jdoconfig_3_0.xsd">
-    <persistence-manager-factory name="transactions-optional">
-        <property name="javax.jdo.PersistenceManagerFactoryClass"
-            value="org.datanucleus.api.jdo.JDOPersistenceManagerFactory" />
-<!--         <property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:mem:hardfidget" /> -->
-<!--         <property name="javax.jdo.option.Mapping" value="hsqldb" /> -->
- 		<property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:file:
- 		    bd" />
-		<property name="javax.jdo.option.ConnectionDriverName"
-                        value="org.hsqldb.jdbcDriver" />
-        <property name="datanucleus.Mapping" value="hsqldb" />
-        <property name="javax.jdo.option.ConnectionUserName" value="sa" />
-        <property name="javax.jdo.option.ConnectionPassword" value="" />
-        <property name="javax.jdo.option.NontransactionalRead" value="true" />
-        <property name="javax.jdo.option.NontransactionalWrite"
-            value="true" />
-        <property name="javax.jdo.option.RetainValues" value="true" />
-        <property name="datanucleus.storeManagerType" value="rdbms" />
-        <property name="datanucleus.autoCreateTables" value="true" />
-    </persistence-manager-factory>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jdo/jdoconfig http://java.sun.com/xml/ns/jdo/jdoconfig_3_0.xsd">
+	<persistence-manager-factory name="transactions-optional">
+		<property name="javax.jdo.PersistenceManagerFactoryClass"
+			value="org.datanucleus.api.jdo.JDOPersistenceManagerFactory" />
+		<!-- <property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:mem:hardfidget" 
+			/> -->
+		<!-- <property name="javax.jdo.option.Mapping" value="hsqldb" /> -->
+		<property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:file:
+ 		    coursegeneratordb" />
+		<property name="javax.jdo.option.ConnectionDriverName" value="org.hsqldb.jdbcDriver" />
+		<property name="datanucleus.Mapping" value="hsqldb" />
+		<property name="javax.jdo.option.ConnectionUserName" value="sa" />
+		<property name="javax.jdo.option.ConnectionPassword" value="" />
+		<property name="javax.jdo.option.NontransactionalRead" value="true" />
+		<property name="javax.jdo.option.NontransactionalWrite"
+			value="true" />
+		<property name="javax.jdo.option.RetainValues" value="true" />
+		<property name="datanucleus.storeManagerType" value="rdbms" />
+		<property name="datanucleus.autoCreateTables" value="true" />
+	</persistence-manager-factory>
 </jdoconfig> 

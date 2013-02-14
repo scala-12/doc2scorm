@@ -46,11 +46,12 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 			trans.begin();
 			PaypalTransaction transaction = new PaypalTransaction();
 			User user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
+			pm.refresh(user);
 			if (!result.equals("Success")) {
 				transaction.setAmount(plan.getAmount());
 				transaction.setSuccessful(false);
 				transaction.setTimestamp(new Date());
-				throw new ActionException("Failed execute PayPal checkout.");
+				throw new ActionException("Failed to execute PayPal checkout.");
 			} else {
 				transaction.setAmount(plan.getAmount());
 				transaction.setSuccessful(true);

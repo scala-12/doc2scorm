@@ -20,6 +20,8 @@ import com.ipoint.coursegenerator.shared.CheckoutWithPaypal;
 import com.ipoint.coursegenerator.shared.CheckoutWithPaypalResult;
 import com.ipoint.coursegenerator.shared.GetOrderPlanList;
 import com.ipoint.coursegenerator.shared.GetOrderPlanListResult;
+import com.ipoint.coursegenerator.shared.GetTrialPeriod;
+import com.ipoint.coursegenerator.shared.GetTrialPeriodResult;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
 public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresenter.MyProxy> implements OrderUiHandlers {
@@ -46,7 +48,7 @@ public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresen
 		super.onBind();
 		this.getView().setUiHandlers(this);
 	}
-	
+
 	@Override
 	protected void onReveal() {
 		super.onReveal();
@@ -62,7 +64,7 @@ public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresen
 			}
 		});
 	}
-	
+
 	@Override
 	protected void revealInParent() {
 		RevealContentEvent.fire(this, CourseGeneratorMainPresenter.SLOT_mainContent, this);
@@ -81,6 +83,26 @@ public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresen
 				Window.open(
 						"https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token="
 								+ result.getToken(), "_self", null);
+			}
+		});
+	}
+
+	@Override
+	public void onTrialButtonClicked() {
+		GetTrialPeriod getTrialPeriod = new GetTrialPeriod();
+		dispatcher.execute(getTrialPeriod, new AsyncCallback<GetTrialPeriodResult>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("An error occured while processing request.");
+			}
+
+			@Override
+			public void onSuccess(GetTrialPeriodResult result) {
+				if (result.isTrialUsed()) {
+					Window.alert("You already has a trial preiod in use or your trial period expired.");
+				} else {
+					Window.open("/Coursegenerator.html#coursegenerator", "_self", null);
+				}
 			}
 		});
 	}

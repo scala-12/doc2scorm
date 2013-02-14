@@ -18,7 +18,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
-import com.ipoint.coursegenerator.server.paypal.PaypalUtils;
 
 public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet {
 

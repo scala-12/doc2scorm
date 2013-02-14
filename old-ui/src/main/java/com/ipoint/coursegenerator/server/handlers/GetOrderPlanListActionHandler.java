@@ -26,9 +26,9 @@ public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlan
 	public GetOrderPlanListResult execute(GetOrderPlanList action, ExecutionContext context) throws ActionException {
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
 		List<OrderPlan> orderPlanList = new ArrayList<OrderPlan>();
-		List results = (List)pm.newQuery(OrderPlan.class).execute();
-		for (Object obj : results) {
-			OrderPlan plan = (OrderPlan)obj;
+		@SuppressWarnings("unchecked")
+		List<OrderPlan> results = (List<OrderPlan>)pm.newQuery(OrderPlan.class).execute();
+		for (OrderPlan plan : results) {
 			if (plan.isActive()) {
 				orderPlanList.add(plan);
 			}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
@@ -45,22 +46,32 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 		PersistenceManagerFactory pInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 		PersistenceManager pm = pInstance.getPersistenceManager();
 		User user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
+		pm.refresh(user);
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
-		try {
-			String tmpPath = servletContext.getRealPath(File.separator + "tmp");
-			String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator
-					+ action.getTemplateForCoursePages());
-			String courseFile = parser.parse(
-					new FileInputStream(tmpPath + File.separator + action.getSourceDocFileUuid()),
-					action.getHeaderLevel(), templateDir, action.getCourseName(),
-					tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir", action.getFileType());
-			generateCourseResult = new GenerateCourseResult("/tmp/" + action.getSourceDocFileUuid() + "_dir/"
-					+ courseFile);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (user != null && (user.getExpirationDate().getTime() > System.currentTimeMillis())) {
+			try {
+				String tmpPath = servletContext.getRealPath(File.separator + "tmp");
+				String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator
+						+ action.getTemplateForCoursePages());
+				String courseFile = parser.parse(
+						new FileInputStream(tmpPath + File.separator + action.getSourceDocFileUuid()),
+						action.getHeaderLevel(), templateDir, action.getCourseName(),
+						tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir", action.getFileType());
+				Transaction trans = pm.currentTransaction();
+				trans.begin();
+				user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
+				pm.refresh(user);
+				user.increaseCurrentConvertionCount();
+				user.increaseTotalConvertionCount();
+				trans.commit();
+				generateCourseResult = new GenerateCourseResult("/tmp/" + action.getSourceDocFileUuid() + "_dir/"
+						+ courseFile);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return generateCourseResult;
 	}

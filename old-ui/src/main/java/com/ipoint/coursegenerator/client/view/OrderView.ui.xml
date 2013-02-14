@@ -8,7 +8,7 @@
 
 	<g:HTMLPanel>
 		<t:Modal ui:field="lockScreen">
-		<t:Well >Processing request in progress. Please, wait...</t:Well>
+			<t:Well>Processing request in progress. Please, wait...</t:Well>
 			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
 				percent="100" />
 		</t:Modal>
@@ -22,6 +22,8 @@
 					<t:Controls>
 						<g:Image ui:field="paypalButton"
 							url="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></g:Image>
+						<t:Strong>OR</t:Strong>
+						<t:Button ui:field="trialButton">Try free (3 days)</t:Button>
 					</t:Controls>
 				</g:HTMLPanel>
 			</t:ControlGroup>

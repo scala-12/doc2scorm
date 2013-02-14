@@ -42,11 +42,12 @@ public class ExpirationFilter implements Filter {
 			if (user != null
 					&& (user.getExpirationDate().getTime() < System.currentTimeMillis() || user
 							.getCurrentConvertionCount() > user.getCurrentPlanCount())) {
+				trans.commit();
 				response.sendRedirect("/orderchoice");
 			} else {
+				trans.commit();
 				chain.doFilter(req, resp);
 			}
-			trans.commit();
 		} else {
 			chain.doFilter(req, resp);
 		}

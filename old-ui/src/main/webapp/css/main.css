@@ -16,3 +16,17 @@ body {
 .page-header-center {
 	text-align: center;
 }
+
+.controls>.container {
+	width: auto;
+}
+
+.controls>img {
+	vertical-align: top;
+	padding-top: 3px;
+}
+
+.controls>strong {
+    padding-left: 8px;
+    padding-right: 8px;
+}
