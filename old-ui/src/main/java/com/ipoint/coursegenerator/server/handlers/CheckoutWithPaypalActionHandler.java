@@ -35,10 +35,12 @@ public class CheckoutWithPaypalActionHandler implements ActionHandler<CheckoutWi
 		PersistenceManager pm = pmfInstance.getPersistenceManager();
 		try {
 			OrderPlan plan = pm.getObjectById(OrderPlan.class, Long.parseLong(action.getSubscriptionId()));
+			plan = pm.detachCopy(plan);
 			String token = paypal.setCheckoutCode(
 					SERVER_NAME + "purchase?subscriptionId=" + action.getSubscriptionId(), SERVER_NAME + "cancel.html",
 					String.valueOf(plan.getAmount()), "Any", "USD");
 			httpSession.setAttribute("subscription", plan);
+			pm.close();
 			return new CheckoutWithPaypalResult(token);
 		} catch (PaypalSetCheckoutCodeException e) {
 			e.printStackTrace();

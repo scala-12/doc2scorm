@@ -67,7 +67,7 @@
 				</div> -->
 			<t:ControlGroup>
 				<t:Controls>
-					<t:SubmitButton styleName="btn" ui:field="generateButton">Сгенерировать</t:SubmitButton>
+					<t:SubmitButton styleName="btn" ui:field="generateButton" enabled="false">Сгенерировать</t:SubmitButton>
 				</t:Controls>
 			</t:ControlGroup>
 		</t:Form>

@@ -15,8 +15,6 @@ import com.ipoint.coursegenerator.shared.GetOrderPlanList;
 import com.ipoint.coursegenerator.server.handlers.GetOrderPlanListActionHandler;
 import com.ipoint.coursegenerator.shared.BuyNow;
 import com.ipoint.coursegenerator.server.handlers.BuyNowActionHandler;
-import com.ipoint.coursegenerator.shared.GetTrialPeriod;
-import com.ipoint.coursegenerator.server.handlers.GetTrialPeriodActionHandler;
 
 @Import({ DefaultModule.class })
 public class CourseGeneratorServerModule extends HandlerModule {
@@ -28,13 +26,11 @@ public class CourseGeneratorServerModule extends HandlerModule {
 		bindHandler(CheckoutWithPaypal.class, CheckoutWithPaypalActionHandler.class);
 
 		bindHandler(GetPurchaseInfo.class, GetPurchaseInfoActionHandler.class);
-	
+
 		bindHandler(GetOrderPlanList.class, GetOrderPlanListActionHandler.class);
 
 		bindHandler(BuyNow.class, BuyNowActionHandler.class);
-
-		bindHandler(GetTrialPeriod.class, GetTrialPeriodActionHandler.class);
-}
+	}
 
 	@Bean
 	public GenerateCourseActionHandler getGenerateCourseActionHandler() {
@@ -59,10 +55,5 @@ public class CourseGeneratorServerModule extends HandlerModule {
 	@Bean
 	public BuyNowActionHandler getBuyNowActionHandler() {
 		return new BuyNowActionHandler();
-	}
-
-	@Bean
-	public GetTrialPeriodActionHandler getGetTrialPeriodActionHandler() {
-		return new GetTrialPeriodActionHandler();
 	}
 }

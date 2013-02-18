@@ -4,72 +4,68 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
 @PersistenceCapable
-public class User {
+public class GoogleAppsDomain {
 
-	public User(String userId, String userEmail, GoogleAppsDomain domain) {
-		super();
-		this.userId = userId;
-		this.userEmail = userEmail;
-		this.expirationDate = new Date(0);
-		this.transactions = new ArrayList<PaypalTransaction>();
-		this.trialUsed = false;
-		this.domain = domain;
-	}
+	@Persistent(mappedBy = "domain")
+	private List<User> users;
 
-	public User() {
-	}
-
-	@PrimaryKey
-	@Persistent(primaryKey="true")
-	private String userId;
-
-	@Persistent
-	private List<PaypalTransaction> transactions;
-	
 	@Persistent
 	@Unique
-	private String userEmail;
-	
-	@Persistent
-	private GoogleAppsDomain domain;
-		
+	private String name;
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private long id;
+
 	@Persistent
 	private int currentConvertionCount;
-	
+
 	@Persistent
 	private int totalConvertionCount;
-	
+
 	@Persistent
 	private Date expirationDate;
-	
+
 	@Persistent
 	private int currentPlanCount;
-	
+
 	@Persistent
 	private boolean trialUsed;
 
-	public String getUserId() {
-		return userId;
+	public GoogleAppsDomain(String name){
+		this.name = name;
+		this.expirationDate = new Date(0);
+		this.trialUsed = false;
+		users = new ArrayList<User>();
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public List<User> getUsers() {
+		return users;
 	}
 
-	public String getUserEmail() {
-		return userEmail;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public String getName() {
+		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public long getId() {
+		return id;
+	}
+	
 	public int getCurrentConvertionCount() {
 		return currentConvertionCount;
 	}
@@ -102,16 +98,12 @@ public class User {
 		this.currentPlanCount = currentPlanCount;
 	}
 
-	public List<PaypalTransaction> getTransactions() {
-		return transactions;
+	public boolean isTrialUsed() {
+		return trialUsed;
 	}
 
-	public void setTransactions(List<PaypalTransaction> transactions) {
-		this.transactions = transactions;
-	}
-	
-	public void addTransaction(PaypalTransaction transaction) {
-		this.transactions.add(transaction);
+	public void setTrialUsed(boolean trialUsed) {
+		this.trialUsed = trialUsed;
 	}
 	
 	public void increaseCurrentConvertionCount() {
@@ -121,20 +113,9 @@ public class User {
 	public void increaseTotalConvertionCount() {
 		this.totalConvertionCount++;
 	}
-
-	public boolean isTrialUsed() {
-		return trialUsed;
+	
+	public void addUser(User user) {
+		users.add(user);
 	}
-
-	public void setTrialUsed(boolean trialUsed) {
-		this.trialUsed = trialUsed;
-	}
-
-	public GoogleAppsDomain getDomain() {
-		return domain;
-	}
-
-	public void setDomain(GoogleAppsDomain domain) {
-		this.domain = domain;
-	}
+	
 }

@@ -4,5 +4,5 @@ import com.gwtplatform.mvp.client.UiHandlers;
 
 public interface OrderUiHandlers extends UiHandlers {
 	public void onPayPalButtonClicked(String subscriptionId);
-	public void onTrialButtonClicked();
+	public void showLockingDialog();
 }

@@ -85,7 +85,7 @@ public class PurchaseConfirmingPresenter extends
 			
 			@Override
 			public void onSuccess(BuyNowResult result) {
-				Window.open("/Coursegenerator.html", "_self", null);
+				Window.open(result.getRedirectUrl(), "_self", null);
 			}
 		});
 	}

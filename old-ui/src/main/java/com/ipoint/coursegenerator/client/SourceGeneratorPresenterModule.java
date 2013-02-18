@@ -12,11 +12,13 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
-import com.ipoint.coursegenerator.client.presenter.OrderPresenter;
+import com.ipoint.coursegenerator.client.presenter.PlanChoiceWidgetPresenter;
+import com.ipoint.coursegenerator.client.presenter.OrderWidgetPresenter;
 import com.ipoint.coursegenerator.client.presenter.PurchaseConfirmingPresenter;
 import com.ipoint.coursegenerator.client.view.CourseGeneratorFormView;
 import com.ipoint.coursegenerator.client.view.CourseGeneratorMainView;
-import com.ipoint.coursegenerator.client.view.OrderView;
+import com.ipoint.coursegenerator.client.view.PlanChoiceWidgetView;
+import com.ipoint.coursegenerator.client.view.OrderWidgetView;
 import com.ipoint.coursegenerator.client.view.PurchaseConfirmingView;
 
 public class SourceGeneratorPresenterModule extends AbstractPresenterModule {
@@ -41,8 +43,11 @@ public class SourceGeneratorPresenterModule extends AbstractPresenterModule {
 		bindPresenter(CourseGeneratorFormPresenter.class, CourseGeneratorFormPresenter.MyView.class,
 				CourseGeneratorFormView.class, CourseGeneratorFormPresenter.MyProxy.class);
 
-		bindPresenter(OrderPresenter.class, OrderPresenter.MyView.class, OrderView.class, OrderPresenter.MyProxy.class);
-		
-		bindPresenter(PurchaseConfirmingPresenter.class, PurchaseConfirmingPresenter.MyView.class, PurchaseConfirmingView.class, PurchaseConfirmingPresenter.MyProxy.class);
+		bindPresenterWidget(PlanChoiceWidgetPresenter.class, PlanChoiceWidgetPresenter.MyView.class, PlanChoiceWidgetView.class);
+
+		bindPresenter(PurchaseConfirmingPresenter.class, PurchaseConfirmingPresenter.MyView.class,
+				PurchaseConfirmingView.class, PurchaseConfirmingPresenter.MyProxy.class);
+
+		bindPresenterWidget(OrderWidgetPresenter.class, OrderWidgetPresenter.MyView.class, OrderWidgetView.class);
 	}
 }

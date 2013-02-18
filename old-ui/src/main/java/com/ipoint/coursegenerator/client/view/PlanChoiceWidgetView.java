@@ -15,20 +15,18 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import com.ipoint.coursegenerator.client.presenter.OrderPresenter;
+import com.ipoint.coursegenerator.client.presenter.PlanChoiceWidgetPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.OrderUiHandlers;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
-public class OrderView extends ViewWithUiHandlers<OrderUiHandlers> implements OrderPresenter.MyView {
+public class PlanChoiceWidgetView extends ViewWithUiHandlers<OrderUiHandlers> implements PlanChoiceWidgetPresenter.MyView {
 
 	private final Widget widget;
 	
 	@UiField
 	Image paypalButton;
 	
-	@UiField
-	Modal lockScreen;
-	
+
 	@UiField
 	Controls radioGroup;
 	
@@ -39,19 +37,18 @@ public class OrderView extends ViewWithUiHandlers<OrderUiHandlers> implements Or
 		return widget;
 	}
 	
-	public interface Binder extends UiBinder<Widget, OrderView> {
+	public interface Binder extends UiBinder<Widget, PlanChoiceWidgetView> {
     }
 
     @Inject
-    public OrderView(final Binder binder) {
+    public PlanChoiceWidgetView(final Binder binder) {
         widget = binder.createAndBindUi(this);
-        paypalButton.getElement().getStyle().setCursor(Cursor.POINTER); 
-        
+        paypalButton.getElement().getStyle().setCursor(Cursor.POINTER);        
     }
 
     @UiHandler("paypalButton")
     public void onPayPalButtonClicked(ClickEvent event) {
-    	lockScreen.show();
+    	this.getUiHandlers().showLockingDialog();
     	String checkId = "";
     	for (RadioButton button : radioItems) {
     		if (button.getValue()) {
@@ -61,12 +58,7 @@ public class OrderView extends ViewWithUiHandlers<OrderUiHandlers> implements Or
     	this.getUiHandlers().onPayPalButtonClicked(checkId);
     }
     
-    @UiHandler("trialButton")
-    public void onTrialButtonClicked(ClickEvent event) {
-    	this.getUiHandlers().onTrialButtonClicked();
-    }
-
-	@Override
+    @Override
 	public void showOrderPlanList(List<OrderPlan> orderPlanList) {
 		radioItems = new ArrayList<RadioButton>();
 		radioGroup.clear();

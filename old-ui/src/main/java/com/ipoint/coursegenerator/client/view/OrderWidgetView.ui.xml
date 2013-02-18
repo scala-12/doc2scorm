@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	xmlns:t="urn:import:com.github.gwtbootstrap.client.ui"
+	ui:generateLocales='default'>
+
+	<t:Nav alignment="RIGHT">
+		<t:NavLink ui:field="buy">Buy</t:NavLink>
+	</t:Nav>
+</ui:UiBinder>

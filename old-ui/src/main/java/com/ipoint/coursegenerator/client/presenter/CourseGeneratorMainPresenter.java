@@ -13,34 +13,70 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootContentEvent;
 import com.ipoint.coursegenerator.client.NameTokens;
 
-public class CourseGeneratorMainPresenter
-	extends
-	Presenter<CourseGeneratorMainPresenter.MyView, CourseGeneratorMainPresenter.MyProxy> {
+public class CourseGeneratorMainPresenter extends
+		Presenter<CourseGeneratorMainPresenter.MyView, CourseGeneratorMainPresenter.MyProxy> {
 
-    public interface MyView extends View {
-    }
+	public interface MyView extends View {
+		void showLockingDialog();
 
-    @ContentSlot
-    public static final Type<RevealContentHandler<?>> SLOT_mainContent = new Type<RevealContentHandler<?>>();
-    
-    @ProxyCodeSplit
-    @NameToken(NameTokens.main)
-    public interface MyProxy extends ProxyPlace<CourseGeneratorMainPresenter> {
-    }
+		void setUsername(String username);
 
-    @Inject
-    public CourseGeneratorMainPresenter(final EventBus eventBus, final MyView view,
-    	final MyProxy proxy) {
-        super(eventBus, view, proxy);
-    }
+		void setDaysRemains(int daysRemains);
 
-    @Override
-    protected void revealInParent() {
-        RevealRootContentEvent.fire(this, this);        
-    }
+	}
 
-    @Override
-    protected void onBind() {
-        super.onBind();        
-    }
+	@ContentSlot
+	public static final Type<RevealContentHandler<?>> SLOT_mainContent = new Type<RevealContentHandler<?>>();
+
+	@ContentSlot
+	public static final Type<RevealContentHandler<?>> SLOT_NAVBAR_CONTENT = new Type<RevealContentHandler<?>>();
+
+	@ProxyCodeSplit
+	@NameToken(NameTokens.main)
+	public interface MyProxy extends ProxyPlace<CourseGeneratorMainPresenter> {
+	}
+
+	private PlanChoiceWidgetPresenter planChoiceWidgetPresenter;
+	private CourseGeneratorFormPresenter courseGeneratorFormPresenter;
+
+	@Inject
+	public CourseGeneratorMainPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
+			final PlanChoiceWidgetPresenter planChoiceWidgetPresenter,
+			final CourseGeneratorFormPresenter courseGeneratorFormPresenter) {
+		super(eventBus, view, proxy);
+		this.planChoiceWidgetPresenter = planChoiceWidgetPresenter;
+		this.courseGeneratorFormPresenter = courseGeneratorFormPresenter;
+	}
+
+	@Override
+	protected void revealInParent() {
+		RevealRootContentEvent.fire(this, this);
+	}
+
+	@Override
+	protected void onBind() {
+		super.onBind();
+		planChoiceWidgetPresenter.setMainPresenter(this);
+	}
+
+	@Override
+	protected void onReveal() {
+		super.onReveal();
+		setInSlot(SLOT_NAVBAR_CONTENT, planChoiceWidgetPresenter);
+	}
+
+	public void showLockingDialog() {
+		getView().showLockingDialog();
+	}
+
+	public void setUsername(String username) {
+		getView().setUsername(username);
+	}
+
+	public void setDaysRemains(int daysRemains) {
+		getView().setDaysRemains(daysRemains);
+		if (daysRemains > 0) {
+			courseGeneratorFormPresenter.enableGenerateButton();
+		}
+	}
 }

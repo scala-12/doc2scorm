@@ -14,16 +14,6 @@ public class MarketplaceOrderHandler extends HttpServlet {
 	
 	private static final long serialVersionUID = -2734267290216150767L;
 
-	private static final String EDITION_PARAMETER = "edition"; 
-	
-	private static final String PURCHASE_TOKEN_PARAMETER = "appsmarket.purchaseToken";
-	
-	private static final String TRIAL = "trial";
-	
-	private static final String ONE_WEEK = "week";
-	
-	private static final String ONE_MONTH = "month";
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String token = req.getParameter("token");

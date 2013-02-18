@@ -12,6 +12,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
+import com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletAuth;
+import com.ipoint.coursegenerator.server.authorization.GoogleAuthorizationUtils;
+import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 import com.ipoint.coursegenerator.server.db.model.PaypalTransaction;
 import com.ipoint.coursegenerator.server.db.model.User;
 import com.ipoint.coursegenerator.server.paypal.PaypalUtils;
@@ -36,6 +39,7 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 	@Override
 	public BuyNowResult execute(BuyNow action, ExecutionContext context) throws ActionException {
 		PaypalUtils paypal = new PaypalUtils();
+		BuyNowResult buyNowResult = null;
 		String token = (String) httpSession.getAttribute("paypalToken");
 		String payerID = (String) httpSession.getAttribute("paypalPayerID");
 		OrderPlan plan = (OrderPlan) httpSession.getAttribute("subscription");
@@ -56,12 +60,29 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 				transaction.setAmount(plan.getAmount());
 				transaction.setSuccessful(true);
 				transaction.setTimestamp(new Date());
+				GoogleAppsDomain domain = user.getDomain();
+				pm.refresh(domain);
 				if (plan.getType().equals(OrderPlanType.TIME)) {
 					Calendar calendar = Calendar.getInstance();
-					calendar.add(Calendar.DAY_OF_MONTH, plan.getExpiresIn());					
+					calendar.add(Calendar.DAY_OF_MONTH, plan.getExpiresIn());
 					user.setExpirationDate(calendar.getTime());
+					if (domain != null) {
+						domain.setExpirationDate(calendar.getTime());
+					}
 				} else if (plan.getType().equals(OrderPlanType.COUNT)) {
 					user.setCurrentPlanCount(plan.getExpiresAfter());
+					if (domain != null) {
+						domain.setCurrentPlanCount(user.getCurrentPlanCount());
+					}
+				}
+				if (domain != null
+						&& httpSession.getAttribute(CourseGeneratorServletAuth.PURCHASE_TOKEN_PARAMETER) != null) {
+					buyNowResult = new BuyNowResult("https://www.google.com/a/cpanel/" + domain.getName()
+							+ "/DomainAppInstall?appId=" + GoogleAuthorizationUtils.APPLICATION_ID
+							+ "&productListingId=" + GoogleAuthorizationUtils.PRODUCT_LISTING_ID
+							+ "&editionId&paymentModel=PAID");
+				} else {
+					buyNowResult = new BuyNowResult("/Coursegenerator.html");
 				}
 			}
 			user.addTransaction(transaction);
@@ -69,7 +90,7 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 		} else {
 			throw new ActionException("Required parameters are missing.");
 		}
-		return null;
+		return buyNowResult;
 	}
 
 	@Override

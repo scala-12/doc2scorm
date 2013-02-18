@@ -1,19 +1,53 @@
 package com.ipoint.coursegenerator.client.view;
 
+import com.github.gwtbootstrap.client.ui.DropdownContainer;
+import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.Nav;
+import com.github.gwtbootstrap.client.ui.NavHeader;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewImpl;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
 
-public class CourseGeneratorMainView extends ViewImpl implements CourseGeneratorMainPresenter.MyView {
+public class CourseGeneratorMainView extends ViewImpl implements CourseGeneratorMainPresenter.MyView,
+		NativePreviewHandler, ClickHandler {
 
 	private final Widget widget;
 
 	@UiField
 	HTMLPanel mainContent;
+
+	@UiField
+	FlowPanel buyPanel;
+
+	@UiField
+	Modal lockScreen;
+
+	@UiField
+	HTMLPanel panel;
+
+	@UiField
+	NavHeader username;
+
+	@UiField
+	NavHeader subscriptionStatus;
+
+	@UiField
+	DropdownContainer dropdown;
+
+	@UiField
+	Nav buyProNav;
 
 	public interface Binder extends UiBinder<Widget, CourseGeneratorMainView> {
 	}
@@ -21,6 +55,9 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 	@Inject
 	public CourseGeneratorMainView(final Binder binder) {
 		widget = binder.createAndBindUi(this);
+		Event.addNativePreviewHandler(this);
+		buyPanel.addHandler(this, ClickEvent.getType());
+		panel.addHandler(this, ClickEvent.getType());
 	}
 
 	@Override
@@ -33,6 +70,46 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 		if (slot == CourseGeneratorMainPresenter.SLOT_mainContent) {
 			mainContent.clear();
 			mainContent.add(content);
+		} else if (slot == CourseGeneratorMainPresenter.SLOT_NAVBAR_CONTENT) {
+			buyPanel.clear();
+			buyPanel.add(content);
+		}
+	}
+
+	@Override
+	public void showLockingDialog() {
+		lockScreen.show();
+	}
+
+	@Override
+	public void onPreviewNativeEvent(NativePreviewEvent event) {
+		NativeEvent ne = event.getNativeEvent();
+		if (ne.getType().equalsIgnoreCase("click")) {
+			if (buyPanel.getAbsoluteLeft() != 0) {
+				if ((ne.getClientX() < buyPanel.getAbsoluteLeft() || ne.getClientX() > (buyPanel.getAbsoluteLeft() + buyPanel
+						.getOffsetWidth()))
+						|| (ne.getClientY() < buyPanel.getAbsoluteTop() || (ne.getClientY() > buyPanel.getAbsoluteTop()
+								+ buyPanel.getOffsetHeight()))) {
+					dropdown.fireEvent(event);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onClick(ClickEvent event) {
+		GWT.log(event.getSource().toString());
+	}
+
+	@Override
+	public void setUsername(String username) {
+		this.username.setText(username);
+	}
+
+	@Override
+	public void setDaysRemains(int daysRemains) {
+		if (daysRemains > 0) {
+			this.subscriptionStatus.setText("You have " + daysRemains + " days remained.");
 		}
 	}
 }

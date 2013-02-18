@@ -108,13 +108,4 @@
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
-	 
-	<filter>
-	    <filter-name>ExpirationFilter</filter-name>
-	    <filter-class>com.ipoint.coursegenerator.server.ExpirationFilter</filter-class>
-	</filter>
-	<filter-mapping>
-	    <filter-name>ExpirationFilter</filter-name>
-	    <url-pattern>/Coursegenerator.html</url-pattern>
-	</filter-mapping>
 </web-app>

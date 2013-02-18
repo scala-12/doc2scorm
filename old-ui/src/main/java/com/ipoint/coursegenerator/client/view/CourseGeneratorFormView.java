@@ -10,6 +10,7 @@ import com.github.gwtbootstrap.client.ui.HelpBlock;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.github.gwtbootstrap.client.ui.ProgressBar;
+import com.github.gwtbootstrap.client.ui.SubmitButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -78,6 +79,9 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 
 	@UiField
 	HelpBlock elementsPopup;
+	
+	@UiField
+	SubmitButton generateButton;
 
 	public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
 	}
@@ -193,6 +197,11 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.DANGER);
 		waitMessageLabel.setText("The document was failed convert.");
+	}
+
+	@Override
+	public void enableGenerateButton() {
+		generateButton.setEnabled(true);
 	}
 
 }

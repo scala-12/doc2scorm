@@ -9,7 +9,7 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.ipoint.coursegenerator.shared.OrderPlanType;
 
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 public class OrderPlan implements Serializable {
 
 	private static final long serialVersionUID = -2139136149949719508L;

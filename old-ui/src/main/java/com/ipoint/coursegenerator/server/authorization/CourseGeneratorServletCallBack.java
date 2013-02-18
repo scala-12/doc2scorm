@@ -1,7 +1,7 @@
 package com.ipoint.coursegenerator.server.authorization;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,16 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfo;
+import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 import com.ipoint.coursegenerator.server.db.model.User;
 
 public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCallbackServlet {
@@ -58,9 +56,28 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 			query.declareParameters("String userEmailParam");
 			@SuppressWarnings("unchecked")
 			List<User> userList = (List<User>) query.execute(userInfo.getEmail());
+			query = pm.newQuery(GoogleAppsDomain.class);
+			query.setFilter("name == nameParam");
+			query.declareParameters("String nameParam");
+			@SuppressWarnings("unchecked")
+			List<GoogleAppsDomain> domainList = (List<GoogleAppsDomain>) query.execute(userInfo.getHd());
 			User user = null;
 			if (userList == null || userList.size() == 0) {
-				user = new User((String) req.getSession().getAttribute("userId"), userInfo.getEmail());
+				GoogleAppsDomain domain = null;
+				if (domainList.size() > 0) {
+					domain = domainList.get(0);
+				} else if (userInfo.getHd() != null) {
+					domain = new GoogleAppsDomain(userInfo.getHd());					
+				}				
+				user = new User((String) req.getSession().getAttribute("userId"), userInfo.getEmail(), domain);
+				if (domain != null) {
+					domain.addUser(user);
+					pm.makePersistent(domain);
+				}
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.DAY_OF_MONTH, 3);
+				user.setExpirationDate(calendar.getTime());
+				user.setTrialUsed(true);
 				pm.makePersistent(user);
 				pm.flush();
 				pm.close();
@@ -81,17 +98,12 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 
 	@Override
 	protected String getRedirectUri(HttpServletRequest req) throws ServletException, IOException {
-		GenericUrl url = new GenericUrl(req.getRequestURL().toString());
-		url.setRawPath("/oauth2callback");
-		return url.build();
+		return GoogleAuthorizationUtils.getRedirectUri(req);
 	}
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
-		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(), new JacksonFactory(),
-				"788842293516-ubkjoslfcetkttrujqhpi1of743mkf7m.apps.googleusercontent.com", "4WoW3NAIJBROYuQBBoo-wOcb",
-				Collections.singleton("https://www.googleapis.com/auth/userinfo.email")).setCredentialStore(
-				new JdoCredentialStore(JDOHelper.getPersistenceManagerFactory("transactions-optional"))).build();
+		return GoogleAuthorizationUtils.newFlow();
 	}
 
 	@Override

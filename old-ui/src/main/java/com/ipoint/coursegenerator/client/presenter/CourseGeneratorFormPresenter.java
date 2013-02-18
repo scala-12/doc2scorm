@@ -35,6 +35,8 @@ public class CourseGeneratorFormPresenter extends
 		public void setGenerateProgressBarCompleted();
 
 		public void setGenerateProgressBarFailed();
+
+		public void enableGenerateButton();
 	}
 
 	@ProxyCodeSplit
@@ -82,5 +84,9 @@ public class CourseGeneratorFormPresenter extends
 				getView().setGenerateProgressBarCompleted();
 			}
 		});
+	}
+	
+	public void enableGenerateButton() {
+		getView().enableGenerateButton();
 	}
 }
