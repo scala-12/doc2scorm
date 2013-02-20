@@ -3,9 +3,7 @@ package com.ipoint.coursegenerator.server.handlers;
 import java.io.IOException;
 import java.util.List;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -14,13 +12,11 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
 public class CourseGeneratorServletContextListener implements ServletContextListener {
 
-	public static final PersistenceManagerFactory pmfInstance = JDOHelper
-			.getPersistenceManagerFactory("transactions-optional");
-	
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
 
@@ -34,7 +30,7 @@ public class CourseGeneratorServletContextListener implements ServletContextList
 			List<OrderPlan> plans = objectMapper.readValue(classLoader.getResourceAsStream("plans.json"),
 					new TypeReference<List<OrderPlan>>() {
 					});
-			PersistenceManager pm = pmfInstance.getPersistenceManager();
+			PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 			pm.newQuery(OrderPlan.class).deletePersistentAll();
 			pm.makePersistentAll(plans);
 			pm.flush();

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app>
-
-<web-app
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-	version="2.4">
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_4.xsd"
+     version="2.4">
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -20,7 +19,8 @@
 		</listener-class>
 	</listener>
 	<listener>
-	    <listener-class>com.ipoint.coursegenerator.server.handlers.CourseGeneratorServletContextListener</listener-class>
+		<listener-class>com.ipoint.coursegenerator.server.handlers.CourseGeneratorServletContextListener
+		</listener-class>
 	</listener>
 	<servlet>
 		<servlet-name>dispatch</servlet-name>
@@ -29,35 +29,23 @@
 	</servlet>
 
 	<servlet>
-		       
 		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
-		       
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet
 		</servlet-class>
-		       
 		<init-param>
-			           
 			<param-name>contextConfigLocation</param-name>
-			           
 			<param-value>META-INF/spring/spring-mvc.xml</param-value>
-			       
 		</init-param>
-		       
 		<load-on-startup>1</load-on-startup>
-		   
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>dispatch</servlet-name>
 		<url-pattern>/dispatch/*</url-pattern>
 	</servlet-mapping>
-	 
 	<servlet-mapping>
-		       
 		<servlet-name>Spring MVC Dispatcher Servlet</servlet-name>
-		       
 		<url-pattern>/rest/*</url-pattern>
-		   
 	</servlet-mapping>
 
 	<servlet>
@@ -66,11 +54,11 @@
 		</servlet-class>
 	</servlet>
 
-	<servlet-mapping>		       
-		<servlet-name>PaypalResponseHandler</servlet-name>		       
-		<url-pattern>/success.html</url-pattern>		   
+	<servlet-mapping>
+		<servlet-name>PaypalResponseHandler</servlet-name>
+		<url-pattern>/success.html</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>MarketplaceOrderHandler</servlet-name>
 		<servlet-class>com.ipoint.coursegenerator.server.marketplace.MarketplaceOrderHandler
@@ -78,11 +66,8 @@
 	</servlet>
 
 	<servlet-mapping>
-		       
 		<servlet-name>MarketplaceOrderHandler</servlet-name>
-		       
 		<url-pattern>/purchase</url-pattern>
-		   
 	</servlet-mapping>
 
 	<servlet>
@@ -98,7 +83,7 @@
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<url-pattern>/Coursegenerator.html</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack

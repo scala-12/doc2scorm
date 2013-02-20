@@ -4,35 +4,95 @@ import java.util.List;
 
 public class CustomerLicense {
 
-	enum State {
+	public enum State {		
+		ACTIVE, UNLICENSED, EXPIRED;
+	}
+
+	public enum SubscriptionState {
+		ACTIVE, TRIAL, CANCELED, LOCKED, NOTEXIST;
+	}
+
+	private String id;
+	
+	private String applicationId;
+	
+	private String customerId;
+	
+	private State state;
+
+	private List<MarketplaceEdition> editions;
+	
+	private SubscriptionState subscriptionState;
+
+	private long nextRenewalTimestamp;
+	
+	public CustomerLicense() {
 		
-		ACTIVE("ACTIVE"), UNLICENSED("UNLICENSED"), EXPIRED("EXPIRED");
-		private String state;
-
-		private State(String state) {
-			this.state = state;
-		}
 	}
 
-	enum SubscriptionState {
-
-		ACTIVE("ACTIVE"), TRIAL("TRIAL"), CANCELED("CANCELED"), LOCKED("LOCKED"), NOTEXIST("NOTEXIST");
-		private String subscriptionState;
-
-		private SubscriptionState(String subscriptionState) {
-			this.subscriptionState = subscriptionState;
-		}
+	private String kind;
+	
+	public String getKind() {
+		return kind;
 	}
 
-	String id;
-	String applicationId;
-	String customerId;
-	String state;
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+	
+	public String getId() {
+		return id;
+	}
 
-	List<MarketplaceEdition> editions;
-	// subscription object The most recent subscription, corresponding to the
-	// subscription state.
-	String subscriptionState;
+	public void setId(String id) {
+		this.id = id;
+	}
 
-	long nextRenewalTimestamp;
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public List<MarketplaceEdition> getEditions() {
+		return editions;
+	}
+
+	public void setEditions(List<MarketplaceEdition> editions) {
+		this.editions = editions;
+	}
+
+	public long getNextRenewalTimestamp() {
+		return nextRenewalTimestamp;
+	}
+
+	public void setNextRenewalTimestamp(long nextRenewalTimestamp) {
+		this.nextRenewalTimestamp = nextRenewalTimestamp;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public SubscriptionState getSubscriptionState() {
+		return subscriptionState;
+	}
+
+	public void setSubscriptionState(SubscriptionState subscriptionState) {
+		this.subscriptionState = subscriptionState;
+	}
 }

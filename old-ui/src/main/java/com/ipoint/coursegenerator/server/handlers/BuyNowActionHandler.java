@@ -3,17 +3,18 @@ package com.ipoint.coursegenerator.server.handlers;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
+import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletAuth;
 import com.ipoint.coursegenerator.server.authorization.GoogleAuthorizationUtils;
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 import com.ipoint.coursegenerator.server.db.model.PaypalTransaction;
 import com.ipoint.coursegenerator.server.db.model.User;
@@ -22,16 +23,12 @@ import com.ipoint.coursegenerator.shared.BuyNow;
 import com.ipoint.coursegenerator.shared.BuyNowResult;
 import com.ipoint.coursegenerator.shared.OrderPlanType;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
-import com.gwtplatform.dispatch.server.ExecutionContext;
-import com.gwtplatform.dispatch.shared.ActionException;
 
 public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> {
 
 	@Autowired
 	private HttpSession httpSession;
 
-	public static final PersistenceManagerFactory pmfInstance = JDOHelper
-			.getPersistenceManagerFactory("transactions-optional");
 
 	public BuyNowActionHandler() {
 	}
@@ -45,7 +42,7 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 		OrderPlan plan = (OrderPlan) httpSession.getAttribute("subscription");
 		if (token != null && payerID != null && plan != null) {
 			String result = paypal.executeCheckoutCode(token, payerID, String.valueOf(plan.getAmount()));
-			PersistenceManager pm = pmfInstance.getPersistenceManager();
+			PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 			Transaction trans = pm.currentTransaction();
 			trans.begin();
 			PaypalTransaction transaction = new PaypalTransaction();
@@ -86,6 +83,7 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 				}
 			}
 			user.addTransaction(transaction);
+			System.out.println("teset");
 			trans.commit();
 		} else {
 			throw new ActionException("Required parameters are missing.");

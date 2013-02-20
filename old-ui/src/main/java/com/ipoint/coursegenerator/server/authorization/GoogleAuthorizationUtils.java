@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
@@ -12,6 +13,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 
 public class GoogleAuthorizationUtils {
 	
@@ -40,6 +42,6 @@ public class GoogleAuthorizationUtils {
 		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(), new JacksonFactory(),
 				"788842293516-ubkjoslfcetkttrujqhpi1of743mkf7m.apps.googleusercontent.com", "4WoW3NAIJBROYuQBBoo-wOcb",
 				Collections.singleton("https://www.googleapis.com/auth/userinfo.email")).setCredentialStore(
-				new JdoCredentialStore(JDOHelper.getPersistenceManagerFactory("transactions-optional"))).build();
+				CourseGeneratorDAO.getJdoCredentialStore()).build();
 	}
 }

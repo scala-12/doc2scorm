@@ -22,9 +22,6 @@
 	<inherits name='com.gwtplatform.dispatch.Dispatch' />
 	<inherits name='com.gwtplatform.mvp.Mvp' />
 
-
-	<inherits name="com.google.gwt.logging.Logging" />
-
 	<!-- <inherits name='com.google.api.gwt.oauth2.OAuth2'/> -->
 
 	<!-- Specify the paths for translatable code -->

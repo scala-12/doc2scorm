@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Transaction;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -22,6 +20,7 @@ import com.gwtplatform.dispatch.server.ExecutionContext;
 import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.core.Parser;
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.User;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
@@ -38,13 +37,12 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 
 	@Inject
 	public GenerateCourseActionHandler() {
-		context = new ClassPathXmlApplicationContext("beans.xml");
+		context = new ClassPathXmlApplicationContext();
 	}
 
 	@Override
 	public GenerateCourseResult execute(GenerateCourse action, ExecutionContext context) throws ActionException {
-		PersistenceManagerFactory pInstance = JDOHelper.getPersistenceManagerFactory("transactions-optional");
-		PersistenceManager pm = pInstance.getPersistenceManager();
+		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 		User user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
 		pm.refresh(user);
 		Parser parser = this.context.getBean("parser", Parser.class);

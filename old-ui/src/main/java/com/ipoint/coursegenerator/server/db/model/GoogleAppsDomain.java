@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import javax.jdo.annotations.Unique;
 
 @PersistenceCapable
 public class GoogleAppsDomain {
@@ -16,13 +14,9 @@ public class GoogleAppsDomain {
 	@Persistent(mappedBy = "domain")
 	private List<User> users;
 
-	@Persistent
-	@Unique
-	private String name;
-
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private long id;
+	@Persistent
+	private String name;
 
 	@Persistent
 	private int currentConvertionCount;
@@ -62,10 +56,6 @@ public class GoogleAppsDomain {
 		this.name = name;
 	}
 
-	public long getId() {
-		return id;
-	}
-	
 	public int getCurrentConvertionCount() {
 		return currentConvertionCount;
 	}

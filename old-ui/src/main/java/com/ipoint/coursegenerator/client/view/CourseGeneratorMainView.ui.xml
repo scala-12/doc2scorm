@@ -18,47 +18,23 @@
 		</t:Modal>
 		<t:Navbar position="TOP" ui:field="navbar">
 			<t:Brand>Doc2SCORM</t:Brand>
-			<t:Nav alignment="RIGHT">
-				<t:NavHeader ui:field="username"></t:NavHeader>
-				<t:NavHeader ui:field="subscriptionStatus"></t:NavHeader>
-				<t:Nav ui:field="buyProNav">
-					<t:DropdownContainer text="Buy Pro"
-						rightDropdown="true" ui:field="dropdown">
-						<g:FlowPanel ui:field="buyPanel" styleName="buyPanel">
-						</g:FlowPanel>
-					</t:DropdownContainer>
-				</t:Nav>
+			<t:Nav ui:field="buyProNav" alignment="RIGHT">
+				<t:DropdownContainer text="Buy Pro"
+					rightDropdown="true" ui:field="dropdown">
+					<g:FlowPanel ui:field="buyPanel" styleName="buyPanel">
+					</g:FlowPanel>
+				</t:DropdownContainer>
 			</t:Nav>
-
+			<t:Nav alignment="RIGHT">
+				<t:NavText ui:field="subscriptionStatus"></t:NavText>
+			</t:Nav>
+			<t:Nav alignment="RIGHT">
+				<t:NavText ui:field="username"></t:NavText>
+			</t:Nav>
 		</t:Navbar>
 		<div class="container-narrow">
 			<t:PageHeader>Doc2SCORM</t:PageHeader>
-			<t:Row>
-				<t:Column size="3">
-					<g:HTMLPanel>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-							do
-							eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-							enim ad minim
-							veniam, quis nostrud exercitation ullamco laboris
-							nisi ut aliquip
-							ex ea commodo consequat. Duis aute irure dolor in
-							reprehenderit in
-							voluptate velit esse cillum dolore eu fugiat
-							nulla
-							pariatur.
-							Excepteur sint occaecat cupidatat non proident,
-							sunt in
-							culpa qui
-							officia deserunt mollit anim id est laborum.</p>
-					</g:HTMLPanel>
-				</t:Column>
-
-				<t:Column size="6">
-					<g:HTMLPanel ui:field="mainContent">
-					</g:HTMLPanel>
-				</t:Column>
-			</t:Row>
+			<g:HTMLPanel ui:field="mainContent"></g:HTMLPanel>
 		</div>
 		<t:ResponsiveNavbar position="BOTTOM">
 			<g:Label>&copy; Copyright, i.Point

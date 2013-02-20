@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.client.view;
 import com.github.gwtbootstrap.client.ui.DropdownContainer;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.Nav;
-import com.github.gwtbootstrap.client.ui.NavHeader;
+import com.github.gwtbootstrap.client.ui.NavText;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,10 +38,10 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 	HTMLPanel panel;
 
 	@UiField
-	NavHeader username;
+	NavText username;
 
 	@UiField
-	NavHeader subscriptionStatus;
+	NavText subscriptionStatus;
 
 	@UiField
 	DropdownContainer dropdown;
@@ -109,7 +109,7 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 	@Override
 	public void setDaysRemains(int daysRemains) {
 		if (daysRemains > 0) {
-			this.subscriptionStatus.setText("You have " + daysRemains + " days remained.");
+			this.subscriptionStatus.setText("You have " + daysRemains + " days remaining");
 		}
 	}
 }

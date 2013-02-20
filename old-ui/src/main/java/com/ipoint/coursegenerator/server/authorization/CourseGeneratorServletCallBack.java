@@ -5,9 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,15 +21,13 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfo;
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 import com.ipoint.coursegenerator.server.db.model.User;
 
 public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCallbackServlet {
 
 	private static final long serialVersionUID = -5536522035960228306L;
-
-	public static final PersistenceManagerFactory pmfInstance = JDOHelper
-			.getPersistenceManagerFactory("transactions-optional");
 
 	@Override
 	protected void onSuccess(HttpServletRequest req, HttpServletResponse resp, final Credential credential)
@@ -48,7 +44,7 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		PersistenceManager pm = pmfInstance.getPersistenceManager();
+		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 		if (userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()
 				&& pm.getUserObject(userInfo.getEmail()) == null) {
 			Query query = pm.newQuery(User.class);
@@ -67,8 +63,8 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 				if (domainList.size() > 0) {
 					domain = domainList.get(0);
 				} else if (userInfo.getHd() != null) {
-					domain = new GoogleAppsDomain(userInfo.getHd());					
-				}				
+					domain = new GoogleAppsDomain(userInfo.getHd());
+				}
 				user = new User((String) req.getSession().getAttribute("userId"), userInfo.getEmail(), domain);
 				if (domain != null) {
 					domain.addUser(user);
@@ -87,7 +83,14 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 			req.getSession().setAttribute("userId", user.getUserId());
 			req.getSession().setAttribute("userEmail", userInfo.getEmail());
 		}
-		resp.sendRedirect("/Coursegenerator.html");
+		if (req.getSession().getAttribute(CourseGeneratorServletAuth.PURCHASE_TOKEN_PARAMETER) != null
+				&& req.getSession().getAttribute("appsmarket.edition") != null
+				&& req.getSession().getAttribute(CourseGeneratorServletAuth.DOMAIN_PARAMETER) != null
+				&& req.getSession().getAttribute(CourseGeneratorServletAuth.DOMAIN_PARAMETER).equals(userInfo.getHd())) {
+			resp.sendRedirect("/orderchoice");
+		} else {
+			resp.sendRedirect("/Coursegenerator.html");
+		}
 	}
 
 	@Override

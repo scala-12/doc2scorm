@@ -16,17 +16,23 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	private static final long serialVersionUID = 8003570633306044820L;
 
-	private static final String EDITION_PARAMETER = "edition"; 
-	
+	private static final String EDITION_PARAMETER = "edition";
+	public static final String DOMAIN_PARAMETER = "domain";
+
 	public static final String PURCHASE_TOKEN_PARAMETER = "appsmarket.purchaseToken";
-	
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		//response.setContentType("text/html;charset=UTF-8");
-		String edition = request.getParameter(EDITION_PARAMETER );
+		// response.setContentType("text/html;charset=UTF-8");
+		String edition = request.getParameter(EDITION_PARAMETER);
 		String purchaseToken = request.getParameter(PURCHASE_TOKEN_PARAMETER);
-		request.getSession().setAttribute("appsmarket.edition", edition);
-		request.getSession().setAttribute("appsmarket.purchaseToken", purchaseToken);
+		String domain = request.getParameter(DOMAIN_PARAMETER);
+		if ((request.getRequestURI().equals("orderchoice") && edition != null && purchaseToken != null && domain != null)
+				|| !request.getRequestURI().equals("orderchoice")) {
+			request.getSession().setAttribute("appsmarket.edition", edition);
+			request.getSession().setAttribute(PURCHASE_TOKEN_PARAMETER, purchaseToken);
+			request.getSession().setAttribute(DOMAIN_PARAMETER, domain);
+		}
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				classLoader.getResourceAsStream("Coursegenerator.html")));
@@ -41,7 +47,7 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 		}
 		PrintWriter writer = response.getWriter();
 		writer.print(result.toString());
-		writer.flush();		
+		writer.flush();
 	}
 
 	@Override
@@ -56,6 +62,12 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	@Override
 	protected String getUserId(HttpServletRequest req) throws ServletException, IOException {
+		String edition = req.getParameter(EDITION_PARAMETER);
+		String purchaseToken = req.getParameter(PURCHASE_TOKEN_PARAMETER);
+		String domain = req.getParameter(DOMAIN_PARAMETER);
+		req.getSession().setAttribute("appsmarket.edition", edition);
+		req.getSession().setAttribute(PURCHASE_TOKEN_PARAMETER, purchaseToken);
+		req.getSession().setAttribute(DOMAIN_PARAMETER, domain);
 		return (String) req.getSession().getAttribute("userId") == null ? "notauser" : (String) req.getSession()
 				.getAttribute("userId");
 	}

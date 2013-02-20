@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.gwtbootstrap.client.ui.Controls;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,18 +15,20 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import com.ipoint.coursegenerator.client.presenter.PlanChoiceWidgetPresenter;
+import com.ipoint.coursegenerator.client.presenter.OrderPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.OrderUiHandlers;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
-public class PlanChoiceWidgetView extends ViewWithUiHandlers<OrderUiHandlers> implements PlanChoiceWidgetPresenter.MyView {
+public class OrderView extends ViewWithUiHandlers<OrderUiHandlers> implements OrderPresenter.MyView {
 
 	private final Widget widget;
 	
 	@UiField
 	Image paypalButton;
 	
-
+	@UiField
+	Modal lockScreen;
+	
 	@UiField
 	Controls radioGroup;
 	
@@ -36,18 +39,19 @@ public class PlanChoiceWidgetView extends ViewWithUiHandlers<OrderUiHandlers> im
 		return widget;
 	}
 	
-	public interface Binder extends UiBinder<Widget, PlanChoiceWidgetView> {
+	public interface Binder extends UiBinder<Widget, OrderView> {
     }
 
     @Inject
-    public PlanChoiceWidgetView(final Binder binder) {
+    public OrderView(final Binder binder) {
         widget = binder.createAndBindUi(this);
-        paypalButton.getElement().getStyle().setCursor(Cursor.POINTER);        
+        paypalButton.getElement().getStyle().setCursor(Cursor.POINTER); 
+        
     }
 
     @UiHandler("paypalButton")
     public void onPayPalButtonClicked(ClickEvent event) {
-    	this.getUiHandlers().showLockingDialog();
+    	lockScreen.show();
     	String checkId = "";
     	for (RadioButton button : radioItems) {
     		if (button.getValue()) {
@@ -56,8 +60,8 @@ public class PlanChoiceWidgetView extends ViewWithUiHandlers<OrderUiHandlers> im
     	}
     	this.getUiHandlers().onPayPalButtonClicked(checkId);
     }
-    
-    @Override
+
+	@Override
 	public void showOrderPlanList(List<OrderPlan> orderPlanList) {
 		radioItems = new ArrayList<RadioButton>();
 		radioGroup.clear();
