@@ -10,14 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 
 public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet {
 
 	private static final long serialVersionUID = 8003570633306044820L;
 
-	private static final String EDITION_PARAMETER = "edition";
+	public static final String EDITION_PARAMETER = "edition";
 	public static final String DOMAIN_PARAMETER = "domain";
+	public static final String PURCHASE_EDITION_PARAMETER  = "appsmarket.edition";
 
 	public static final String PURCHASE_TOKEN_PARAMETER = "appsmarket.purchaseToken";
 
@@ -27,8 +30,8 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 		String edition = request.getParameter(EDITION_PARAMETER);
 		String purchaseToken = request.getParameter(PURCHASE_TOKEN_PARAMETER);
 		String domain = request.getParameter(DOMAIN_PARAMETER);
-		if ((request.getRequestURI().equals("orderchoice") && edition != null && purchaseToken != null && domain != null)
-				|| !request.getRequestURI().equals("orderchoice")) {
+		if ((request.getRequestURI().equals("/orderchoice") && edition != null && purchaseToken != null && domain != null)
+				|| !request.getRequestURI().equals("/orderchoice")) {
 			request.getSession().setAttribute("appsmarket.edition", edition);
 			request.getSession().setAttribute(PURCHASE_TOKEN_PARAMETER, purchaseToken);
 			request.getSession().setAttribute(DOMAIN_PARAMETER, domain);
@@ -57,7 +60,7 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
-		return GoogleAuthorizationUtils.newFlow();
+		return GoogleAuthorizationUtils.newFlow(new JdoCredentialStore(CourseGeneratorDAO.getPersistenceManagerFactory()));
 	}
 
 	@Override
@@ -65,9 +68,11 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 		String edition = req.getParameter(EDITION_PARAMETER);
 		String purchaseToken = req.getParameter(PURCHASE_TOKEN_PARAMETER);
 		String domain = req.getParameter(DOMAIN_PARAMETER);
-		req.getSession().setAttribute("appsmarket.edition", edition);
-		req.getSession().setAttribute(PURCHASE_TOKEN_PARAMETER, purchaseToken);
-		req.getSession().setAttribute(DOMAIN_PARAMETER, domain);
+		if (req.getRequestURI().equals("/orderchoice") && edition != null && purchaseToken != null && domain != null) {			
+			req.getSession().setAttribute(PURCHASE_EDITION_PARAMETER, edition);
+			req.getSession().setAttribute(PURCHASE_TOKEN_PARAMETER, purchaseToken);
+			req.getSession().setAttribute(DOMAIN_PARAMETER, domain);
+		}
 		return (String) req.getSession().getAttribute("userId") == null ? "notauser" : (String) req.getSession()
 				.getAttribute("userId");
 	}

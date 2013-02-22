@@ -12,20 +12,24 @@
 			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
 				percent="100" />
 		</t:Modal>
-		<t:Form styleName="form-horizontal" action="" method="get">
-			<t:ControlGroup>
-				<t:ControlLabel>Make a choice:</t:ControlLabel>
-				<t:Controls ui:field="radioGroup"></t:Controls>
-			</t:ControlGroup>
-			<t:ControlGroup>
-				<g:HTMLPanel>
-					<t:Controls>
-						<g:Image ui:field="paypalButton"
-							url="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></g:Image>
-					</t:Controls>
-				</g:HTMLPanel>
-			</t:ControlGroup>
-		</t:Form>
+		<t:Row>
+			<t:Column size="6" offset="3">
+				<t:Form styleName="form-horizontal" action="" method="get">
+					<t:ControlGroup>
+						<t:ControlLabel>Make a choice:</t:ControlLabel>
+						<t:Controls ui:field="radioGroup"></t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup>
+						<g:HTMLPanel>
+							<t:Controls>
+								<g:Image ui:field="paypalButton"
+									url="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></g:Image>
+							</t:Controls>
+						</g:HTMLPanel>
+					</t:ControlGroup>
+				</t:Form>
+			</t:Column>
+		</t:Row>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

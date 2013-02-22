@@ -21,8 +21,8 @@
 			<t:Nav ui:field="buyProNav" alignment="RIGHT">
 				<t:DropdownContainer text="Buy Pro"
 					rightDropdown="true" ui:field="dropdown">
-					<g:FlowPanel ui:field="buyPanel" styleName="buyPanel">
-					</g:FlowPanel>
+					<t:FluidContainer ui:field="buyPanel" styleName="buyPanel">
+					</t:FluidContainer>
 				</t:DropdownContainer>
 			</t:Nav>
 			<t:Nav alignment="RIGHT">

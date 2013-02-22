@@ -77,13 +77,12 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 					buyNowResult = new BuyNowResult("https://www.google.com/a/cpanel/" + domain.getName()
 							+ "/DomainAppInstall?appId=" + GoogleAuthorizationUtils.APPLICATION_ID
 							+ "&productListingId=" + GoogleAuthorizationUtils.PRODUCT_LISTING_ID
-							+ "&editionId&paymentModel=PAID");
+							+ "&editionId=free&paymentModel=FREE");
 				} else {
 					buyNowResult = new BuyNowResult("/Coursegenerator.html");
 				}
 			}
 			user.addTransaction(transaction);
-			System.out.println("teset");
 			trans.commit();
 		} else {
 			throw new ActionException("Required parameters are missing.");

@@ -8,7 +8,7 @@
 
 	<g:HTMLPanel>
 		<t:Row>
-			<t:Column size="3">
+			<t:Column size="3" offset="1">
 				<g:HTMLPanel>
 					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
 						do

@@ -1,19 +1,19 @@
 package com.ipoint.coursegenerator.client.view;
 
 import com.github.gwtbootstrap.client.ui.DropdownContainer;
+import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.Nav;
 import com.github.gwtbootstrap.client.ui.NavText;
-import com.google.gwt.core.client.GWT;
+import com.github.gwtbootstrap.client.ui.base.Style;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ import com.gwtplatform.mvp.client.ViewImpl;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
 
 public class CourseGeneratorMainView extends ViewImpl implements CourseGeneratorMainPresenter.MyView,
-		NativePreviewHandler, ClickHandler {
+		NativePreviewHandler {
 
 	private final Widget widget;
 
@@ -29,7 +29,7 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 	HTMLPanel mainContent;
 
 	@UiField
-	FlowPanel buyPanel;
+	FluidContainer buyPanel;
 
 	@UiField
 	Modal lockScreen;
@@ -55,9 +55,7 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 	@Inject
 	public CourseGeneratorMainView(final Binder binder) {
 		widget = binder.createAndBindUi(this);
-		Event.addNativePreviewHandler(this);
-		buyPanel.addHandler(this, ClickEvent.getType());
-		panel.addHandler(this, ClickEvent.getType());
+		Event.addNativePreviewHandler(this);		
 	}
 
 	@Override
@@ -90,15 +88,19 @@ public class CourseGeneratorMainView extends ViewImpl implements CourseGenerator
 						.getOffsetWidth()))
 						|| (ne.getClientY() < buyPanel.getAbsoluteTop() || (ne.getClientY() > buyPanel.getAbsoluteTop()
 								+ buyPanel.getOffsetHeight()))) {
-					dropdown.fireEvent(event);
+					dropdown.getWidget(1).getElement().setAttribute("style", "display:none;");
+					dropdown.removeStyleName("open");
+					event.cancel();
 				}
 			}
 		}
 	}
 
-	@Override
+	@UiHandler("dropdown")
 	public void onClick(ClickEvent event) {
-		GWT.log(event.getSource().toString());
+		if (dropdown.getWidget(1).getElement().getAttribute("style").equals("display:none;")) {
+			dropdown.getWidget(1).getElement().setAttribute("style", "display:block;");
+		}
 	}
 
 	@Override

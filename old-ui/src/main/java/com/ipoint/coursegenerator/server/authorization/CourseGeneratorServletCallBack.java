@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -106,7 +107,7 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
-		return GoogleAuthorizationUtils.newFlow();
+		return GoogleAuthorizationUtils.newFlow(new JdoCredentialStore(CourseGeneratorDAO.getPersistenceManagerFactory()));
 	}
 
 	@Override
