@@ -13,12 +13,14 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.servlet.ServletContext;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.context.ServletContextAware;
 
 import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
 import com.google.gdata.client.authn.oauth.OAuthException;
@@ -30,7 +32,7 @@ import com.ipoint.coursegenerator.server.authorization.GoogleAuthorizationUtils;
 import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 
-public class GoogleMarketplaceUtils {
+public class GoogleMarketplaceUtils implements ServletContextAware {
 
 	private static final String APP_NAME = "ipoint-ilogos-course-generator-0.1";
 
@@ -45,7 +47,9 @@ public class GoogleMarketplaceUtils {
 	private static final int MARKETPLACE_TRIAL_DAY_COUNT = 3;
 	
 	private static final int GET_NOTIFICATIONS_INTERVAL = 300000;
-
+	
+	private ServletContext servletContext;
+	
 	public GoogleMarketplaceUtils() {
 		firstTimeCall = true;
 	}
@@ -59,8 +63,8 @@ public class GoogleMarketplaceUtils {
 			connection.setRequestProperty("GData-Version", "2.0");
 			OAuthSigner signer = new OAuthHmacSha1Signer();
 			GoogleOAuthParameters oauthParameters = new GoogleOAuthParameters();
-			oauthParameters.setOAuthConsumerKey(GoogleAuthorizationUtils.CONSUMER_KEY);
-			oauthParameters.setOAuthConsumerSecret(GoogleAuthorizationUtils.CONSUMER_SECRET);
+			oauthParameters.setOAuthConsumerKey(servletContext.getInitParameter("appsmarketplace_consumer_key"));
+			oauthParameters.setOAuthConsumerSecret(servletContext.getInitParameter("appsmarketplace_consumer_secret"));
 			oauthParameters.setOAuthType(OAuthType.TWO_LEGGED_OAUTH);
 			oauthParameters.addCustomBaseParameter("oauth_version", "1.0");
 			TwoLeggedOAuthHelper twoLeggedOAuthHelper = new TwoLeggedOAuthHelper(signer, oauthParameters);
@@ -121,7 +125,7 @@ public class GoogleMarketplaceUtils {
 				query += String.format("start-token=%s", URLEncoder.encode(startToken, charset));
 			}
 			// Create connection
-			url = new URL(LICENSE_NOTIFICATION_LIST_URL + GoogleAuthorizationUtils.APPLICATION_ID + "?" + query);
+			url = new URL(LICENSE_NOTIFICATION_LIST_URL + GoogleAuthorizationUtils.APPLICATION_ID + (query.length() < 1 ? "" : "?" + query));
 
 			connection = (HttpURLConnection) url.openConnection();
 			InputStream is = getHttpURLConnectionInputStream(connection, url.toString());
@@ -191,5 +195,10 @@ public class GoogleMarketplaceUtils {
 		}
 		pm.flush();
 		pm.close();
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 }

@@ -6,9 +6,10 @@
 	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
 	ui:generateLocales='default'>
 
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<g:HTMLPanel>
 		<t:Modal ui:field="lockScreen">
-			<t:Well>Processing request in progress. Please, wait...</t:Well>
+			<t:Well><ui:text from='{msg.waitMessage}'/></t:Well>
 			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
 				percent="100" />
 		</t:Modal>
@@ -16,7 +17,7 @@
 			<t:Column size="6" offset="3">
 				<t:Form styleName="form-horizontal" action="" method="get">
 					<t:ControlGroup>
-						<t:ControlLabel>Make a choice:</t:ControlLabel>
+						<t:ControlLabel><ui:text from='{msg.orderSelectMessage}'/></t:ControlLabel>
 						<t:Controls ui:field="radioGroup"></t:Controls>
 					</t:ControlGroup>
 					<t:ControlGroup>

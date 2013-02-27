@@ -20,10 +20,6 @@ public class GoogleAuthorizationUtils {
 
 	public static final String APPLICATION_ID = "274434146714";
 
-	public static final String CONSUMER_KEY = "274434146714.apps.googleusercontent.com";
-
-	public static final String CONSUMER_SECRET = "H0xga5JLxQuLfvUohwtu7nYl";
-
 	public static final String XOAUTH_PARAM = "xoauth_requestor_id";
 
 	public static final String PRODUCT_LISTING_ID = "23741+10727418611876118780";

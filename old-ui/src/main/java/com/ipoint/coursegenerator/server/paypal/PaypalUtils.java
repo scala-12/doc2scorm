@@ -1,5 +1,10 @@
 package com.ipoint.coursegenerator.server.paypal;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.ServletContextAware;
+
 import com.ipoint.coursegenerator.server.exception.PaypalSetCheckoutCodeException;
 import com.paypal.sdk.core.nvp.NVPDecoder;
 import com.paypal.sdk.core.nvp.NVPEncoder;
@@ -7,13 +12,12 @@ import com.paypal.sdk.profiles.APIProfile;
 import com.paypal.sdk.profiles.ProfileFactory;
 import com.paypal.sdk.services.NVPCallerServices;
 
-public class PaypalUtils {
+@Service
+public class PaypalUtils implements ServletContextAware {
 
 	private NVPCallerServices caller = null;
-
-	private final static String PAYPAL_API_USERNAME = "shamak_1360056582_biz_api1.ipoint.ru";
-	private final static String PAYPAL_API_PASSWORD = "1360056603";
-	private final static String PAYPAL_API_SIGNATURE = "A8OsBMjuCbaWBQGxI7oVQz7fgFYNApx73g9a9rGc8AyhZ.OIsM2jMor5";
+	
+	private ServletContext servletContext;
 
 	public String setCheckoutCode(String returnURL, String cancelURL, String amount, String paymentType,
 			String currencyCode) throws PaypalSetCheckoutCodeException {
@@ -24,9 +28,9 @@ public class PaypalUtils {
 		try {
 			caller = new NVPCallerServices();
 			APIProfile profile = ProfileFactory.createSignatureAPIProfile();
-			profile.setAPIUsername(PAYPAL_API_USERNAME);
-			profile.setAPIPassword(PAYPAL_API_PASSWORD);
-			profile.setSignature(PAYPAL_API_SIGNATURE);
+			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
+			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
+			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
 			profile.setEnvironment("sandbox");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
@@ -62,9 +66,9 @@ public class PaypalUtils {
 
 			caller = new NVPCallerServices();
 			APIProfile profile = ProfileFactory.createSignatureAPIProfile();
-			profile.setAPIUsername(PAYPAL_API_USERNAME);
-			profile.setAPIPassword(PAYPAL_API_PASSWORD);
-			profile.setSignature(PAYPAL_API_SIGNATURE);
+			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
+			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
+			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
 			profile.setEnvironment("sandbox");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
@@ -99,9 +103,9 @@ public class PaypalUtils {
 			caller = new NVPCallerServices();
 			APIProfile profile = ProfileFactory.createSignatureAPIProfile();
 
-			profile.setAPIUsername(PAYPAL_API_USERNAME);
-			profile.setAPIPassword(PAYPAL_API_PASSWORD);
-			profile.setSignature(PAYPAL_API_SIGNATURE);
+			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
+			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
+			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
 			profile.setEnvironment("sandbox");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
@@ -122,5 +126,10 @@ public class PaypalUtils {
 		}
 
 		return decoder.get("ACK");
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
 	}
 }

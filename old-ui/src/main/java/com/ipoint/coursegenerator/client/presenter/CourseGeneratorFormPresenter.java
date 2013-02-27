@@ -12,8 +12,10 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.ipoint.coursegenerator.client.Messages;
 import com.ipoint.coursegenerator.client.NameTokens;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
+import com.ipoint.coursegenerator.client.presenter.uihandlers.MessagesHolder;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
@@ -45,12 +47,16 @@ public class CourseGeneratorFormPresenter extends
 	}
 
 	private final DispatchAsync dispatcher;
+	
+	private final Messages messages;
 
 	@Inject
 	public CourseGeneratorFormPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-			DispatchAsync dispatcher) {
+			DispatchAsync dispatcher,
+			Messages messages) {
 		super(eventBus, view, proxy);
 		this.dispatcher = dispatcher;
+		this.messages = messages;
 	}
 
 	@Override
@@ -88,5 +94,10 @@ public class CourseGeneratorFormPresenter extends
 	
 	public void enableGenerateButton() {
 		getView().enableGenerateButton();
+	}
+
+	@Override
+	public Messages getMessages() {
+		return messages;
 	}
 }

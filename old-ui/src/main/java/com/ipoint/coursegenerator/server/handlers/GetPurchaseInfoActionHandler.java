@@ -18,13 +18,15 @@ public class GetPurchaseInfoActionHandler implements ActionHandler<GetPurchaseIn
 
 	@Autowired
 	private HttpSession httpSession;
+	
+	@Autowired
+	private PaypalUtils paypal;
 		
 	public GetPurchaseInfoActionHandler() {
 	}
 
 	@Override
 	public GetPurchaseInfoResult execute(GetPurchaseInfo action, ExecutionContext context) throws ActionException {
-		PaypalUtils paypal = new PaypalUtils();
 		paypal.getCheckoutCode((String)httpSession.getAttribute("paypalToken"));
 		Object subscription = httpSession.getAttribute("subscription");
 		OrderPlan plan = null;

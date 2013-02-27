@@ -13,10 +13,12 @@ import com.github.gwtbootstrap.client.ui.ProgressBar;
 import com.github.gwtbootstrap.client.ui.SubmitButton;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.server.Message;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
@@ -30,6 +32,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.UmbrellaException;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.ipoint.coursegenerator.client.Messages;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
 
@@ -82,7 +85,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	
 	@UiField
 	SubmitButton generateButton;
-
+	
 	public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
 	}
 
@@ -110,7 +113,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	public void onClicked(ClickEvent event) {
 		getUiHandlers().generateButtonClicked();
 		generateProgressBar.setVisible(true);
-		waitMessageLabel.setText("Please, wait a couple of minutes while the document is in a process...");
+		waitMessageLabel.setText(getUiHandlers().getMessages().processingDocument());
 		waitMessageLabel.setVisible(true);
 	}
 
@@ -133,7 +136,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 			fileUploadControlGroup.setType(ControlGroupType.NONE);
 			helpBlock.setVisible(false);
 		} else {
-			Window.alert("You should choose MS Word document (file with doc or docx extension)!");
+			Window.alert(getUiHandlers().getMessages().documentChooseError());
 		}
 	}
 
@@ -148,9 +151,9 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 			sourceFileName.setValue(((JSONString) response.get("sourceFileName")).stringValue());
 			fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
 			fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
-			helpBlock.setText("File has been uploaded successfully!");
+			helpBlock.setText(getUiHandlers().getMessages().uploadingFileSuccess());
 		} catch (UmbrellaException e) {
-			helpBlock.setText("An error occured while loading file!");
+			helpBlock.setText(getUiHandlers().getMessages().uploadingFileFailure());
 			fileUploadProgressBar.setColor(ProgressBar.Color.DANGER);
 			fileUploadControlGroup.setType(ControlGroupType.ERROR);
 		}
@@ -189,14 +192,14 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	public void setGenerateProgressBarCompleted() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
-		waitMessageLabel.setText("The document was converted to course sucessfully.");
+		waitMessageLabel.setText(getUiHandlers().getMessages().convertSuccessful());
 	}
 
 	@Override
 	public void setGenerateProgressBarFailed() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.DANGER);
-		waitMessageLabel.setText("The document was failed convert.");
+		waitMessageLabel.setText(getUiHandlers().getMessages().convertFailure());
 	}
 
 	@Override

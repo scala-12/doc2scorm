@@ -5,11 +5,13 @@
 	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
 	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
 	ui:generateLocales='default'>
-
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<g:HTMLPanel>
 		<t:Form action="" method="get">
 			<t:ControlGroup>
-				<t:ControlLabel>Make a choice:</t:ControlLabel>
+				<t:ControlLabel>
+					<ui:text from='{msg.orderSelectMessage}' />
+				</t:ControlLabel>
 				<t:Controls ui:field="radioGroup"></t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>

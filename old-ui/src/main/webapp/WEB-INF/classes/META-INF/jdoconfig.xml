@@ -8,8 +8,7 @@
 		<!-- <property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:mem:hardfidget" 
 			/> -->
 		<!-- <property name="javax.jdo.option.Mapping" value="hsqldb" /> -->
-		<property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:file:
- 		    coursegeneratordb" />
+		<property name="javax.jdo.option.ConnectionURL" value="jdbc:hsqldb:file:/home/jetty/databases/coursegeneratordb" />
 		<property name="javax.jdo.option.ConnectionDriverName" value="org.hsqldb.jdbcDriver" />
 		<property name="datanucleus.Mapping" value="hsqldb" />
 		<property name="javax.jdo.option.ConnectionUserName" value="sa" />

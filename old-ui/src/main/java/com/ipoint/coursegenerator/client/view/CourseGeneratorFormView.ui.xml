@@ -5,26 +5,14 @@
 	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
 	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
 	ui:generateLocales='default'>
-
+	
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	
 	<g:HTMLPanel>
 		<t:Row>
 			<t:Column size="3" offset="1">
 				<g:HTMLPanel>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-						do
-						eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-						enim ad minim
-						veniam, quis nostrud exercitation ullamco laboris
-						nisi ut aliquip
-						ex ea commodo consequat. Duis aute irure dolor in
-						reprehenderit in
-						voluptate velit esse cillum dolore eu fugiat
-						nulla
-						pariatur.
-						Excepteur sint occaecat cupidatat non proident,
-						sunt in
-						culpa qui
-						officia deserunt mollit anim id est laborum.</p>
+					<p><ui:text from='{msg.guide}' /></p>
 				</g:HTMLPanel>
 			</t:Column>
 
@@ -33,8 +21,7 @@
 					method="post" ui:field="sourceDocUploadForm">
 					<t:HelpBlock visible="true" ui:field="elementsPopup"></t:HelpBlock>
 					<t:ControlGroup ui:field="fileUploadControlGroup">
-						<t:ControlLabel for="sourceDocFile">Выберите файл MS Word (.doc,
-							.docx):</t:ControlLabel>
+						<t:ControlLabel for="sourceDocFile"><ui:text from='{msg.chooseDoc}' />:</t:ControlLabel>
 						<t:Controls>
 							<t:FileUpload ui:field="sourceDocFile" name="sourceDocFile"></t:FileUpload>
 							<t:HelpBlock ui:field="helpBlock" visible="false"></t:HelpBlock>
@@ -47,51 +34,44 @@
 					<g:Hidden ui:field="uuidFileName"></g:Hidden>
 					<g:Hidden ui:field="sourceFileName"></g:Hidden>
 					<t:ControlGroup>
-						<t:ControlLabel for="headerLevel">Создавать разделы для
-							заголовков
-							не ниже уровня:</t:ControlLabel>
+						<t:ControlLabel for="headerLevel"><ui:text from='{msg.depth}' /></t:ControlLabel>
 						<t:Controls>
 							<t:ListBox ui:field="headerLevel">
-								<g:item value="1">Заголовок 1</g:item>
-								<g:item value="2">Заголовок 2</g:item>
-								<g:item value="3">Заголовок 3</g:item>
-								<g:item value="4">Заголовок 4</g:item>
-								<g:item value="5">Заголовок 5</g:item>
-								<g:item value="6">Заголовок 6</g:item>
-								<g:item value="7">Заголовок 7</g:item>
-								<g:item value="8">Заголовок 8</g:item>
-								<g:item value="9">Заголовок 9</g:item>
+								<g:item value="1"><ui:text from='{msg.heading1}' /></g:item>
+								<g:item value="2"><ui:text from='{msg.heading2}' /></g:item>
+								<g:item value="3"><ui:text from='{msg.heading3}' /></g:item>
+								<g:item value="4"><ui:text from='{msg.heading4}' /></g:item>
+								<g:item value="5"><ui:text from='{msg.heading5}' /></g:item>
+								<g:item value="6"><ui:text from='{msg.heading6}' /></g:item>
+								<g:item value="7"><ui:text from='{msg.heading7}' /></g:item>
+								<g:item value="8"><ui:text from='{msg.heading8}' /></g:item>
+								<g:item value="9"><ui:text from='{msg.heading9}' /></g:item>
 							</t:ListBox>
 						</t:Controls>
 					</t:ControlGroup>
 					<t:ControlGroup>
-						<t:ControlLabel for="templateForCoursePages">Выберите шаблон страниц курса:</t:ControlLabel>
+						<t:ControlLabel for="templateForCoursePages"><ui:text from='{msg.template}' /></t:ControlLabel>
 						<t:Controls>
 							<t:ListBox ui:field="templateForCoursePages">
-								<g:item value="default">iLogos default</g:item>
+								<g:item value="default"><ui:text from='{msg.defaultTemplate}' /></g:item>
 							</t:ListBox>
 						</t:Controls>
 					</t:ControlGroup>
 					<t:ControlGroup>
-						<t:ControlLabel for="courseName">Название курса:</t:ControlLabel>
+						<t:ControlLabel for="courseName"><ui:text from='{msg.courseName}' />:</t:ControlLabel>
 						<t:Controls>
-							<t:TextBox ui:field="courseName" placeholder="Название курса"></t:TextBox>
+							<t:TextBox ui:field="courseName" placeholder="{msg.courseNamePlaceholder}"></t:TextBox>
 						</t:Controls>
 					</t:ControlGroup>
 					<t:ControlGroup>
 						<t:Controls>
-							<t:CheckBox ui:field="useFilenameAsCourseName" inline="true">Использовать
-								имя файла в качестве названия курса</t:CheckBox>
+							<t:CheckBox ui:field="useFilenameAsCourseName" inline="true"><ui:text from='{msg.useFilename}' /></t:CheckBox>
 						</t:Controls>
 					</t:ControlGroup>
-					<!-- <div class="control-group"> <label class="control-label" for="sourceCourseFile">Курс, 
-						к которому необходимо добавить новые элементы:</label> <div class="controls"> 
-						<input type="file" placeholder="Путь к файлу" id="sourceCourseFile" /> </div> 
-						</div> -->
 					<t:ControlGroup>
 						<t:Controls>
 							<t:SubmitButton styleName="btn" ui:field="generateButton"
-								enabled="false">Сгенерировать</t:SubmitButton>
+								enabled="false"><ui:text from='{msg.process}' /></t:SubmitButton>
 						</t:Controls>
 					</t:ControlGroup>
 				</t:Form>

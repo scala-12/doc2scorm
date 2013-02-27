@@ -17,17 +17,21 @@ import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
 public class CheckoutWithPaypalActionHandler implements ActionHandler<CheckoutWithPaypal, CheckoutWithPaypalResult> {
 
-	private final static String SERVER_NAME = "http://localhost:8888/";
+	private final static String SERVER_NAME = "true".equals(System.getProperty("debugging")) ? "http://localhost:8888/"
+			: "http://doc2scorm.ipoint-consulting.com/";
 
 	@Autowired
 	private HttpSession httpSession;
-	
+
+	@Autowired
+	private PaypalUtils paypal;
+
 	public CheckoutWithPaypalActionHandler() {
 	}
 
 	@Override
 	public CheckoutWithPaypalResult execute(CheckoutWithPaypal action, ExecutionContext context) throws ActionException {
-		PaypalUtils paypal = new PaypalUtils();
+
 		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 		try {
 			OrderPlan plan = pm.getObjectById(OrderPlan.class, Long.parseLong(action.getSubscriptionId()));

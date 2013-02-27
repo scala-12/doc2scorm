@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 	public static final String PURCHASE_EDITION_PARAMETER  = "appsmarket.edition";
 
 	public static final String PURCHASE_TOKEN_PARAMETER = "appsmarket.purchaseToken";
+	
+	private Locale russianLocale = new Locale("ru");
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

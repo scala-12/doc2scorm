@@ -5,21 +5,26 @@
 	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
 	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
 	ui:generateLocales='default'>
+	
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	
 	<g:HTMLPanel ui:field="panel">
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen" />
 		<link href="css/main.css" rel="stylesheet" media="screen" />
 		<script src="http://code.jquery.com/jquery-latest.js"></script>
 		<script src="js/bootstrap.min.js"></script>
-
+		
 		<t:Modal ui:field="lockScreen">
-			<t:Well>Processing request in progress. Please, wait...</t:Well>
+			<t:Well>
+				<ui:text from='{msg.waitMessage}' />
+			</t:Well>
 			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
 				percent="100" />
 		</t:Modal>
 		<t:Navbar position="TOP" ui:field="navbar">
 			<t:Brand>Doc2SCORM</t:Brand>
 			<t:Nav ui:field="buyProNav" alignment="RIGHT">
-				<t:DropdownContainer text="Buy Pro"
+				<t:DropdownContainer text="{msg.buyPro}"
 					rightDropdown="true" ui:field="dropdown">
 					<t:FluidContainer ui:field="buyPanel" styleName="buyPanel">
 					</t:FluidContainer>
@@ -37,8 +42,7 @@
 			<g:HTMLPanel ui:field="mainContent"></g:HTMLPanel>
 		</div>
 		<t:ResponsiveNavbar position="BOTTOM">
-			<g:Label>&copy; Copyright, i.Point
-				LLC 2012-2013</g:Label>
+			<g:Label>&copy; <ui:text from='{msg.copyrightMessage}' /></g:Label>
 		</t:ResponsiveNavbar>
 	</g:HTMLPanel>
 </ui:UiBinder>

@@ -29,13 +29,14 @@ public class BuyNowActionHandler implements ActionHandler<BuyNow, BuyNowResult> 
 	@Autowired
 	private HttpSession httpSession;
 
+	@Autowired
+	private PaypalUtils paypal;
 
 	public BuyNowActionHandler() {
 	}
 
 	@Override
 	public BuyNowResult execute(BuyNow action, ExecutionContext context) throws ActionException {
-		PaypalUtils paypal = new PaypalUtils();
 		BuyNowResult buyNowResult = null;
 		String token = (String) httpSession.getAttribute("paypalToken");
 		String payerID = (String) httpSession.getAttribute("paypalPayerID");

@@ -7,7 +7,8 @@
 	xmlns:t="urn:import:com.github.gwtbootstrap.client.ui"
 	ui:generateLocales='default'>
 
+    <ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<t:Nav alignment="RIGHT">
-		<t:NavLink ui:field="buy">Buy</t:NavLink>
+		<t:NavLink ui:field="buy"><ui:text from='{msg.buy}'/></t:NavLink>
 	</t:Nav>
 </ui:UiBinder>

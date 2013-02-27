@@ -6,29 +6,30 @@
 	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
 	ui:generateLocales='default'>
 
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<g:HTMLPanel>
 		<t:Form styleName="form-horizontal">
 			<t:ControlGroup>
-				<t:ControlLabel>Name:</t:ControlLabel>
+				<t:ControlLabel><ui:text from='{msg.planName}'/>:</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="name"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
-				<t:ControlLabel>Description:</t:ControlLabel>
+				<t:ControlLabel><ui:text from='{msg.planDescription}'/>:</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="description"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
-				<t:ControlLabel>Price:</t:ControlLabel>
+				<t:ControlLabel><ui:text from='{msg.planPrice}'/>:</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="price"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
 				<t:Controls>
-					<t:Button ui:field="submit" text="Buy Now" />
+					<t:Button ui:field="submit" text="{msg.buyNow}" />
 				</t:Controls>
 			</t:ControlGroup>
 		</t:Form>

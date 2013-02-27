@@ -58,7 +58,9 @@
 						<goals>
 							<goal>compile</goal>
 							<goal>test</goal>
-							<!-- <goal>generateAsync</goal> -->
+							<goal>resources</goal>
+							<goal>i18n</goal>
+							<goal>generateAsync</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -69,6 +71,10 @@
 					<copyWebapp>true</copyWebapp>
 					<runTarget>Coursegenerator.html</runTarget>
 					<module>com.ipoint.coursegenerator.Coursegenerator</module>
+					<generateDirectory>${basedir}/target/generated-sources/gwt</generateDirectory>
+					<i18nMessagesBundles>
+						<i18nMessagesBundle>com.ipoint.coursegenerator.client.Messages</i18nMessagesBundle>
+					</i18nMessagesBundles>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -161,6 +167,65 @@
 				</dependencies>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>gwt-maven-plugin</artifactId>
+										<versionRange>[2.3.0-1,)</versionRange>
+										<goals>
+											<goal>generateAsync</goal>
+											<goal>resources</goal>
+											<goal>compile</goal>
+											<goal>i18n</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-war-plugin</artifactId>
+										<versionRange>[2.1.1,)</versionRange>
+										<goals>
+											<goal>exploded</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.google.code.maven-replacer-plugin</groupId>
+										<artifactId>replacer</artifactId>
+										<versionRange>[1.5.0,)</versionRange>
+										<goals>
+											<goal>replace</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<version>0.0.1-SNAPSHOT</version>

@@ -18,7 +18,7 @@
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='com.ipoint.coursegenerator.client.CourseGenerator' />
-
+	<extend-property name="locale" values="ru"/>
 	<inherits name='com.gwtplatform.dispatch.Dispatch' />
 	<inherits name='com.gwtplatform.mvp.Mvp' />
 
