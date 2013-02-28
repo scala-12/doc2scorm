@@ -8,21 +8,37 @@
 
 	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<g:HTMLPanel>
+		<t:Modal ui:field="lockScreen">
+			<t:Well>
+				<ui:text from='{msg.waitMessage}' />
+			</t:Well>
+			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
+				percent="100" />
+		</t:Modal>
 		<t:Form styleName="form-horizontal">
 			<t:ControlGroup>
-				<t:ControlLabel><ui:text from='{msg.planName}'/>:</t:ControlLabel>
+				<t:ControlLabel>
+					<ui:text from='{msg.planName}' />
+					:
+				</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="name"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
-				<t:ControlLabel><ui:text from='{msg.planDescription}'/>:</t:ControlLabel>
+				<t:ControlLabel>
+					<ui:text from='{msg.planDescription}' />
+					:
+				</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="description"></t:Container>
 				</t:Controls>
 			</t:ControlGroup>
 			<t:ControlGroup>
-				<t:ControlLabel><ui:text from='{msg.planPrice}'/>:</t:ControlLabel>
+				<t:ControlLabel>
+					<ui:text from='{msg.planPrice}' />
+					:
+				</t:ControlLabel>
 				<t:Controls>
 					<t:Container ui:field="price"></t:Container>
 				</t:Controls>

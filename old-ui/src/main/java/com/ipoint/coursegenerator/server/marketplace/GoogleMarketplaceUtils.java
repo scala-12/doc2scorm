@@ -10,11 +10,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletContext;
 
+import org.apache.avalon.framework.logger.Loggable;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -50,6 +52,8 @@ public class GoogleMarketplaceUtils implements ServletContextAware {
 	
 	private ServletContext servletContext;
 	
+	private Logger log = Logger.getLogger(GoogleMarketplaceUtils.class.getName());
+	
 	public GoogleMarketplaceUtils() {
 		firstTimeCall = true;
 	}
@@ -70,6 +74,7 @@ public class GoogleMarketplaceUtils implements ServletContextAware {
 			TwoLeggedOAuthHelper twoLeggedOAuthHelper = new TwoLeggedOAuthHelper(signer, oauthParameters);
 			String authorizationHeader = twoLeggedOAuthHelper
 					.getAuthorizationHeader(url, connection.getRequestMethod());
+			log.warning("Marketplace Authorization Header: " + authorizationHeader);
 			connection.setRequestProperty("Authorization", authorizationHeader);
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
@@ -80,6 +85,11 @@ public class GoogleMarketplaceUtils implements ServletContextAware {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			try {
+				log.warning("Response message: " + servletContext.getInitParameter("appsmarketplace_consumer_key") + " " + connection.getResponseMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return result;
 	}

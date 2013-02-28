@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.client.view;
 
 import com.github.gwtbootstrap.client.ui.Container;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,6 +26,9 @@ public class PurchaseConfirmingView extends ViewWithUiHandlers<PurchaseConfirmin
 
 	@UiField
 	Container price;
+	
+	@UiField
+	Modal lockScreen;
 
 	public interface Binder extends UiBinder<Widget, PurchaseConfirmingView> {
 	}
@@ -51,6 +55,7 @@ public class PurchaseConfirmingView extends ViewWithUiHandlers<PurchaseConfirmin
 
 	@UiHandler("submit")
 	public void onBuyNowClicked(ClickEvent event) {
+		lockScreen.show();
 		this.getUiHandlers().buyNow();
 	}
 }

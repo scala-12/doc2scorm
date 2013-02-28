@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +15,17 @@ public class MarketplaceOrderHandler extends HttpServlet {
 	
 	private static final long serialVersionUID = -2734267290216150767L;
 
+	private Locale russianLocale = new Locale("ru");
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		if (req.getLocale().getLanguage().equals(russianLocale.getLanguage())
+				&& req.getParameter("locale") == null) {
+			resp.sendRedirect(req.getRequestURI() + "?" + "locale=ru"
+					+ (req.getQueryString() == null ? "" : "&" + req.getQueryString()));
+			return;
+		}
 		String token = req.getParameter("token");
 		String payerID = req.getParameter("PayerID");
 		req.getSession().setAttribute("paypalToken", token);
