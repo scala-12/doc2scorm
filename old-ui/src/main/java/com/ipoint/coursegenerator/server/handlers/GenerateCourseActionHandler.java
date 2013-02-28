@@ -47,7 +47,10 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 		pm.refresh(user);
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
-		if (user != null && (user.getExpirationDate().getTime() > System.currentTimeMillis())) {
+		if (user != null
+				&& ((user.getDomain() != null && (user.getDomain().getExpirationDate().getTime() > System
+						.currentTimeMillis() || user.getDomain().equals(GetOrderPlanListActionHandler.IPOINT_DOMAIN))) || (user
+						.getExpirationDate().getTime() > System.currentTimeMillis()))) {
 			try {
 				String tmpPath = servletContext.getRealPath(File.separator + "tmp");
 				String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator

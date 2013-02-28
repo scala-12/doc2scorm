@@ -21,6 +21,8 @@ public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlan
 	
 	private static double DAY_IN_MILLISECONDS = 86400000.0;
 	
+	public static final String IPOINT_DOMAIN = "ipoint.ru";
+	
 	@Autowired
 	private HttpSession httpSession;
 	
@@ -34,9 +36,12 @@ public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlan
 		long daysRemains = -1;
 		if (user.getDomain() != null ) {
 			daysRemains = Math.round(Math.floor((user.getDomain().getExpirationDate().getTime() - System.currentTimeMillis())/DAY_IN_MILLISECONDS));
+			if (user.getDomain().getName().equals(IPOINT_DOMAIN)) {
+				daysRemains = 999999999;
+			}
 		} else {
 			daysRemains =  Math.round(Math.floor((user.getExpirationDate().getTime() - System.currentTimeMillis())/DAY_IN_MILLISECONDS));
-		}
+		}		
 		String username = user.getUserEmail();
 		List<OrderPlan> orderPlanList = new ArrayList<OrderPlan>();
 		@SuppressWarnings("unchecked")
