@@ -37,7 +37,7 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 
 	@Inject
 	public GenerateCourseActionHandler() {
-		context = new ClassPathXmlApplicationContext();
+		context = new ClassPathXmlApplicationContext("beans.xml");
 	}
 
 	@Override
