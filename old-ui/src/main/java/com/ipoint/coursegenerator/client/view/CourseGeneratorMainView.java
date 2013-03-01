@@ -5,8 +5,6 @@ import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.Nav;
 import com.github.gwtbootstrap.client.ui.NavText;
-import com.github.gwtbootstrap.client.ui.base.Style;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -18,9 +16,7 @@ import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.ViewImpl;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import com.ipoint.coursegenerator.client.Messages;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.MessagesHolder;
 
@@ -117,5 +113,10 @@ public class CourseGeneratorMainView extends ViewWithUiHandlers<MessagesHolder> 
 		if (daysRemains > 0) {
 			this.subscriptionStatus.setText(getUiHandlers().getMessages().remainingPrefix() +" "+ daysRemains  +" "+ getUiHandlers().getMessages().remainingSuffix());
 		}
+	}
+
+	@Override
+	public void hideBuyButton() {
+		buyProNav.setVisible(false);
 	}
 }

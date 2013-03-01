@@ -39,17 +39,6 @@
 		<outputDirectory>target/ilogos-course-generator-0.0.1-SNAPSHOT/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
-				<groupId>com.jelastic</groupId>
-				<artifactId>jelastic-maven-plugin</artifactId>
-				<version>1.7-SNAPSHOT</version>
-				<configuration>
-					<api_hoster>app.j.rsnx.ru</api_hoster>
-					<email>${jelastic.username}</email>
-					<password>${jelastic.password}</password>
-					<environment>env-9571171</environment>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>

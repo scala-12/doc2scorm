@@ -26,6 +26,7 @@ public class CourseGeneratorMainPresenter extends
 
 		void setDaysRemains(int daysRemains);
 
+		void hideBuyButton();
 	}
 
 	@ContentSlot
@@ -85,6 +86,9 @@ public class CourseGeneratorMainPresenter extends
 		getView().setDaysRemains(daysRemains);
 		if (daysRemains > 0) {
 			courseGeneratorFormPresenter.enableGenerateButton();
+			if (daysRemains > 999999) {
+				getView().hideBuyButton();
+			}
 		}
 	}
 

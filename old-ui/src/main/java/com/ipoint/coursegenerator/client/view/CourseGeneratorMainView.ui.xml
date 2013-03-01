@@ -42,7 +42,7 @@
 			<g:HTMLPanel ui:field="mainContent"></g:HTMLPanel>
 		</div>
 		<t:ResponsiveNavbar position="BOTTOM">
-			<g:Label>&copy; <ui:text from='{msg.copyrightMessage}' /></g:Label>
+			<g:Label>&copy; <ui:text from='{msg.copyrightMessage}' /></g:Label><g:Anchor href="http://ipoint-consulting.com/">ipoint-consulting.com</g:Anchor>
 		</t:ResponsiveNavbar>
 	</g:HTMLPanel>
 </ui:UiBinder>
