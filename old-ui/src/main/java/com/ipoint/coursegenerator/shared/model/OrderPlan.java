@@ -15,8 +15,8 @@ public class OrderPlan implements Serializable {
 	private static final long serialVersionUID = -2139136149949719508L;
 
 	@PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private long id;
+    @Persistent
+    private String id;
 	
 	@Persistent
 	private String name;
@@ -92,7 +92,7 @@ public class OrderPlan implements Serializable {
 		this.description = description;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 

@@ -52,7 +52,7 @@ public class GetSubscribedActionHandler implements ActionHandler<GetSubscribed, 
 			}
 		}
 		pm.close();
-		return new GetSubscribedResult(orderPlanList, username, (int)daysRemains, false);
+		return new GetSubscribedResult(orderPlanList, username, (int)daysRemains, false, user.getUserId());
 	}
 
 	@Override

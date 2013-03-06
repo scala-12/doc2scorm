@@ -45,7 +45,7 @@ public class PlanChoiceWidgetPresenter extends PresenterWidget<PlanChoiceWidgetP
 
 			@Override
 			public void onSuccess(GetSubscribedResult result) {
-				getView().setSubscribed(result.isSubscribed(), result.getUsername());
+				getView().setSubscribed(result.isSubscribed(), result.getUserId());
 				courseGeneratorMainPresenter.setUsername(result.getUsername());
 				courseGeneratorMainPresenter.setDaysRemains(result.getDaysRemains());
 			}

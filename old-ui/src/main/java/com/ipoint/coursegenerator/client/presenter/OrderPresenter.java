@@ -1,7 +1,6 @@
 package com.ipoint.coursegenerator.client.presenter;
 
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -15,8 +14,6 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.ipoint.coursegenerator.client.NameTokens;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.OrderUiHandlers;
-import com.ipoint.coursegenerator.shared.CheckoutWithPaypal;
-import com.ipoint.coursegenerator.shared.CheckoutWithPaypalResult;
 import com.ipoint.coursegenerator.shared.GetSubscribed;
 import com.ipoint.coursegenerator.shared.GetSubscribedResult;
 

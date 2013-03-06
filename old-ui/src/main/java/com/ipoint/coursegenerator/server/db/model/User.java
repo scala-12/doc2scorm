@@ -148,4 +148,13 @@ public class User {
 	public void setSubscribed(boolean subscribed) {
 		this.subscribed = subscribed;
 	}
+	
+	public boolean transactionExists(String txnId) {
+		for (PaypalTransaction txn : transactions) {
+			if (txn.getTxnId().equals(txnId)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

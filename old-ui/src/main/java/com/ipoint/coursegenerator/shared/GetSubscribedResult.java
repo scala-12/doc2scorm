@@ -11,6 +11,8 @@ public class GetSubscribedResult implements Result {
 	
 	private String username;
 	
+	private String userId;
+	
 	private int daysRemains;
 	
 	private boolean subscribed;
@@ -20,11 +22,12 @@ public class GetSubscribedResult implements Result {
 		// For serialization only
 	}
 
-	public GetSubscribedResult(List<OrderPlan> orderPlanList, String username, int daysRemains, boolean subscribed) {
+	public GetSubscribedResult(List<OrderPlan> orderPlanList, String username, int daysRemains, boolean subscribed, String userId) {
 		this.orderPlanList = orderPlanList;
 		this.username = username;
 		this.daysRemains = daysRemains;
 		this.subscribed = subscribed;
+		this.userId = userId;
 	}
 
 	public List<OrderPlan> getOrderPlanList() {
@@ -41,5 +44,9 @@ public class GetSubscribedResult implements Result {
 	
 	public boolean isSubscribed() {
 		return subscribed;
+	}
+
+	public String getUserId() {
+		return userId;
 	}
 }

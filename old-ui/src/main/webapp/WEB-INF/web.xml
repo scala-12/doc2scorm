@@ -25,6 +25,10 @@
 		<param-name>PAYPAL_API_SIGNATURE</param-name>
 		<param-value>A8OsBMjuCbaWBQGxI7oVQz7fgFYNApx73g9a9rGc8AyhZ.OIsM2jMor5</param-value>
 	</context-param>
+	<context-param>
+		<param-name>receiver_email</param-name>
+		<param-value>shamak_1360056582_biz@ipoint.ru</param-value>
+	</context-param>
 	<filter>
 		<filter-name>LanguageSetFilter</filter-name>
 		<filter-class>com.ipoint.coursegenerator.server.LanguageSetFilter</filter-class>

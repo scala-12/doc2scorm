@@ -6,33 +6,42 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Transaction;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
+import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
+import com.ipoint.coursegenerator.server.db.model.PaypalTransaction;
+import com.ipoint.coursegenerator.server.db.model.User;
 import com.ipoint.coursegenerator.shared.ApplicationProperties;
-
+import com.ipoint.coursegenerator.shared.OrderPlanType;
+import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
 public class PayPalIPNHandler extends HttpServlet {
 
 	private static final long serialVersionUID = -5538594404825478772L;
-	
-	public static final String PAYPAL_SERVER = ApplicationProperties.debugEnabled() ? "https://www.sandbox.paypal.com/" : "https://www.paypal.com/";
 
-	public static final String PAYPAL_VERIFY_IPN_URL = "cgi-bin/webscr?cmd=_notify-validate";
-	
+	public static final String PAYPAL_SERVER = ApplicationProperties.debugEnabled() ? "https://www.sandbox.paypal.com/"
+			: "https://www.paypal.com/";
+
+	public static final String PAYPAL_VERIFY_IPN_URL = "cgi-bin/webscr";
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		System.out.println(req.getContentType());
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-		// read post from PayPal system and add 'cmd'
 		Enumeration en = request.getParameterNames();
 		StringBuffer strBuffer = new StringBuffer("cmd=_notify-validate");
 		String paramName;
@@ -40,26 +49,19 @@ public class PayPalIPNHandler extends HttpServlet {
 		while (en.hasMoreElements()) {
 			paramName = (String) en.nextElement();
 			paramValue = request.getParameter(paramName);
-			strBuffer.append("&").append(paramName).append("=")
-					.append(URLEncoder.encode(paramValue));
+			strBuffer.append("&").append(paramName).append("=").append(URLEncoder.encode(paramValue));
 		}
 
-		// post back to PayPal system to validate
-		// NOTE: change http: to https: in the following URL to verify using SSL (for increased security).
-		// using HTTPS requires either Java 1.4 or greater, or Java Secure Socket Extension (JSSE)
-		// and configured for older versions.
-		URL u = new URL("https://www.sandbox.paypal.com/cgi-bin/webscr");
+		URL u = new URL(PAYPAL_SERVER + PAYPAL_VERIFY_IPN_URL);
 		HttpsURLConnection uc = (HttpsURLConnection) u.openConnection();
 		uc.setDoOutput(true);
-		uc.setRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
+		uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 		uc.setRequestProperty("Host", "sandbox.paypal.com");
 		PrintWriter pw = new PrintWriter(uc.getOutputStream());
 		pw.println(strBuffer.toString());
 		pw.close();
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				uc.getInputStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 		String res = in.readLine();
 		in.close();
 
@@ -72,18 +74,46 @@ public class PayPalIPNHandler extends HttpServlet {
 		String txnId = request.getParameter("txn_id");
 		String receiverEmail = request.getParameter("receiver_email");
 		String payerEmail = request.getParameter("payer_email");
-
+		String userId = request.getParameter("custom");
 		// check notification validation
 		if (res.equals("VERIFIED")) {
-			// check that paymentStatus=Completed
-			// check that txnId has not been previously processed
-			// check that receiverEmail is your Primary PayPal email
-			// check that paymentAmount/paymentCurrency are correct
-			// process payment
+			if ("Completed".equals(paymentStatus) && userId != null && userId.length() == 36) {
+				PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
+				Transaction trans = pm.currentTransaction();
+				trans.begin();
+				User user = pm.getObjectById(User.class, userId);
+				OrderPlan plan = pm.getObjectById(OrderPlan.class, itemNumber);
+				plan = pm.detachCopy(plan);
+				double amount = Double.parseDouble(paymentAmount);
+				if (!user.transactionExists(txnId)
+						&& getServletContext().getInitParameter("receiver_email").equals(receiverEmail)
+						&& "USD".equals(paymentCurrency) && Math.round(amount) == Math.round(plan.getAmount())) {
+					PaypalTransaction transaction = new PaypalTransaction();
+					transaction.setAmount(amount);
+					transaction.setSuccessful(true);
+					transaction.setTimestamp(new Date());
+					transaction.setTxnId(txnId);
+					GoogleAppsDomain domain = user.getDomain();
+					pm.refresh(domain);
+					if (plan.getType().equals(OrderPlanType.TIME)) {
+						Calendar calendar = Calendar.getInstance();
+						calendar.add(Calendar.DAY_OF_MONTH, plan.getExpiresIn());
+						user.setExpirationDate(calendar.getTime());
+						if (domain != null) {
+							domain.setExpirationDate(calendar.getTime());
+						}
+					} else if (plan.getType().equals(OrderPlanType.COUNT)) {
+						user.setCurrentPlanCount(plan.getExpiresAfter());
+						if (domain != null) {
+							domain.setCurrentPlanCount(user.getCurrentPlanCount());
+						}
+					}
+					user.addTransaction(transaction);
+					trans.commit();
+				}
+			}
 		} else if (res.equals("INVALID")) {
-			// log for investigation
 		} else {
-			// error
 		}
 	}
 }

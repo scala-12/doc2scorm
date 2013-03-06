@@ -15,6 +15,9 @@ public class PaypalTransaction {
     private long id;
 	
 	@Persistent
+	private String txnId;
+	
+	@Persistent
 	private double amount;
 
 	@Persistent
@@ -50,5 +53,13 @@ public class PaypalTransaction {
 
 	public long getId() {
 		return id;
+	}
+
+	public String getTxnId() {
+		return txnId;
+	}
+
+	public void setTxnId(String txnId) {
+		this.txnId = txnId;
 	}
 }
