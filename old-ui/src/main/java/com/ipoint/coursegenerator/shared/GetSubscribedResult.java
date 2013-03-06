@@ -5,23 +5,26 @@ import java.util.List;
 import com.gwtplatform.dispatch.shared.Result;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
-public class GetOrderPlanListResult implements Result {
+public class GetSubscribedResult implements Result {
 
 	private List<OrderPlan> orderPlanList;
 	
 	private String username;
 	
 	private int daysRemains;
+	
+	private boolean subscribed;
 
 	@SuppressWarnings("unused")
-	private GetOrderPlanListResult() {
+	private GetSubscribedResult() {
 		// For serialization only
 	}
 
-	public GetOrderPlanListResult(List<OrderPlan> orderPlanList, String username, int daysRemains) {
+	public GetSubscribedResult(List<OrderPlan> orderPlanList, String username, int daysRemains, boolean subscribed) {
 		this.orderPlanList = orderPlanList;
 		this.username = username;
 		this.daysRemains = daysRemains;
+		this.subscribed = subscribed;
 	}
 
 	public List<OrderPlan> getOrderPlanList() {
@@ -34,5 +37,9 @@ public class GetOrderPlanListResult implements Result {
 	
 	public int getDaysRemains() {
 		return daysRemains;
+	}
+	
+	public boolean isSubscribed() {
+		return subscribed;
 	}
 }

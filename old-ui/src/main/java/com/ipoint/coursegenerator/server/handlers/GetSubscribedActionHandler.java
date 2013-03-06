@@ -13,11 +13,11 @@ import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.User;
-import com.ipoint.coursegenerator.shared.GetOrderPlanList;
-import com.ipoint.coursegenerator.shared.GetOrderPlanListResult;
+import com.ipoint.coursegenerator.shared.GetSubscribed;
+import com.ipoint.coursegenerator.shared.GetSubscribedResult;
 import com.ipoint.coursegenerator.shared.model.OrderPlan;
 
-public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlanList, GetOrderPlanListResult> {
+public class GetSubscribedActionHandler implements ActionHandler<GetSubscribed, GetSubscribedResult> {
 	
 	private static double DAY_IN_MILLISECONDS = 86400000.0;
 	
@@ -26,11 +26,11 @@ public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlan
 	@Autowired
 	private HttpSession httpSession;
 	
-	public GetOrderPlanListActionHandler() {
+	public GetSubscribedActionHandler() {
 	}
 
 	@Override
-	public GetOrderPlanListResult execute(GetOrderPlanList action, ExecutionContext context) throws ActionException {
+	public GetSubscribedResult execute(GetSubscribed action, ExecutionContext context) throws ActionException {
 		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 		User user = pm.getObjectById(User.class, (String)httpSession.getAttribute("userId"));
 		long daysRemains = -1;
@@ -52,16 +52,16 @@ public class GetOrderPlanListActionHandler implements ActionHandler<GetOrderPlan
 			}
 		}
 		pm.close();
-		return new GetOrderPlanListResult(orderPlanList, username, (int)daysRemains);
+		return new GetSubscribedResult(orderPlanList, username, (int)daysRemains, false);
 	}
 
 	@Override
-	public void undo(GetOrderPlanList action, GetOrderPlanListResult result, ExecutionContext context)
+	public void undo(GetSubscribed action, GetSubscribedResult result, ExecutionContext context)
 			throws ActionException {
 	}
 
 	@Override
-	public Class<GetOrderPlanList> getActionType() {
-		return GetOrderPlanList.class;
+	public Class<GetSubscribed> getActionType() {
+		return GetSubscribed.class;
 	}
 }

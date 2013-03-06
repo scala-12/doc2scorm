@@ -11,8 +11,8 @@ import com.ipoint.coursegenerator.shared.CheckoutWithPaypal;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GetPurchaseInfo;
 import com.ipoint.coursegenerator.server.handlers.GetPurchaseInfoActionHandler;
-import com.ipoint.coursegenerator.shared.GetOrderPlanList;
-import com.ipoint.coursegenerator.server.handlers.GetOrderPlanListActionHandler;
+import com.ipoint.coursegenerator.shared.GetSubscribed;
+import com.ipoint.coursegenerator.server.handlers.GetSubscribedActionHandler;
 import com.ipoint.coursegenerator.shared.BuyNow;
 import com.ipoint.coursegenerator.server.handlers.BuyNowActionHandler;
 
@@ -27,7 +27,7 @@ public class CourseGeneratorServerModule extends HandlerModule {
 
 		bindHandler(GetPurchaseInfo.class, GetPurchaseInfoActionHandler.class);
 
-		bindHandler(GetOrderPlanList.class, GetOrderPlanListActionHandler.class);
+		bindHandler(GetSubscribed.class, GetSubscribedActionHandler.class);
 
 		bindHandler(BuyNow.class, BuyNowActionHandler.class);
 	}
@@ -48,8 +48,8 @@ public class CourseGeneratorServerModule extends HandlerModule {
 	}
 
 	@Bean
-	public GetOrderPlanListActionHandler getGetOrderPlanListActionHandler() {
-		return new GetOrderPlanListActionHandler();
+	public GetSubscribedActionHandler getGetOrderPlanListActionHandler() {
+		return new GetSubscribedActionHandler();
 	}
 
 	@Bean

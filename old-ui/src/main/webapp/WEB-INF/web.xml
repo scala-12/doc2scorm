@@ -75,6 +75,11 @@
 		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack
 		</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>PayPalIPNHandler</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.paypal.PayPalIPNHandler
+		</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>dispatch</servlet-name>
 		<url-pattern>/dispatch/*</url-pattern>
@@ -98,5 +103,9 @@
 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PayPalIPNHandler</servlet-name>
+		<url-pattern>/PayPal_IPN</url-pattern>
 	</servlet-mapping>
 </web-app>

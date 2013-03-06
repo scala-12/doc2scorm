@@ -53,6 +53,9 @@ public class User {
 	
 	@Persistent
 	private boolean trialUsed;
+	
+	@Persistent
+	private boolean subscribed;
 
 	public String getUserId() {
 		return userId;
@@ -136,5 +139,13 @@ public class User {
 
 	public void setDomain(GoogleAppsDomain domain) {
 		this.domain = domain;
+	}
+
+	public boolean isSubscribed() {
+		return subscribed;
+	}
+
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
 	}
 }

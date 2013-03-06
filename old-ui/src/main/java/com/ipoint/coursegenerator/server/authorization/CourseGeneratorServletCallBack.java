@@ -46,7 +46,7 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 			e.printStackTrace();
 		}
 		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
-		if (userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()
+		if (userInfo != null && userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()
 				&& pm.getUserObject(userInfo.getEmail()) == null) {
 			Query query = pm.newQuery(User.class);
 			query.setFilter("userEmail == userEmailParam");
