@@ -84,6 +84,10 @@
 		<servlet-class>com.ipoint.coursegenerator.server.paypal.PayPalIPNHandler
 		</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>PayPalAutoReturnServlet</servlet-name>
+		<servlet-class>com.ipoint.coursegenerator.server.paypal.PayPalAutoReturnServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>dispatch</servlet-name>
 		<url-pattern>/dispatch/*</url-pattern>
@@ -111,5 +115,9 @@
 	<servlet-mapping>
 		<servlet-name>PayPalIPNHandler</servlet-name>
 		<url-pattern>/PayPal_IPN</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PayPalAutoReturnServlet</servlet-name>
+		<url-pattern>/paypal_return</url-pattern>
 	</servlet-mapping>
 </web-app>

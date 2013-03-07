@@ -32,6 +32,9 @@ public class GoogleAppsDomain {
 
 	@Persistent
 	private boolean trialUsed;
+	
+	@Persistent
+	private boolean subscribed;
 
 	public GoogleAppsDomain(String name){
 		this.name = name;
@@ -107,5 +110,12 @@ public class GoogleAppsDomain {
 	public void addUser(User user) {
 		users.add(user);
 	}
+
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
+	}
 	
+	public boolean isSubscribed() {
+		return subscribed;
+	}	
 }

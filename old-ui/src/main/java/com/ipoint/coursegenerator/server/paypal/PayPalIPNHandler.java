@@ -72,16 +72,17 @@ public class PayPalIPNHandler extends HttpServlet {
 		String paymentAmount = request.getParameter("mc_gross");
 		String paymentCurrency = request.getParameter("mc_currency");
 		String txnId = request.getParameter("txn_id");
+		String txnType = request.getParameter("txn_type");
 		String receiverEmail = request.getParameter("receiver_email");
 		String payerEmail = request.getParameter("payer_email");
 		String userId = request.getParameter("custom");
 		// check notification validation
-		if (res.equals("VERIFIED")) {
-			if ("Completed".equals(paymentStatus) && userId != null && userId.length() == 36) {
-				PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
-				Transaction trans = pm.currentTransaction();
-				trans.begin();
-				User user = pm.getObjectById(User.class, userId);
+		if (res.equals("VERIFIED") && userId != null && userId.length() == 36) {
+			PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
+			Transaction trans = pm.currentTransaction();
+			trans.begin();
+			User user = pm.getObjectById(User.class, userId);
+			if ("Completed".equals(paymentStatus) && "subscr_payment".equals(txnType)) {
 				OrderPlan plan = pm.getObjectById(OrderPlan.class, itemNumber);
 				plan = pm.detachCopy(plan);
 				double amount = Double.parseDouble(paymentAmount);
@@ -99,8 +100,10 @@ public class PayPalIPNHandler extends HttpServlet {
 						Calendar calendar = Calendar.getInstance();
 						calendar.add(Calendar.DAY_OF_MONTH, plan.getExpiresIn());
 						user.setExpirationDate(calendar.getTime());
+						user.setSubscribed(true);
 						if (domain != null) {
 							domain.setExpirationDate(calendar.getTime());
+							domain.setSubscribed(true);
 						}
 					} else if (plan.getType().equals(OrderPlanType.COUNT)) {
 						user.setCurrentPlanCount(plan.getExpiresAfter());
@@ -109,9 +112,20 @@ public class PayPalIPNHandler extends HttpServlet {
 						}
 					}
 					user.addTransaction(transaction);
-					trans.commit();
+				}
+			} else if ("subscr_cancel".equals(txnType) || "subscr_eot".equals(txnType)
+					|| "subscr_failed".equals(txnType)) {
+				GoogleAppsDomain domain = user.getDomain();
+				pm.refresh(domain);
+				user.setExpirationDate(new Date());
+				user.setSubscribed(false);
+				if (domain != null) {
+					domain.setExpirationDate(new Date());
+					domain.setSubscribed(false);
 				}
 			}
+			trans.commit();
+			pm.close();
 		} else if (res.equals("INVALID")) {
 		} else {
 		}
