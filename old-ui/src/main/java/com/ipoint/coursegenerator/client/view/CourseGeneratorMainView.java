@@ -20,8 +20,8 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorMainPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.MessagesHolder;
 
-public class CourseGeneratorMainView extends ViewWithUiHandlers<MessagesHolder> implements CourseGeneratorMainPresenter.MyView,
-		NativePreviewHandler {
+public class CourseGeneratorMainView extends ViewWithUiHandlers<MessagesHolder> implements
+		CourseGeneratorMainPresenter.MyView, NativePreviewHandler {
 
 	private final Widget widget;
 
@@ -48,14 +48,14 @@ public class CourseGeneratorMainView extends ViewWithUiHandlers<MessagesHolder> 
 
 	@UiField
 	Nav buyProNav;
-	
+
 	public interface Binder extends UiBinder<Widget, CourseGeneratorMainView> {
 	}
 
 	@Inject
 	public CourseGeneratorMainView(final Binder binder) {
 		widget = binder.createAndBindUi(this);
-		Event.addNativePreviewHandler(this);		
+		Event.addNativePreviewHandler(this);
 	}
 
 	@Override
@@ -111,7 +111,10 @@ public class CourseGeneratorMainView extends ViewWithUiHandlers<MessagesHolder> 
 	@Override
 	public void setDaysRemains(int daysRemains) {
 		if (daysRemains > 0) {
-			this.subscriptionStatus.setText(getUiHandlers().getMessages().remainingPrefix() +" "+ daysRemains  +" "+ getUiHandlers().getMessages().remainingSuffix());
+			this.subscriptionStatus.setText(getUiHandlers().getMessages().remainingPrefix() + " " + daysRemains + " "
+					+ getUiHandlers().getMessages().remainingSuffix());
+		} else {
+			this.subscriptionStatus.setText(getUiHandlers().getMessages().subscriptionExpiredMessage());
 		}
 	}
 

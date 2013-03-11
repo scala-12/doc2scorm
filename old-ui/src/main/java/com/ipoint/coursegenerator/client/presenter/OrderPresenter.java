@@ -22,7 +22,7 @@ public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresen
 	private final DispatchAsync dispatcher;
 
 	public interface MyView extends View, HasUiHandlers<OrderUiHandlers> {
-		public void setSubscribed();
+		public void setSubscribed(boolean subscribed, String userEmail);
 	}
 
 	@ProxyCodeSplit
@@ -53,7 +53,7 @@ public class OrderPresenter extends Presenter<OrderPresenter.MyView, OrderPresen
 
 			@Override
 			public void onSuccess(GetSubscribedResult result) {
-				getView().setSubscribed();
+				getView().setSubscribed(result.isSubscribed(), result.getUserId());
 			}
 		});
 	}

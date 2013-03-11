@@ -18,7 +18,7 @@ import com.ipoint.coursegenerator.shared.model.OrderPlan;
 public class CheckoutWithPaypalActionHandler implements ActionHandler<CheckoutWithPaypal, CheckoutWithPaypalResult> {
 
 	private final static String SERVER_NAME = "true".equals(System.getProperty("debugging")) ? "http://localhost:8888/"
-			: "http://doc2scorm.ipoint-consulting.com/";
+			: "http://www.doc2scorm.com/";
 
 	@Autowired
 	private HttpSession httpSession;

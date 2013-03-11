@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.server.paypal;
 
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.stereotype.Service;
@@ -16,8 +18,10 @@ import com.paypal.sdk.services.NVPCallerServices;
 public class PaypalUtils implements ServletContextAware {
 
 	private NVPCallerServices caller = null;
-	
+
 	private ServletContext servletContext;
+
+	private final static Logger log = Logger.getLogger(PaypalUtils.class.getName());
 
 	public String setCheckoutCode(String returnURL, String cancelURL, String amount, String paymentType,
 			String currencyCode) throws PaypalSetCheckoutCodeException {
@@ -31,7 +35,7 @@ public class PaypalUtils implements ServletContextAware {
 			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
 			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
 			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
-			profile.setEnvironment("sandbox");
+			profile.setEnvironment("live");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
 			encoder.add("VERSION", "51.0");
@@ -54,7 +58,10 @@ public class PaypalUtils implements ServletContextAware {
 		}
 		if (decoder.get("ACK") != null && decoder.get("ACK").equals("Success")) {
 			return decoder.get("TOKEN");
-		} else throw new PaypalSetCheckoutCodeException("Failed to set PayPal Checkout Code.");
+		} else {
+			log.warning(decoder.getMap().values().toString());
+			throw new PaypalSetCheckoutCodeException("Failed to set PayPal Checkout Code.");
+		}
 	}
 
 	public String executeCheckoutCode(String token, String payerID, String amount) {
@@ -69,7 +76,7 @@ public class PaypalUtils implements ServletContextAware {
 			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
 			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
 			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
-			profile.setEnvironment("sandbox");
+			profile.setEnvironment("live");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
 			encoder.add("VERSION", "51.0");
@@ -106,7 +113,7 @@ public class PaypalUtils implements ServletContextAware {
 			profile.setAPIUsername(servletContext.getInitParameter("PAYPAL_API_USERNAME"));
 			profile.setAPIPassword(servletContext.getInitParameter("PAYPAL_API_PASSWORD"));
 			profile.setSignature(servletContext.getInitParameter("PAYPAL_API_SIGNATURE"));
-			profile.setEnvironment("sandbox");
+			profile.setEnvironment("live");
 			profile.setSubject("");
 			caller.setAPIProfile(profile);
 			encoder.add("VERSION", "51.0");

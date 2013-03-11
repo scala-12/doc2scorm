@@ -18,11 +18,11 @@ public class GoogleAuthorizationUtils {
 
 	public static final String APP_NAME = "ipoint-ilogos-course-generator-0.1";
 
-	public static final String APPLICATION_ID = "274434146714";
+	public static final String APPLICATION_ID = "941037917146";
 
 	public static final String XOAUTH_PARAM = "xoauth_requestor_id";
 
-	public static final String PRODUCT_LISTING_ID = "23741+10727418611876118780";
+	public static final String PRODUCT_LISTING_ID = "14092+1382165968457555329";
 
 	static String getRedirectUri(HttpServletRequest req) {
 		GenericUrl url = new GenericUrl(req.getRequestURL().toString());

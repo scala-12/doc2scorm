@@ -12,27 +12,27 @@
 				<t:ControlLabel>
 					<ui:text from='{msg.weekSubscription}' />
 				</t:ControlLabel>
-				<form id="weekForm" action="https://www.sandbox.paypal.com/cgi-bin/webscr"
+				<form id="weekForm" action="https://www.paypal.com/cgi-bin/webscr"
 					method="post">
 					<input type="hidden" name="cmd" value="_s-xclick" />
 					<input type="hidden" name="hosted_button_id" value="{msg.payPalWeekButtonId}" />
 					<input type="image" src="{msg.subscriptionButtonUrl}" border="0"
 						name="submit" alt="{msg.payPalAlt}" />
 					<img alt="" border="0"
-						src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1"
+						src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
 						height="1" />
 				</form>
 				<t:ControlLabel>
 					<ui:text from='{msg.monthSubscription}' />
 				</t:ControlLabel>
-				<form id="monthForm" action="https://www.sandbox.paypal.com/cgi-bin/webscr"
+				<form id="monthForm" action="https://www.paypal.com/cgi-bin/webscr"
 					method="post">
 					<input type="hidden" name="cmd" value="_s-xclick" />
 					<input type="hidden" name="hosted_button_id" value="{msg.payPalMonthButtonId}" />
 					<input type="image" src="{msg.subscriptionButtonUrl}" border="0"
 						name="submit" alt="{msg.payPalAlt}" />
 					<img alt="" border="0"
-						src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1"
+						src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
 						height="1" />
 				</form>
 			</g:HTMLPanel>

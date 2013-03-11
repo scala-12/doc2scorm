@@ -47,13 +47,12 @@ public class CourseGeneratorFormPresenter extends
 	}
 
 	private final DispatchAsync dispatcher;
-	
+
 	private final Messages messages;
 
 	@Inject
 	public CourseGeneratorFormPresenter(final EventBus eventBus, final MyView view, final MyProxy proxy,
-			DispatchAsync dispatcher,
-			Messages messages) {
+			DispatchAsync dispatcher, Messages messages) {
 		super(eventBus, view, proxy);
 		this.dispatcher = dispatcher;
 		this.messages = messages;
@@ -86,12 +85,16 @@ public class CourseGeneratorFormPresenter extends
 
 			@Override
 			public void onSuccess(GenerateCourseResult result) {
-				Window.Location.replace(result.getCourseFileName());
-				getView().setGenerateProgressBarCompleted();
+				if (result != null) {
+					Window.Location.replace(result.getCourseFileName());
+					getView().setGenerateProgressBarCompleted();
+				} else {
+					getView().setGenerateProgressBarFailed();
+				}
 			}
 		});
 	}
-	
+
 	public void enableGenerateButton() {
 		getView().enableGenerateButton();
 	}

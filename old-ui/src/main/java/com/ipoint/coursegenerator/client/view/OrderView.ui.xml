@@ -8,27 +8,54 @@
 
 	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
 	<g:HTMLPanel>
-		<t:Modal ui:field="lockScreen">
-			<t:Well><ui:text from='{msg.waitMessage}'/></t:Well>
-			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
-				percent="100" />
-		</t:Modal>
 		<t:Row>
-			<t:Column size="6" offset="3">
-				<t:Form styleName="form-horizontal" action="" method="get">
+			<t:Column offset="4" size="4">
+				<g:HTMLPanel ui:field="subscribe" visible="true">
+
 					<t:ControlGroup>
-						<t:ControlLabel><ui:text from='{msg.orderSelectMessage}'/></t:ControlLabel>
-						<t:Controls ui:field="radioGroup"></t:Controls>
+						<t:ControlLabel>
+							<ui:text from='{msg.weekSubscription}' />
+						</t:ControlLabel>
+						<t:Controls>
+							<g:HTMLPanel>
+								<form id="weekForm" action="https://www.paypal.com/cgi-bin/webscr"
+									method="post">
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="{msg.payPalWeekButtonId}" />
+									<input type="image" src="{msg.subscriptionButtonUrl}"
+										border="0" name="submit" alt="{msg.payPalAlt}" />
+									<img alt="" border="0"
+										src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+										width="1" height="1" />
+								</form>
+							</g:HTMLPanel>
+						</t:Controls>
 					</t:ControlGroup>
 					<t:ControlGroup>
-						<g:HTMLPanel>
-							<t:Controls>
-								<g:Image ui:field="paypalButton"
-									url="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"></g:Image>
-							</t:Controls>
-						</g:HTMLPanel>
+						<t:ControlLabel>
+							<ui:text from='{msg.monthSubscription}' />
+						</t:ControlLabel>
+						<t:Controls>
+							<g:HTMLPanel>
+								<form id="monthForm" action="https://www.paypal.com/cgi-bin/webscr"
+									method="post">
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="{msg.payPalMonthButtonId}" />
+									<input type="image" src="{msg.subscriptionButtonUrl}"
+										border="0" name="submit" alt="{msg.payPalAlt}" />
+									<img alt="" border="0"
+										src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+										width="1" height="1" />
+								</form>
+							</g:HTMLPanel>
+						</t:Controls>
 					</t:ControlGroup>
-				</t:Form>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="unsubscribe" visible="false">
+					<a href="{msg.unsubscribeUrl}">
+						<img SRC="{msg.unsubscribeButtonUrl}" BORDER="0" />
+					</a>
+				</g:HTMLPanel>
 			</t:Column>
 		</t:Row>
 	</g:HTMLPanel>

@@ -56,7 +56,7 @@ public class PayPalIPNHandler extends HttpServlet {
 		HttpsURLConnection uc = (HttpsURLConnection) u.openConnection();
 		uc.setDoOutput(true);
 		uc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		uc.setRequestProperty("Host", "sandbox.paypal.com");
+		uc.setRequestProperty("Host", ApplicationProperties.debugEnabled() ? "sandbox.paypal.com" : "paypal.com");
 		PrintWriter pw = new PrintWriter(uc.getOutputStream());
 		pw.println(strBuffer.toString());
 		pw.close();
