@@ -47,6 +47,9 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 	@Override
 	public GenerateCourseResult execute(GenerateCourse action, ExecutionContext context) throws ActionException {
 		//TODO: add check authorization
+		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
+		Transaction trans = pm.currentTransaction();
+		trans.begin();
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
 		log.warning("Processing the document for course \"" + action.getCourseName() + "\".");
@@ -70,6 +73,7 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		pm.close();
 
 		return generateCourseResult;
 	}

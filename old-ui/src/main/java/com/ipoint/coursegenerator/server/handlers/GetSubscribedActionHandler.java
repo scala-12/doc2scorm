@@ -57,6 +57,7 @@ public class GetSubscribedActionHandler implements ActionHandler<GetSubscribed, 
 				orderPlanList.add(plan);
 			}
 		}
+		pm.close();
 		
 		return new GetSubscribedResult(orderPlanList,
 				username,

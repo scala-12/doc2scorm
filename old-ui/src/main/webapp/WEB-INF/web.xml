@@ -69,6 +69,7 @@
 		<servlet-class>com.ipoint.coursegenerator.server.marketplace.MarketplaceOrderHandler
 		</servlet-class>
 	</servlet>
+<!--	
 	<servlet>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletAuth
@@ -79,6 +80,7 @@
 		<servlet-class>com.ipoint.coursegenerator.server.authorization.CourseGeneratorServletCallBack
 		</servlet-class>
 	</servlet>
+	-->
 	<servlet>
 		<servlet-name>PayPalIPNHandler</servlet-name>
 		<servlet-class>com.ipoint.coursegenerator.server.paypal.PayPalIPNHandler
@@ -100,18 +102,20 @@
 		<servlet-name>MarketplaceOrderHandler</servlet-name>
 		<url-pattern>/purchase</url-pattern>
 	</servlet-mapping>
+<!--
 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<url-pattern>/orderchoice</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
+ 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorization</servlet-name>
 		<url-pattern>/Coursegenerator.html</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
+ 	<servlet-mapping>
 		<servlet-name>CourseGeneratorAuthorizationCallback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
+-->	
 	<servlet-mapping>
 		<servlet-name>PayPalIPNHandler</servlet-name>
 		<url-pattern>/PayPal_IPN</url-pattern>
