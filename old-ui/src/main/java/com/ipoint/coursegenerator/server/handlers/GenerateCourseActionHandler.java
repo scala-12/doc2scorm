@@ -45,18 +45,11 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 	@Override
 	public GenerateCourseResult execute(GenerateCourse action, ExecutionContext context) throws ActionException {
 		//TODO: add check authorization
-		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
 		log.warning("Processing the document for course \"" + action.getCourseName() + "\".");
-		//TODO: remove comments
-		//log.warning("Access granted." + (user.getDomain() != null) + "; "
-		//		+ (user.getDomain().getExpirationDate().getTime() > System.currentTimeMillis()) + "; "
-		//		+ domain.getName()+ "; "
-		//		+ (user.getExpirationDate().getTime() > System.currentTimeMillis()));
 		
+		//TODO: add checking user, domain, time, ipoint-domain
 		try {				
 			String tmpPath = servletContext.getRealPath(File.separator + "tmp");
 			String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator
@@ -76,7 +69,6 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		pm.close();
 
 		return generateCourseResult;
 	}
