@@ -14,14 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeResponseUrl;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeCallbackServlet;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.oauth2.Oauth2;
-import com.google.api.services.oauth2.model.Userinfo;
+import com.google.api.services.oauth2.model.Userinfoplus;
 import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
 import com.ipoint.coursegenerator.server.db.model.User;
@@ -38,8 +37,13 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 				request.getHeaders().setAuthorization("Bearer " + credential.getAccessToken());
 			}
 		};
-		Oauth2 userInfoService = new Oauth2.Builder(new NetHttpTransport(), new JacksonFactory(), initializer).build();
-		Userinfo userInfo = null;
+		Oauth2 userInfoService = new Oauth2.Builder(
+				new NetHttpTransport(), 
+				new JacksonFactory(), 
+				initializer)
+		.setApplicationName(GoogleAuthorizationUtils.APP_NAME)
+		.build();
+		Userinfoplus userInfo = null;
 		try {
 			userInfo = userInfoService.userinfo().get().execute();
 		} catch (IOException e) {
@@ -107,7 +111,8 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
-		return GoogleAuthorizationUtils.newFlow(new JdoCredentialStore(CourseGeneratorDAO.getPersistenceManagerFactory()));
+		//TODO: add variables for method newFlow
+		return GoogleAuthorizationUtils.newFlow();
 	}
 
 	@Override

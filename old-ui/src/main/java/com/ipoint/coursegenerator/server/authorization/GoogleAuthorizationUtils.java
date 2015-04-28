@@ -6,7 +6,6 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -23,6 +22,10 @@ public class GoogleAuthorizationUtils {
 	public static final String XOAUTH_PARAM = "xoauth_requestor_id";
 
 	public static final String PRODUCT_LISTING_ID = "14092+1382165968457555329";
+	
+	private static final String USER_ID = "";
+	
+	private static final String USER_SECRET = "";
 
 	static String getRedirectUri(HttpServletRequest req) {
 		GenericUrl url = new GenericUrl(req.getRequestURL().toString());
@@ -30,10 +33,14 @@ public class GoogleAuthorizationUtils {
 		return url.build();
 	}
 
-	static AuthorizationCodeFlow newFlow(JdoCredentialStore jdoCredentialStore) throws IOException {
-		return new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(), new JacksonFactory(),
-				"788842293516-ubkjoslfcetkttrujqhpi1of743mkf7m.apps.googleusercontent.com", "4WoW3NAIJBROYuQBBoo-wOcb",
-				Collections.singleton("https://www.googleapis.com/auth/userinfo.email"))
-				.setCredentialStore(jdoCredentialStore).setAccessType("offline").setApprovalPrompt("force").build();
+	static AuthorizationCodeFlow newFlow() throws IOException {
+		//TODO: refactor authorization method (add credential info), add variables like 'newFlow(something)'
+		return new GoogleAuthorizationCodeFlow.Builder(
+				new NetHttpTransport(),
+				new JacksonFactory(),
+				USER_ID,
+				USER_SECRET,
+				Collections.singleton("https://www.googleapis.com/auth/userinfo.email")
+		).setAccessType("offline").setApprovalPrompt("force").build();
 	}
 }

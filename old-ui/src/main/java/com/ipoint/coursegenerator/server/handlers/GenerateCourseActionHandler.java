@@ -46,47 +46,31 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 
 	@Override
 	public GenerateCourseResult execute(GenerateCourse action, ExecutionContext context) throws ActionException {
-		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
-		User user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
-		pm.refresh(user);
-		GoogleAppsDomain domain = user.getDomain();
-		pm.refresh(domain);
+		//TODO: add check authorization
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
 		log.warning("Processing the document for course \"" + action.getCourseName() + "\".");
-		log.warning("Access granted." + (user.getDomain() != null) + "; "
-				+ (user.getDomain().getExpirationDate().getTime() > System.currentTimeMillis()) + "; "
-				+ domain.getName()+ "; "
-				+ (user.getExpirationDate().getTime() > System.currentTimeMillis()));
-		if (user != null
-				&& ((domain != null && (domain.getExpirationDate().getTime() > System
-						.currentTimeMillis() || domain.getName().equals(GetSubscribedActionHandler.IPOINT_DOMAIN))) || (user
-						.getExpirationDate().getTime() > System.currentTimeMillis()))) {
-			try {				
-				String tmpPath = servletContext.getRealPath(File.separator + "tmp");
-				String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator
-						+ action.getTemplateForCoursePages());
-				String courseFile = parser.parse(
-						new FileInputStream(tmpPath + File.separator + action.getSourceDocFileUuid()),
-						action.getHeaderLevel(), templateDir, action.getCourseName(),
-						tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir", action.getFileType());
-				user = pm.getObjectById(User.class, httpSession.getAttribute("userId"));
-				pm.refresh(user);
-				user.increaseCurrentConvertionCount();
-				user.increaseTotalConvertionCount();
-				trans.commit();
-				log.warning("Proccessing finished.");
-				generateCourseResult = new GenerateCourseResult("/tmp/" + action.getSourceDocFileUuid() + "_dir/"
-						+ courseFile);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		
+		try {				
+			String tmpPath = servletContext.getRealPath(File.separator + "tmp");
+			String templateDir = servletContext.getRealPath(File.separator + "templates" + File.separator
+					+ action.getTemplateForCoursePages());
+			String courseFile = parser.parse(
+					new FileInputStream(tmpPath + File.separator + action.getSourceDocFileUuid()),
+					action.getHeaderLevel(), 
+					templateDir, 
+					action.getCourseName(),
+					tmpPath + File.separator + action.getSourceDocFileUuid() + "_dir", action.getFileType()
+			);
+			log.warning("Proccessing finished.");
+			generateCourseResult = new GenerateCourseResult("/tmp/" + action.getSourceDocFileUuid() + "_dir/"
+					+ courseFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		pm.close();
+
 		return generateCourseResult;
 	}
 

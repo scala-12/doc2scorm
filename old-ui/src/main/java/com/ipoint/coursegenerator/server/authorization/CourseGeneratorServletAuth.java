@@ -11,9 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.extensions.jdo.auth.oauth2.JdoCredentialStore;
 import com.google.api.client.extensions.servlet.auth.oauth2.AbstractAuthorizationCodeServlet;
-import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
 
 public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet {
 
@@ -69,8 +67,8 @@ public class CourseGeneratorServletAuth extends AbstractAuthorizationCodeServlet
 
 	@Override
 	protected AuthorizationCodeFlow initializeFlow() throws IOException {
-		return GoogleAuthorizationUtils.newFlow(new JdoCredentialStore(CourseGeneratorDAO
-				.getPersistenceManagerFactory()));
+		//TODO: add variables for method newFlow
+		return GoogleAuthorizationUtils.newFlow();
 	}
 
 	@Override
