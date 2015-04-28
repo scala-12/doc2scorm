@@ -68,8 +68,8 @@ public class GetSubscribedActionHandler implements ActionHandler<GetSubscribed, 
 				//		user.getDomain().isSubscribed() 
 				//		: user.isSubscribed()
 				,
-				//TODO: remove "0" and comments
-				"0"
+				//TODO: remove null and comments
+				null
 				//user.getUserId()
 				);
 	}

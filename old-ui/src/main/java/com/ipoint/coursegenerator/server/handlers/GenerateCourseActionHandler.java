@@ -22,8 +22,6 @@ import com.gwtplatform.dispatch.server.actionhandler.ActionHandler;
 import com.gwtplatform.dispatch.shared.ActionException;
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.server.db.CourseGeneratorDAO;
-import com.ipoint.coursegenerator.server.db.model.GoogleAppsDomain;
-import com.ipoint.coursegenerator.server.db.model.User;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 
@@ -53,6 +51,11 @@ public class GenerateCourseActionHandler implements ActionHandler<GenerateCourse
 		Parser parser = this.context.getBean("parser", Parser.class);
 		GenerateCourseResult generateCourseResult = null;
 		log.warning("Processing the document for course \"" + action.getCourseName() + "\".");
+		//TODO: remove comments
+		//log.warning("Access granted." + (user.getDomain() != null) + "; "
+		//		+ (user.getDomain().getExpirationDate().getTime() > System.currentTimeMillis()) + "; "
+		//		+ domain.getName()+ "; "
+		//		+ (user.getExpirationDate().getTime() > System.currentTimeMillis()));
 		
 		try {				
 			String tmpPath = servletContext.getRealPath(File.separator + "tmp");

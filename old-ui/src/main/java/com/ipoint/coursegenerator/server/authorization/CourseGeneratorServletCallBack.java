@@ -44,11 +44,13 @@ public class CourseGeneratorServletCallBack extends AbstractAuthorizationCodeCal
 		.setApplicationName(GoogleAuthorizationUtils.APP_NAME)
 		.build();
 		Userinfoplus userInfo = null;
+		
 		try {
 			userInfo = userInfoService.userinfo().get().execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		PersistenceManager pm = CourseGeneratorDAO.getPersistenceManager();
 		if (userInfo != null && userInfo.getEmail() != null && !userInfo.getEmail().isEmpty()
 				&& pm.getUserObject(userInfo.getEmail()) == null) {
