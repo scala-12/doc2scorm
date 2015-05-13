@@ -21,6 +21,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import schemasMicrosoftComVml.CTImageData;
@@ -33,64 +34,63 @@ import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsPars
 public class ParagraphParser extends AbstractElementParser {
 
     public static String parse(Object paragraph, Document html,
-	    Object document, String path, HeaderInfo headerInfo, Node parent) {
-	if (paragraph instanceof Paragraph) {
-	    return parse((Paragraph) paragraph, html, (HWPFDocument) document,
-		    path, headerInfo, parent);
-	} else if (paragraph instanceof XWPFParagraph) {
-	    return parse((XWPFParagraph) paragraph, html,
-		    (XWPFDocument) document, path, headerInfo, parent);
-	}
-	return null;
+    		Object document, String path, HeaderInfo headerInfo, Node parent) {
+    	
+		if (paragraph instanceof Paragraph) {
+		    return parse((Paragraph) paragraph, html, (HWPFDocument) document,
+			    path, headerInfo, parent);
+		} else if (paragraph instanceof XWPFParagraph) {
+		    return parse((XWPFParagraph) paragraph, html,
+			    (XWPFDocument) document, path, headerInfo, parent);
+		}
+		return null;
     }
 
     public static String parse(Paragraph par, Document html, HWPFDocument doc,
-	    String path, HeaderInfo headerInfo, Node parent) {
-	String headerText = "";
-	PicturesTable pictures = doc.getPicturesTable();
-
-	Element element = createTextElement(par.getStyleIndex(), html,
-		headerInfo.getHeaderLevelNumber());
-	ArrayList<Element> imgsToAppend = new ArrayList<Element>();
-
-	for (int i = 0; i < par.numCharacterRuns(); i++) {
-	    CharacterRun run = par.getCharacterRun(i);
-	    if (run.isSpecialCharacter()) {
-		if (pictures.hasPicture(run)) {
-		    Element imgElement = html.createElement("img");
-		    Picture picture = pictures.extractPicture(run, true);
-		    if (picture.getMimeType().equals(
-			    AbstractGraphicsParser.IMAGE_WMF)) {
-			VectorGraphicsParser.parse(picture, path, imgElement);
-		    } else {
-			RasterGraphicsParser.parse(picture, path, imgElement);
+    		String path, HeaderInfo headerInfo, Node parent) {
+		String headerText = "";
+		PicturesTable pictures = doc.getPicturesTable();
+	
+		Element element = createTextElement(par.getStyleIndex(), html,
+			headerInfo.getHeaderLevelNumber());
+		ArrayList<Element> imgsToAppend = new ArrayList<Element>();
+	
+		for (int i = 0; i < par.numCharacterRuns(); i++) {
+		    CharacterRun run = par.getCharacterRun(i);
+		    if (run.isSpecialCharacter()) {
+				if (pictures.hasPicture(run)) {
+				    Element imgElement = html.createElement("img");
+				    Picture picture = pictures.extractPicture(run, true);
+				    if (picture.getMimeType().equals(
+					    AbstractGraphicsParser.IMAGE_WMF)) {
+					VectorGraphicsParser.parse(picture, path, imgElement);
+				    } else {
+					RasterGraphicsParser.parse(picture, path, imgElement);
+				    }
+				    imgsToAppend.add(imgElement);
+				    element.appendChild(imgElement);
+				}
+				int offset = i;
+				for (offset = i + 1; offset < par.numCharacterRuns(); offset++) {
+				    if (par.getCharacterRun(offset).text().contains((char) 20 + "")) {
+						i = offset;
+						break;
+				    }
+				}
+		    } else if (!run.text().equals(Character.toString((char) 13))) {
+		    	getTextFormatDOC(run, html, element, parent, par.getStyleIndex());
+			// element.setTextContent(element.getTextContent() +
+			// run.text());
 		    }
-		    imgsToAppend.add(imgElement);
-		    element.appendChild(imgElement);
 		}
-		int offset = i;
-		for (offset = i + 1; offset < par.numCharacterRuns(); offset++) {
-		    if (par.getCharacterRun(offset).text()
-			    .contains((char) 20 + "")) {
-			i = offset;
-			break;
-		    }
+		headerText = element.getTextContent();
+		parent.appendChild(element);
+		for (Element el : imgsToAppend) {
+		    // parent.appendChild(el);
+		    headerInfo.addResourceFile(el.getAttribute("src"));
 		}
-	    } else if (!run.text().equals(Character.toString((char) 13))) {
-		getTextFormatDOC(run, html, element, parent,
-			par.getStyleIndex());
-		// element.setTextContent(element.getTextContent() +
-		// run.text());
-	    }
-	}
-	headerText = element.getTextContent();
-	parent.appendChild(element);
-	for (Element el : imgsToAppend) {
-	    // parent.appendChild(el);
-	    headerInfo.addResourceFile(el.getAttribute("src"));
-	}
-	return headerText;
-
+		
+		return headerText;
     }
 
     public static String parse(XWPFParagraph paragraph, Document html,
@@ -198,81 +198,104 @@ public class ParagraphParser extends AbstractElementParser {
     }
 
     public static void getTextFormatDOCX(XWPFRun run, Node parentElement,
-	    Document creatorTags, int styleNumber, Element el) {
-	Element tempElement = el;
-
-	if (run.isBold()) {
-	    Element boldText = creatorTags.createElement("b");
-	    tempElement.appendChild(boldText);
-	    tempElement = boldText;
-	}
-	if (run.isItalic()) {
-	    Element italicText = creatorTags.createElement("i");
-	    tempElement.appendChild(italicText);
-	    tempElement = italicText;
-	}
-	if (run.getUnderline() != UnderlinePatterns.NONE) {
-	    Element underlineText = creatorTags.createElement("u");
-	    tempElement.appendChild(underlineText);
-	    tempElement = underlineText;
-	}
-	if (run.getSubscript() == VerticalAlign.SUPERSCRIPT) {
-	    Element supElement = creatorTags.createElement("sup");
-	    tempElement.appendChild(supElement);
-	    tempElement = supElement;
-	} else if (run.getSubscript() == VerticalAlign.SUBSCRIPT) {
-	    Element subElement = creatorTags.createElement("sub");
-	    tempElement.appendChild(subElement);
-	    tempElement = subElement;
-	}
-	if (styleNumber > 9 || styleNumber < 1) {
-	    Element simpleText = creatorTags.createElement("font");
-	    if (run.getColor() != null) {
-		simpleText.setAttribute("color", run.getColor());
-	    }
-	    tempElement.appendChild(simpleText);
-	    tempElement = simpleText;
-
-	} else if (styleNumber > 0 && styleNumber < 10) {
-	    tempElement = el;
-	}
-	if (!tempElement.equals(el)) {
-	    tempElement.setTextContent(run.toString());
-	} else {
-	    tempElement.setTextContent(tempElement.getTextContent()
-		    + run.toString());
-	}
-	parentElement.appendChild(el);
-
-	// new code
-	/*
-	 * if(run.getParagraph().getCTP().getHyperlinkList().size()>0) { Element
-	 * hyperLinkElement = creatorTags.createElement("a");
-	 * hyperLinkElement.setAttribute("href", "http://google.ru");
-	 * tempElement.appendChild(hyperLinkElement); tempElement =
-	 * hyperLinkElement; }
-	 */
+    		Document creatorTags, int styleNumber, Element el) {
+    	Element tempElement = el;
+    	
+    	boolean isAnchor = false;
+		if (run.getCTR().isSetRPr()) {
+			Node node = run.getCTR().getRPr().getDomNode().getParentNode().getParentNode();
+			if (node.getNodeName().equals("w:hyperlink")) {
+			    NamedNodeMap linkParam = node.getAttributes();
+				if (linkParam.getNamedItem("r:id") != null) {
+					Element hyperlink = creatorTags.createElement("a");
+				    String urlAddress = run.getDocument().getHyperlinkByID(
+				    		linkParam.getNamedItem("r:id").getNodeValue() ).getURL();
+				    if (linkParam.getNamedItem("w:anchor") != null) {
+				    	urlAddress = urlAddress.concat("#").concat(linkParam.getNamedItem("w:anchor").getNodeValue());
+				    }
+					hyperlink.setAttribute("href", urlAddress);
+					tempElement.appendChild(hyperlink);
+				    tempElement = hyperlink;
+				} else {
+					isAnchor = true;
+				}
+			}
+		}
+    	
+		if (run.isBold()) {
+		    Element boldText = creatorTags.createElement("b");
+		    tempElement.appendChild(boldText);
+		    tempElement = boldText;
+		}
+		
+		if (run.isItalic()) {
+		    Element italicText = creatorTags.createElement("i");
+		    tempElement.appendChild(italicText);
+		    tempElement = italicText;
+		}
+		
+		if (!isAnchor) {
+			if (run.getUnderline() != UnderlinePatterns.NONE) {	//is underlined
+			    Element underlineText = creatorTags.createElement("u");
+			    tempElement.appendChild(underlineText);
+			    tempElement = underlineText;
+			}
+			
+			if (styleNumber > 9 || styleNumber < 1) {
+			    Element simpleText = creatorTags.createElement("font");
+			    if (run.getColor() != null) {
+			    	simpleText.setAttribute("color", run.getColor());
+			    }
+			    tempElement.appendChild(simpleText);
+			    tempElement = simpleText;
+			} else if (styleNumber > 0 && styleNumber < 10) {
+			    tempElement = el;
+			}
+		}
+		
+		if (run.getSubscript() == VerticalAlign.SUPERSCRIPT) {//is superscript
+		    Element supElement = creatorTags.createElement("sup");
+		    tempElement.appendChild(supElement);
+		    tempElement = supElement;
+		} else if (run.getSubscript() == VerticalAlign.SUBSCRIPT) {//is subscript
+		    Element subElement = creatorTags.createElement("sub");
+		    tempElement.appendChild(subElement);
+		    tempElement = subElement;
+		}
+		
+		if (!tempElement.equals(el)) {
+		    tempElement.setTextContent(run.toString());
+		} else {
+		    tempElement.setTextContent(tempElement.getTextContent()
+			    + run.toString());
+		}
+		
+		parentElement.appendChild(el);
     }
 
     public static void getTextFormatDOC(CharacterRun run, Document creatorTags,
 	    Element el, Node parentElement, int styleNumber) {
 	Element tempElement = el;
+
 	if (run.isBold()) {
 	    Element boldText = creatorTags.createElement("b");
 	    tempElement.appendChild(boldText);
 	    tempElement = boldText;
 	}
+	
 	if (run.isItalic()) {
 	    Element italicText = creatorTags.createElement("i");
 	    tempElement.appendChild(italicText);
 	    tempElement = italicText;
 	}
-	if (run.getUnderlineCode() != 0) {
+	
+	if (run.getUnderlineCode() != 0) {	//is underlined
 	    Element underlineText = creatorTags.createElement("u");
 	    tempElement.appendChild(underlineText);
 	    tempElement = underlineText;
 	}
-	if (run.getSubSuperScriptIndex() == 1) {
+	
+	if (run.getSubSuperScriptIndex() == 1) {	//is (subscript or superscript)
 	    Element supElement = creatorTags.createElement("sup");
 	    tempElement.appendChild(supElement);
 	    tempElement = supElement;
@@ -281,23 +304,39 @@ public class ParagraphParser extends AbstractElementParser {
 	    tempElement.appendChild(subElement);
 	    tempElement = subElement;
 	}
-	if (styleNumber > 9 || styleNumber < 1) {
+	
+	if (styleNumber > 9 || styleNumber < 1) {	//is colored
 	    Element simpleText = creatorTags.createElement("font");
 	    simpleText.setTextContent(run.text());
 	    if (run.getColor() != 0) {
-		simpleText.setAttribute("color",
-			AbstractWordUtils.getColor(run.getColor()));
+	    	simpleText.setAttribute("color", AbstractWordUtils.getColor(run.getColor()));
 	    }
 	    tempElement.appendChild(simpleText);
 	    tempElement = simpleText;
 	} else if (styleNumber > 0 && styleNumber < 10) {
 	    tempElement = el;
 	}
+	
+	
+	String text = run.text();
+	if ((text.startsWith("HYPERLINK") || text.startsWith(" HYPERLINK"))) {	//is hyperlink
+		int start = text.indexOf('"') + 1;
+        int end = text.lastIndexOf('\u201D');//smart right double quote
+        if (end <= start) {
+        	end = text.lastIndexOf('\r');
+        }
+        
+		Element hyperlink = creatorTags.createElement("a");
+	    tempElement.appendChild(hyperlink);
+	    hyperlink.setAttribute("href", text.substring(start, end));
+	    
+	    tempElement = hyperlink;
+	}
+	
 	if (!tempElement.equals(el)) {
 	    tempElement.setTextContent(run.text());
 	} else {
-	    tempElement.setTextContent(tempElement.getTextContent()
-		    + run.text());
+	    tempElement.setTextContent(tempElement.getTextContent() + run.text());
 	}
 
 	parentElement.appendChild(el);
