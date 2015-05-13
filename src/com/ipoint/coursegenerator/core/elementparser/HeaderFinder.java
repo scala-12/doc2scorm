@@ -54,68 +54,69 @@ public class HeaderFinder {
 	return null;
     }
 
-    public static Document parse(Object paragraph, Document html,
-	    HeaderInfo headerInfo, ArrayList<ItemInfo> items, Object document,
-	    ManifestType manifest, int parStyleId) {
-	ItemInfo itemInfo = null;
-	ItemInfo lastItem = items.get(items.size() - 1);
-	if (html == null) {
-	    html = createNewHTMLDocument();
-	}
-	boolean createItemForHeader = parStyleId <= headerInfo
-		.getHeaderLevelNumber() && parStyleId > 0;
-	if (createItemForHeader && !headerInfo.isFirstHeader()
-		&& headerInfo.getPreviousParStyleID() != parStyleId) {
-	    if (html != null) {
-		if (hasNonHeading1Childs(html)) {
-		    FileWork.saveHTMLDocument(html,
-			    headerInfo.getTemplateDir(), lastItem.getHtmlPath()
-				    + File.separator + lastItem.getFilename(),
-			    lastItem.getPath());
-		    ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
-			    lastItem.getResource(),
-			    headerInfo.getPathToResources());
-		} else {
-		    lastItem.getItem().getDomNode().getAttributes()
-			    .removeNamedItem("identifierref");
-		    ResourcesProcessor.removeResource(manifest,
-			    lastItem.getResource());
+    public static Document parse(Object paragraph,
+    		Document html,
+    		HeaderInfo headerInfo,
+    		ArrayList<ItemInfo> items,
+    		Object document,
+    		ManifestType manifest, int parStyleId) {
+    	
+		ItemInfo itemInfo = null;
+		ItemInfo lastItem = items.get(items.size() - 1);
+		if (html == null) {
+			html = createNewHTMLDocument();
 		}
-		headerInfo.resetPathToResources();
-	    }
-	    html = createNewHTMLDocument();
-	}
-	String paragraphText = ParagraphParser.parse(paragraph, html, document,
-		lastItem.getHtmlPath(), headerInfo,
-		html.getElementsByTagName("body").item(0));
-	if (createItemForHeader) {
-	    if (headerInfo.getPreviousParStyleID() == parStyleId) {
-		headerInfo.setHeaderText(headerInfo.getHeaderText()
-			+ paragraphText);
-	    } else {
-		headerInfo.setHeaderText(paragraphText);
-	    }
-	    headerInfo.setHeaderStyleID(parStyleId);
-	}
-	if (createItemForHeader && headerInfo.getNextParStyleID() != parStyleId) {
-	    headerInfo.setFirstHeader(false);
-	    headerInfo
-		    .setHeaderText(headerInfo.getHeaderText().length() > 127 ? headerInfo
-			    .getHeaderText().substring(0, 127) : headerInfo
-			    .getHeaderText());
-	    itemInfo = createItem(items, headerInfo.getHeaderText(),
-		    headerInfo.getHeaderStyleID(), manifest);
-	    itemInfo.setHtmlPath(lastItem.getPath() + File.separator
-		    + itemInfo.getUrl().replace('/', File.separatorChar));
-	    itemInfo.setPath(lastItem.getPath());
-	    items.add(itemInfo);
-	    File f = new File(itemInfo.getHtmlPath());
-	    if (!f.exists()) {
-		f.mkdirs();
-	    }
-	}
-	headerInfo.setPreviousParStyleID(parStyleId);
-	return html;
+		boolean createItemForHeader = (parStyleId <= headerInfo.getHeaderLevelNumber()) && (parStyleId > 0);
+		if (createItemForHeader && !headerInfo.isFirstHeader()
+				&& (headerInfo.getPreviousParStyleID() != parStyleId)) {
+		    
+			if (html != null) {
+				if (hasNonHeading1Childs(html)) {
+				    FileWork.saveHTMLDocument(html,
+				    		headerInfo.getTemplateDir(),
+				    		lastItem.getHtmlPath() + File.separator + lastItem.getFilename(),
+				    		lastItem.getPath());
+				    ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
+				    		lastItem.getResource(),
+				    		headerInfo.getPathToResources());
+				} else {
+				    lastItem.getItem().getDomNode().getAttributes().removeNamedItem("identifierref");
+				    ResourcesProcessor.removeResource(manifest, lastItem.getResource());
+				}
+				headerInfo.resetPathToResources();
+		    }
+		    html = createNewHTMLDocument();
+		}
+		String paragraphText = ParagraphParser.parse(paragraph, html, document, lastItem.getHtmlPath(),
+				headerInfo, html.getElementsByTagName("body").item(0));
+		if (createItemForHeader) {
+		    if (headerInfo.getPreviousParStyleID() == parStyleId) {
+		    	headerInfo.setHeaderText(headerInfo.getHeaderText() + paragraphText);
+		    } else {
+		    	headerInfo.setHeaderText(paragraphText);
+		    }
+		    headerInfo.setHeaderStyleID(parStyleId);
+		}
+		if (createItemForHeader && (headerInfo.getNextParStyleID() != parStyleId)) {
+		    headerInfo.setFirstHeader(false);
+		    headerInfo.setHeaderText(
+		    		(headerInfo.getHeaderText().length() > 127) 
+		    				? headerInfo.getHeaderText().substring(0, 127) 
+		    				: headerInfo.getHeaderText());
+		    itemInfo = createItem(items,
+		    		headerInfo.getHeaderText(),
+		    		headerInfo.getHeaderStyleID(),
+		    		manifest);
+		    itemInfo.setHtmlPath(lastItem.getPath() + File.separator + itemInfo.getUrl().replace('/', File.separatorChar));
+		    itemInfo.setPath(lastItem.getPath());
+		    items.add(itemInfo);
+		    File f = new File(itemInfo.getHtmlPath());
+		    if (!f.exists()) {
+		    	f.mkdirs();
+		    }
+		}
+		headerInfo.setPreviousParStyleID(parStyleId);
+		return html;
     }
 
     public static ItemInfo createItem(ArrayList<ItemInfo> items,
