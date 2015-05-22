@@ -2,8 +2,6 @@ package com.ipoint.coursegenerator.core.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +24,6 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.wmf.tosvg.WMFTranscoder;
-import org.apache.fop.image.EmfImage;
-import org.apache.poi.hslf.blip.EMF;
-import org.docx4j.model.images.WordXmlPictureE10;
 import org.docx4j.openpackaging.parts.WordprocessingML.MetafileEmfPart;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
