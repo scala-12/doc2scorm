@@ -61,22 +61,23 @@ public class ParagraphParser extends AbstractElementParser {
 		for (int i = 0; i < par.numCharacterRuns(); i++) {
 		    CharacterRun run = par.getCharacterRun(i);
 		    if (run.isSpecialCharacter()) {
-		    	Element hyperlink = html.createElement("a");
+		    	Element hyperlink = null;
 		    	boolean isHyperlink = run.text().contains((char)19 + "");	//(char)19 is start of hyperlink
 		    	if (isHyperlink) {	
 		    	//search address of hyperlink
-		    		run = par.getCharacterRun(++i);
+		    		hyperlink = html.createElement("a");
+		    		run = par.getCharacterRun(++i);	//run in hyperlink. This run stored address
 		    		String text = run.text().replace('\\', '/');
-		    		int start = text.indexOf('"') + 1;
-    				int end = text.indexOf('"', start);
+		    		int start = text.indexOf('"') + 1;	//start of address
+    				int end = text.indexOf('"', start);	//end of address
     				
-		    		String urlAddress = run.text().substring(start, end);
-		    		if (end != text.lastIndexOf('"')) {
+		    		String urlAddress = run.text().substring(start, end);	//address of hyperlink
+		    		if (end != text.lastIndexOf('"')) {	//if address contains symbol ", then hyperlink has anchor
 		    			urlAddress = urlAddress.concat("#").concat(text.substring(
 		    					text.indexOf(
 		    							'"', text.indexOf('"', end + 1)) + 1
 		    							, text.lastIndexOf('"')));
-		    		} else if (text.substring(0, start - 1).contains("/l")) {
+		    		} else if (text.substring(0, start - 1).contains("/l")) {	//if hyperlink start with "/l" then this hyperlink is anchor
 		    			urlAddress = "#".concat(urlAddress);
 		    		}
 		    		
@@ -96,17 +97,15 @@ public class ParagraphParser extends AbstractElementParser {
 		    	if (isHyperlink) {
 		    		run = par.getCharacterRun(++i);	//into hyperlink tag
 		    		for (int j = i+1; (endOfLink == -1) && (endOfLink < par.numCharacterRuns()); ++j) {
-		    			if (par.getCharacterRun(j).text().contains((char)21 + "")) {
-		    			//search end of hyperlink
-		    				endOfLink = j;	//(char)21 is end of hyperlink
+		    			if (par.getCharacterRun(j).text().contains((char)21 + "")) {	//(char)21 is end of hyperlink
+		    				endOfLink = j;	//search end of hyperlink
 		    			}
 		    		}
 		    	}
 		    	
 		    	for (int elem = i; (elem < par.numCharacterRuns()) && (elem != endOfLink); ++elem) {
 		    		run = par.getCharacterRun(elem);
-		    		if (run.isSpecialCharacter()) {
-		    		//run is something object MS Word
+		    		if (run.isSpecialCharacter()) {	//run is something object MS Word
 			    		if (pictures.hasPicture(run)) {
 			    			Element imgElement = html.createElement("img");
 						    Picture picture = pictures.extractPicture(run, true);
@@ -130,12 +129,13 @@ public class ParagraphParser extends AbstractElementParser {
 		    	}
 		    	
 		    	if (isHyperlink) {
-		    		((parent.getLastChild() != null) ? parent.getLastChild() 
+		    		((parent.getLastChild() != null) ? 
+		    				parent.getLastChild() 
 		    				: (parent.getNodeName().equalsIgnoreCase("body")) ? 
 		    						element
 		    						: parent
 		    				)
-		    				.appendChild(hyperlink);
+		    				.appendChild(hyperlink);	//add hyperlink in html
 		    		i = endOfLink;
 		    	}
 		    } else if (!run.text().equals(Character.toString((char) 13))) {
@@ -176,7 +176,10 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		}
 		headerText = element.getTextContent();
-		parent.appendChild(element);
+		if (parent.getLastChild() == null) {
+			parent.appendChild(element);	//element has not been added in parent
+		}
+		//parent.appendChild(element);	is old method
 		for (Element el : imgsToAppend) {
 		    // parent.appendChild(el);
 		    headerInfo.addResourceFile(el.getAttribute("src"));
@@ -202,33 +205,58 @@ public class ParagraphParser extends AbstractElementParser {
 		    
 		    boolean isHyperlink = false;
 		    if (run.getCTR().isSetRPr()) {
-		    	Node node = run.getCTR().getRPr().getDomNode().getParentNode().getParentNode();
-		    	isHyperlink = node.getNodeName().contains("hyperlink");
-		    	if (isHyperlink && (end == -1)) {
+		    	Node node = run.getCTR().getDomNode();	//run as XML-tag <r>
+		    	isHyperlink = node.getParentNode().getLocalName().equalsIgnoreCase("hyperlink");	//if run is hyperlink, then run is in tag <hyperlink>
+		    	if (isHyperlink && (end == -1)) {	//if it is hyperlink and this run in the same tag <hyperlink>
+		    		node = node.getParentNode();	//<hyperlink> as XML-tag
 		    		hyperlink = html.createElement("a");
-			    	end = i + node.getChildNodes().getLength() - 1;
-			    	NamedNodeMap linkParam = node.getAttributes();
-		    		if (linkParam.getNamedItem("r:id") != null) {
-		    		//TODO: replace on searching id ???
-		    			String urlAddress = run.getDocument().getHyperlinkByID(linkParam.getNamedItem("r:id").getNodeValue() ).getURL().replace('\\', '/');
+			    	end = i + (node.getChildNodes().getLength() - 1);	//number of last run in <hyperlink>
+			    	NamedNodeMap linkParam = node.getAttributes();	//attributes of hyperlink
+		    		if (linkParam.getNamedItem("r:id") != null) {	//if id is set then this hyperlink is external and address 
+		    			String urlAddress = run.getDocument()
+		    					.getHyperlinkByID(
+		    							linkParam.getNamedItem("r:id").getNodeValue())
+		    					.getURL().replace('\\', '/');
 		    			if (urlAddress.toLowerCase().startsWith("http://") || urlAddress.toLowerCase().startsWith("https://")
 		    					 || urlAddress.toLowerCase().startsWith("mailto:")
 		    					 || urlAddress.toLowerCase().startsWith("ftp://")) {
-		    			    if (linkParam.getNamedItem("w:anchor") != null) {
+		    			    if (linkParam.getNamedItem("w:anchor") != null) {	//if hyperlink has anchor
 		    			    	urlAddress = urlAddress.concat("#").concat(linkParam.getNamedItem("w:anchor").getNodeValue());
 		    			    }
 		    				hyperlink.setAttribute("href", urlAddress);
 		    				if (!urlAddress.toLowerCase().startsWith("mailto:")) {
-								hyperlink.setAttribute("target", "_blank");
+								hyperlink.setAttribute("target", "_blank");	//open new window but not for sending mail
 							}
 		    			}
 		    		} else {
 		    			//TODO: create link on anchor in text
+		    			
 		    		}
+		    	} else if ((node.getPreviousSibling() != null) && (end == -1)) {
+    				if (node.getPreviousSibling().getLocalName().equals("bookmarkStart")) {	//if this run is bookmark then tag before <r> is <bookmarkStart/>
+    					isHyperlink = true;
+	    			} else if (node.getPreviousSibling().getLocalName().equals("bookmarkEnd")) {
+	    				if (node.getPreviousSibling().getPreviousSibling().getLocalName().equals("bookmarkStart")) {
+	    					isHyperlink = true;
+	    					end = i;
+	    				}
+	    			}
+    				if (isHyperlink) {
+    					hyperlink = html.createElement("a");
+	    				if (end != i) {
+	    					hyperlink.setAttribute("name",  node.getPreviousSibling().getAttributes().getNamedItem("w:name").getNodeValue());
+	    					end = i;
+	    					for (Node iter = node.getNextSibling(); !iter.getLocalName().equals("bookmarkEnd"); iter = iter.getNextSibling()) {	//tag after last run in bookmark is <bookmarkEnd>	
+	    						++end;	//search number of last run of bookmark
+	    					}
+	    				} else {
+	    					hyperlink.setAttribute("name",  node.getPreviousSibling().getPreviousSibling().getAttributes().getNamedItem("w:name").getNodeValue());
+	    				}
+    				}
 		    	}
 		    }
 		    
-	    	if (run.toString().isEmpty()) {
+	    	if (run.toString().isEmpty()) {	//if run is not text
 	    		if (run.getEmbeddedPictures() != null) {
 					for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
 					    Element imgElement = html.createElement("img");
@@ -244,7 +272,7 @@ public class ParagraphParser extends AbstractElementParser {
 					    imagesElementsToAppend.add(imgElement);
 					    
 					    (isHyperlink ? hyperlink 
-					    		: element).appendChild(imgElement);
+					    		: element).appendChild(imgElement);	//add object in hyperlink or html
 					}
 			    } else if (run.getCTR().sizeOfObjectArray() > 0) {
 					for (CTObject picture : run.getCTR().getObjectArray()) {
@@ -274,7 +302,7 @@ public class ParagraphParser extends AbstractElementParser {
 							    }
 							    imagesElementsToAppend.add(imgElement);
 							    (isHyperlink ? hyperlink 
-							    		: element).appendChild(imgElement);
+							    		: element).appendChild(imgElement);	//add object in hyperlink or html
 							}
 					    }
 					}
@@ -282,22 +310,26 @@ public class ParagraphParser extends AbstractElementParser {
 	    	} else if (isHyperlink) {
 		    	Element inHyperlink = html.createElement("span");
 				inHyperlink.setAttribute("class", "text_in_hyperlink");
-		    	getTextFormatDOCX(run, html, inHyperlink, hyperlink, styleIndex);
+		    	getTextFormatDOCX(run, html, inHyperlink, hyperlink, styleIndex);	//add in <hyperlink> for html
 		    } else {
-		    	getTextFormatDOCX(run, html, element, parent, styleIndex);
+		    	getTextFormatDOCX(run, html, element, parent, styleIndex);	//add element in html
 		    }
 
 		    if (i == end) {
-	    		((parent.getLastChild() != null) ? parent.getLastChild() 
+	    		((parent.getLastChild() != null) ? 
+	    				parent.getLastChild() 
 	    				: (parent.getNodeName().equalsIgnoreCase("body")) ? 
 	    						element
 	    						: parent
 	    				)
-	    				.appendChild(hyperlink);
+	    				.appendChild(hyperlink);	//add hyperlink in html
 	    		end = -1;
 		    }
 		    
 		    headerText = element.getTextContent();
+		    if (parent.getLastChild() == null) {
+		    	parent.appendChild(element);	//element has not been added in parent
+    		}
 		}
 		for (Element el : imagesElementsToAppend) {
 		    headerInfo.addResourceFile(el.getAttribute("src"));
