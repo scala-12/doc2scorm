@@ -15,7 +15,6 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.ipoint.coursegenerator.client.Messages;
 import com.ipoint.coursegenerator.client.NameTokens;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
-import com.ipoint.coursegenerator.client.presenter.uihandlers.MessagesHolder;
 import com.ipoint.coursegenerator.shared.GenerateCourse;
 import com.ipoint.coursegenerator.shared.GenerateCourseResult;
 

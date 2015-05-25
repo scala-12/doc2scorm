@@ -16,7 +16,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.servlet.ServletContext;
 
-import org.apache.avalon.framework.logger.Loggable;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;

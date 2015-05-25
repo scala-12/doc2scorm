@@ -100,7 +100,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.1</version>
 				<configuration>
 					<source>${target.jdk}</source>
 					<target>${target.jdk}</target>
@@ -114,11 +114,11 @@
 				<configuration>
 					<!-- Make sure this path contains your persistent classes! -->
 					<fork>false</fork>
-					<mappingIncludes>**/model/*.class,**/jdo/*.class</mappingIncludes>
+					<mappingIncludes>**/model/*.class</mappingIncludes>
 					<verbose>true</verbose>
 					<enhancerName>ASM</enhancerName>
 					<api>JDO</api>
-					<metadataDirectory>${project.build.outputDirectory}/..</metadataDirectory>
+					<metadataDirectory>${project.build.outputDirectory}</metadataDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -132,7 +132,8 @@
 					<dependency>
 						<groupId>org.datanucleus</groupId>
 						<artifactId>datanucleus-core</artifactId>
-						<version>4.0.5</version>  
+						<version>4.0.5</version> 
+						<scope>runtime</scope> 
 						<exclusions>
 							<exclusion>
 								<groupId>javax.transaction</groupId>
@@ -169,6 +170,21 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
+							
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.datanucleus</groupId>
+										<artifactId>maven-datanucleus-plugin</artifactId>
+										<versionRange>[1.0,)</versionRange>
+										<goals>
+											<goal>enhance</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+								
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
@@ -202,7 +218,7 @@
 									<pluginExecutionFilter>
 										<groupId>com.google.code.maven-replacer-plugin</groupId>
 										<artifactId>replacer</artifactId>
-										<version>1.5.3</version>
+										<versionRange>[1.5.0,)</versionRange>
 										<goals>
 											<goal>replace</goal>
 										</goals>
