@@ -29,6 +29,8 @@ import org.w3c.dom.Node;
 
 import schemasMicrosoftComVml.CTImageData;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
+
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
@@ -142,12 +144,12 @@ public class ParagraphParser extends AbstractElementParser {
 		    	Map<Integer, List<Bookmark>> bookmarks = doc.getBookmarks().getBookmarksStartedBetween(run.getStartOffset(), run.getEndOffset());
 		    	if (!bookmarks.isEmpty()) {
 	    			String textBefore = run.text();	//text before adding anchors
-	    			Integer offset = 0;
+	    			int offset = 0;
 	    			//adding anchors
 	    			for (Iterator<List<Bookmark>>  iter = bookmarks.values().iterator(); iter.hasNext(); ) {
 	    				Bookmark bookmark = iter.next().get(0);			//anchor
-	    				Integer start = bookmark.getStart() - run.getStartOffset();			//start anchor in doc
-	    				Integer end = ((start != bookmark.getEnd()) && ((bookmark.getEnd() - bookmark.getStart()) <= textBefore.length())) ?	//end anchor in text
+	    				int start = bookmark.getStart() - run.getStartOffset();			//start anchor in doc
+	    				int end = ((start != bookmark.getEnd()) && ((bookmark.getEnd() - bookmark.getStart()) <= textBefore.length())) ?	//end anchor in text
 								bookmark.getEnd() - run.getStartOffset()
 								: textBefore.length();
 						
@@ -258,21 +260,55 @@ public class ParagraphParser extends AbstractElementParser {
 		    
 	    	if (run.toString().isEmpty()) {	//if run is not text
 	    		if (run.getEmbeddedPictures() != null) {
-					for (int j = 0; j < run.getEmbeddedPictures().size(); j++) {
+	    			boolean picList = false;	//for choice method
+	    			int endCycle = 0;
+	    			if (run.getCTR().getPictList().isEmpty()) {
+	    				//EmbeddedPictures 
+	    				picList = false;
+		    			endCycle = run.getEmbeddedPictures().size();
+	    			} else {
+	    				//PictList
+	    				picList = true;
+		    			endCycle = run.getCTR().getPictList().size();
+	    			}
+	    			
+			    	for (int j = 0; j < endCycle; j++) {
 					    Element imgElement = html.createElement("img");
-					    XWPFPicture picture = run.getEmbeddedPictures().get(j);
-					    if (picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-					    		|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-					    		|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-					    		|| picture.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-					    	RasterGraphicsParser.parse(picture.getPictureData(), path, imgElement);
+					    XWPFPictureData pictureData = null;
+					    if (picList) {
+					    	CTPicture picture = run.getCTR().getPictList().get(j);
+						    for (int k = 0; k < picture.getDomNode().getChildNodes().getLength(); ++k) {
+						    	if (picture.getDomNode().getChildNodes().item(k).getLocalName().equalsIgnoreCase("shape")) {
+						    		Node node = picture.getDomNode().getChildNodes().item(k).getFirstChild();
+						    		for (; !node.getLocalName().equals("imagedata") && (node != null); node = node.getNextSibling()) {
+						    		}
+						    		if (node != null) {
+						    			if (node.getLocalName().equals("imagedata")) {
+						    				if (node.getAttributes().getNamedItem("r:id") != null) {
+						    					pictureData = doc.getPictureDataByID(node.getAttributes().getNamedItem("r:id").getNodeValue());
+						    				}
+					    				}
+					    			}
+						    	}
+						    }
 					    } else {
-					    	VectorGraphicsParser.parse(picture.getPictureData(), path, imgElement);
+					    	pictureData = run.getEmbeddedPictures().get(j).getPictureData();
 					    }
-					    imagesElementsToAppend.add(imgElement);
 					    
-					    (isHyperlink ? hyperlink 
-					    		: element).appendChild(imgElement);	//add object in hyperlink or html
+					    if (pictureData != null) {
+						    if (pictureData.getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+						    		|| pictureData.getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+						    		|| pictureData.getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+						    		|| pictureData.getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+						    	RasterGraphicsParser.parse(pictureData, path, imgElement);
+						    } else {
+						    	VectorGraphicsParser.parse(pictureData, path, imgElement);
+						    }
+						    
+						    imagesElementsToAppend.add(imgElement);
+						    (isHyperlink ? hyperlink 
+						    		: element).appendChild(imgElement);	//add object in hyperlink or html
+					    }
 					}
 			    } else if (run.getCTR().sizeOfObjectArray() > 0) {
 					for (CTObject picture : run.getCTR().getObjectArray()) {
