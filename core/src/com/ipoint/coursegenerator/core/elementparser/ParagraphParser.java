@@ -18,18 +18,16 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import schemasMicrosoftComVml.CTImageData;
-
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.elementparser.graphics.AbstractGraphicsParser;
