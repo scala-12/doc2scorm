@@ -129,13 +129,7 @@ public class ParagraphParser extends AbstractElementParser {
 		    	}
 		    	
 		    	if (isHyperlink) {
-		    		((parent.getLastChild() != null) ? 
-		    				parent.getLastChild() 
-		    				: (parent.getNodeName().equalsIgnoreCase("body")) ? 
-		    						element
-		    						: parent
-		    				)
-		    				.appendChild(hyperlink);	//add hyperlink in html
+		    		element.appendChild(hyperlink);	//add hyperlink in html
 		    		i = endOfLink;
 		    	}
 		    } else if (!run.text().equals(Character.toString((char) 13))) {
@@ -176,10 +170,7 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 		}
 		headerText = element.getTextContent();
-		if (parent.getLastChild() == null) {
-			parent.appendChild(element);	//element has not been added in parent
-		}
-		//parent.appendChild(element);	is old method
+		parent.appendChild(element);
 		for (Element el : imgsToAppend) {
 		    // parent.appendChild(el);
 		    headerInfo.addResourceFile(el.getAttribute("src"));
@@ -350,20 +341,13 @@ public class ParagraphParser extends AbstractElementParser {
 		    }
 
 		    if (i == end) {
-	    		((parent.getLastChild() != null) ? 
-	    				parent.getLastChild() 
-	    				: (parent.getNodeName().equalsIgnoreCase("body")) ? 
-	    						element
-	    						: parent
-	    				)
-	    				.appendChild(hyperlink);	//add hyperlink in html
+	    		element.appendChild(hyperlink);	//add hyperlink in html
 	    		end = -1;
 		    }
+
+		    parent.appendChild(element);
 		    
 		    headerText = element.getTextContent();
-		    if (parent.getLastChild() == null) {
-		    	parent.appendChild(element);	//element has not been added in parent
-    		}
 		}
 		for (Element el : imagesElementsToAppend) {
 		    headerInfo.addResourceFile(el.getAttribute("src"));
