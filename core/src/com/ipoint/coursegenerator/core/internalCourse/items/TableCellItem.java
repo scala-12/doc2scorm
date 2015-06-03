@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 
 public class TableCellItem extends AbstractItem {
 
-	private ArrayList<AbstractBlock> value;
+	private ArrayList<ParagraphBlock> value;
 	private Integer rowSpan;
 	private Integer colSpan;
 
@@ -15,7 +16,7 @@ public class TableCellItem extends AbstractItem {
 		this(null, null, null);
 	}
 
-	public TableCellItem(ArrayList<AbstractBlock> value, Integer rowSpan,
+	public TableCellItem(ArrayList<ParagraphBlock> value, Integer rowSpan,
 			Integer colSpan) {
 		this.setValue(value);
 		this.setRowSpan(rowSpan);
@@ -39,14 +40,14 @@ public class TableCellItem extends AbstractItem {
 	}
 
 	@Override
-	public List<AbstractBlock> getValue() {
+	public List<ParagraphBlock> getValue() {
 		return this.value;
 	}
 
 	@Override
 	public void setValue(Object value) {
-		this.value = (value == null) ? new ArrayList<AbstractBlock>()
-				: (ArrayList<AbstractBlock>) value;
+		this.value = (value == null) ? new ArrayList<ParagraphBlock>()
+				: (ArrayList<ParagraphBlock>) value;
 	}
 
 }
