@@ -27,6 +27,8 @@ import com.ipoint.coursegenerator.core.elementparser.ItemInfo;
 import com.ipoint.coursegenerator.core.elementparser.ListParser;
 import com.ipoint.coursegenerator.core.elementparser.ParagraphParser;
 import com.ipoint.coursegenerator.core.elementparser.TableParser;
+import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
+import com.ipoint.coursegenerator.core.newParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
@@ -61,10 +63,11 @@ public class Parser {
 		// Add Metadata for Manifest
 		MetadataProcessor metadataProcessor = new MetadataProcessor();
 		metadataProcessor.createMetadata(manifest.getManifest());
+		
 		// Add Organization (default and root) to Manifest
-		OrganizationProcessor organizationProcessor = new OrganizationProcessor();
-		organizationProcessor.createOrganization(manifest.getManifest(),
+		OrganizationProcessor.createOrganization(manifest.getManifest(),
 				courseName);
+		
 		// Add Resources for Manifest
 		ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
 		resourcesProcessor.createResources(manifest.getManifest());
@@ -97,6 +100,7 @@ public class Parser {
 			parseHWPF((HWPFDocument) doc, headerLevel, templateDir, courseName, path);
 		} else if (doc instanceof XWPFDocument) {
 			parseXWPF((XWPFDocument) doc, headerLevel, templateDir, courseName, path);
+			Course a = parseToInternalCourse((XWPFDocument) doc, courseName);//stream, courseName, fileType);
 		}
 		String res = tuneManifest(manifest);
 		File f = new File(path, "imsmanifest.xml");
@@ -131,6 +135,35 @@ public class Parser {
 		zip.addToZip(new String[] { zipCourseFileName });
 		return zipCourseFileName;
 	}
+	
+	
+	
+	
+	public Course parseToInternalCourse(Object doc, String courseName)//InputStream stream, String courseName, String fileType)
+			throws IOException {
+
+		/*
+		Object doc = null;
+		if (fileType.toLowerCase().equals(FILETYPE_DOC)) {
+			doc = new HWPFDocument(stream);
+		} else if (fileType.toLowerCase().equals(FILETYPE_DOCX)) {
+			doc = new XWPFDocument(stream);
+		}
+		*/
+		Course internalCourse = null;
+		
+		String tunedManifest = tuneManifest(manifest);
+		if (doc instanceof HWPFDocument) {
+			//internalCourse = CourseParser.parse((HWPFDocument) doc, tunedManifest, courseName);
+		} else if (doc instanceof XWPFDocument) {
+			internalCourse = CourseParser.parse((XWPFDocument) doc, tunedManifest, courseName);
+		}		
+		
+		return internalCourse;
+	}
+	
+	
+	
 
 	private void parseXWPF(XWPFDocument doc, String headerLevel,
 			String templateDir, String courseName, String path) {
