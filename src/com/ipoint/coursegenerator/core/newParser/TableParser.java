@@ -1,11 +1,18 @@
 package com.ipoint.coursegenerator.core.newParser;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.xwpf.usermodel.IBodyElement;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableRowItem;
@@ -59,6 +66,31 @@ public class TableParser extends AbstractParser {
 
 				XWPFTableCell tableCell = tableRow.getCell(j);
 				TableCellItem cell = new TableCellItem();
+
+				if (!tableCell.getParagraphs().isEmpty()) {
+					ArrayList<ParagraphBlock> blocks = new ArrayList<ParagraphBlock>();
+					for (int k = 0; k < tableCell.getParagraphs().size(); k++) {
+						XWPFParagraph par = tableCell.getParagraphs().get(k);
+						Integer size = ParagraphParser.listSize(k, par);
+						if (size == null) {
+							blocks.add(new ParagraphBlock(new ParagraphParser()
+									.parseDocx(par)));
+						} else {
+							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
+							XWPFDocument doc = par.getDocument(); 
+							for (int blockNum = 0; blockNum < size; blockNum++, k++) {
+								listItems.add((XWPFParagraph) doc
+										.getBodyElements().get(k));
+							}
+							k--;
+							blocks.add(new ParagraphBlock(new ParagraphParser()
+									.parseDocx(listItems)));
+						}
+
+					}
+					
+					cell.setValue(blocks);
+				}
 
 				if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
 					cell.setColSpan(tableCell.getCTTc().getTcPr().getGridSpan()
