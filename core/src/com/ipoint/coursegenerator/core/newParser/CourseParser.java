@@ -33,62 +33,70 @@ public class CourseParser {
 			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 				XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 				if (!paragraph.getRuns().isEmpty()) {
+					Integer headLevel = null;
 					if (paragraph.getStyleID() != null) {
-						if (levelMap.size() == getNonNumericHeaderParser(paragraph
-								.getStyleID())) {
-							levelMap.set(levelMap.size() - 1,
-									levelMap.get(levelMap.size() - 1) + 1); // to
-																			// next
-																			// element
-																			// on
-																			// the
-																			// level
-						} else {
-							if (levelMap.size() > getNonNumericHeaderParser(paragraph
-									.getStyleID())) {
-								levelMap = (ArrayList<Integer>) levelMap
-										.subList(
-												0,
-												getNonNumericHeaderParser(paragraph
-														.getStyleID())); // remove
-																			// extra
-																			// levels
+						headLevel = getNonNumericHeaderParser(paragraph
+								.getStyleID());
+						
+						if (headLevel != null) {
+							if (levelMap.size() == headLevel) {
+								levelMap.set(levelMap.size() - 1,
+										levelMap.get(levelMap.size() - 1) + 1); // to
+																				// next
+																				// element
+																				// on
+																				// the
+																				// level
 							} else {
-								while (levelMap.size() < getNonNumericHeaderParser(paragraph
-										.getStyleID())) {
-									levelMap.add(0); // create new levels
+								if (levelMap.size() > headLevel) {
+									ArrayList<Integer> newMap = new ArrayList<Integer>();
+									newMap.addAll(levelMap.subList(0, headLevel - 1));
+									newMap.add(levelMap.get(headLevel) + 1);
+									levelMap = newMap; // remove extra levels
+								} else {
+									while (levelMap.size() < headLevel) {
+										levelMap.add(0); // create new levels
+									}
 								}
 							}
 
 							CourseTreeItem treeNode = null;
 							for (Integer lvl : levelMap) {
-								if (course.getItem(lvl) == null) {
-									course.addItem(new CourseTreeItem());
-								}
 								if (treeNode == null) {
+									if (course.getItem(lvl) == null) {
+										course.addItem(new CourseTreeItem(paragraph
+												.getText()));
+									}
 									treeNode = course.getItem(lvl);
 								} else {
-									treeNode = treeNode.getCourseTree()
-											.get(lvl);
+									if (treeNode.getItem(lvl) == null) {
+										treeNode.addItem(new CourseTreeItem(
+												paragraph.getText()));
+									}
+									treeNode = treeNode.getCourseTree().get(lvl);
 								}
 							}
 
 							if (page.getAllBlocks().isEmpty()) {
 								treeNode.setPage(page);
 							} else {
-								treeNode.setPage(page);
 								page = new CoursePage();
+								treeNode.setPage(page);
 							}
+						} else {
+							
 						}
-						forParsing = (XWPFParagraph) bodyElement;
-					} else {
+					}
+					
+					if (headLevel == null) {
 						Integer size = ParagraphParser.listSize(i, paragraph);
 						if (size == null) {
 							forParsing = (XWPFParagraph) bodyElement;
 						} else {
 							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
 							for (int j = 0; j < size; j++, i++) {
-								listItems.add((XWPFParagraph) document.getBodyElements().get(i));
+								listItems.add((XWPFParagraph) document
+										.getBodyElements().get(i));
 							}
 							i--;
 							forParsing = listItems;
@@ -121,7 +129,7 @@ public class CourseParser {
 	}
 
 	private static Integer getNonNumericHeaderParser(String headId) {
-		Integer resultVariable = 0;
+		Integer resultVariable = null;
 		if (headId.equals("Heading1")) {
 			resultVariable = 1;
 		} else if (headId.equals("Heading2")) {

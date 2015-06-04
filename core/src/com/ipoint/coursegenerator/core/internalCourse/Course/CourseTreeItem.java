@@ -3,12 +3,16 @@ package com.ipoint.coursegenerator.core.internalCourse.Course;
 public class CourseTreeItem extends CourseTree {
 
 	private CoursePage page;
-	private String pageName;
+	private String header;
 
-	public CourseTreeItem(CoursePage page, String pageName) {
+	public CourseTreeItem(CoursePage page, String header) {
 		super();
-		this.page = page;
-		this.pageName = pageName;
+		this.setPage(page);
+		this.setHeader(header);
+	}
+	
+	public CourseTreeItem(String header) {
+		this(null, header);
 	}
 
 	public CourseTreeItem(CoursePage page) {
@@ -16,19 +20,19 @@ public class CourseTreeItem extends CourseTree {
 	}
 	
 	public CourseTreeItem() {
-		this(null);
+		this(null, null);
 	}
 
 	public CoursePage getPage() {
 		return this.page;
 	}
 
-	public String getPageName() {
-		return this.pageName;
+	public String getHeader() {
+		return this.header;
 	}
 
-	public void setPageName(String name) {
-		this.pageName = name;
+	public void setHeader(String header) {
+		this.header = header;
 	}
 
 	public void setPage(CoursePage page) {
