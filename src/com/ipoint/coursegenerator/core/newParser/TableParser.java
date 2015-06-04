@@ -1,7 +1,6 @@
 package com.ipoint.coursegenerator.core.newParser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -77,7 +76,7 @@ public class TableParser extends AbstractParser {
 									.parseDocx(par)));
 						} else {
 							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
-							XWPFDocument doc = par.getDocument(); 
+							XWPFDocument doc = par.getDocument();
 							for (int blockNum = 0; blockNum < size; blockNum++, k++) {
 								listItems.add((XWPFParagraph) doc
 										.getBodyElements().get(k));
@@ -88,7 +87,7 @@ public class TableParser extends AbstractParser {
 						}
 
 					}
-					
+
 					cell.setValue(blocks);
 				}
 

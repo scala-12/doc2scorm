@@ -37,7 +37,7 @@ public class CourseParser {
 					if (paragraph.getStyleID() != null) {
 						headLevel = getNonNumericHeaderParser(paragraph
 								.getStyleID());
-						
+
 						if (headLevel != null) {
 							if (levelMap.size() == headLevel) {
 								levelMap.set(levelMap.size() - 1,
@@ -50,7 +50,8 @@ public class CourseParser {
 							} else {
 								if (levelMap.size() > headLevel) {
 									ArrayList<Integer> newMap = new ArrayList<Integer>();
-									newMap.addAll(levelMap.subList(0, headLevel - 1));
+									newMap.addAll(levelMap.subList(0,
+											headLevel - 1));
 									newMap.add(levelMap.get(headLevel) + 1);
 									levelMap = newMap; // remove extra levels
 								} else {
@@ -64,8 +65,8 @@ public class CourseParser {
 							for (Integer lvl : levelMap) {
 								if (treeNode == null) {
 									if (course.getItem(lvl) == null) {
-										course.addItem(new CourseTreeItem(paragraph
-												.getText()));
+										course.addItem(new CourseTreeItem(
+												paragraph.getText()));
 									}
 									treeNode = course.getItem(lvl);
 								} else {
@@ -73,7 +74,8 @@ public class CourseParser {
 										treeNode.addItem(new CourseTreeItem(
 												paragraph.getText()));
 									}
-									treeNode = treeNode.getCourseTree().get(lvl);
+									treeNode = treeNode.getCourseTree()
+											.get(lvl);
 								}
 							}
 
@@ -84,10 +86,10 @@ public class CourseParser {
 								treeNode.setPage(page);
 							}
 						} else {
-							
+
 						}
 					}
-					
+
 					if (headLevel == null) {
 						Integer size = ParagraphParser.listSize(i, paragraph);
 						if (size == null) {

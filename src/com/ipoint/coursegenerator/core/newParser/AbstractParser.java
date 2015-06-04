@@ -17,8 +17,9 @@ public abstract class AbstractParser implements ForParser {
 			XWPFRun run = runs.get(i);
 			Integer end = null;
 			if (run.getClass().equals(XWPFHyperlinkRun.class)) {
-				end = i + run.getCTR().getDomNode().getParentNode().getChildNodes()
-						.getLength();
+				end = i
+						+ run.getCTR().getDomNode().getParentNode()
+								.getChildNodes().getLength();
 			}
 			if (end == null) {
 				for (end = i; (end < runs.size())
