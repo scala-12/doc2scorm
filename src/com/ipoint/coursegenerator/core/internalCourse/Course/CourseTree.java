@@ -16,7 +16,7 @@ public abstract class CourseTree {
 	}
 
 	public CourseTreeItem getItem(int i) {
-		return (this.courseTree.isEmpty()) ? null
+		return ((this.courseTree.size() <= i) || this.courseTree.isEmpty()) ? null
 				: this.courseTree.get(i);
 	}
 
