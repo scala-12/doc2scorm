@@ -21,8 +21,8 @@ public class HyperlinkParser extends TextParser {
 		XWPFHyperlinkRun link = (XWPFHyperlinkRun) ((List<XWPFRun>) element)
 				.get(0);
 
-		String url = (link.getHyperlinkId() == null) ? new String()
-				: link.getDocument().getHyperlinkByID(link.getHyperlinkId()).getURL();
+		String url = (link.getHyperlinkId() == null) ? new String() : link
+				.getDocument().getHyperlinkByID(link.getHyperlinkId()).getURL();
 
 		if (link.getAnchor() != null) {
 			url = url.concat("#").concat(link.getAnchor());

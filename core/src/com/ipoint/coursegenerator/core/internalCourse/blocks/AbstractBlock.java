@@ -15,7 +15,7 @@ public abstract class AbstractBlock implements Convertable {
 		this.items = (items == null) ? new ArrayList<AbstractItem>()
 				: (ArrayList<AbstractItem>) items;
 	}
-	
+
 	public AbstractBlock(AbstractItem item) {
 		this();
 		if (item != null) {

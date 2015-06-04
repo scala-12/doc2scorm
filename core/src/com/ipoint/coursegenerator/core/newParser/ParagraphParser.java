@@ -12,7 +12,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 
 public class ParagraphParser extends AbstractParser {
-	
+
 	public static boolean isListElement(XWPFParagraph par) {
 		if ((par.getStyleID() == null) && (par.getNumID() != null)) {
 			return true;
@@ -27,8 +27,10 @@ public class ParagraphParser extends AbstractParser {
 			int listNumber = head.getNumID().intValue();
 			XWPFDocument doc = head.getDocument();
 			boolean isAtomList = true;
-			for (int i = start + 1; i < doc.getBodyElements().size() && isAtomList; i++) {
-				XWPFParagraph par = (XWPFParagraph) doc.getBodyElements().get(i);
+			for (int i = start + 1; i < doc.getBodyElements().size()
+					&& isAtomList; i++) {
+				XWPFParagraph par = (XWPFParagraph) doc.getBodyElements()
+						.get(i);
 				isAtomList = (par.getNumID() != null);
 				if (isAtomList) {
 					if (par.getNumID().intValue() == listNumber) {

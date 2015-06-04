@@ -10,7 +10,7 @@ public class CourseTreeItem extends CourseTree {
 		this.setPage(page);
 		this.setHeader(header);
 	}
-	
+
 	public CourseTreeItem(String header) {
 		this(null, header);
 	}
@@ -18,7 +18,7 @@ public class CourseTreeItem extends CourseTree {
 	public CourseTreeItem(CoursePage page) {
 		this(page, null);
 	}
-	
+
 	public CourseTreeItem() {
 		this(null, null);
 	}
