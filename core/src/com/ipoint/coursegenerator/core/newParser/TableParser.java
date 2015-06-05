@@ -36,7 +36,7 @@ public class TableParser extends AbstractParser {
 	 * @return
 	 */
 	private static Integer getRowSpan(XWPFTable tbl, int row, int col) {
-		int factCell = col;
+		int factCell = col; // The actual number of this cell in column
 		for (int j = 0; j < col; j++) {
 			if (tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan() != null) {
 				factCell += tbl.getRow(row).getCell(j).getCTTc().getTcPr()
@@ -47,7 +47,7 @@ public class TableParser extends AbstractParser {
 		int rowSpan = 1;
 		for (int i = row + 1, factNum = factCell; (i < tbl.getNumberOfRows())
 				&& (factNum == factCell); i++) {
-			factNum = 0;
+			factNum = 0; // The actual number of cell for compare
 			XWPFTableRow tblRow = tbl.getRow(i);
 			int j = 0;
 			while ((j < tblRow.getTableCells().size()) && (factNum != factCell)) {
@@ -75,11 +75,10 @@ public class TableParser extends AbstractParser {
 		ArrayList<AbstractItem> block = new ArrayList<AbstractItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {
-
 			XWPFTableRow tableRow = table.getRow(i);
+
 			ArrayList<TableCellItem> cells = new ArrayList<TableCellItem>();
 			for (int j = 0; j < tableRow.getTableCells().size(); j++) {
-
 				XWPFTableCell tableCell = tableRow.getCell(j);
 				TableCellItem cell = new TableCellItem();
 
@@ -90,11 +89,13 @@ public class TableParser extends AbstractParser {
 						Integer size = ParagraphParser.listSize(k, par,
 								tableCell.getBodyElements());
 						if (size == null) {
+							// is text
 							if (!par.getText().isEmpty()) {
 								blocks.add(new ParagraphBlock(
 										new ParagraphParser().parseDocx(par)));
 							}
 						} else {
+							// is list
 							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
 							for (int blockNum = 0; blockNum < size; blockNum++, k++) {
 								listItems.add(tableCell.getParagraphs().get(
@@ -126,10 +127,6 @@ public class TableParser extends AbstractParser {
 		}
 
 		return new TableBlock(block);
-	}
-
-	public Integer offsetTable() {
-		return null;
 	}
 
 	@Override

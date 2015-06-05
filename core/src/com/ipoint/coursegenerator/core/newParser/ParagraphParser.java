@@ -35,21 +35,21 @@ public class ParagraphParser extends AbstractParser {
 		List<XWPFRun> runs = paragraph.getRuns();
 		for (int i = 0; i < runs.size(); i++) {
 			XWPFRun run = runs.get(i);
-			Integer end = null;
+			Integer last = null; // number of last element in run
 			if (run.getClass().equals(XWPFHyperlinkRun.class)) {
-				end = i
+				last = i
 						+ run.getCTR().getDomNode().getParentNode()
 								.getChildNodes().getLength();
 			}
-			if (end == null) {
-				for (end = i; (end < runs.size())
-						&& !runs.get(end).getClass()
-								.equals(XWPFHyperlinkRun.class); end++) {
+			if (last == null) {
+				for (last = i; (last < runs.size())
+						&& !runs.get(last).getClass()
+								.equals(XWPFHyperlinkRun.class); last++) {
 					// waiting
 				}
 			}
-			items.add(runs.subList(i, end));
-			i = end - 1;
+			items.add(runs.subList(i, last));
+			i = last - 1;
 		}
 
 		return items;
@@ -115,71 +115,39 @@ public class ParagraphParser extends AbstractParser {
 	}
 
 	@Override
-	public List<AbstractBlock> parseDocx(Object paragraphs) {
-		if (paragraphs != null) { // if nothing
-			if (paragraphs.getClass().equals(XWPFParagraph.class)) {
-				return this.parseDocx((XWPFParagraph) paragraphs); // paragraph
-			} else if ((paragraphs.getClass().equals(List.class))
-					|| (paragraphs.getClass().equals(ArrayList.class))) {
-				return this.parseDocx((List<XWPFParagraph>) paragraphs); // list
-			} else if (paragraphs.getClass().equals(XWPFTable.class)) {
-				return this.parseDocx((XWPFTable) paragraphs); // table
+	public List<AbstractBlock> parseDocx(Object element) {
+		if (element != null) { // if nothing
+			ArrayList<AbstractBlock> paragraphs = new ArrayList<AbstractBlock>();
+
+			if (element.getClass().equals(XWPFParagraph.class)) {
+				// is text
+				for (List<XWPFRun> runList : preParseParagraphOnPieces((XWPFParagraph) element)) {
+					AbstractBlock block = null;
+					if (runList.get(0).getClass()
+							.equals(XWPFHyperlinkRun.class)) {
+						block = new HyperlinkParser().parseDocx(runList);
+					} else {
+						block = new TextParser().parseDocx(runList);
+					}
+					paragraphs.add(block);
+				}
+			} else if ((element.getClass().equals(List.class))
+					|| (element.getClass().equals(ArrayList.class))) {
+				// is List
+				paragraphs.add(new ListParser()
+						.parseDocx((List<XWPFParagraph>) element));
+			} else if (element.getClass().equals(XWPFTable.class)) {
+				// is table
+				paragraphs
+						.add(new TableParser().parseDocx((XWPFTable) element));
 			} else {
-				return null; // else
+				paragraphs = null; // else
 			}
+
+			return paragraphs;
 		} else {
 			return null;
 		}
-	}
-
-	/**
-	 * Parsing list elements
-	 * 
-	 * @param list
-	 *            List items
-	 * @return
-	 */
-	private List<AbstractBlock> parseDocx(List<XWPFParagraph> list) {
-		ArrayList<AbstractBlock> paragraphs = new ArrayList<AbstractBlock>();
-		paragraphs.add(new ListParser().parseDocx(list));
-
-		return paragraphs;
-	}
-
-	/**
-	 * Parsing table
-	 * 
-	 * @param docxTable
-	 *            Table of Docx
-	 * @return List which includes one {@link TableBlock}
-	 */
-	private List<AbstractBlock> parseDocx(XWPFTable docxTable) {
-		ArrayList<AbstractBlock> paragraphs = new ArrayList<AbstractBlock>();
-		paragraphs.add(new TableParser().parseDocx(docxTable));
-
-		return paragraphs;
-	}
-
-	/**
-	 * Parsing docx paragraph which includes only text and image
-	 * 
-	 * @param docxPar
-	 *            Paragraph of docx
-	 * @return List of {@link TextBlock}
-	 */
-	private List<AbstractBlock> parseDocx(XWPFParagraph docxPar) {
-		ArrayList<AbstractBlock> paragraphs = new ArrayList<AbstractBlock>();
-		for (List<XWPFRun> runList : preParseParagraphOnPieces((XWPFParagraph) docxPar)) {
-			AbstractBlock block = null;
-			if (runList.get(0).getClass().equals(XWPFHyperlinkRun.class)) {
-				block = new HyperlinkParser().parseDocx(runList);
-			} else {
-				block = new TextParser().parseDocx(runList);
-			}
-			paragraphs.add(block);
-		}
-
-		return paragraphs;
 	}
 
 }
