@@ -30,7 +30,7 @@ public class CourseTreeItem extends CourseTree {
 	public CourseTreeItem(CoursePage page, String title) {
 		super();
 		this.setPage(page);
-		
+
 		// TODO: exception if title is null (then setTitle = false)
 		this.setTitle(title);
 	}

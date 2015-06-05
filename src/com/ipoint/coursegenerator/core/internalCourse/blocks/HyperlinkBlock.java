@@ -35,7 +35,7 @@ public class HyperlinkBlock extends TextBlock {
 			// TODO: Exception
 		}
 	}
-	
+
 	/**
 	 * Create Hyperlink block with preset address and items
 	 * 

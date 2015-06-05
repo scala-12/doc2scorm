@@ -53,23 +53,7 @@ public class ListBlock extends AbstractBlock {
 	 *            Type of list
 	 */
 	public void setMarkerType(String type) {
-		String resultVariable = null;
-		
-		if (type  != null) {
-			if (type.equalsIgnoreCase("upperLetter")) {
-				resultVariable = "A";
-			} else if (type.equalsIgnoreCase("lowerLetter")) {
-				resultVariable = "a";
-			} else if (type.equalsIgnoreCase("upperRoman")) {
-				resultVariable = "I";
-			} else if (type.equalsIgnoreCase("lowerRoman")) {
-				resultVariable = "i";
-			} else if (type.equalsIgnoreCase("decimal")) {
-				resultVariable = "1";
-			}
-		}
-		
-		this.type = resultVariable;
+		this.type = type;
 	}
 
 	/**
@@ -113,6 +97,18 @@ public class ListBlock extends AbstractBlock {
 	@Override
 	public Node toHtml() {
 		// TODO Auto-generated method stub
+		/*
+		 * String resultVariable = null;
+		 * 
+		 * if (type != null) { if (type.equalsIgnoreCase("upperLetter")) {
+		 * resultVariable = "A"; } else if
+		 * (type.equalsIgnoreCase("lowerLetter")) { resultVariable = "a"; } else
+		 * if (type.equalsIgnoreCase("upperRoman")) { resultVariable = "I"; }
+		 * else if (type.equalsIgnoreCase("lowerRoman")) { resultVariable = "i";
+		 * } else if (type.equalsIgnoreCase("decimal")) { resultVariable = "1";
+		 * } }
+		 */
+
 		return null;
 	}
 

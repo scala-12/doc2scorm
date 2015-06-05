@@ -36,7 +36,8 @@ public class TextParser extends AbstractParser {
 		ArrayList<AbstractItem> block = new ArrayList<AbstractItem>();
 
 		for (XWPFRun run : (List<XWPFRun>) runs) {
-			if (run.toString().isEmpty()) { // if run is not text
+			if (run.toString().isEmpty()) {
+				// this run is not simple text
 				XWPFPictureData pictureData = null;
 				if (!run.getEmbeddedPictures().isEmpty()) {
 					pictureData = run.getEmbeddedPictures().get(0)
