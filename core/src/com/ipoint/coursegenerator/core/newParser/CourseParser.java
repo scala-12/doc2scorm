@@ -2,8 +2,6 @@ package com.ipoint.coursegenerator.core.newParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
@@ -17,29 +15,47 @@ import com.ipoint.coursegenerator.core.internalCourse.Course.CourseTreeItem;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 
+/**
+ * Parsing document
+ * 
+ * @author Kalashnikov
+ *
+ */
 public class CourseParser {
 
+	/**
+	 * Parsing docx document
+	 * 
+	 * @param document
+	 *            Document docx
+	 * @param manifest
+	 * @param courseName
+	 * @return Special model of docx
+	 */
 	public static Course parse(XWPFDocument document, String manifest,
 			String courseName) {
 		Course course = new Course();
-		ArrayList<Integer> levelMap = new ArrayList<Integer>();
+		ArrayList<Integer> levelMap = new ArrayList<Integer>(); // map for
+																// document tree
 		CoursePage page = new CoursePage();
 		for (int i = 0; i < document.getBodyElements().size(); i++) {
 			IBodyElement bodyElement = document.getBodyElements().get(i);
-			// TODO check pages before course body
+			// TODO check pages before course body (Title list)
 
 			Object forParsing = null;
-
-			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
+			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) { // is
+																					// text
+																					// paragraph
 				XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 				if (!paragraph.getRuns().isEmpty()) {
 					Integer headLevel = null;
-					if (paragraph.getStyleID() != null) {
-						headLevel = getNonNumericHeaderParser(paragraph
-								.getStyleID());
 
-						if (headLevel != null) {
-							if (levelMap.size() == headLevel) {
+					if (paragraph.getStyleID() != null) { // search header
+						headLevel = getNumberOfHeader(paragraph.getStyleID());
+
+						if (headLevel != null) { // it is header
+							if (levelMap.size() == headLevel) { // level not
+																// changed
 								levelMap.set(levelMap.size() - 1,
 										levelMap.get(levelMap.size() - 1) + 1); // to
 																				// next
@@ -48,19 +64,21 @@ public class CourseParser {
 																				// the
 																				// level
 							} else {
-								if (levelMap.size() > headLevel) {
+								if (levelMap.size() > headLevel) { // new level
+																	// is up
 									ArrayList<Integer> newMap = new ArrayList<Integer>();
 									newMap.addAll(levelMap.subList(0,
 											headLevel - 1));
 									newMap.add(levelMap.get(headLevel) + 1);
 									levelMap = newMap; // remove extra levels
-								} else {
+								} else { // new level is down
 									while (levelMap.size() < headLevel) {
 										levelMap.add(0); // create new levels
 									}
 								}
 							}
 
+							// search node of level in document tree
 							CourseTreeItem treeNode = null;
 							for (Integer lvl : levelMap) {
 								if (treeNode == null) {
@@ -79,6 +97,7 @@ public class CourseParser {
 								}
 							}
 
+							// TODO: write describe
 							if (page.getAllBlocks().isEmpty()) {
 								treeNode.setPage(page);
 							} else {
@@ -90,9 +109,9 @@ public class CourseParser {
 						}
 					}
 
-					if (headLevel == null) {
-						Integer size = ParagraphParser.listSize(i, paragraph);
-						if (size == null) {
+					if (headLevel == null) { // if it not header
+						Integer size = ParagraphParser.listSize(i, paragraph, document.getBodyElements());
+						if (size == null) { // is simple text with image
 							forParsing = (XWPFParagraph) bodyElement;
 						} else {
 							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
@@ -106,10 +125,11 @@ public class CourseParser {
 					}
 				}
 			} else if (bodyElement.getElementType().equals(
-					BodyElementType.TABLE)) {
+					BodyElementType.TABLE)) { // is table
 				forParsing = (XWPFTable) bodyElement;
 			}
 
+			// element for ParagraphBlock
 			List<AbstractBlock> blockItems = new ParagraphParser()
 					.parseDocx(forParsing);
 
@@ -121,16 +141,12 @@ public class CourseParser {
 		return course;
 	}
 
-	public static boolean isNumericParagraphStyle(String stringStyleID) {
-		if (stringStyleID != null) {
-			Pattern pattern = Pattern.compile("[0-9]*");
-			Matcher matcher = pattern.matcher(stringStyleID);
-			return matcher.matches();
-		}
-		return false;
-	}
-
-	private static Integer getNonNumericHeaderParser(String headId) {
+	/**
+	 * Search header level
+	 * @param headId ID of header
+	 * @return
+	 */
+	private static Integer getNumberOfHeader(String headId) {
 		Integer resultVariable = null;
 		if (headId.equals("Heading1")) {
 			resultVariable = 1;

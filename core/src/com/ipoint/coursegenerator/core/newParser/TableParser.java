@@ -3,7 +3,6 @@ package com.ipoint.coursegenerator.core.newParser;
 import java.util.ArrayList;
 
 import org.apache.poi.xwpf.usermodel.IBodyElement;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
@@ -13,11 +12,29 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableRowItem;
 
+/**
+ * Parsing paragraph which includes only table
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class TableParser extends AbstractParser {
 
+	/**
+	 * Search count of cells which combined in row
+	 * 
+	 * @param tbl
+	 *            Table
+	 * @param row
+	 *            Row of cell
+	 * @param col
+	 *            Column of cell
+	 * @return
+	 */
 	private static Integer getRowSpan(XWPFTable tbl, int row, int col) {
 		int factCell = col;
 		for (int j = 0; j < col; j++) {
@@ -55,12 +72,12 @@ public class TableParser extends AbstractParser {
 	@Override
 	public TableBlock parseDocx(Object element) {
 		XWPFTable table = (XWPFTable) element;
-		TableBlock block = new TableBlock();
+		ArrayList<AbstractItem> block = new ArrayList<AbstractItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {
 
 			XWPFTableRow tableRow = table.getRow(i);
-			TableRowItem row = new TableRowItem();
+			ArrayList<TableCellItem> cells = new ArrayList<TableCellItem>();
 			for (int j = 0; j < tableRow.getTableCells().size(); j++) {
 
 				XWPFTableCell tableCell = tableRow.getCell(j);
@@ -70,16 +87,18 @@ public class TableParser extends AbstractParser {
 					ArrayList<ParagraphBlock> blocks = new ArrayList<ParagraphBlock>();
 					for (int k = 0; k < tableCell.getParagraphs().size(); k++) {
 						XWPFParagraph par = tableCell.getParagraphs().get(k);
-						Integer size = ParagraphParser.listSize(k, par);
+						Integer size = ParagraphParser.listSize(k, par,
+								tableCell.getBodyElements());
 						if (size == null) {
-							blocks.add(new ParagraphBlock(new ParagraphParser()
-									.parseDocx(par)));
+							if (!par.getText().isEmpty()) {
+								blocks.add(new ParagraphBlock(
+										new ParagraphParser().parseDocx(par)));
+							}
 						} else {
 							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
-							XWPFDocument doc = par.getDocument();
 							for (int blockNum = 0; blockNum < size; blockNum++, k++) {
-								listItems.add((XWPFParagraph) doc
-										.getBodyElements().get(k));
+								listItems.add(tableCell.getParagraphs().get(
+										blockNum));
 							}
 							k--;
 							blocks.add(new ParagraphBlock(new ParagraphParser()
@@ -88,7 +107,7 @@ public class TableParser extends AbstractParser {
 
 					}
 
-					cell.setValue(blocks);
+					cell.setValue((blocks.isEmpty()) ? null : blocks);
 				}
 
 				if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
@@ -101,12 +120,12 @@ public class TableParser extends AbstractParser {
 						cell.setRowSpan(getRowSpan(table, i, j));
 					}
 				}
-				row.addCell(cell);
+				cells.add(cell);
 			}
-			block.addItem(row);
+			block.add(new TableRowItem(cells));
 		}
 
-		return block;
+		return new TableBlock(block);
 	}
 
 	public Integer offsetTable() {

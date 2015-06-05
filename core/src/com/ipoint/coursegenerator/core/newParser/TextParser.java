@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.newParser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
@@ -12,9 +13,16 @@ import schemasMicrosoftComVml.CTImageData;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.ImageItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TextItem;
 
+/**
+ * Parsing paragraph which includes only text and images
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class TextParser extends AbstractParser {
 
 	@Override
@@ -25,7 +33,7 @@ public class TextParser extends AbstractParser {
 
 	@Override
 	public TextBlock parseDocx(Object runs) {
-		TextBlock block = new TextBlock();
+		ArrayList<AbstractItem> block = new ArrayList<AbstractItem>();
 
 		for (XWPFRun run : (List<XWPFRun>) runs) {
 			if (run.toString().isEmpty()) { // if run is not text
@@ -86,13 +94,13 @@ public class TextParser extends AbstractParser {
 					}
 				}
 
-				block.addItem(new ImageItem(pictureData));
+				block.add(new ImageItem(pictureData));
 			} else {
-				block.addItem(new TextItem(run));
+				block.add(new TextItem(run));
 			}
 		}
 
-		return block;
+		return new TextBlock(block);
 	}
 
 }
