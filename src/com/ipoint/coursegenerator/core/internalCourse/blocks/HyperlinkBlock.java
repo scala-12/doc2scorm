@@ -6,25 +6,77 @@ import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 
+/**
+ * Hyperlink block. This block is an extends of {@link TextBlock}
+ * 
+ * @see TextBlock
+ * @see AbstractBlock
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class HyperlinkBlock extends TextBlock {
 
+	/**
+	 * Full address of hyperlink.
+	 */
 	private String url;
 
-	public HyperlinkBlock(String url, List<AbstractItem> list) {
-		super(list);
-		this.url = url;
+	/**
+	 * Create Hyperlink block with preset address and items
+	 * 
+	 * @param url
+	 *            Address of hyperlink
+	 * @param items
+	 *            List of text and pictures
+	 */
+	public HyperlinkBlock(String url, List<AbstractItem> items) {
+		super(items);
+		if (!this.setUrl(url)) {
+			// TODO: Exception
+		}
+	}
+	
+	/**
+	 * Create Hyperlink block with preset address and items
+	 * 
+	 * @param url
+	 *            Address of hyperlink
+	 * @param items
+	 *            List of text and pictures
+	 */
+	public HyperlinkBlock(String url, AbstractItem item) {
+		super(item);
+		if (!this.setUrl(url)) {
+			// TODO: Exception
+		}
 	}
 
-	public HyperlinkBlock(String url) {
-		this(url, null);
-	}
-
+	/**
+	 * Returns adress of hyperlink
+	 * 
+	 * @return Adress of hyperlink
+	 */
 	public String getUrl() {
 		return this.url;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	/**
+	 * Change address of hyperlink
+	 * 
+	 * @param url
+	 *            Address of hyperlink
+	 */
+	public boolean setUrl(String url) {
+		if (url == null) {
+			return false;
+		} else {
+			if (url.isEmpty()) {
+				return false;
+			} else {
+				this.url = url;
+				return true;
+			}
+		}
 	}
 
 	@Override

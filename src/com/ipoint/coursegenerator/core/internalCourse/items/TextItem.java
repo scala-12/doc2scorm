@@ -1,13 +1,24 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+
+/**
+ * Item for {@link TextBlock}. This item includes text and him properties.
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class TextItem extends AbstractItem {
 
-	private String text;
+	//properties of text
 	private boolean bold;
 	private boolean italic;
 	private boolean underline;
@@ -15,18 +26,8 @@ public class TextItem extends AbstractItem {
 	private boolean subscript;
 	private String color;
 
-	public TextItem() {
-		this.setBold(false);
-		this.setItalic(false);
-		this.setUnderline(false);
-		this.setSuperscript(false);
-		this.setSubscript(false);
-		this.setColor(null);
-		this.setValue(null);
-	}
-
 	public TextItem(XWPFRun run) {
-		this();
+		super(run.toString());
 
 		boolean isHyperlink = run.getClass().equals(XWPFHyperlinkRun.class);
 
@@ -45,8 +46,6 @@ public class TextItem extends AbstractItem {
 		// } else if ((styleNumber > 0) && (styleNumber < 10)) {
 		// tempElement = el;
 		// }
-
-		this.setValue(run.toString());
 	}
 
 	public void setBold(boolean value) {
@@ -105,12 +104,14 @@ public class TextItem extends AbstractItem {
 
 	@Override
 	public String getValue() {
-		return this.text;
+		return (String) super.getValue();
 	}
 
 	@Override
-	public void setValue(Object text) {
-		this.text = (String) text;
+	public List<Class<?>> getAvailableValueClasses() {
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(String.class);
+		return classes;
 	}
 
 }

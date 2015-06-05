@@ -3,26 +3,32 @@ package com.ipoint.coursegenerator.core.internalCourse.items;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
+
+/**
+ * Item for {@link TableBlock}. This item includes table cells (see
+ * {@link TableCellItem}).
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class TableRowItem extends AbstractItem {
 
-	private ArrayList<TableCellItem> cells;
-
-	public TableRowItem() {
-		this.cells = new ArrayList<TableCellItem>();
+	public TableRowItem(ArrayList<TableCellItem> cells) {
+		super(cells);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TableCellItem> getValue() {
-		return this.cells;
+		return (List<TableCellItem>) super.getValue();
 	}
 
 	@Override
-	public void setValue(Object cellList) {
-		this.cells = (ArrayList<TableCellItem>) cellList;
-	}
-
-	public void addCell(TableCellItem cell) {
-		this.cells.add(cell);
+	public List<Class<?>> getAvailableValueClasses() {
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(TableCellItem.class);
+		return classes;
 	}
 
 }
