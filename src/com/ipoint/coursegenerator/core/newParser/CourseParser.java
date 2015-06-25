@@ -1,19 +1,17 @@
 package com.ipoint.coursegenerator.core.newParser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
 import com.ipoint.coursegenerator.core.internalCourse.Course.CoursePage;
 import com.ipoint.coursegenerator.core.internalCourse.Course.CourseTreeItem;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
 
 /**
  * Parsing document
@@ -45,8 +43,7 @@ public class CourseParser {
 
 			// TODO check pages before course body (Title list)
 
-			// elements for parsing
-			Object forParsing = null;
+			Integer headLevel = null;
 			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 				// This is text paragraph: text, image or list
 
@@ -54,7 +51,6 @@ public class CourseParser {
 				XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 
 				if (!paragraph.getRuns().isEmpty()) {
-					Integer headLevel = null;
 
 					// search header
 					if (paragraph.getStyleID() != null) {
@@ -117,36 +113,21 @@ public class CourseParser {
 							}
 						}
 					}
-
-					if (headLevel == null) { // It is text, not header
-						Integer size = ParagraphParser.listSize(i, paragraph,
-								document.getBodyElements());
-						if (size == null) {
-							// is simple text with image
-							forParsing = (XWPFParagraph) bodyElement;
-						} else {
-							// It is list
-							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
-							for (int j = 0; j < size; j++, i++) {
-								listItems.add((XWPFParagraph) document
-										.getBodyElements().get(i));
-							}
-							i--;
-							forParsing = listItems;
-						}
-					}
 				}
-			} else if (bodyElement.getElementType().equals(
-					BodyElementType.TABLE)) { // It is a table
-				forParsing = (XWPFTable) bodyElement;
 			}
 
-			// element for inserting in ParagraphBlock (List, text or table)
-			List<AbstractBlock> blockItems = new ParagraphParser()
-					.parseDocx(forParsing);
-
-			if (blockItems != null) { // Have nothing for adding
-				page.addParagraph(new ParagraphBlock(blockItems));
+			if (headLevel == null) {
+				AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
+						.parse(document.getBodyElements().subList(i,
+								document.getBodyElements().size() - 1));
+				
+				if (paragraphBlock instanceof ListBlock) {
+					i += ((ListBlock) paragraphBlock).getItems().size() - 1;
+				}
+				
+				if (paragraphBlock != null) {
+					page.addBlock(paragraphBlock);
+				}
 			}
 		}
 

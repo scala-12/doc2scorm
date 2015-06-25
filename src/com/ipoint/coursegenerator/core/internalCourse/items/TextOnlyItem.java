@@ -1,8 +1,5 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
@@ -16,9 +13,11 @@ import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
  * @author Kalashnikov Vladislav
  *
  */
-public class TextItem extends AbstractItem {
+public class TextOnlyItem extends AbstractTextItem {
 
-	//properties of text
+	private String value;
+
+	// properties of text
 	private boolean bold;
 	private boolean italic;
 	private boolean underline;
@@ -26,10 +25,16 @@ public class TextItem extends AbstractItem {
 	private boolean subscript;
 	private String color;
 
-	public TextItem(XWPFRun run) {
-		super(run.toString());
+	/**
+	 * Create text item from run of text
+	 * 
+	 * @param run
+	 *            Run of text
+	 */
+	public TextOnlyItem(XWPFRun run) {
+		this.setValue(run.toString());
 
-		boolean isHyperlink = run.getClass().equals(XWPFHyperlinkRun.class);
+		boolean isHyperlink = (run instanceof XWPFHyperlinkRun);
 
 		this.setBold(run.isBold());
 		this.setItalic(run.isItalic());
@@ -46,6 +51,26 @@ public class TextItem extends AbstractItem {
 		// } else if ((styleNumber > 0) && (styleNumber < 10)) {
 		// tempElement = el;
 		// }
+	}
+
+	public String getValue() {
+		return this.value;
+	}
+
+	/**
+	 * Set value of item
+	 * 
+	 * @param value
+	 *            Value of item
+	 * @return true if all right
+	 */
+	public boolean setValue(String text) {
+		if (text == null) {
+			return false;
+		} else {
+			this.value = text;
+			return true;
+		}
 	}
 
 	public void setBold(boolean value) {
@@ -100,18 +125,6 @@ public class TextItem extends AbstractItem {
 
 	public String getColor() {
 		return this.color;
-	}
-
-	@Override
-	public String getValue() {
-		return (String) super.getValue();
-	}
-
-	@Override
-	public List<Class<?>> getAvailableValueClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		classes.add(String.class);
-		return classes;
 	}
 
 }

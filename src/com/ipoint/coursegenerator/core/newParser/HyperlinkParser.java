@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
 
 /**
@@ -16,26 +15,30 @@ import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
  */
 public class HyperlinkParser extends TextParser {
 
-	@Override
-	public AbstractBlock parseDoc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * Parse runs with hyperlink to Hyperlink block
+	 */
+	public HyperlinkBlock parseDocx(List<XWPFRun> hyperRuns) {
+		if (hyperRuns != null) {
+			if (hyperRuns.isEmpty()) {
+				return null;
+			} else {
+				XWPFHyperlinkRun link = (XWPFHyperlinkRun) hyperRuns.get(0);
+				String url = (link.getHyperlinkId() == null) ? new String()
+						: link.getDocument()
+								.getHyperlinkByID(link.getHyperlinkId())
+								.getURL();
 
-	@Override
-	public HyperlinkBlock parseDocx(Object element) {
-		XWPFHyperlinkRun link = (XWPFHyperlinkRun) ((List<XWPFRun>) element)
-				.get(0);
+				if (link.getAnchor() != null) {
+					url = url.concat("#").concat(link.getAnchor());
+				}
 
-		String url = (link.getHyperlinkId() == null) ? new String() : link
-				.getDocument().getHyperlinkByID(link.getHyperlinkId()).getURL();
-
-		if (link.getAnchor() != null) {
-			url = url.concat("#").concat(link.getAnchor());
+				return new HyperlinkBlock(new TextParser().parseDocx(hyperRuns)
+						.getItems(), url);
+			}
+		} else {
+			return null;
 		}
-
-		return new HyperlinkBlock(url, new TextParser().parseDocx(element)
-				.getItems());
 	}
 
 }

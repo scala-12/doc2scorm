@@ -2,6 +2,7 @@ package com.ipoint.coursegenerator.core.newParser;
 
 import java.util.ArrayList;
 
+import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
@@ -9,12 +10,11 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableRowItem;
+import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
 
 /**
  * Parsing paragraph which includes only table
@@ -69,10 +69,15 @@ public class TableParser extends AbstractParser {
 		return rowSpan;
 	}
 
-	@Override
-	public TableBlock parseDocx(Object element) {
-		XWPFTable table = (XWPFTable) element;
-		ArrayList<AbstractItem> block = new ArrayList<AbstractItem>();
+	/**
+	 * Parse Table paragraph to Table Block
+	 * 
+	 * @param table
+	 *            Table paragraph
+	 * @return Table block
+	 */
+	public TableBlock parseDocx(XWPFTable table) {
+		ArrayList<TableItem> block = new ArrayList<TableItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {
 			XWPFTableRow tableRow = table.getRow(i);
@@ -82,57 +87,51 @@ public class TableParser extends AbstractParser {
 				XWPFTableCell tableCell = tableRow.getCell(j);
 				TableCellItem cell = new TableCellItem();
 
-				if (!tableCell.getParagraphs().isEmpty()) {
-					ArrayList<ParagraphBlock> blocks = new ArrayList<ParagraphBlock>();
-					for (int k = 0; k < tableCell.getParagraphs().size(); k++) {
-						XWPFParagraph par = tableCell.getParagraphs().get(k);
-						Integer size = ParagraphParser.listSize(k, par,
-								tableCell.getBodyElements());
-						if (size == null) {
-							// is text
-							if (!par.getText().isEmpty()) {
-								blocks.add(new ParagraphBlock(
-										new ParagraphParser().parseDocx(par)));
-							}
-						} else {
-							// is list
-							ArrayList<IBodyElement> listItems = new ArrayList<IBodyElement>();
-							for (int blockNum = 0; blockNum < size; blockNum++, k++) {
-								listItems.add(tableCell.getParagraphs().get(
-										blockNum));
-							}
-							k--;
-							blocks.add(new ParagraphBlock(new ParagraphParser()
-									.parseDocx(listItems)));
-						}
+				if (!tableCell.getBodyElements().isEmpty()) {
+					ArrayList<AbstractParagraphBlock> blocks = new ArrayList<AbstractParagraphBlock>();
+					for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
+						AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
+								.parse(tableCell.getBodyElements().subList(k,
+										tableCell.getBodyElements().size()));
 
+						if (paragraphBlock != null) {
+							if (paragraphBlock instanceof ListBlock) {
+								k += ((ListBlock) paragraphBlock).getItems().size() - 1;
+							}
+
+							blocks.add(paragraphBlock);
+						}
 					}
 
-					cell.setValue((blocks.isEmpty()) ? null : blocks);
+					if (blocks.isEmpty()) {
+						cell.setNullValue();
+					} else {
+						cell.setValue(blocks);
+					}
 				}
 
-				if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
-					cell.setColSpan(tableCell.getCTTc().getTcPr().getGridSpan()
-							.getVal().intValue());
-				}
+				boolean phantomCell = false;
 
 				if (tableCell.getCTTc().getTcPr().getVMerge() != null) {
 					if (tableCell.getCTTc().getTcPr().getVMerge().getVal() == STMerge.RESTART) {
 						cell.setRowSpan(getRowSpan(table, i, j));
+					} else {
+						phantomCell = true;
 					}
 				}
-				cells.add(cell);
+
+				if (!phantomCell) {
+					if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
+						cell.setColSpan(tableCell.getCTTc().getTcPr()
+								.getGridSpan().getVal().intValue());
+					}
+
+					cells.add(cell);
+				}
 			}
-			block.add(new TableRowItem(cells));
+			block.add(new TableItem(cells));
 		}
 
-		return new TableBlock(block);
+		return (block.isEmpty()) ? null : new TableBlock(block);
 	}
-
-	@Override
-	public AbstractBlock parseDoc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

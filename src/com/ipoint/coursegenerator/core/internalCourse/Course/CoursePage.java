@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.internalCourse.Convertable;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
 
 /**
  * Page of document
@@ -21,13 +21,13 @@ public class CoursePage implements Convertable {
 	/**
 	 * Paragraph of document
 	 */
-	private ArrayList<ParagraphBlock> paragraphs;
+	private ArrayList<AbstractParagraphBlock> paragraphs;
 
 	/**
 	 * Create empty page
 	 */
 	public CoursePage() {
-		this.paragraphs = new ArrayList<ParagraphBlock>();
+		this.paragraphs = new ArrayList<AbstractParagraphBlock>();
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class CoursePage implements Convertable {
 	 * 
 	 * @return All paragraph of document
 	 */
-	public List<ParagraphBlock> getAllBlocks() {
+	public List<AbstractParagraphBlock> getAllBlocks() {
 		return this.paragraphs;
 	}
 
@@ -57,7 +57,7 @@ public class CoursePage implements Convertable {
 	 * @param block
 	 *            Block for adding
 	 */
-	public void addParagraph(ParagraphBlock block) {
+	public void addBlock(AbstractParagraphBlock block) {
 		this.paragraphs.add(block);
 	}
 

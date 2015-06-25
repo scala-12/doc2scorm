@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
 
 /**
@@ -16,7 +15,7 @@ import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class ListBlock extends AbstractBlock {
+public class ListBlock extends AbstractParagraphBlock {
 
 	/**
 	 * Level of list. Start from zero as first level and may not be null.
@@ -31,19 +30,16 @@ public class ListBlock extends AbstractBlock {
 	/**
 	 * @see AbstractBlock#AbstractBlock(List)
 	 */
-	public ListBlock(List<AbstractItem> items) {
+	public ListBlock(List<ListItem> items) {
 		super(items);
+		
 		this.setLevel(level);
 		this.setMarkerType(null);
 	}
-
-	/**
-	 * @see AbstractBlock#AbstractBlock(AbstractItem)
-	 */
-	public ListBlock(AbstractItem item) {
-		super(item);
-		this.setLevel(level);
-		this.setMarkerType(null);
+	
+	@Override
+	public List<ListItem> getItems() {
+		return (List<ListItem>) super.getItems();
 	}
 
 	/**
@@ -83,15 +79,6 @@ public class ListBlock extends AbstractBlock {
 	 */
 	public int getLevel() {
 		return this.level;
-	}
-
-	@Override
-	public boolean isRightItem(AbstractItem item) {
-		if (item.getClass().equals(ListItem.class)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 package com.ipoint.coursegenerator.core.newParser;
 
-public abstract class AbstractParser implements ForParser {
+public abstract class AbstractParser {
 
 }

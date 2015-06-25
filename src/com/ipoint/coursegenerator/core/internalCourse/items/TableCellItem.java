@@ -1,20 +1,23 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
 
 /**
- * Item for {@link TableRowItem}. This item includes other blocks:
+ * Item for {@link TableItem}. This item includes other blocks:
  * {@link TextBlock}, {@link HyperlinkBlock}, {@link TableBlock} or null
  * 
  * @author Kalashnikov Vladislav
  *
  */
 public class TableCellItem extends AbstractItem {
+
+	private List<AbstractParagraphBlock> value;
 
 	/**
 	 * Count of cells which combined in row
@@ -27,57 +30,62 @@ public class TableCellItem extends AbstractItem {
 	private Integer colSpan;
 
 	/**
-	 * Create cell which preset value
+	 * Create cell as block item
 	 * 
 	 * @param value
-	 *            Value for cell. May be null
+	 *            Value of cell. There can be null
 	 */
-	public TableCellItem(List<ParagraphBlock> value) {
-		super(value);
-	}
-
-	/**
-	 * Create cell which preset value and properties
-	 * 
-	 * @param value
-	 *            Value for cell. May be null
-	 * @param rowSpan
-	 *            Count of cells which combined in row. May be null
-	 * @param colSpan
-	 *            Count of cells which combined in column. May be null
-	 */
-	public TableCellItem(List<ParagraphBlock> value, Integer rowSpan,
-			Integer colSpan) {
-		this(value);
-		this.setRowSpan(rowSpan);
-		this.setColSpan(colSpan);
+	public TableCellItem(List<AbstractParagraphBlock> blocks) {
+		this.setValue(blocks);
+		this.setRowSpan(0);
+		this.setColSpan(0);
 	}
 
 	/**
 	 * Create empty cell
 	 */
 	public TableCellItem() {
-		this(null, null, null);
+		this(null);
 	}
 
 	/**
 	 * Change count of cells which combined in row
 	 * 
 	 * @param rowSpan
-	 *            Count of cells which combined in row. May be null
+	 *            Count of cells which combined in row.
+	 * @return if successful then true
 	 */
-	public void setRowSpan(Integer rowSpan) {
-		this.rowSpan = (rowSpan == null) ? null : (rowSpan > 0) ? rowSpan : 0;
+	public boolean setRowSpan(Integer rowSpan) {
+		if (rowSpan == null) {
+			return false;
+		} else {
+			if (rowSpan >= 0) {
+				this.rowSpan = rowSpan;
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	/**
 	 * Change count of cells which combined in column
 	 * 
 	 * @param colSpan
-	 *            Count of cells which combined in column. May be null
+	 *            Count of cells which combined in column.
+	 * @return if successful then true
 	 */
-	public void setColSpan(Integer colSpan) {
-		this.colSpan = (colSpan == null) ? null : (colSpan > 0) ? colSpan : 0;
+	public boolean setColSpan(Integer colSpan) {
+		if (colSpan == null) {
+			return false;
+		} else {
+			if (colSpan > 0) {
+				this.colSpan = colSpan;
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	/**
@@ -98,15 +106,46 @@ public class TableCellItem extends AbstractItem {
 		return this.colSpan;
 	}
 
-	@Override
-	protected boolean isRightItemValue(Object value) {
-		return (value == null) ? true : super.isRightItemValue(value);
+	public List<AbstractParagraphBlock> getValue() {
+		return this.value;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ParagraphBlock> getValue() {
-		return (List<ParagraphBlock>) super.getValue();
+	/**
+	 * Setup value of cell
+	 * 
+	 * @param paragraphs
+	 *            Value of cell. May be null
+	 */
+	public void setValue(List<AbstractParagraphBlock> paragraphs) {
+		this.value = paragraphs;
+		if (paragraphs != null) {
+			if (paragraphs.isEmpty()) {
+				this.value = null;
+			}
+		}
+	}
+
+	/**
+	 * Setup paragraph as value of cell
+	 * 
+	 * @param paragraph
+	 *            Paragraph
+	 * @return true if it's all right
+	 */
+	public void setValue(AbstractParagraphBlock paragraph) {
+		if (value != null) {
+			ArrayList<AbstractParagraphBlock> valueAsList = new ArrayList<AbstractParagraphBlock>();
+			valueAsList.add(paragraph);
+			this.setValue(valueAsList);
+		} else {
+			this.value = null;
+		}
+	}
+	
+	public void setFantom(boolean value) {
+		this.value = null;
+		this.colSpan = null;
+		this.rowSpan = null;
 	}
 
 }
