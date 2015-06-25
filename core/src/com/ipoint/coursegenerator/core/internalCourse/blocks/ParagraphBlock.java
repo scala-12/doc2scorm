@@ -1,11 +1,9 @@
 package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
 
 /**
@@ -16,50 +14,18 @@ import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractBlock {
+public class ParagraphBlock extends AbstractParagraphBlock {
 
 	/**
-	 * @see AbstractBlock#AbstractBlock(AbstractItem)
+	 * Create ParagraphBlock which includes items
 	 */
-	public ParagraphBlock(AbstractBlock block) {
-		super(new ParagraphItem(block));
-	}
-
-	/**
-	 * @see AbstractBlock#AbstractBlock(List)
-	 */
-	public ParagraphBlock(List<AbstractBlock> items) {
-		super(blockToBlockItems(items));
-	}
-
-	/**
-	 * Conversion blocks to block items list
-	 * 
-	 * @param blocks
-	 *            Blocks for conversion
-	 * @return Block items List
-	 */
-	private static List<AbstractItem> blockToBlockItems(
-			List<AbstractBlock> blocks) {
-		ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
-		for (AbstractBlock block : blocks) {
-			if (block.getClass().equals(ParagraphBlock.class)) {
-				// TODO: Exception
-			} else {
-				items.add(new ParagraphItem(block));
-			}
-		}
-
-		return items;
+	public ParagraphBlock(List<ParagraphItem> items) {
+		super(items);
 	}
 
 	@Override
-	public boolean isRightItem(AbstractItem item) {
-		if (item.getClass().equals(ParagraphItem.class)) {
-			return true;
-		} else {
-			return false;
-		}
+	public List<ParagraphItem> getItems() {
+		return (List<ParagraphItem>) super.getItems();
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
+import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
 
 /**
  * Hyperlink block. This block is an extends of {@link TextBlock}
@@ -29,23 +29,8 @@ public class HyperlinkBlock extends TextBlock {
 	 * @param items
 	 *            List of text and pictures
 	 */
-	public HyperlinkBlock(String url, List<AbstractItem> items) {
+	public HyperlinkBlock(List<AbstractTextItem> items, String url) {
 		super(items);
-		if (!this.setUrl(url)) {
-			// TODO: Exception
-		}
-	}
-
-	/**
-	 * Create Hyperlink block with preset address and items
-	 * 
-	 * @param url
-	 *            Address of hyperlink
-	 * @param items
-	 *            List of text and pictures
-	 */
-	public HyperlinkBlock(String url, AbstractItem item) {
-		super(item);
 		if (!this.setUrl(url)) {
 			// TODO: Exception
 		}

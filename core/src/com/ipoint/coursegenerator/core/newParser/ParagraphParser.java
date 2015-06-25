@@ -7,11 +7,10 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
 
 /**
  * Parsing paragraph whic includes tables, text, images, hyperlinks, list - is
@@ -31,28 +30,27 @@ public class ParagraphParser extends AbstractParser {
 	 */
 	private static List<List<XWPFRun>> preParseParagraphOnPieces(
 			XWPFParagraph paragraph) {
-		ArrayList<List<XWPFRun>> items = new ArrayList<List<XWPFRun>>();
+		ArrayList<List<XWPFRun>> runBlocks = new ArrayList<List<XWPFRun>>();
 		List<XWPFRun> runs = paragraph.getRuns();
 		for (int i = 0; i < runs.size(); i++) {
 			XWPFRun run = runs.get(i);
 			Integer last = null; // number of last element in run
-			if (run.getClass().equals(XWPFHyperlinkRun.class)) {
+			if (run instanceof XWPFHyperlinkRun) {
 				last = i
 						+ run.getCTR().getDomNode().getParentNode()
 								.getChildNodes().getLength();
 			}
 			if (last == null) {
 				for (last = i; (last < runs.size())
-						&& !runs.get(last).getClass()
-								.equals(XWPFHyperlinkRun.class); last++) {
+						&& !(runs.get(last) instanceof XWPFHyperlinkRun); last++) {
 					// waiting
 				}
 			}
-			items.add(runs.subList(i, last));
+			runBlocks.add(runs.subList(i, last));
 			i = last - 1;
 		}
 
-		return items;
+		return runBlocks;
 	}
 
 	/**
@@ -62,7 +60,7 @@ public class ParagraphParser extends AbstractParser {
 	 *            Paragraph
 	 * @return true if this paragraph is item of list
 	 */
-	public static boolean isListElement(XWPFParagraph par) {
+	private static boolean isListElement(XWPFParagraph par) {
 		if ((par.getStyleID() == null) && (par.getNumID() != null)) {
 			return true;
 		} else {
@@ -108,46 +106,33 @@ public class ParagraphParser extends AbstractParser {
 		}
 	}
 
-	@Override
-	public AbstractBlock parseDoc() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * Parse docx Paragraph to Paragraph block which includes only text
+	 * 
+	 * @param paragraph
+	 *            Text paragraph
+	 * @return Paragraph block
+	 */
+	public ParagraphBlock parseDocx(XWPFParagraph paragraph) {
+		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
 
-	@Override
-	public List<AbstractBlock> parseDocx(Object element) {
-		if (element != null) { // if nothing
-			ArrayList<AbstractBlock> paragraphs = new ArrayList<AbstractBlock>();
-
-			if (element.getClass().equals(XWPFParagraph.class)) {
+		if (paragraph != null) { // if nothing
+			if (paragraph instanceof XWPFParagraph) {
 				// is text
-				for (List<XWPFRun> runList : preParseParagraphOnPieces((XWPFParagraph) element)) {
-					AbstractBlock block = null;
-					if (runList.get(0).getClass()
-							.equals(XWPFHyperlinkRun.class)) {
+				for (List<XWPFRun> runList : preParseParagraphOnPieces(paragraph)) {
+					TextBlock block = null;
+					if (runList.get(0) instanceof XWPFHyperlinkRun) {
 						block = new HyperlinkParser().parseDocx(runList);
 					} else {
 						block = new TextParser().parseDocx(runList);
 					}
-					paragraphs.add(block);
+					itemsOfParagraph.add(new ParagraphItem(block));
 				}
-			} else if ((element.getClass().equals(List.class))
-					|| (element.getClass().equals(ArrayList.class))) {
-				// is List
-				paragraphs.add(new ListParser()
-						.parseDocx((List<XWPFParagraph>) element));
-			} else if (element.getClass().equals(XWPFTable.class)) {
-				// is table
-				paragraphs
-						.add(new TableParser().parseDocx((XWPFTable) element));
-			} else {
-				paragraphs = null; // else
 			}
-
-			return paragraphs;
-		} else {
-			return null;
 		}
+
+		return (itemsOfParagraph.isEmpty()) ? null : new ParagraphBlock(
+				itemsOfParagraph);
 	}
 
 }

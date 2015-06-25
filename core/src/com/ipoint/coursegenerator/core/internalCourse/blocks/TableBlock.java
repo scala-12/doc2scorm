@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableRowItem;
+import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
 
 /**
  * Table block which includes rows of table. This block is an extends of
@@ -15,29 +14,21 @@ import com.ipoint.coursegenerator.core.internalCourse.items.TableRowItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class TableBlock extends AbstractBlock {
-
+public class TableBlock extends AbstractParagraphBlock {
+	
 	/**
-	 * @see AbstractBlock#AbstractBlock(List)
+	 * Create Table
+	 * 
+	 * @param rows
+	 *            Rows of table
 	 */
-	public TableBlock(List<AbstractItem> items) {
-		super(items);
-	}
-
-	/**
-	 * @see AbstractBlock#AbstractBlock(AbstractItem)
-	 */
-	public TableBlock(AbstractItem item) {
-		super(item);
+	public TableBlock(List<TableItem> rows) {
+		super(rows);
 	}
 
 	@Override
-	public boolean isRightItem(AbstractItem item) {
-		if (item.getClass().equals(TableRowItem.class)) {
-			return true;
-		} else {
-			return false;
-		}
+	public List<TableItem> getItems() {
+		return (List<TableItem>) super.getItems();
 	}
 
 	@Override

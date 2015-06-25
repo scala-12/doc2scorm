@@ -1,11 +1,8 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
 
 /**
@@ -18,26 +15,38 @@ import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
  */
 public class ListItem extends AbstractItem {
 
-	public ListItem(Object blocks) {
-		super(blocks);
+	private ParagraphBlock value;
+
+	/**
+	 * Create item as block item
+	 * 
+	 * @param paragraph
+	 *            Item of block. There cannot be null
+	 */
+	public ListItem(ParagraphBlock paragraph) {
+		if (!this.setValue(paragraph)) {
+			// TODO:exception
+		}
+	}
+
+	public ParagraphBlock getValue() {
+		return this.value;
 	}
 
 	/**
-	 * Returns included blocks as {@link List}
+	 * Set value of item
 	 * 
-	 * @return List of blocks
+	 * @param block
+	 *            Item of block. There cannot be null
+	 * @return if successful then true
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<AbstractBlock> getValue() {
-		return (List<AbstractBlock>) super.getValue();
+	public boolean setValue(ParagraphBlock block) {
+		if (block == null) {
+			return false;
+		} else {
+			this.value = block;
+			return true;
+		}
 	}
 
-	@Override
-	public List<Class<?>> getAvailableValueClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		classes.add(TextBlock.class);
-		classes.add(HyperlinkBlock.class);
-		return classes;
-	}
 }

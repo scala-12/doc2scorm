@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.internalCourse.Convertable;
@@ -18,65 +17,29 @@ import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
  * @author Kalashnikov Vladislav
  *
  */
-public abstract class AbstractBlock implements Convertable, ForBlock {
+public abstract class AbstractBlock implements Convertable {
 
 	/**
-	 * items of block
+	 * items of List block
 	 */
-	private ArrayList<AbstractItem> items;
+	private List<? extends AbstractItem> items;
 
 	/**
 	 * Create block with items
 	 * 
 	 * @param items
-	 *            list items for block
+	 *            Items of block
 	 */
-	public AbstractBlock(List<AbstractItem> items) {
-		this.items = (ArrayList<AbstractItem>) this.checkedItems(items);
-	}
-
-	/**
-	 * Creating block with one item
-	 * 
-	 * @param item
-	 *            item for block
-	 */
-	public AbstractBlock(AbstractItem item) {
-		this.items = new ArrayList<AbstractItem>();
-		if (item != null) {
-			this.addItem(this.checkedItem(item));
-		}
-	}
-
-	@Override
-	public boolean isRightItem(AbstractItem item) {
-		return true;
-	}
-
-	/**
-	 * Checking block
-	 * 
-	 * @return Checked block
-	 */
-	private AbstractItem checkedItem(AbstractItem item) {
-		if (this.isRightItem(item)) {
-			return item;
+	protected AbstractBlock(List<? extends AbstractItem> items) {
+		if (items != null) {
+			if (items.isEmpty()) {
+				// TODO:exception
+			} else {
+				this.items = items;
+			}
 		} else {
-			// TODO: Exception
-			return null;
+			// TODO: exception
 		}
-	}
-
-	/**
-	 * Checking blocks
-	 * 
-	 * @return Checked blocks
-	 */
-	private List<AbstractItem> checkedItems(List<AbstractItem> items) {
-		for (AbstractItem item : items) {
-			this.checkedItem(item);
-		}
-		return items;
 	}
 
 	/**
@@ -84,31 +47,8 @@ public abstract class AbstractBlock implements Convertable, ForBlock {
 	 * 
 	 * @return all items of block
 	 */
-	public List<AbstractItem> getItems() {
+	protected List<? extends AbstractItem> getItems() {
 		return this.items;
-	}
-
-	/**
-	 * Appends the item to the block
-	 * 
-	 * @param item
-	 *            item for adding
-	 * @return true
-	 */
-	public boolean addItem(AbstractItem item) {
-		return (this.isRightItem(item)) ? this.items.add(item) : false;
-	}
-
-	/**
-	 * Returns the item at the specified position in this block
-	 * 
-	 * @param index
-	 *            index of the element to return
-	 * @return item of block at the the specified position
-	 */
-	public AbstractItem getItem(int index) {
-		return ((this.items.size() <= index) || this.items.isEmpty()) ? null
-				: this.items.get(index);
 	}
 
 }
