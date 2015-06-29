@@ -9,6 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.internalCourse.blocks.FormulaBlock;
+import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
 
 public abstract class AbstractParagraphParser extends AbstractParser {
 
@@ -36,6 +38,11 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 						}
 						block = new ListParser().parseDocx(listItems);
 					}
+				} else if (paragraph.getCTP() != null) {
+					//TODO: formula as paragraph
+					if (!paragraph.getCTP().getOMathParaList().isEmpty()) {
+						block = new FormulaBlock(new FormulaItem(paragraph.getCTP().getOMathParaList().get(0).getOMathList().get(0)));
+					}					
 				}
 			} else if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.TABLE)) {

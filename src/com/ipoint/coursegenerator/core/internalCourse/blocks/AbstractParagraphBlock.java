@@ -2,7 +2,8 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
 
@@ -16,8 +17,7 @@ public abstract class AbstractParagraphBlock extends AbstractBlock {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
+	public Element toHtml(Document creatorTags) {
 		return null;
 	}
 

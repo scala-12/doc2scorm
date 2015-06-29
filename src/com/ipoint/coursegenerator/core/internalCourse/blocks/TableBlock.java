@@ -2,8 +2,10 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
 
 /**
@@ -15,7 +17,7 @@ import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
  *
  */
 public class TableBlock extends AbstractParagraphBlock {
-	
+
 	/**
 	 * Create Table
 	 * 
@@ -32,10 +34,30 @@ public class TableBlock extends AbstractParagraphBlock {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
+	public Element toHtml(Document creatorTags) {
+		Element table = creatorTags.createElement("table");
+		Element tBody = creatorTags.createElement("tbody");
+		table.appendChild(tBody);
 
-		return null;
+		for (TableItem row : this.getItems()) {
+			Element tRow = creatorTags.createElement("tr");
+			tBody.appendChild(tRow);
+			for (TableCellItem cell : row.getValue()) {
+				if ((cell.getColSpan() != null) && (cell.getRowSpan() != null)) {
+					Element tCell = creatorTags.createElement("td");
+					tRow.appendChild(tCell);
+					tCell.setAttribute("colspan", cell.getColSpan().toString());
+					tCell.setAttribute("rowspan", cell.getRowSpan().toString());
+					if (cell.getValue() != null) {
+						for (AbstractParagraphBlock par : cell.getValue()) {
+							Element tPar = par.toHtml(creatorTags);
+							tCell.appendChild(tPar);
+						}
+					}
+				}
+			}
+		}
+
+		return table;
 	}
-
 }

@@ -6,6 +6,7 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
 import com.ipoint.coursegenerator.core.internalCourse.Course.CoursePage;
@@ -119,7 +120,7 @@ public class CourseParser {
 			if (headLevel == null) {
 				AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
 						.parse(document.getBodyElements().subList(i,
-								document.getBodyElements().size() - 1));
+								document.getBodyElements().size()));
 				
 				if (paragraphBlock instanceof ListBlock) {
 					i += ((ListBlock) paragraphBlock).getItems().size() - 1;
@@ -131,6 +132,8 @@ public class CourseParser {
 			}
 		}
 
+		Document ttt = course.toHtml();
+		
 		return course;
 	}
 
@@ -143,23 +146,23 @@ public class CourseParser {
 	 */
 	private static Integer getNumberOfHeader(String headId) {
 		Integer resultVariable = null;
-		if (headId.equals("Heading1")) {
+		if ((headId.equals("Heading1")) || (headId.equals("1"))) {
 			resultVariable = 1;
-		} else if (headId.equals("Heading2")) {
+		} else if ((headId.equals("Heading2")) || (headId.equals("2"))) {
 			resultVariable = 2;
-		} else if (headId.equals("Heading3")) {
+		} else if ((headId.equals("Heading3")) || (headId.equals("3"))) {
 			resultVariable = 3;
-		} else if (headId.equals("Heading4")) {
+		} else if ((headId.equals("Heading4")) || (headId.equals("4"))) {
 			resultVariable = 4;
-		} else if (headId.equals("Heading5")) {
+		} else if ((headId.equals("Heading5")) || (headId.equals("5"))) {
 			resultVariable = 5;
-		} else if (headId.equals("Heading6")) {
+		} else if ((headId.equals("Heading6")) || (headId.equals("6"))) {
 			resultVariable = 6;
-		} else if (headId.equals("Heading7")) {
+		} else if ((headId.equals("Heading7")) || (headId.equals("7"))) {
 			resultVariable = 7;
-		} else if (headId.equals("Heading8")) {
+		} else if ((headId.equals("Heading8")) || (headId.equals("8"))) {
 			resultVariable = 8;
-		} else if (headId.equals("Heading9")) {
+		} else if ((headId.equals("Heading9")) || (headId.equals("9"))) {
 			resultVariable = 9;
 		}
 		return resultVariable;

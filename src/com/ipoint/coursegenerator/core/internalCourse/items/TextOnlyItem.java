@@ -4,6 +4,8 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
 
@@ -125,6 +127,52 @@ public class TextOnlyItem extends AbstractTextItem {
 
 	public String getColor() {
 		return this.color;
+	}
+	
+	@Override
+	public Element toHtml(Document creatorTag, boolean isHyperlink) {
+		Element span = creatorTag.createElement("span");
+		
+		if (this.isBold()) {
+		    Element bold = creatorTag.createElement("b");
+		    span.appendChild(bold);
+		    span = bold;
+		}
+		
+		if (this.isItalic()) {
+		    Element italic = creatorTag.createElement("i");
+		    span.appendChild(italic);
+		    span = italic;
+		}
+		
+		if (this.isSubscript()) {
+		    Element superscript = creatorTag.createElement("sup");
+		    span.appendChild(superscript);
+		    span = superscript;
+		} else if (this.isSubscript()) {
+		    Element subscript = creatorTag.createElement("sub");
+		    span.appendChild(subscript);
+		    span = subscript;
+		}
+		
+		if (!isHyperlink) {
+			if (this.isUnderline()) {
+			    Element underline = creatorTag.createElement("u");
+			    span.appendChild(underline);
+			    span = underline;
+			}
+			
+			if (this.getColor() != null) {
+				Element font = creatorTag.createElement("font");
+				font.setAttribute("color", this.getColor());
+				span.appendChild(font);
+				span = font;
+			}
+		}
+		
+		span.setTextContent(this.getValue());
+		
+		return span;
 	}
 
 }

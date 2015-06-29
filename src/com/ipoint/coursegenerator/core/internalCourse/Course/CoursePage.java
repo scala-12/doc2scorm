@@ -3,7 +3,8 @@ package com.ipoint.coursegenerator.core.internalCourse.Course;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.Convertable;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
@@ -62,10 +63,13 @@ public class CoursePage implements Convertable {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
-
-		return null;
+	public Element toHtml(Document creatorTags) {
+		Element pageBody = creatorTags.createElement("body");
+		for (AbstractParagraphBlock par : this.getAllBlocks()) {
+			pageBody.appendChild(par.toHtml(creatorTags));
+		}
+		
+		return pageBody;
 	}
 
 }

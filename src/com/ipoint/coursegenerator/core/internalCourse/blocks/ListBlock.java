@@ -2,7 +2,8 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
 
@@ -32,11 +33,11 @@ public class ListBlock extends AbstractParagraphBlock {
 	 */
 	public ListBlock(List<ListItem> items) {
 		super(items);
-		
+
 		this.setLevel(level);
 		this.setMarkerType(null);
 	}
-	
+
 	@Override
 	public List<ListItem> getItems() {
 		return (List<ListItem>) super.getItems();
@@ -82,21 +83,36 @@ public class ListBlock extends AbstractParagraphBlock {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
-		/*
-		 * String resultVariable = null;
-		 * 
-		 * if (type != null) { if (type.equalsIgnoreCase("upperLetter")) {
-		 * resultVariable = "A"; } else if
-		 * (type.equalsIgnoreCase("lowerLetter")) { resultVariable = "a"; } else
-		 * if (type.equalsIgnoreCase("upperRoman")) { resultVariable = "I"; }
-		 * else if (type.equalsIgnoreCase("lowerRoman")) { resultVariable = "i";
-		 * } else if (type.equalsIgnoreCase("decimal")) { resultVariable = "1";
-		 * } }
-		 */
+	public Element toHtml(Document creatorTags) {
+		String typeMarker = null;
+		if (type != null) {
+			if (type.equalsIgnoreCase("upperLetter")) {
+				typeMarker = "A";
+			} else if (type.equalsIgnoreCase("lowerLetter")) {
+				typeMarker = "a"; 
+			} else if (type.equalsIgnoreCase("upperRoman")) {
+				 typeMarker = "I";
+			} else if (type.equalsIgnoreCase("lowerRoman")) {
+				typeMarker = "i";
+			} else if (type.equalsIgnoreCase("decimal")) {
+				typeMarker = "1";
+			}
+		}
+		
+		Element list = null;
+		if (typeMarker == null) {
+			list = creatorTags.createElement("ul");
+		} else {
+			list = creatorTags.createElement("ol");
+			list.setAttribute("type", typeMarker);
+		}
+		
+		for (ListItem el : this.getItems()) {
+			Element li = creatorTags.createElement("li");
+			list.appendChild(li);
+			li.appendChild(el.toHtml(creatorTags));
+		}
 
 		return null;
 	}
-
 }

@@ -2,7 +2,8 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
 
@@ -29,9 +30,14 @@ public class ParagraphBlock extends AbstractParagraphBlock {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
-		return null;
+	public Element toHtml(Document creatorTags) {
+		Element par = creatorTags.createElement("p");
+		
+		for (ParagraphItem item : this.getItems()) {
+			par.appendChild(item.toHtml(creatorTags));
+		}
+		
+		return par;
 	}
 
 }
