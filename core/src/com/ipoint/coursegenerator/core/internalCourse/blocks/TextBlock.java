@@ -2,7 +2,8 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
-import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
 
@@ -18,7 +19,9 @@ public class TextBlock extends AbstractBlock {
 
 	/**
 	 * Create Text block
-	 * @param runs Runs of text
+	 * 
+	 * @param runs
+	 *            Runs of text
 	 */
 	public TextBlock(List<AbstractTextItem> runs) {
 		super(runs);
@@ -29,10 +32,19 @@ public class TextBlock extends AbstractBlock {
 		return (List<AbstractTextItem>) super.getItems();
 	}
 
-	public Node toHtml() {
-		// TODO Auto-generated method stub
+	@Override
+	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
 
-		return null;
+	protected Element toHtml(Document creatorTags, boolean isHyperlink) {
+		Element span = creatorTags.createElement("span");
+
+		for (AbstractTextItem run : this.getItems()) {
+			span.appendChild(run.toHtml(creatorTags, isHyperlink));
+		}
+
+		return span;
 	}
 
 }

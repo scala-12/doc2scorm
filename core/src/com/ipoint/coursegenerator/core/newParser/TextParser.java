@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -13,6 +14,7 @@ import schemasMicrosoftComVml.CTImageData;
 
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
 import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
+import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.ImageOnlyItem;
 import com.ipoint.coursegenerator.core.internalCourse.items.TextOnlyItem;
 
@@ -23,6 +25,13 @@ import com.ipoint.coursegenerator.core.internalCourse.items.TextOnlyItem;
  *
  */
 public class TextParser extends AbstractParser {
+	
+	public TextBlock parseDocx(CTOMath formula) {
+		ArrayList<AbstractTextItem> block = new ArrayList<AbstractTextItem>();
+		block.add(new FormulaItem(formula));
+		
+		return new TextBlock(block);
+	}
 
 	public TextBlock parseDocx(List<XWPFRun> runs) {
 		ArrayList<AbstractTextItem> block = null;

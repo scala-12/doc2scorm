@@ -1,7 +1,11 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
+import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
 
@@ -47,6 +51,22 @@ public class ImageOnlyItem extends AbstractTextItem {
 			this.value = imageData;
 			return true;
 		}
+	}
+
+	@Override
+	public Element toHtml(Document creatorTag, boolean isHyperlink) {
+		Element img = creatorTag.createElement("img");
+		
+		if (this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+	    	//RasterGraphicsParser.parse(this.getValue(), path, imgElement);
+	    } else {
+	    	//VectorGraphicsParser.parse(this.getValue(), path, imgElement);
+	    }
+		
+		return img;
 	}
 
 }

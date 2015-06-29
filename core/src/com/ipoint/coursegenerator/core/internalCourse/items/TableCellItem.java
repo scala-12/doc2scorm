@@ -79,7 +79,7 @@ public class TableCellItem extends AbstractItem {
 		if (colSpan == null) {
 			return false;
 		} else {
-			if (colSpan > 0) {
+			if (colSpan >= 0) {
 				this.colSpan = colSpan;
 				return true;
 			} else {
@@ -142,7 +142,7 @@ public class TableCellItem extends AbstractItem {
 		}
 	}
 	
-	public void setFantom(boolean value) {
+	public void setFantom() {
 		this.value = null;
 		this.colSpan = null;
 		this.rowSpan = null;

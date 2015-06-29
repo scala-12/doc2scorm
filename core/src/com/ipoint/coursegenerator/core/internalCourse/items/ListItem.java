@@ -1,5 +1,8 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
@@ -47,6 +50,10 @@ public class ListItem extends AbstractItem {
 			this.value = block;
 			return true;
 		}
+	}
+
+	public Element toHtml(Document creatorTags) {
+		return this.getValue().toHtml(creatorTags);
 	}
 
 }

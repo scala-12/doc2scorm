@@ -2,6 +2,8 @@ package com.ipoint.coursegenerator.core.internalCourse.blocks;
 
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
@@ -65,9 +67,11 @@ public class HyperlinkBlock extends TextBlock {
 	}
 
 	@Override
-	public Node toHtml() {
-		// TODO Auto-generated method stub
-		return null;
+	public Element toHtml(Document creatorTags) {
+		Element hyperlink = creatorTags.createElement("a");
+		hyperlink.appendChild(toHtml(creatorTags, true));
+		hyperlink.setAttribute("href", this.getUrl());
+		return hyperlink;
 	}
 
 }

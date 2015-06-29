@@ -86,48 +86,42 @@ public class TableParser extends AbstractParser {
 			for (int j = 0; j < tableRow.getTableCells().size(); j++) {
 				XWPFTableCell tableCell = tableRow.getCell(j);
 				TableCellItem cell = new TableCellItem();
-
-				if (!tableCell.getBodyElements().isEmpty()) {
-					ArrayList<AbstractParagraphBlock> blocks = new ArrayList<AbstractParagraphBlock>();
-					for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
-						AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
-								.parse(tableCell.getBodyElements().subList(k,
-										tableCell.getBodyElements().size()));
-
-						if (paragraphBlock != null) {
-							if (paragraphBlock instanceof ListBlock) {
-								k += ((ListBlock) paragraphBlock).getItems().size() - 1;
-							}
-
-							blocks.add(paragraphBlock);
-						}
-					}
-
-					if (blocks.isEmpty()) {
-						cell.setNullValue();
-					} else {
-						cell.setValue(blocks);
-					}
-				}
-
-				boolean phantomCell = false;
-
+				
 				if (tableCell.getCTTc().getTcPr().getVMerge() != null) {
 					if (tableCell.getCTTc().getTcPr().getVMerge().getVal() == STMerge.RESTART) {
 						cell.setRowSpan(getRowSpan(table, i, j));
 					} else {
-						phantomCell = true;
+						cell.setFantom();
 					}
 				}
 
-				if (!phantomCell) {
+				if (cell.getRowSpan() != null) {
 					if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
 						cell.setColSpan(tableCell.getCTTc().getTcPr()
 								.getGridSpan().getVal().intValue());
 					}
+					
+					if (!tableCell.getBodyElements().isEmpty()) {
+						ArrayList<AbstractParagraphBlock> blocks = new ArrayList<AbstractParagraphBlock>();
+						for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
+							AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
+									.parse(tableCell.getBodyElements().subList(k,
+											tableCell.getBodyElements().size()));
 
-					cells.add(cell);
+							if (paragraphBlock != null) {
+								if (paragraphBlock instanceof ListBlock) {
+									k += ((ListBlock) paragraphBlock).getItems().size() - 1;
+								}
+
+								blocks.add(paragraphBlock);
+							}
+						}
+
+						cell.setValue(blocks);
+					}
 				}
+				
+				cells.add(cell);
 			}
 			block.add(new TableItem(cells));
 		}
