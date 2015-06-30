@@ -1,13 +1,14 @@
 package com.ipoint.coursegenerator.core.internalCourse.items;
 
+import java.io.File;
+
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.elementparser.graphics.RasterGraphicsParser;
-import com.ipoint.coursegenerator.core.elementparser.graphics.VectorGraphicsParser;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
  * Item for {@link TextBlock}. This item includes picture data
@@ -33,6 +34,11 @@ public class ImageOnlyItem extends AbstractTextItem {
 		}
 	}
 
+	public String getImageName() {
+		return FileWork.IMAGE_PREFIX.concat(String.valueOf(this.value
+				.hashCode()));
+	}
+
 	public XWPFPictureData getValue() {
 		return value;
 	}
@@ -53,19 +59,46 @@ public class ImageOnlyItem extends AbstractTextItem {
 		}
 	}
 
+	public String getImageType() {
+		switch (this.value.getPictureType()) {
+		// TODO: library is not in import
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
+			return "png";
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
+			return "bmp";
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF:
+			return "gif";
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
+			return "jpg";
+		default:
+			if (!this.value.getPackagePart().getContentType()
+					.equals("image/x-emf")
+					|| this.value.getPackagePart().getContentType()
+							.equals("image/emf")) {
+				return "png";
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public String getImageFullName() {
+		return this.getImageName().concat(".").concat(this.getImageType());
+	}
+
 	@Override
 	public Element toHtml(Document creatorTag, boolean isHyperlink) {
 		Element img = creatorTag.createElement("img");
-		
+
 		if (this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-	    		|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-	    	//RasterGraphicsParser.parse(this.getValue(), path, imgElement);
-	    } else {
-	    	//VectorGraphicsParser.parse(this.getValue(), path, imgElement);
-	    }
-		
+				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+			// RasterGraphicsParser.parse(this.getValue(), path, imgElement);
+		} else {
+			// VectorGraphicsParser.parse(this.getValue(), path, imgElement);
+		}
+
 		return img;
 	}
 

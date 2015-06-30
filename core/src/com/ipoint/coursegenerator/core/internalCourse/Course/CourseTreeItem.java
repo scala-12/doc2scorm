@@ -1,5 +1,11 @@
 package com.ipoint.coursegenerator.core.internalCourse.Course;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.ipoint.coursegenerator.core.internalCourse.Convertable;
+
 /**
  * Node of the document tree
  * 
@@ -7,7 +13,7 @@ package com.ipoint.coursegenerator.core.internalCourse.Course;
  * @author Kalashnikov Vladislav
  *
  */
-public class CourseTreeItem extends CourseTree {
+public class CourseTreeItem extends CourseTree implements Convertable {
 
 	/**
 	 * Page of node
@@ -77,6 +83,22 @@ public class CourseTreeItem extends CourseTree {
 
 	public void setPage(CoursePage page) {
 		this.page = page;
+	}
+
+	@Override
+	public Element toHtml(Document creatorTags) {
+		Element pageBody = null;
+		pageBody = creatorTags.createElement("div");
+		Element pageHeader = creatorTags.createElement("h1");
+		pageHeader.setTextContent(this.getTitle());
+		pageBody.appendChild(pageHeader);
+		NodeList pageElements = this.getPage().toHtml(creatorTags)
+				.getChildNodes();
+		for (int i = 0; i < pageElements.getLength(); ++i) {
+			pageBody.appendChild(pageElements.item(i));
+		}
+
+		return pageBody;
 	}
 
 }
