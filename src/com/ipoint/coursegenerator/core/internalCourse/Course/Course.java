@@ -55,48 +55,4 @@ public class Course extends CourseTree {
 		this.manifest = manifest;
 	}
 
-	private void tree(List<CourseTreeItem> tree, String path, int partNum) {
- 		for (CourseTreeItem item : tree) {
- 			Document html = null;
- 			
- 			if (item.getPage() != null) {
- 				html = createNewHTMLDocument();
- 				Element body = item.getPage().toHtml(html);
- 				html.getFirstChild().appendChild(body);
- 				Element header = html.createElement("h1");
- 				body.appendChild(header);
- 				header.setTextContent(item.getTitle());
- 			}
- 			
- 			String fileName = "part_".concat(String.valueOf(partNum));
-
-			if (item.getCourseTree() != null) {
-				if (!item.getCourseTree().isEmpty()) {
-					tree(item.getCourseTree(), path.concat(fileName).concat(File.separator), partNum + 1);	//to next level of header
-				}
-			}
-			
-			//TODO: add html in zip
-		}
-	}
-
-	public Document toHtml() {
-		List<CourseTreeItem> tree = this.getCourseTree();
-		this.tree(tree, File.separator, 1);	// 1 is a number of part
-
-		return null;
-	}
-
-	private static Document createNewHTMLDocument() {
-		try {
-			Document html = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder().newDocument();
-			html.appendChild(html.createElement("html"));
-			html.getFirstChild().appendChild(html.createElement("head"));
-			return html;
-		} catch (ParserConfigurationException e) {
-		}
-		return null;
-	}
-
 }

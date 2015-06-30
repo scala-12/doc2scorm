@@ -6,7 +6,6 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
 import com.ipoint.coursegenerator.core.internalCourse.Course.CoursePage;
@@ -31,8 +30,7 @@ public class CourseParser {
 	 * @param courseName
 	 * @return Special model of docx
 	 */
-	public static Course parse(XWPFDocument document, String manifest,
-			String courseName) {
+	public static Course parse(XWPFDocument document, String courseName) {
 		Course course = new Course();
 
 		// map for document tree
@@ -102,9 +100,16 @@ public class CourseParser {
 							}
 
 							if (page.getAllBlocks().isEmpty()) {
-								// page is empty. Add this page to the node?
-								if (treeNode.getCourseTree().isEmpty()) {
-									// add because this page is first
+								if (levelMap.size() > 1) {
+									CourseTreeItem node = course
+											.getItem(levelMap.get(0));
+									for (Integer lvl : levelMap.subList(1,
+											levelMap.size() - 1)) {
+										node = node.getCourseTree().get(lvl);
+									}
+									if (page == node.getPage()) {
+										node.setPage(null);
+									}
 									treeNode.setPage(page);
 								}
 							} else {
@@ -121,19 +126,17 @@ public class CourseParser {
 				AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
 						.parse(document.getBodyElements().subList(i,
 								document.getBodyElements().size()));
-				
+
 				if (paragraphBlock instanceof ListBlock) {
 					i += ((ListBlock) paragraphBlock).getItems().size() - 1;
 				}
-				
+
 				if (paragraphBlock != null) {
 					page.addBlock(paragraphBlock);
 				}
 			}
 		}
 
-		Document ttt = course.toHtml();
-		
 		return course;
 	}
 

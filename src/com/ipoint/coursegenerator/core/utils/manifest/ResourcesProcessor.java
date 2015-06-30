@@ -17,75 +17,79 @@ import org.w3c.dom.Node;
 
 public class ResourcesProcessor {
 
-
-    public ResourcesProcessor() {
-	super();
-    }
-
-    private TagFindingVisitor getHtmlVisitor(File scoFile)
-	    throws UnsupportedEncodingException, FileNotFoundException,
-	    ParserException {
-	Parser htmlResourceParser = new Parser(new org.htmlparser.lexer.Lexer(
-		new org.htmlparser.lexer.Page(new FileInputStream(scoFile),
-			"UTF-8")));
-	TagFindingVisitor visitor = new TagFindingVisitor(new String[] {
-		"SCRIPT", "SCRIPT SRC" });
-	htmlResourceParser.visitAllNodesWith(visitor);
-	return visitor;
-    }
-    
-    public void createResources(ManifestType manifest) {
-	manifest.addNewResources();
-    }
-
-    public static ResourceType createResource(ManifestType manifest, String path,
-	    String iref) {
-	if (manifest.getResources() == null
-		|| manifest.getResources().getResourceArray() == null) {
-	    manifest.addNewResources();
+	public ResourcesProcessor() {
+		super();
 	}
-	ResourceType resource = manifest.getResources().addNewResource();
-	resource.setIdentifier(iref);
-	resource.setType("webcontent");
-	Node attNode = resource.getDomNode().getOwnerDocument()
-		.createAttributeNS("http://www.adlnet.org/xsd/adlcp_rootv1p2", "scormType");
-	attNode.setNodeValue("sco");
-	resource.getDomNode().getAttributes().setNamedItem(attNode);
-	resource.setHref(path);
-	resource.addNewFile().setHref(path);
-	return resource;
-    }
 
-    public static String getResourceHrefForItem(ManifestType manifest, ItemType item) {
-	String href = null;
-	for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
-	    if (manifest.getResources().getResourceArray()[i].getIdentifier().equals(item.getIdentifierref())) {
-		href = manifest.getResources().getResourceArray()[i].getHref();
-		break;
-	    }	    
+	private TagFindingVisitor getHtmlVisitor(File scoFile)
+			throws UnsupportedEncodingException, FileNotFoundException,
+			ParserException {
+		Parser htmlResourceParser = new Parser(new org.htmlparser.lexer.Lexer(
+				new org.htmlparser.lexer.Page(new FileInputStream(scoFile),
+						"UTF-8")));
+		TagFindingVisitor visitor = new TagFindingVisitor(new String[] {
+				"SCRIPT", "SCRIPT SRC" });
+		htmlResourceParser.visitAllNodesWith(visitor);
+		return visitor;
 	}
-	return href;
-    }
-    
 
-    public static void addFilesToResource(String htmlPath,
-	    ResourceType resource, List<String> pathToResources) {
-	for (String path : pathToResources) {
-	    FileType fileType = resource.addNewFile();
-	    fileType.setHref(htmlPath + path);
+	public void createResources(ManifestType manifest) {
+		manifest.addNewResources();
 	}
-    }
 
-    public static void removeResource(ManifestType manifest,
-	    ResourceType resource) {
-	int i = manifest.getResources().getResourceArray().length;
-	for (i = 0; i < manifest.getResources().getResourceArray().length; i++) {
-	    if (manifest.getResources().getResourceArray(i).getIdentifier().equals(resource.getIdentifier())){
-		break;
-	    }
+	public static ResourceType createResource(ManifestType manifest,
+			String path, String iref) {
+		if (manifest.getResources() == null
+				|| manifest.getResources().getResourceArray() == null) {
+			manifest.addNewResources();
+		}
+		ResourceType resource = manifest.getResources().addNewResource();
+		resource.setIdentifier(iref);
+		resource.setType("webcontent");
+		Node attNode = resource
+				.getDomNode()
+				.getOwnerDocument()
+				.createAttributeNS("http://www.adlnet.org/xsd/adlcp_rootv1p2",
+						"scormType");
+		attNode.setNodeValue("sco");
+		resource.getDomNode().getAttributes().setNamedItem(attNode);
+		resource.setHref(path);
+		resource.addNewFile().setHref(path);
+		return resource;
 	}
-	if (i < manifest.getResources().getResourceArray().length) {
-	    manifest.getResources().removeResource(i);
+
+	public static String getResourceHrefForItem(ManifestType manifest,
+			ItemType item) {
+		String href = null;
+		for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
+			if (manifest.getResources().getResourceArray()[i].getIdentifier()
+					.equals(item.getIdentifierref())) {
+				href = manifest.getResources().getResourceArray()[i].getHref();
+				break;
+			}
+		}
+		return href;
 	}
-    }
+
+	public static void addFilesToResource(String htmlPath,
+			ResourceType resource, List<String> pathToResources) {
+		for (String path : pathToResources) {
+			FileType fileType = resource.addNewFile();
+			fileType.setHref(htmlPath + path);
+		}
+	}
+
+	public static void removeResource(ManifestType manifest,
+			ResourceType resource) {
+		int i = manifest.getResources().getResourceArray().length;
+		for (i = 0; i < manifest.getResources().getResourceArray().length; i++) {
+			if (manifest.getResources().getResourceArray(i).getIdentifier()
+					.equals(resource.getIdentifier())) {
+				break;
+			}
+		}
+		if (i < manifest.getResources().getResourceArray().length) {
+			manifest.getResources().removeResource(i);
+		}
+	}
 }
