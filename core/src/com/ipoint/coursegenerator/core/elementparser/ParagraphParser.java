@@ -185,7 +185,7 @@ public class ParagraphParser extends AbstractElementParser {
 		final List<XWPFPictureData> pictures = doc.getAllPackagePictures();
 		XWPFParagraph par = (XWPFParagraph) paragraph;
 		int styleIndex = 0;
-		styleIndex = Parser.getCurrentParagraphStyleID(par);
+		styleIndex = 0;// Parser.getCurrentParagraphStyleID(par);
 		Element element = createTextElement(styleIndex, html, headerInfo.getHeaderLevelNumber());
 		ArrayList<Element> imagesElementsToAppend = new ArrayList<Element>();
 		

@@ -71,10 +71,11 @@ public class HeaderFinder {
 			if (html != null) {
 				if (hasNonHeading1Childs(html)) {
 					//before next Page save prev page
-					FileWork.saveHTMLDocument(html,
+					/*FileWork.saveHTMLDocument(html,
 							headerInfo.getTemplateDir(), lastItem.getHtmlPath()
-									+ File.separator + lastItem.getFilename(),
-							lastItem.getPath());
+									 + lastItem.getFilename(),
+							lastItem.getPath() + File.separator);
+					*/
 					ResourcesProcessor.addFilesToResource(lastItem.getUrl(),
 							lastItem.getResource(),
 							headerInfo.getPathToResources());

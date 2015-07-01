@@ -66,7 +66,7 @@ public class CourseParser {
 									ArrayList<Integer> newMap = new ArrayList<Integer>();
 									newMap.addAll(levelMap.subList(0,
 											headLevel - 1));
-									newMap.add(levelMap.get(headLevel) + 1);
+									newMap.add(levelMap.get(headLevel-1) + 1);
 									levelMap = newMap; // remove extra levels
 								} else {
 									// down level

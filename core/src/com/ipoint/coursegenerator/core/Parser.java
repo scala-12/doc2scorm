@@ -13,13 +13,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.formula.eval.ConcatEval;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
+import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
+import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,110 +102,108 @@ public class Parser {
 		}
 		return null;
 	}
-	
-	private ItemType addOrganizationElementToManifest(ItemType parentItem, String scoName) {
-		String itemId = "ITEM_".concat(java.util.UUID.randomUUID()
-				.toString());
-		String resourseId = "RES_".concat(java.util.UUID.randomUUID()
-				.toString());
-		
+
+	private ItemType addOrganizationElementToManifest(XmlObject parentItem,
+			CourseTreeItem node) {
+		String id = java.util.UUID.randomUUID().toString();
+		String itemId = "ITEM_".concat(id);
+		String resourseId = (node.getPage() == null) ? null : "RES_".concat(id);
+
 		ItemType manifestItem = null;
-		if (parentItem == null) {
-			manifestItem = OrganizationProcessor.createItem(manifest
-					.getManifest().getOrganizations(), scoName,
+		if (parentItem instanceof ItemType) {
+			manifestItem = OrganizationProcessor.createItem(
+					(ItemType) parentItem, node.getTitle(), resourseId, itemId);
+		} else if (parentItem instanceof OrganizationsType) {
+			manifestItem = OrganizationProcessor.createItem(
+					(OrganizationsType) parentItem, node.getTitle(),
 					resourseId, itemId);
-		} else {
-			manifestItem = OrganizationProcessor.createItem(parentItem,
-					scoName, resourseId, itemId);
 		}
-		
+
 		return manifestItem;
 	}
-	
-	private void addResourceToManifest(String path, String pageName, List<String> imagesNames, String resourseId) {
-		ResourceType itemResource = ResourcesProcessor.createResource(
-				manifest.getManifest(),
-				path.concat(pageName).concat(FileWork.HTML_SUFFIX),
-				resourseId);
 
-		ResourcesProcessor.addFilesToResource(path.concat("img")
-				.concat(File.separator), itemResource, imagesNames);
+	private void addResourceToManifest(ManifestType manifest, String path,
+			String pageName, List<String> imagesNames, String resourseId) {
+		ResourceType itemResource = ResourcesProcessor.createResource(manifest,
+				path.concat(pageName).concat(FileWork.HTML_SUFFIX), resourseId);
+
+		ResourcesProcessor.addFilesToResource(
+				path.concat("img").concat(File.separator), itemResource,
+				imagesNames);
 	}
 
-	private void recursiveSaveCourse(
-			List<CourseTreeItem> items, String templateDir, String coursePath,
-			String path, String part, ItemType parentItem) {
+	private void addPageToCourse(CourseTreeItem node, String templateDir,
+			String coursePath, String pagePath, String pageName) {
+		Document html = createNewHTMLDocument();
+		Element pageDiv = node.toHtml(html);
+		html.getElementsByTagName("body").item(0).appendChild(pageDiv);
+
+		FileWork.saveHTMLDocument(html, templateDir, coursePath,
+				pagePath, pageName.concat(FileWork.HTML_SUFFIX));
+	}
+
+	private void recursiveSaveCourse(List<CourseTreeItem> items,
+			ManifestType manifest, String templateDir, String coursePath,
+			String path, String level, XmlObject parentItem) {
 		int numberOnLevel = 0;
-		if (part == null) {
-			part = FileWork.HTML_PREFIX;
-		} else {
-			part = part.concat("-");
-		}
+		String part = (level == null) ? FileWork.HTML_PREFIX
+				: FileWork.HTML_PREFIX.concat(level).concat("-");
 		for (CourseTreeItem item : items) {
 			// title of page
-			// page name with part (level) number
-			String pageName = part.concat(String.valueOf(++numberOnLevel))
+			// page name with level number
+			String pageTitle = part.concat(String.valueOf(++numberOnLevel))
 					.concat("_");
-			pageName = pageName.concat(TransliterationTool
+			pageTitle = pageTitle.concat(TransliterationTool
 					.convertRU2ENString(item.getTitle()));
-			pageName = pageName.replaceAll(" ", "_");
-			pageName = pageName.replaceAll("[\\W&&[^-]]", "");
+			pageTitle = pageTitle.replaceAll(" ", "_");
+			pageTitle = pageTitle.replaceAll("[\\W&&[^-]]", "");
 
-			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item.getTitle());			
+			ItemType manifestItem = addOrganizationElementToManifest(
+					parentItem, item);
 			if (item.getPage() != null) {
-				// create html page
-				Document html = createNewHTMLDocument();
-				Element pageDiv = item.toHtml(html);
-				html.getElementsByTagName("body").item(0).appendChild(pageDiv);
-				this.addResourceToManifest(path, pageName, item.getPage().getImagesNames(), manifestItem.getIdentifierref());	
+				this.addPageToCourse(item, templateDir, coursePath, path,
+						pageTitle);
+				this.addResourceToManifest(manifest, path, pageTitle, item
+						.getPage().getImagesNames(), manifestItem
+						.getIdentifierref());
 
-			} else {
-				// TODO: add in manifest information about header???
 			}
 
-			if (item.getCourseTree() != null) {
-				if (!item.getCourseTree().isEmpty()) {
-					this.recursiveSaveCourse(item
-							.getCourseTree(), templateDir, coursePath, path
-							.concat(pageName).concat(File.separator), part
-							.concat(String.valueOf(numberOnLevel)),
-							manifestItem);
-				}
+			if (!item.getCourseTree().isEmpty()) {
+				this.recursiveSaveCourse(
+						item.getCourseTree(),
+						manifest,
+						templateDir,
+						coursePath,
+						path.concat(pageTitle).concat(File.separator),
+						(level == null) ? String.valueOf(numberOnLevel) : level
+								.concat("-").concat(
+										String.valueOf(numberOnLevel)),
+						manifestItem);
 			}
 		}
-	}
-
-	private void saveCourse(Course courseModel, String templateDir,
-			String path) {
-		this.recursiveSaveCourse(courseModel.getCourseTree(),
-				templateDir, path, "", null, null);
 	}
 
 	public String parse(InputStream stream, String headerLevel,
 			String templateDir, String courseName, String path, String fileType)
 			throws IOException {
-		createImsManifestFile(courseName);
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
 		}
 		directory.mkdirs();
-		Object doc = null;
-		try {
-			doc = new XWPFDocument(stream);
-		} catch (IOException e) {
-			// TODO: exception - file has't docx-structure
-		}
-
+		XWPFDocument doc = new XWPFDocument(stream);
 		Course courseModel = CourseParser.parse((XWPFDocument) doc, courseName);
 
+		// TODO: replace "%name_of_course%" on "courseModel.getTitle()"
+		this.createImsManifestFile("%name_of_course%");
+
 		if (!courseModel.getCourseTree().isEmpty()) {
-			this.saveCourse(courseModel, templateDir, path);
+			this.recursiveSaveCourse(courseModel.getCourseTree(), manifest
+					.getManifest(), templateDir, path.concat(File.separator),
+					"", null, manifest.getManifest().getOrganizations());
 		}
 
-		// TODO: remove method
-		parseXWPF((XWPFDocument) doc, headerLevel, templateDir, courseName,
-				path);
 		String res = tuneManifest(manifest);
 		File f = new File(path, "imsmanifest.xml");
 		try {
@@ -254,146 +256,4 @@ public class Parser {
 		return zipCourseFileName;
 	}
 
-	// TODO: remove methods under this place
-	private void parseXWPF(XWPFDocument doc, String headerLevel,
-			String templateDir, String courseName, String path) {
-		Document html = null;
-		int paragraphStyle = 0;
-		ArrayList<ItemInfo> items = new ArrayList<ItemInfo>();
-		ItemInfo firstItem = new ItemInfo(null, 999, "", "", "");
-		firstItem.setPath(path);
-		firstItem.setHtmlPath(path);
-		items.add(firstItem);
-		int nextParagraphStyle = 0;
-		HeaderInfo headerInfo = new HeaderInfo(Integer.parseInt(headerLevel));
-		headerInfo.setTemplateDir(templateDir);
-		ListParser listParser = new ListParser();
-		for (int i = 0; i < doc.getBodyElements().size(); i++) {
-			IBodyElement bodyElement = doc.getBodyElements().get(i);
-			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
-				XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
-				if (paragraph.getStyleID() != null) {
-					doc.getStyles().getStyle(paragraph.getStyleID())
-							.getCTStyle();
-				}
-				paragraphStyle = getCurrentParagraphStyleID(paragraph);
-				if (doc.getBodyElements().size() > i + 1
-						&& doc.getBodyElements().get(i + 1) instanceof XWPFParagraph
-						&& ((XWPFParagraph) doc.getBodyElements().get(i + 1))
-								.getStyleID() != null) {
-					String nextParagraphStyleID = null;
-					if (((XWPFParagraph) doc.getBodyElements().get(i + 1))
-							.getStyleID() != null) {
-						nextParagraphStyleID = ((XWPFParagraph) doc
-								.getBodyElements().get(i + 1)).getStyleID();
-					} else {
-						nextParagraphStyleID = "100";
-					}
-					nextParagraphStyle = getNextParagraphStyleID(nextParagraphStyleID);
-				} else {
-					nextParagraphStyle = 100;
-				}
-				if (paragraph.getNumID() != null
-						&& !isHeading(paragraphStyle,
-								headerInfo.getHeaderLevelNumber())) {
-					listParser.parse(paragraph, html, doc, headerInfo, path);
-					headerInfo.setPreviousParStyleID(paragraphStyle);
-				} else {
-					headerInfo.setNextParStyleID(nextParagraphStyle);
-					String htmlHash = "";
-					if (html != null) {
-						htmlHash = html.toString();
-					}
-					html = HeaderFinder.parse(paragraph, html, headerInfo,
-							items, doc, manifest.getManifest(), paragraphStyle);
-					if (!html.toString().equals(htmlHash))
-						listParser.reset();
-					else {
-						listParser.setPreviousParIlvl(-1);
-					}
-				}
-			} else if (bodyElement.getElementType().equals(
-					BodyElementType.TABLE)) {
-				XWPFTable table = (XWPFTable) bodyElement;
-				TableParser.parse(table, html, doc, path, headerInfo,
-						listParser, html.getElementsByTagName("body").item(0));
-			}
-		}
-		if (items.get(items.size() - 1).getFilename() != null) {
-			ItemInfo itemInfo = items.get(items.size() - 1);
-			FileWork.saveHTMLDocument(html, templateDir, itemInfo.getHtmlPath()
-					+ File.separator + itemInfo.getFilename(), path);
-			ResourcesProcessor.addFilesToResource(itemInfo.getUrl(),
-					itemInfo.getResource(), headerInfo.getPathToResources());
-		}
-	}
-
-	public static boolean isHeading(int parStyleId, int headerLevel) {
-		return parStyleId <= headerLevel && parStyleId > 0;
-	}
-
-	public static int getCurrentParagraphStyleID(XWPFParagraph xwpfParagraph) {
-		int resultVariable = 0;
-		try {
-			if (xwpfParagraph.getStyleID() != null) {
-				if (ParagraphParser.isNumericParagraphStyle(xwpfParagraph
-						.getStyleID())) {
-					resultVariable = Integer
-							.valueOf(xwpfParagraph.getStyleID());
-					if (resultVariable == 20) {
-						resultVariable = (int) 2;
-					}
-				} else {
-					resultVariable = getNonNumericHeaderParser(xwpfParagraph
-							.getStyleID());
-				}
-			} else {
-				resultVariable = (int) 100;
-			}
-		} catch (NumberFormatException e) {
-			resultVariable = (int) 100;
-		}
-		return resultVariable;
-	}
-
-	public int getNextParagraphStyleID(String strStyleID) {
-		int resultVariable = 0;
-		try {
-			if (ParagraphParser.isNumericParagraphStyle(strStyleID)) {
-				resultVariable = Integer.valueOf(strStyleID);
-				if (resultVariable == 20) {
-					resultVariable = (int) 2;
-				}
-			} else {
-				resultVariable = getNonNumericHeaderParser(strStyleID);
-			}
-		} catch (NumberFormatException e) {
-			resultVariable = (int) 100;
-		}
-		return resultVariable;
-	}
-
-	public static int getNonNumericHeaderParser(String headId) {
-		int resultVariable = 0;
-		if (headId.equals("Heading1")) {
-			resultVariable = 1;
-		} else if (headId.equals("Heading2")) {
-			resultVariable = 2;
-		} else if (headId.equals("Heading3")) {
-			resultVariable = 3;
-		} else if (headId.equals("Heading4")) {
-			resultVariable = 4;
-		} else if (headId.equals("Heading5")) {
-			resultVariable = 5;
-		} else if (headId.equals("Heading6")) {
-			resultVariable = 6;
-		} else if (headId.equals("Heading7")) {
-			resultVariable = 7;
-		} else if (headId.equals("Heading8")) {
-			resultVariable = 8;
-		} else if (headId.equals("Heading9")) {
-			resultVariable = 9;
-		}
-		return resultVariable;
-	}
 }
