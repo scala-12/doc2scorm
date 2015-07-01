@@ -89,15 +89,7 @@ public class ImageOnlyItem extends AbstractTextItem {
 	@Override
 	public Element toHtml(Document creatorTag, boolean isHyperlink) {
 		Element img = creatorTag.createElement("img");
-
-		if (this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-				|| this.getValue().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-			// RasterGraphicsParser.parse(this.getValue(), path, imgElement);
-		} else {
-			// VectorGraphicsParser.parse(this.getValue(), path, imgElement);
-		}
+		img.setAttribute("src", "img".concat(File.separator).concat(this.getImageFullName()));
 
 		return img;
 	}

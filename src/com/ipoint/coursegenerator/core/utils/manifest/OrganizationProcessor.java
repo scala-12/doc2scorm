@@ -38,6 +38,19 @@ public class OrganizationProcessor {
 	public static ItemType createItem(ItemType parentItem, String scoName,
 			String resid, String itemid) {
 		ItemType item = parentItem.addNewItem();
+		
+		return addItemInfo(item, scoName, resid, itemid);
+	}
+	
+	public static ItemType createItem(OrganizationsType organizations,
+			String scoName, String resid, String itemid) {
+		ItemType item = organizations.getOrganizationArray(0).addNewItem();
+
+		return addItemInfo(item, scoName, resid, itemid);
+	}
+	
+	private static ItemType addItemInfo(ItemType item, String scoName,
+			String resid, String itemid) {
 		item.setIdentifier(itemid);
 		item.setTitle(scoName);
 		if (resid != null)
@@ -73,13 +86,4 @@ public class OrganizationProcessor {
 			return null;
 	}
 
-	public static ItemType createItem(OrganizationsType organizations,
-			String scoName, String resid, String itemid) {
-		ItemType item = organizations.getOrganizationArray(0).addNewItem();
-		if (resid != null)
-			item.setIdentifierref(resid);
-		item.setTitle(scoName);
-		item.setIdentifier(itemid);
-		return item;
-	}
 }
