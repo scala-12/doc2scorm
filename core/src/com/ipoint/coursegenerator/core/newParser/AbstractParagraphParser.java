@@ -8,9 +8,9 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.FormulaBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.FormulaBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
 
 public abstract class AbstractParagraphParser extends AbstractParser {
 

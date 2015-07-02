@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
 
 /**
  * Parsing paragraph which includes only text and images as hyperlink

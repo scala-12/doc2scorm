@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.internalCourse.Course;
+package com.ipoint.coursegenerator.core.courseModel;
 
 import java.util.ArrayList;
 import java.util.List;

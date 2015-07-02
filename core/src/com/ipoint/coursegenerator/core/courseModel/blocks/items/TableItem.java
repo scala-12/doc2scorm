@@ -1,8 +1,8 @@
-package com.ipoint.coursegenerator.core.internalCourse.items;
+package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
 
 /**
  * Item for {@link TableBlock}. This item includes table cells (see

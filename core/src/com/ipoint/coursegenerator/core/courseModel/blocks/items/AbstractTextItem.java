@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.internalCourse.items;
+package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 
 /***
  * Item for {@link TextBlock} data

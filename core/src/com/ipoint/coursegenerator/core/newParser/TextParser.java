@@ -12,11 +12,11 @@ import org.w3c.dom.NodeList;
 
 import schemasMicrosoftComVml.CTImageData;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.ImageOnlyItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TextOnlyItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ImageOnlyItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TextOnlyItem;
 
 /**
  * Parsing paragraph which includes only text and images

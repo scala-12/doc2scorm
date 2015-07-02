@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 
 /**
  * Hyperlink block. This block is an extends of {@link TextBlock}

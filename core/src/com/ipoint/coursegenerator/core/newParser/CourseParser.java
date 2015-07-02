@@ -7,11 +7,11 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
-import com.ipoint.coursegenerator.core.internalCourse.Course.CoursePage;
-import com.ipoint.coursegenerator.core.internalCourse.Course.CourseTreeItem;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.Course;
+import com.ipoint.coursegenerator.core.courseModel.CoursePage;
+import com.ipoint.coursegenerator.core.courseModel.CourseTreeItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 
 /**
  * Parsing document

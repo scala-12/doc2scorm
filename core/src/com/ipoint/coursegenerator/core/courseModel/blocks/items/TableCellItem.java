@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.internalCourse.items;
+package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 
 /**
  * Item for {@link TableItem}. This item includes other blocks:

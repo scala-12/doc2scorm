@@ -10,11 +10,11 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
 
 /**
  * Parsing paragraph which includes only table

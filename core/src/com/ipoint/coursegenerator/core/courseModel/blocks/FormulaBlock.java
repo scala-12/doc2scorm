@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
 
 public class FormulaBlock extends AbstractParagraphBlock {
 

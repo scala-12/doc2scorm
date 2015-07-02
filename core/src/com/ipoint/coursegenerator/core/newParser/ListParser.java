@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
 
 public class ListParser extends AbstractParser {
 

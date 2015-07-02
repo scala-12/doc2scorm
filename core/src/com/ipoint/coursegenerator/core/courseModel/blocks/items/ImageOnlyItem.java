@@ -1,13 +1,11 @@
-package com.ipoint.coursegenerator.core.internalCourse.items;
-
-import java.io.File;
+package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
@@ -22,6 +20,8 @@ public class ImageOnlyItem extends AbstractTextItem {
 
 	private XWPFPictureData value;
 
+	private final static String IMAGE_PREFIX = "img_";
+
 	/**
 	 * Create image as Block Item
 	 * 
@@ -35,8 +35,7 @@ public class ImageOnlyItem extends AbstractTextItem {
 	}
 
 	public String getImageName() {
-		return FileWork.IMAGE_PREFIX.concat(String.valueOf(this.value
-				.hashCode()));
+		return IMAGE_PREFIX.concat(String.valueOf(this.value.hashCode()));
 	}
 
 	public XWPFPictureData getValue() {
@@ -59,9 +58,8 @@ public class ImageOnlyItem extends AbstractTextItem {
 		}
 	}
 
-	public String getImageType() {
+	private String getImageType() {
 		switch (this.value.getPictureType()) {
-		// TODO: library is not in import
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
 			return "png";
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
@@ -89,7 +87,8 @@ public class ImageOnlyItem extends AbstractTextItem {
 	@Override
 	public Element toHtml(Document creatorTag, boolean isHyperlink) {
 		Element img = creatorTag.createElement("img");
-		img.setAttribute("src", "img".concat(File.separator).concat(this.getImageFullName()));
+		img.setAttribute("src",
+				FileWork.IMAGE_PATH.concat(this.getImageFullName()));
 
 		return img;
 	}
