@@ -60,14 +60,19 @@ public class FileWork {
 			String fullPathToHtml = coursePath;
 			for (String dirLevel : pathInCourseToPage.split((File.separator
 					.equals("\\")) ? "\\\\" : File.separator)) {
-				fullPathToHtml = fullPathToHtml.concat(dirLevel).concat(
-						File.separator);
-				File f = new File(fullPathToHtml);
-				if (!f.exists()) {
-					f.mkdirs();
+				//TODO: if used java 8, then operator "if" (below)
+				if (!dirLevel.isEmpty()) {
+					fullPathToHtml = fullPathToHtml.concat(dirLevel).concat(
+							File.separator);
+					File f = new File(fullPathToHtml);
+					if (!f.exists()) {
+						f.mkdirs();
+					}
+					upToLevel += "../";
 				}
-				upToLevel += "../";
 			}
+			
+			fullPathToHtml = fullPathToHtml.replace(File.separatorChar, '/');
 
 			Template temp = cfg.getTemplate("index.ftl", "UTF-8");
 			Map<String, String> body = new HashMap<String, String>();
@@ -91,7 +96,7 @@ public class FileWork {
 
 	public static void saveImagesOfPage(List<ImageInfo> images, String pathToDir) {
 		for (ImageInfo image : images) {
-			String scrToImage = pathToDir.concat(image.getImageName());
+			String scrToImage = pathToDir.concat(image.getImageName()).replace(File.separatorChar, '/');
 			byte[] picture = null;
 
 			if (image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG

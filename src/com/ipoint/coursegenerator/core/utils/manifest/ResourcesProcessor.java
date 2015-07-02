@@ -53,8 +53,8 @@ public class ResourcesProcessor {
 						"scormType");
 		attNode.setNodeValue("sco");
 		resource.getDomNode().getAttributes().setNamedItem(attNode);
-		resource.setHref(path);
-		resource.addNewFile().setHref(path);
+		resource.setHref(path.replace(File.separatorChar, '/'));
+		resource.addNewFile().setHref(path.replace(File.separatorChar, '/'));
 		return resource;
 	}
 
@@ -75,7 +75,7 @@ public class ResourcesProcessor {
 			ResourceType resource, List<String> pathToResources) {
 		for (String path : pathToResources) {
 			FileType fileType = resource.addNewFile();
-			fileType.setHref(htmlPath + path);
+			fileType.setHref(htmlPath.concat(path).replace(File.separatorChar, '/'));
 		}
 	}
 

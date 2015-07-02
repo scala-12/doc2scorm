@@ -112,7 +112,7 @@ public class Parser {
 		return manifestItem;
 	}
 
-	private void addResourceToManifest(ManifestType manifest, String path,
+	private void addResourseToManifest(ManifestType manifest, String path,
 			String pageName, List<ImageInfo> images, String resourseId) {
 		ResourceType itemResource = ResourcesProcessor.createResource(manifest,
 				path.concat(pageName).concat(FileWork.HTML_SUFFIX), resourseId);
@@ -161,7 +161,7 @@ public class Parser {
 			if (item.getPage() != null) {
 				this.addPageToCourse(item, templateDir, coursePath, path,
 						pageTitle);
-				this.addResourceToManifest(manifest, path, pageTitle, item
+				this.addResourseToManifest(manifest, path, pageTitle, item
 						.getPage().getImages(), manifestItem
 						.getIdentifierref());
 
