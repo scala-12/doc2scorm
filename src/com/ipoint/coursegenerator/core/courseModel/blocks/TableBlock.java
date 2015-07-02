@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
 
 /**
  * Table block which includes rows of table. This block is an extends of

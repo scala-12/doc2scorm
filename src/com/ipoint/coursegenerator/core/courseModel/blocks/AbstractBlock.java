@@ -1,9 +1,9 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.internalCourse.Convertable;
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.Convertable;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractItem;
 
 /**
  * Abstract Block. May be {@link TextBlock}, {@link TableBlock} ,

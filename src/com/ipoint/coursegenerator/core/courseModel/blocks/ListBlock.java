@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
 
 /**
  * List block which may includes several other blocks ({@link TextBlock},

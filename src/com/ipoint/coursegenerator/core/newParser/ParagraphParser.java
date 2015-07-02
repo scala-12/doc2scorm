@@ -10,10 +10,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TextBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.FormulaItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
  * Parsing paragraph whic includes tables, text, images, hyperlinks, list - is

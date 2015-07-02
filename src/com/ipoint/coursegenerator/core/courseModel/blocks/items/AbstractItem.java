@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.internalCourse.items;
+package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 /**
  * Item for block

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.internalCourse.Course;
+package com.ipoint.coursegenerator.core.courseModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,18 +6,18 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.Convertable;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ListBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.internalCourse.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.internalCourse.items.AbstractTextItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.ImageOnlyItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.ListItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableCellItem;
-import com.ipoint.coursegenerator.core.internalCourse.items.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ImageOnlyItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
+import com.ipoint.coursegenerator.core.utils.ImageInfo;
 
 /**
  * Page of document
@@ -81,35 +81,36 @@ public class CoursePage implements Convertable {
 		return divAsPage;
 	}
 	
-	public List<String> getImagesNames() {
-		ArrayList<String> imagesNames = new ArrayList<String>();
-		this.recursiveAddImages(this.getAllBlocks(), imagesNames);
-		return imagesNames;
+	public List<ImageInfo> getImages() {
+		ArrayList<ImageInfo> imagesInfo = new ArrayList<ImageInfo>();
+		this.recursiveSearchImages(this.getAllBlocks(), imagesInfo);
+		return imagesInfo;
 	}
 	
-	private void workWithParagraph(ParagraphBlock block, ArrayList<String> imagesNames) {
+	private void searchInParagraph(ParagraphBlock block, ArrayList<ImageInfo> imagesInfo) {
 		for (ParagraphItem parItem : block.getItems()) {
 			for (AbstractTextItem item : parItem.getValue().getItems()) {
 				if (item instanceof ImageOnlyItem) {
-					imagesNames.add(((ImageOnlyItem) item).getImageFullName());
+					ImageOnlyItem imageItem = (ImageOnlyItem) item; 
+					imagesInfo.add(new ImageInfo(imageItem.getImageFullName(), imageItem.getValue()));
 				}
 			}
 		}
 	}
 	
-	private void recursiveAddImages(List<AbstractParagraphBlock> blocks, ArrayList<String> imagesNames) {
+	private void recursiveSearchImages(List<AbstractParagraphBlock> blocks, ArrayList<ImageInfo> imagesInfo) {
 		for (AbstractParagraphBlock block : blocks) {
 			if (block instanceof ParagraphBlock) {
-				this.workWithParagraph((ParagraphBlock)block, imagesNames);
+				this.searchInParagraph((ParagraphBlock)block, imagesInfo);
 			} else if (block instanceof ListBlock) {
 				for (ListItem listItem : ((ListBlock) block).getItems()) {
-					this.workWithParagraph(listItem.getValue(), imagesNames);
+					this.searchInParagraph(listItem.getValue(), imagesInfo);
 				}
 			} else if (block instanceof TableBlock) {
 				for (TableItem row : ((TableBlock) block).getItems()) {
 					for (TableCellItem cell : row.getValue()) {
 						if (cell.getValue() != null) {
-							this.recursiveAddImages(cell.getValue(), imagesNames);
+							this.recursiveSearchImages(cell.getValue(), imagesInfo);
 						}
 					}
 				}

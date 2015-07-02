@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.internalCourse.blocks;
+package com.ipoint.coursegenerator.core.courseModel.blocks;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.internalCourse.items.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
  * Block which may includes other blocks. This block is an analogue of paragraph

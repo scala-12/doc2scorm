@@ -13,12 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.formula.eval.ConcatEval;
-import org.apache.poi.xwpf.usermodel.BodyElementType;
-import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
@@ -28,16 +23,11 @@ import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.elementparser.HeaderFinder;
-import com.ipoint.coursegenerator.core.elementparser.HeaderInfo;
-import com.ipoint.coursegenerator.core.elementparser.ItemInfo;
-import com.ipoint.coursegenerator.core.elementparser.ListParser;
-import com.ipoint.coursegenerator.core.elementparser.ParagraphParser;
-import com.ipoint.coursegenerator.core.elementparser.TableParser;
-import com.ipoint.coursegenerator.core.internalCourse.Course.Course;
-import com.ipoint.coursegenerator.core.internalCourse.Course.CourseTreeItem;
+import com.ipoint.coursegenerator.core.courseModel.Course;
+import com.ipoint.coursegenerator.core.courseModel.CourseTreeItem;
 import com.ipoint.coursegenerator.core.newParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.ImageInfo;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -123,10 +113,15 @@ public class Parser {
 	}
 
 	private void addResourceToManifest(ManifestType manifest, String path,
-			String pageName, List<String> imagesNames, String resourseId) {
+			String pageName, List<ImageInfo> images, String resourseId) {
 		ResourceType itemResource = ResourcesProcessor.createResource(manifest,
 				path.concat(pageName).concat(FileWork.HTML_SUFFIX), resourseId);
 
+		ArrayList<String> imagesNames = new ArrayList<String>(); 
+		for (ImageInfo image : images) {
+			imagesNames.add(image.getImageName());
+		}
+		
 		ResourcesProcessor.addFilesToResource(
 				path.concat("img").concat(File.separator), itemResource,
 				imagesNames);
@@ -138,8 +133,11 @@ public class Parser {
 		Element pageDiv = node.toHtml(html);
 		html.getElementsByTagName("body").item(0).appendChild(pageDiv);
 
-		FileWork.saveHTMLDocument(html, templateDir, coursePath,
+		boolean pageAdded = FileWork.saveHTMLDocument(html, templateDir, coursePath,
 				pagePath, pageName.concat(FileWork.HTML_SUFFIX));
+		if (pageAdded) {
+			FileWork.saveImagesOfPage(node.getPage().getImages(), coursePath.concat(pagePath).concat(FileWork.IMAGE_PATH));
+		}
 	}
 
 	private void recursiveSaveCourse(List<CourseTreeItem> items,
@@ -164,7 +162,7 @@ public class Parser {
 				this.addPageToCourse(item, templateDir, coursePath, path,
 						pageTitle);
 				this.addResourceToManifest(manifest, path, pageTitle, item
-						.getPage().getImagesNames(), manifestItem
+						.getPage().getImages(), manifestItem
 						.getIdentifierref());
 
 			}

@@ -1,10 +1,8 @@
-package com.ipoint.coursegenerator.core.internalCourse.Course;
+package com.ipoint.coursegenerator.core.courseModel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import com.ipoint.coursegenerator.core.internalCourse.Convertable;
 
 /**
  * Node of the document tree

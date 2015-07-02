@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.internalCourse.Course;
+package com.ipoint.coursegenerator.core.courseModel;
 
 //TODO: rename class, because it is document, and write constructor
 /**
