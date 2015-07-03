@@ -4,33 +4,19 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 
 /**
- * Hyperlink block. This block is an extends of {@link TextBlock}
+ * Hyperlink block. This block is {@link TextBlock} with hyperlink
  * 
- * @see TextBlock
- * @see AbstractBlock
  * @author Kalashnikov Vladislav
  *
  */
 public class HyperlinkBlock extends TextBlock {
 
-	/**
-	 * Full address of hyperlink.
-	 */
 	private String url;
 
-	/**
-	 * Create Hyperlink block with preset address and items
-	 * 
-	 * @param url
-	 *            Address of hyperlink
-	 * @param items
-	 *            List of text and pictures
-	 */
 	public HyperlinkBlock(List<AbstractTextItem> items, String url) {
 		super(items);
 		if (!this.setUrl(url)) {
@@ -38,11 +24,6 @@ public class HyperlinkBlock extends TextBlock {
 		}
 	}
 
-	/**
-	 * Returns adress of hyperlink
-	 * 
-	 * @return Adress of hyperlink
-	 */
 	public String getUrl() {
 		return this.url;
 	}
@@ -51,26 +32,29 @@ public class HyperlinkBlock extends TextBlock {
 	 * Change address of hyperlink
 	 * 
 	 * @param url
-	 *            Address of hyperlink
+	 *            New address
+	 * @return if new address is not null then true
 	 */
 	public boolean setUrl(String url) {
-		if (url == null) {
-			return false;
-		} else {
-			if (url.isEmpty()) {
-				return false;
-			} else {
+		if (url != null) {
+			if (!url.isEmpty()) {
 				this.url = url;
 				return true;
 			}
 		}
+
+		return false;
 	}
 
+	/**
+	 * @return html-element a
+	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element hyperlink = creatorTags.createElement("a");
-		hyperlink.appendChild(toHtml(creatorTags, true));
+		hyperlink.appendChild(super.toHtml(creatorTags, true));
 		hyperlink.setAttribute("href", this.getUrl());
+
 		return hyperlink;
 	}
 

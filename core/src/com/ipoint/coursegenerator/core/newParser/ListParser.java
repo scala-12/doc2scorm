@@ -10,22 +10,22 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
 
 public class ListParser extends AbstractParser {
 
-
 	public ListBlock parseDocx(List<XWPFParagraph> paragraphs) {
 		ListBlock block = null;
-		
+
 		if (paragraphs != null) {
-			if (paragraphs.isEmpty()) {
+			if (!paragraphs.isEmpty()) {
 				ArrayList<ListItem> items = new ArrayList<ListItem>();
 				for (XWPFParagraph par : paragraphs) {
 					items.add(new ListItem(new ParagraphParser().parseDocx(par)));
 				}
 				block = new ListBlock(items);
 
-				block.setMarkerType(((List<XWPFParagraph>) paragraphs).get(0)
-						.getNumFmt());
+				block.setMarkerType(ListBlock
+						.getMarkerTypeFromString(((List<XWPFParagraph>) paragraphs)
+								.get(0).getNumFmt()));
 			}
-		}		
+		}
 
 		return block;
 	}

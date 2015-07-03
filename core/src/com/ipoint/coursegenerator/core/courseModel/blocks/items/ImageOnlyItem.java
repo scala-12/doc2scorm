@@ -4,15 +4,11 @@ import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
- * Item for {@link TextBlock}. This item includes picture data
+ * Item that includes picture data
  * 
- * @see TextBlock
- * @see HyperlinkBlock
  * @author Kalashnikov Vladislav
  *
  */
@@ -23,10 +19,8 @@ public class ImageOnlyItem extends AbstractTextItem {
 	private final static String IMAGE_PREFIX = "img_";
 
 	/**
-	 * Create image as Block Item
-	 * 
 	 * @param imageData
-	 *            Image of block. There cannot be null
+	 *            Image that can't be null
 	 */
 	public ImageOnlyItem(XWPFPictureData imageData) {
 		if (!this.setValue(imageData)) {
@@ -43,10 +37,8 @@ public class ImageOnlyItem extends AbstractTextItem {
 	}
 
 	/**
-	 * Set value of item
-	 * 
 	 * @param imageData
-	 *            Image of block
+	 *            Image. If it is null then return false
 	 * @return If successful then true
 	 */
 	public boolean setValue(XWPFPictureData imageData) {
@@ -84,9 +76,12 @@ public class ImageOnlyItem extends AbstractTextItem {
 		return this.getImageName().concat(".").concat(this.getImageType());
 	}
 
+	/**
+	 * @return html element img
+	 */
 	@Override
-	public Element toHtml(Document creatorTag, boolean isHyperlink) {
-		Element img = creatorTag.createElement("img");
+	public Element toHtml(Document creatorTags) {
+		Element img = creatorTags.createElement("img");
 		img.setAttribute("src",
 				FileWork.IMAGE_PATH.concat(this.getImageFullName()));
 

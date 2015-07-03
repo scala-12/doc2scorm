@@ -8,21 +8,13 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 
 /**
- * Text block which may include images or text. This block is an extends of
- * {@link AbstractBlock}
+ * Text block which may include {@link AbstractTextItem}
  * 
- * @see AbstractBlock
  * @author Kalashnikov Vladislav
  *
  */
 public class TextBlock extends AbstractBlock {
 
-	/**
-	 * Create Text block
-	 * 
-	 * @param runs
-	 *            Runs of text
-	 */
 	public TextBlock(List<AbstractTextItem> runs) {
 		super(runs);
 	}
@@ -32,11 +24,21 @@ public class TextBlock extends AbstractBlock {
 		return (List<AbstractTextItem>) super.getItems();
 	}
 
+	/**
+	 * @return html-element span
+	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
 		return this.toHtml(creatorTags, false);
 	}
 
+	/**
+	 * 
+	 * @see TextBlock#toHtml(Document)
+	 * 
+	 * @return html-element span that may includes tags "u" and "font" with
+	 *         color parameter
+	 */
 	protected Element toHtml(Document creatorTags, boolean isHyperlink) {
 		Element span = creatorTags.createElement("span");
 

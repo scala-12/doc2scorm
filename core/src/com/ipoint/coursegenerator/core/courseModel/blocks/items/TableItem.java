@@ -2,11 +2,11 @@ package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
- * Item for {@link TableBlock}. This item includes table cells (see
- * {@link TableCellItem}).
+ * This item includes {@link TableCellItem}).
  * 
  * @author Kalashnikov Vladislav
  *
@@ -35,20 +35,31 @@ public class TableItem extends AbstractItem {
 	 * Set value of row
 	 * 
 	 * @param cells
-	 *            Value of row. There cannot be null
-	 * @return If successful ten true
+	 *            Value of row. If there is null then return false
+	 * @return If successful then true
 	 */
 	public boolean setValue(List<TableCellItem> cells) {
 		if (cells != null) {
-			if (cells.isEmpty()) {
-				return false;
-			} else {
+			if (!cells.isEmpty()) {
 				this.value = cells;
 				return true;
 			}
-		} else {
-			return false;
 		}
+
+		return false;
+	}
+
+	/**
+	 * @return html-element tr
+	 */
+	@Override
+	public Element toHtml(Document creatorTags) {
+		Element tRow = creatorTags.createElement("tr");
+		for (TableCellItem cell : this.getValue()) {
+			tRow.appendChild(cell.toHtml(creatorTags));
+		}
+
+		return tRow;
 	}
 
 }

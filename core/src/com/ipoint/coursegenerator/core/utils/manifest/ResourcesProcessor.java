@@ -21,30 +21,25 @@ public class ResourcesProcessor {
 		super();
 	}
 
-	private TagFindingVisitor getHtmlVisitor(File scoFile)
-			throws UnsupportedEncodingException, FileNotFoundException,
-			ParserException {
-		Parser htmlResourceParser = new Parser(new org.htmlparser.lexer.Lexer(
-				new org.htmlparser.lexer.Page(new FileInputStream(scoFile),
-						"UTF-8")));
-		TagFindingVisitor visitor = new TagFindingVisitor(new String[] {
-				"SCRIPT", "SCRIPT SRC" });
-		htmlResourceParser.visitAllNodesWith(visitor);
-		return visitor;
-	}
-
 	public void createResources(ManifestType manifest) {
 		manifest.addNewResources();
 	}
 
+	/**
+	 * Create resourse in manifest
+	 * @param manifest Manifest
+	 * @param path Path in course
+	 * @param resourseId Id of resource
+	 * @return Added in manifest resource
+	 */
 	public static ResourceType createResource(ManifestType manifest,
-			String path, String iref) {
+			String path, String resourseId) {
 		if (manifest.getResources() == null
 				|| manifest.getResources().getResourceArray() == null) {
 			manifest.addNewResources();
 		}
 		ResourceType resource = manifest.getResources().addNewResource();
-		resource.setIdentifier(iref);
+		resource.setIdentifier(resourseId);
 		resource.setType("webcontent");
 		Node attNode = resource
 				.getDomNode()
@@ -55,20 +50,8 @@ public class ResourcesProcessor {
 		resource.getDomNode().getAttributes().setNamedItem(attNode);
 		resource.setHref(path.replace(File.separatorChar, '/'));
 		resource.addNewFile().setHref(path.replace(File.separatorChar, '/'));
+		
 		return resource;
-	}
-
-	public static String getResourceHrefForItem(ManifestType manifest,
-			ItemType item) {
-		String href = null;
-		for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
-			if (manifest.getResources().getResourceArray()[i].getIdentifier()
-					.equals(item.getIdentifierref())) {
-				href = manifest.getResources().getResourceArray()[i].getHref();
-				break;
-			}
-		}
-		return href;
 	}
 
 	public static void addFilesToResource(String htmlPath,
@@ -92,4 +75,30 @@ public class ResourcesProcessor {
 			manifest.getResources().removeResource(i);
 		}
 	}
+	
+	private TagFindingVisitor getHtmlVisitor(File scoFile)
+			throws UnsupportedEncodingException, FileNotFoundException,
+			ParserException {
+		Parser htmlResourceParser = new Parser(new org.htmlparser.lexer.Lexer(
+				new org.htmlparser.lexer.Page(new FileInputStream(scoFile),
+						"UTF-8")));
+		TagFindingVisitor visitor = new TagFindingVisitor(new String[] {
+				"SCRIPT", "SCRIPT SRC" });
+		htmlResourceParser.visitAllNodesWith(visitor);
+		return visitor;
+	}
+	
+	public static String getResourceHrefForItem(ManifestType manifest,
+			ItemType item) {
+		String href = null;
+		for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
+			if (manifest.getResources().getResourceArray()[i].getIdentifier()
+					.equals(item.getIdentifierref())) {
+				href = manifest.getResources().getResourceArray()[i].getHref();
+				break;
+			}
+		}
+		return href;
+	}
+	
 }

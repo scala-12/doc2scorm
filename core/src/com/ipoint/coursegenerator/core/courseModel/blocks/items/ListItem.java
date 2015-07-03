@@ -4,14 +4,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 
 /**
- * Item for {@link ListBlock}. This item includes other blocks:
- * {@link HyperlinkBlock} and {@link TextBlock}
- * 
+ * Item includes {@link HyperlinkBlock} and {@link TextBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -21,10 +18,8 @@ public class ListItem extends AbstractItem {
 	private ParagraphBlock value;
 
 	/**
-	 * Create item as block item
-	 * 
 	 * @param paragraph
-	 *            Item of block. There cannot be null
+	 *            Paragraph. There cannot be null
 	 */
 	public ListItem(ParagraphBlock paragraph) {
 		if (!this.setValue(paragraph)) {
@@ -37,10 +32,8 @@ public class ListItem extends AbstractItem {
 	}
 
 	/**
-	 * Set value of item
-	 * 
 	 * @param block
-	 *            Item of block. There cannot be null
+	 *            Paragraph. If there is null then return false
 	 * @return if successful then true
 	 */
 	public boolean setValue(ParagraphBlock block) {
@@ -52,8 +45,14 @@ public class ListItem extends AbstractItem {
 		}
 	}
 
+	/**
+	 * @return html-element li
+	 */
+	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.getValue().toHtml(creatorTags);
+		Element listItem = creatorTags.createElement("li");
+		listItem.appendChild(this.getValue().toHtml(creatorTags));
+		return listItem;
 	}
 
 }
