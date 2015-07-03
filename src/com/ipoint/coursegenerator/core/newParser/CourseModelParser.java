@@ -7,31 +7,16 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.courseModel.Course;
+import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CoursePage;
-import com.ipoint.coursegenerator.core.courseModel.CourseTreeItem;
+import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 
-/**
- * Parsing document
- * 
- * @author Kalashnikov
- *
- */
-public class CourseParser {
+public class CourseModelParser {
 
-	/**
-	 * Parsing docx document
-	 * 
-	 * @param document
-	 *            Document docx
-	 * @param manifest
-	 * @param courseName
-	 * @return Special model of docx
-	 */
-	public static Course parse(XWPFDocument document, String courseName) {
-		Course course = new Course();
+	public static CourseModel parse(XWPFDocument document, String courseName) {
+		CourseModel courseModel = new CourseModel(courseName);
 
 		// map for document tree
 		ArrayList<Integer> levelMap = new ArrayList<Integer>();
@@ -66,7 +51,7 @@ public class CourseParser {
 									ArrayList<Integer> newMap = new ArrayList<Integer>();
 									newMap.addAll(levelMap.subList(0,
 											headLevel - 1));
-									newMap.add(levelMap.get(headLevel-1) + 1);
+									newMap.add(levelMap.get(headLevel - 1) + 1);
 									levelMap = newMap; // remove extra levels
 								} else {
 									// down level
@@ -77,35 +62,34 @@ public class CourseParser {
 							}
 
 							// search node of level in document tree
-							CourseTreeItem treeNode = null;
+							CourseTreeNode treeNode = null;
 							for (Integer lvl : levelMap) {
 								if (treeNode == null) {
 									// start node
-									if (course.getItem(lvl) == null) {
+									if (courseModel.getNode(lvl) == null) {
 										// new node
-										course.addItem(new CourseTreeItem(
+										courseModel.addNode(new CourseTreeNode(
 												paragraph.getText()));
 									}
-									treeNode = course.getItem(lvl);
+									treeNode = courseModel.getNode(lvl);
 								} else {
 									// other nodes
-									if (treeNode.getItem(lvl) == null) {
+									if (treeNode.getNode(lvl) == null) {
 										// new node
-										treeNode.addItem(new CourseTreeItem(
+										treeNode.addNode(new CourseTreeNode(
 												paragraph.getText()));
 									}
-									treeNode = treeNode.getCourseTree()
-											.get(lvl);
+									treeNode = treeNode.getNodes().get(lvl);
 								}
 							}
 
-							if (page.getAllBlocks().isEmpty()) {
+							if (page.getBlocks().isEmpty()) {
 								if (levelMap.size() > 1) {
-									CourseTreeItem node = course
-											.getItem(levelMap.get(0));
+									CourseTreeNode node = courseModel
+											.getNode(levelMap.get(0));
 									for (Integer lvl : levelMap.subList(1,
 											levelMap.size() - 1)) {
-										node = node.getCourseTree().get(lvl);
+										node = node.getNodes().get(lvl);
 									}
 									if (page == node.getPage()) {
 										node.setPage(null);
@@ -137,7 +121,7 @@ public class CourseParser {
 			}
 		}
 
-		return course;
+		return courseModel;
 	}
 
 	/**

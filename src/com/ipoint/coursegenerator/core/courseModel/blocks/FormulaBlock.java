@@ -7,6 +7,12 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
 
+/**
+ * Block which includes formula
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class FormulaBlock extends AbstractParagraphBlock {
 
 	public FormulaBlock(FormulaItem item) {

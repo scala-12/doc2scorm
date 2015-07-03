@@ -20,102 +20,144 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
 import com.ipoint.coursegenerator.core.utils.ImageInfo;
 
 /**
- * Page of document
+ * Page. These includes {@link AbstractParagraphBlock}
  * 
- * @see Course
+ * @see CourseModel
  * @author Kalashnikov Vladislav
  *
  */
 public class CoursePage implements Convertable {
 
-	/**
-	 * Paragraph of document
-	 */
-	private ArrayList<AbstractParagraphBlock> paragraphs;
+	public final static String CONTENT_DIV_ID = "content_div";
 
-	/**
-	 * Create empty page
-	 */
+	private ArrayList<AbstractParagraphBlock> blocks;
+
+	private CourseTreeNode parentNode;
+
 	public CoursePage() {
-		this.paragraphs = new ArrayList<AbstractParagraphBlock>();
+		this.blocks = new ArrayList<AbstractParagraphBlock>();
+		this.parentNode = null;
+	}
+
+	public AbstractBlock getBlock(int index) {
+		return ((this.blocks.size() <= index) || this.blocks.isEmpty()) ? null
+				: this.blocks.get(index);
+	}
+
+	public List<AbstractParagraphBlock> getBlocks() {
+		return this.blocks;
 	}
 
 	/**
-	 * Returns the paragraph at the specified position in this page
-	 * 
-	 * @param index
-	 *            index of the element to return
-	 * @return the paragraph at the specified position in this page
-	 */
-	public AbstractBlock getBlock(Integer index) {
-		return ((this.paragraphs.size() <= index) || this.paragraphs.isEmpty()) ? null
-				: this.paragraphs.get(index);
-	}
-
-	/**
-	 * Returns all paragraph of document
-	 * 
-	 * @return All paragraph of document
-	 */
-	public List<AbstractParagraphBlock> getAllBlocks() {
-		return this.paragraphs;
-	}
-
-	/**
-	 * Appends the paragraph to the page
+	 * Method for add block on page
 	 * 
 	 * @param block
-	 *            Block for adding
+	 *            Block for adding. If it is null then return false
+	 * @return If successful then true
 	 */
-	public void addBlock(AbstractParagraphBlock block) {
-		this.paragraphs.add(block);
+	public boolean addBlock(AbstractParagraphBlock block) {
+		if (block == null) {
+			return false;
+		} else {
+			this.blocks.add(block);
+			return true;
+		}
 	}
 
-	@Override
-	public Element toHtml(Document creatorTags) {
-		Element divAsPage = creatorTags.createElement("div");
-		for (AbstractParagraphBlock par : this.getAllBlocks()) {
-			divAsPage.appendChild(par.toHtml(creatorTags));
+	/**
+	 * Set parent of page
+	 * 
+	 * @param node
+	 *            Is parent of page. If there is null then return false
+	 * @return If successful then true
+	 */
+	public boolean setParent(CourseTreeNode node) {
+		if (node == null) {
+			return false;
+		} else if (node != this.parentNode) {
+			// because class CourseTreeNode have call of this method
+			// method that below need for set link between page and node
+			if (node.getPage() != null) {
+				node.getPage().setParent(null);
+			}
+			this.parentNode = node;
+			node.setPage(this);
 		}
 		
-		return divAsPage;
+		return true;		
 	}
-	
+
+	public CourseTreeNode getParent() {
+		return this.parentNode;
+	}
+
+	/**
+	 * @return html-element div
+	 */
+	@Override
+	public Element toHtml(Document creatorTags) {
+		Element pageBody = creatorTags.createElement("div");
+		pageBody.setAttribute("id", CONTENT_DIV_ID);
+
+		if (this.parentNode != null) {
+			Element pageHeader = creatorTags.createElement("h1");
+			pageHeader.setTextContent(this.parentNode.getTitle());
+			pageBody.appendChild(pageHeader);
+		}
+
+		for (AbstractParagraphBlock par : this.getBlocks()) {
+			pageBody.appendChild(par.toHtml(creatorTags));
+		}
+
+		return pageBody;
+	}
+
 	public List<ImageInfo> getImages() {
-		ArrayList<ImageInfo> imagesInfo = new ArrayList<ImageInfo>();
-		this.recursiveSearchImages(this.getAllBlocks(), imagesInfo);
-		return imagesInfo;
+		return this.getImagesRecursive(this.getBlocks());
 	}
-	
-	private void searchInParagraph(ParagraphBlock block, ArrayList<ImageInfo> imagesInfo) {
-		for (ParagraphItem parItem : block.getItems()) {
+
+	private List<ImageInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
+		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
+
+		for (ParagraphItem parItem : paragraph.getItems()) {
 			for (AbstractTextItem item : parItem.getValue().getItems()) {
 				if (item instanceof ImageOnlyItem) {
-					ImageOnlyItem imageItem = (ImageOnlyItem) item; 
-					imagesInfo.add(new ImageInfo(imageItem.getImageFullName(), imageItem.getValue()));
+					ImageOnlyItem imageItem = (ImageOnlyItem) item;
+					images.add(new ImageInfo(imageItem.getImageFullName(),
+							imageItem.getValue()));
 				}
 			}
 		}
+
+		return images;
 	}
-	
-	private void recursiveSearchImages(List<AbstractParagraphBlock> blocks, ArrayList<ImageInfo> imagesInfo) {
+
+	private List<ImageInfo> getImagesRecursive(
+			List<AbstractParagraphBlock> blocks) {
+		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
+
 		for (AbstractParagraphBlock block : blocks) {
 			if (block instanceof ParagraphBlock) {
-				this.searchInParagraph((ParagraphBlock)block, imagesInfo);
+				images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
+
 			} else if (block instanceof ListBlock) {
 				for (ListItem listItem : ((ListBlock) block).getItems()) {
-					this.searchInParagraph(listItem.getValue(), imagesInfo);
+					images.addAll(this.getImagesOfParagraph(listItem.getValue()));
 				}
+
 			} else if (block instanceof TableBlock) {
 				for (TableItem row : ((TableBlock) block).getItems()) {
 					for (TableCellItem cell : row.getValue()) {
 						if (cell.getValue() != null) {
-							this.recursiveSearchImages(cell.getValue(), imagesInfo);
+							images.addAll(this.getImagesRecursive(cell
+									.getValue()));
 						}
 					}
 				}
 			}
-		}		
+		}
+
+		return images;
 	}
 
 }

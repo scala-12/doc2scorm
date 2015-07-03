@@ -1,6 +1,8 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FormulaItem extends AbstractTextItem {
 
@@ -36,5 +38,11 @@ public class FormulaItem extends AbstractTextItem {
 			this.value = oMath;
 			return true;
 		}
+	}
+
+	@Override
+	public Element toHtml(Document creatorTags) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -92,6 +92,7 @@ public class ParagraphParser extends AbstractParser {
 		return runBlocks;
 	}
 
+	//TODO: check method which below 
 	/**
 	 * Checking that is paragraph list item
 	 * 
@@ -100,7 +101,7 @@ public class ParagraphParser extends AbstractParser {
 	 * @return true if this paragraph is item of list
 	 */
 	private static boolean isListElement(XWPFParagraph par) {
-		if ((par.getStyleID() == null) && (par.getNumID() != null)) {
+		if ((par.getStyleID() != null) && (par.getNumID() != null)) {
 			return true;
 		} else {
 			return false;

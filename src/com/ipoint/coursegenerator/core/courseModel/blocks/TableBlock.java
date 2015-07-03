@@ -5,25 +5,16 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
 
 /**
- * Table block which includes rows of table. This block is an extends of
- * {@link AbstractBlock}
+ * Table block which includes rows
  * 
- * @see AbstractBlock
  * @author Kalashnikov Vladislav
  *
  */
 public class TableBlock extends AbstractParagraphBlock {
 
-	/**
-	 * Create Table
-	 * 
-	 * @param rows
-	 *            Rows of table
-	 */
 	public TableBlock(List<TableItem> rows) {
 		super(rows);
 	}
@@ -33,6 +24,9 @@ public class TableBlock extends AbstractParagraphBlock {
 		return (List<TableItem>) super.getItems();
 	}
 
+	/**
+	 * @return html-element table
+	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element table = creatorTags.createElement("table");
@@ -40,24 +34,10 @@ public class TableBlock extends AbstractParagraphBlock {
 		table.appendChild(tBody);
 
 		for (TableItem row : this.getItems()) {
-			Element tRow = creatorTags.createElement("tr");
-			tBody.appendChild(tRow);
-			for (TableCellItem cell : row.getValue()) {
-				if ((cell.getColSpan() != null) && (cell.getRowSpan() != null)) {
-					Element tCell = creatorTags.createElement("td");
-					tRow.appendChild(tCell);
-					tCell.setAttribute("colspan", cell.getColSpan().toString());
-					tCell.setAttribute("rowspan", cell.getRowSpan().toString());
-					if (cell.getValue() != null) {
-						for (AbstractParagraphBlock par : cell.getValue()) {
-							Element tPar = par.toHtml(creatorTags);
-							tCell.appendChild(tPar);
-						}
-					}
-				}
-			}
+			tBody.appendChild(row.toHtml(creatorTags));
 		}
 
 		return table;
 	}
+
 }

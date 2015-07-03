@@ -34,7 +34,9 @@ public class TextOnlyItem extends AbstractTextItem {
 	 *            Run of text
 	 */
 	public TextOnlyItem(XWPFRun run) {
-		this.setValue(run.toString());
+		if (!this.setValue(run.toString())) {
+			// TODO: exception
+		}
 
 		boolean isHyperlink = (run instanceof XWPFHyperlinkRun);
 
@@ -60,19 +62,19 @@ public class TextOnlyItem extends AbstractTextItem {
 	}
 
 	/**
-	 * Set value of item
-	 * 
 	 * @param value
-	 *            Value of item
-	 * @return true if all right
+	 *            Text of item. If there is null then return false
+	 * @return if successful then true
 	 */
 	public boolean setValue(String text) {
-		if (text == null) {
-			return false;
-		} else {
-			this.value = text;
-			return true;
+		if (text != null) {
+			if (!text.isEmpty()) {
+				this.value = text;
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public void setBold(boolean value) {
@@ -128,51 +130,62 @@ public class TextOnlyItem extends AbstractTextItem {
 	public String getColor() {
 		return this.color;
 	}
-	
+
+	/**
+	 * @return html-element span
+	 */
 	@Override
-	public Element toHtml(Document creatorTag, boolean isHyperlink) {
-		Element span = creatorTag.createElement("span");
-		
+	public Element toHtml(Document creatorTags, boolean isHyperlink) {
+		Element span = creatorTags.createElement("span");
+
 		if (this.isBold()) {
-		    Element bold = creatorTag.createElement("b");
-		    span.appendChild(bold);
-		    span = bold;
+			Element bold = creatorTags.createElement("b");
+			span.appendChild(bold);
+			span = bold;
 		}
-		
+
 		if (this.isItalic()) {
-		    Element italic = creatorTag.createElement("i");
-		    span.appendChild(italic);
-		    span = italic;
+			Element italic = creatorTags.createElement("i");
+			span.appendChild(italic);
+			span = italic;
 		}
-		
+
 		if (this.isSubscript()) {
-		    Element superscript = creatorTag.createElement("sup");
-		    span.appendChild(superscript);
-		    span = superscript;
+			Element superscript = creatorTags.createElement("sup");
+			span.appendChild(superscript);
+			span = superscript;
 		} else if (this.isSubscript()) {
-		    Element subscript = creatorTag.createElement("sub");
-		    span.appendChild(subscript);
-		    span = subscript;
+			Element subscript = creatorTags.createElement("sub");
+			span.appendChild(subscript);
+			span = subscript;
 		}
-		
+
 		if (!isHyperlink) {
 			if (this.isUnderline()) {
-			    Element underline = creatorTag.createElement("u");
-			    span.appendChild(underline);
-			    span = underline;
+				Element underline = creatorTags.createElement("u");
+				span.appendChild(underline);
+				span = underline;
 			}
-			
+
 			if (this.getColor() != null) {
-				Element font = creatorTag.createElement("font");
+				Element font = creatorTags.createElement("font");
 				font.setAttribute("color", this.getColor());
 				span.appendChild(font);
 				span = font;
 			}
 		}
-		
+
 		span.setTextContent(this.getValue());
-		
+
 		return span;
+	}
+
+	/**
+	 * @return html-element span. With underline and color parameters
+	 */
+	@Override
+	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
 	}
 
 }

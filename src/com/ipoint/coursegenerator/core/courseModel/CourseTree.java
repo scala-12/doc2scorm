@@ -4,54 +4,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tree of document
+ * Tree as list of nodes that may includes several {@link CourseTreeNode}
+ * 
  * 
  * @author Kalashnikov Vladislav
  *
  */
 public abstract class CourseTree {
 
-	/**
-	 * Tree of document
-	 */
-	private ArrayList<CourseTreeItem> documenTree;
+	private ArrayList<CourseTreeNode> nodes;
 
-	/**
-	 * Create empty Tree
-	 */
 	public CourseTree() {
-		this.documenTree = new ArrayList<CourseTreeItem>();
+		this(new ArrayList<CourseTreeNode>());
+	}
+
+	protected CourseTree(ArrayList<CourseTreeNode> courseTree) {
+		this.nodes = courseTree;
 	}
 
 	/**
-	 * Appends the node to the Tree
+	 * Method for adding node in tree on this level
 	 * 
 	 * @param node
-	 *            Node for adding
+	 *            Node for adding. If it is null then return false
+	 * @return If successful then true
 	 */
-	public void addItem(CourseTreeItem node) {
-		this.documenTree.add(node);
+	public boolean addNode(CourseTreeNode node) {
+		if (node == null) {
+			return false;
+		} else {
+			this.nodes.add(node);
+			return true;
+		}
 	}
 
-	/**
-	 * Returns the node at the specified position in this Tree
-	 * 
-	 * @param index
-	 *            index of the element to return
-	 * @return the node at the specified position in this Tree
-	 */
-	public CourseTreeItem getItem(int index) {
-		return ((this.documenTree.size() <= index) || this.documenTree
-				.isEmpty()) ? null : this.documenTree.get(index);
+	public CourseTreeNode getNode(int index) {
+		return ((this.nodes.size() <= index) || this.nodes.isEmpty()) ? null
+				: this.nodes.get(index);
 	}
 
-	/**
-	 * Returns all nodes of Tree
-	 * 
-	 * @return All nodes of Tree
-	 */
-	public List<CourseTreeItem> getCourseTree() {
-		return this.documenTree;
+	public List<CourseTreeNode> getNodes() {
+		return this.nodes;
 	}
 
 }
