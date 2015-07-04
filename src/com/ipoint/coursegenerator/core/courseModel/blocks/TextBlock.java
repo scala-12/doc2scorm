@@ -42,8 +42,12 @@ public class TextBlock extends AbstractBlock {
 	protected Element toHtml(Document creatorTags, boolean isHyperlink) {
 		Element span = creatorTags.createElement("span");
 
-		for (AbstractTextItem run : this.getItems()) {
-			span.appendChild(run.toHtml(creatorTags, isHyperlink));
+		if (this.getItems().size() == 1) {
+			span = this.getItems().get(0).toHtml(creatorTags, isHyperlink);
+		} else {
+			for (AbstractTextItem run : this.getItems()) {
+				span.appendChild(run.toHtml(creatorTags, isHyperlink));
+			}
 		}
 
 		return span;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
@@ -19,7 +20,7 @@ public class ParagraphHeaderBlock extends ParagraphBlock {
 		super(items);
 		this.setLevel(level);
 	}
-	
+
 	public boolean setLevel(Integer level) {
 		if (level != null) {
 			if (level >= 0) {
@@ -27,20 +28,29 @@ public class ParagraphHeaderBlock extends ParagraphBlock {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public int getLevel() {
 		return this.level;
 	}
-	
+
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element header = creatorTags.createElement("h".concat(String.valueOf(this.getLevel() + 1)));
+		Element header = creatorTags.createElement("h".concat(String
+				.valueOf(this.getLevel() + 1)));
 
-		for (ParagraphItem item : this.getItems()) {
-			header.appendChild(item.toHtml(creatorTags));
+		if (this.getItems().size() == 1) {
+			NodeList childs = this.getItems().get(0).toHtml(creatorTags)
+					.getChildNodes();
+			for (int i = 0; i < childs.getLength(); ++i) {
+				header.appendChild(childs.item(i));
+			}
+		} else {
+			for (ParagraphItem item : this.getItems()) {
+				header.appendChild(item.toHtml(creatorTags));
+			}
 		}
 
 		return header;

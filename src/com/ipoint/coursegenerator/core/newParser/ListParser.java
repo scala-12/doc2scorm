@@ -23,14 +23,14 @@ public class ListParser extends AbstractParser {
 	 *            Paragraphs as items of list
 	 * @return {@link ListBlock}
 	 */
-	public static ListBlock parseDocx(List<XWPFParagraph> paragraphs) {
+	public static ListBlock parse(List<XWPFParagraph> paragraphs) {
 		ListBlock block = null;
 
 		if (paragraphs != null) {
 			if (!paragraphs.isEmpty()) {
 				ArrayList<ListItem> items = new ArrayList<ListItem>();
 				for (XWPFParagraph par : paragraphs) {
-					items.add(new ListItem(ParagraphParser.parseDocx(par)));
+					items.add(new ListItem(ParagraphParser.parse(par)));
 				}
 				block = new ListBlock(items);
 

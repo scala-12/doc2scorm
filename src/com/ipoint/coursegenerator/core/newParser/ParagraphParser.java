@@ -152,7 +152,7 @@ public class ParagraphParser extends AbstractParser {
 	 *            Paragraph with text and images
 	 * @return {@link ParagraphBlock}
 	 */
-	public static ParagraphBlock parseDocx(XWPFParagraph paragraph) {
+	public static ParagraphBlock parse(XWPFParagraph paragraph) {
 		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
 		List<CTOMath> formuls = paragraph.getCTP().getOMathList();
 
@@ -165,9 +165,9 @@ public class ParagraphParser extends AbstractParser {
 				if (runList == null) {
 					block = new TextParser().parseDocx(formuls.get(k++));
 				} else if (runList.get(0) instanceof XWPFHyperlinkRun) {
-					block = HyperlinkParser.parseDocx(runList);
+					block = HyperlinkParser.parse(runList);
 				} else {
-					block = TextParser.parseDocx(runList);
+					block = TextParser.parse(runList);
 				}
 
 				itemsOfParagraph.add(new ParagraphItem(block));

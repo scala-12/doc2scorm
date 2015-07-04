@@ -20,7 +20,7 @@ public class HyperlinkParser extends TextParser {
 	 * 
 	 * @return {@link HyperlinkBlock}
 	 */
-	public static HyperlinkBlock parseDocx(List<XWPFRun> hyperRuns) {
+	public static HyperlinkBlock parse(List<XWPFRun> hyperRuns) {
 		if (hyperRuns != null) {
 			if (!hyperRuns.isEmpty()) {
 				XWPFHyperlinkRun link = (XWPFHyperlinkRun) hyperRuns.get(0);
@@ -33,7 +33,7 @@ public class HyperlinkParser extends TextParser {
 					url = url.concat("#").concat(link.getAnchor());
 				}
 
-				return new HyperlinkBlock(TextParser.parseDocx(hyperRuns)
+				return new HyperlinkBlock(TextParser.parse(hyperRuns)
 						.getItems(), url);
 			}
 		}
