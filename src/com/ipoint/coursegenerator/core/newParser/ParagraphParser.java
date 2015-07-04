@@ -12,12 +12,10 @@ import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
- * Parsing paragraph whic includes tables, text, images, hyperlinks, list - is
- * an analogue paragraph in real life
+ * Parsing to {@link ParagraphBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -25,16 +23,16 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 public class ParagraphParser extends AbstractParser {
 
 	/**
-	 * Parsing docx paragraph on pieces - simple text and hyperlink
+	 * Parsing {@link XWPFParagraph} on pieces - simple text and hyperlink
 	 * 
 	 * @param paragraph
 	 *            Paragraph for parsing
-	 * @return List of text and hyperlink
+	 * @return List of text and hyperlink ({@link XWPFRun})
 	 */
 	private static List<List<XWPFRun>> preParseParagraphOnPieces(
 			XWPFParagraph paragraph) {
 		ArrayList<List<XWPFRun>> runBlocks = new ArrayList<List<XWPFRun>>();
-		
+
 		ArrayList<Integer> formula = new ArrayList<Integer>();
 		if (!paragraph.getCTP().getOMathList().isEmpty()) {
 			Node node = paragraph.getCTP().getDomNode().getChildNodes().item(0);
@@ -46,10 +44,9 @@ public class ParagraphParser extends AbstractParser {
 				}
 			}
 		}
-		
-		Integer k = (formula.isEmpty()) ? null
-				: 0; 
-		
+
+		Integer k = (formula.isEmpty()) ? null : 0;
+
 		List<XWPFRun> runs = paragraph.getRuns();
 		for (int i = 0; i < runs.size(); i++) {
 			XWPFRun run = runs.get(i);
@@ -64,35 +61,36 @@ public class ParagraphParser extends AbstractParser {
 					// waiting
 				}
 			}
-			
+
 			if (k != null) {
 				Integer start = i;
-				
+
 				while (start != null) {
 					runBlocks.add(runs.subList(start, formula.get(k)));
 					start = formula.get(k);
 					runBlocks.add(null);
-					for (; (k < formula.size() - 1) && (formula.get(k) != formula.get(k + 1)); k++) {
+					for (; (k < formula.size() - 1)
+							&& (formula.get(k) != formula.get(k + 1)); k++) {
 						runBlocks.add(null);
 					}
-					
+
 					if ((formula.get(k) >= last) || (k <= (formula.size() - 1))) {
 						start = null;
 					}
 				}
-				
+
 				runBlocks.add(runs.subList(formula.get(k), last));
 			} else {
 				runBlocks.add(runs.subList(i, last));
 			}
-			
+
 			i = last - 1;
 		}
 
 		return runBlocks;
 	}
 
-	//TODO: check method which below 
+	// TODO: check method which below
 	/**
 	 * Checking that is paragraph list item
 	 * 
@@ -147,30 +145,31 @@ public class ParagraphParser extends AbstractParser {
 	}
 
 	/**
-	 * Parse docx Paragraph to Paragraph block which includes only text
+	 * Parse to {@link ParagraphBlock} which includes only text and images from
+	 * {@link XWPFParagraph}
 	 * 
 	 * @param paragraph
-	 *            Text paragraph
-	 * @return Paragraph block
+	 *            Paragraph with text and images
+	 * @return {@link ParagraphBlock}
 	 */
-	public ParagraphBlock parseDocx(XWPFParagraph paragraph) {
-		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();		
+	public static ParagraphBlock parseDocx(XWPFParagraph paragraph) {
+		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
 		List<CTOMath> formuls = paragraph.getCTP().getOMathList();
-		
+
 		if (paragraph != null) {
 			// is text
 			int k = 0;
 			for (List<XWPFRun> runList : preParseParagraphOnPieces(paragraph)) {
 				TextBlock block = null;
-				
+
 				if (runList == null) {
 					block = new TextParser().parseDocx(formuls.get(k++));
 				} else if (runList.get(0) instanceof XWPFHyperlinkRun) {
-					block = new HyperlinkParser().parseDocx(runList);
+					block = HyperlinkParser.parseDocx(runList);
 				} else {
-					block = new TextParser().parseDocx(runList);
+					block = TextParser.parseDocx(runList);
 				}
-				
+
 				itemsOfParagraph.add(new ParagraphItem(block));
 			}
 		}

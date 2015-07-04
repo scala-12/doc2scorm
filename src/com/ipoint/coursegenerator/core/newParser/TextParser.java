@@ -33,11 +33,12 @@ public class TextParser extends AbstractParser {
 		return new TextBlock(block);
 	}
 
-	public TextBlock parseDocx(List<XWPFRun> runs) {
-		ArrayList<AbstractTextItem> block = null;
+	public static TextBlock parseDocx(List<XWPFRun> runs) {
+		ArrayList<AbstractTextItem> blockItems = null;
+		
 		if (runs != null) {
 			if (!runs.isEmpty()) {
-				block = new ArrayList<AbstractTextItem>();
+				blockItems = new ArrayList<AbstractTextItem>();
 
 				for (XWPFRun run : runs) {
 					if (run.toString().isEmpty()) {
@@ -103,15 +104,15 @@ public class TextParser extends AbstractParser {
 							}
 						}
 
-						block.add(new ImageOnlyItem(pictureData));
+						blockItems.add(new ImageOnlyItem(pictureData));
 					} else {
-						block.add(new TextOnlyItem(run));
+						blockItems.add(new TextOnlyItem(run));
 					}
 				}
 			}
 		}
 
-		return (block.isEmpty()) ? null : new TextBlock(block);
+		return (blockItems.isEmpty()) ? null : new TextBlock(blockItems);
 	}
 
 }

@@ -8,16 +8,29 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
 
+/**
+ * Parsing to {@link ListBlock}
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class ListParser extends AbstractParser {
 
-	public ListBlock parseDocx(List<XWPFParagraph> paragraphs) {
+	/**
+	 * Parsing to {@link ListBlock} from list of {@link XWPFParagraph}
+	 * 
+	 * @param paragraphs
+	 *            Paragraphs as items of list
+	 * @return {@link ListBlock}
+	 */
+	public static ListBlock parseDocx(List<XWPFParagraph> paragraphs) {
 		ListBlock block = null;
 
 		if (paragraphs != null) {
 			if (!paragraphs.isEmpty()) {
 				ArrayList<ListItem> items = new ArrayList<ListItem>();
 				for (XWPFParagraph par : paragraphs) {
-					items.add(new ListItem(new ParagraphParser().parseDocx(par)));
+					items.add(new ListItem(ParagraphParser.parseDocx(par)));
 				}
 				block = new ListBlock(items);
 

@@ -12,11 +12,34 @@ import com.ipoint.coursegenerator.core.courseModel.CoursePage;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHeaderBlock;
 
+/**
+ * Class for parsing to {@link CourseModel}
+ * 
+ * @author Kalashnikov Vladislav
+ *
+ */
 public class CourseModelParser {
 
-	public static CourseModel parse(XWPFDocument document, String courseName) {
+	/**
+	 * Parsing to {@link CourseModel} from {@link XWPFDocument}
+	 * 
+	 * @param document
+	 *            Course as document MS Word
+	 * @param courseName
+	 *            Course name
+	 * @param maxHeaderLevel
+	 *            Max level of header that is paragraph. Max value is 1 that
+	 *            first level of header. If this value is no more than 1 then
+	 *            first level
+	 * @return {@link CourseModel} of course
+	 */
+	public static CourseModel parse(XWPFDocument document, String courseName,
+			Integer maxHeaderLevel) {
 		CourseModel courseModel = new CourseModel(courseName);
+		int maxHead = (maxHeaderLevel == null) ? 1 : ((maxHeaderLevel < 1) ? 1
+				: maxHeaderLevel);
 
 		// map for document tree
 		ArrayList<Integer> levelMap = new ArrayList<Integer>();
@@ -30,75 +53,67 @@ public class CourseModelParser {
 			Integer headLevel = null;
 			if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 				// This is text paragraph: text, image or list
-
-				// element docx as paragraph with runs
 				XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 
 				if (!paragraph.getRuns().isEmpty()) {
-
 					// search header
 					if (paragraph.getStyleID() != null) {
 						headLevel = getNumberOfHeader(paragraph.getStyleID());
 						if (headLevel != null) {// This it is header
-							if (levelMap.size() == headLevel) {
-								// level not changed - go to next element
-								levelMap.set(levelMap.size() - 1,
-										levelMap.get(levelMap.size() - 1) + 1);
-							} else {
-								// have new level
-								if (levelMap.size() > headLevel) {
-									// up level
-									ArrayList<Integer> newMap = new ArrayList<Integer>();
-									newMap.addAll(levelMap.subList(0,
-											headLevel - 1));
-									newMap.add(levelMap.get(headLevel - 1) + 1);
-									levelMap = newMap; // remove extra levels
+							if (headLevel <= maxHead) {
+								if (levelMap.size() == headLevel) {
+									// level not changed - go to next element
+									levelMap.set(
+											levelMap.size() - 1,
+											levelMap.get(levelMap.size() - 1) + 1);
 								} else {
-									// down level
-									while (levelMap.size() < headLevel) {
-										levelMap.add(0); // create new levels
+									// have new level
+									if (levelMap.size() > headLevel) {
+										// up level
+										ArrayList<Integer> newMap = new ArrayList<Integer>();
+										newMap.addAll(levelMap.subList(0,
+												headLevel - 1));
+										newMap.add(levelMap.get(headLevel - 1) + 1);
+										levelMap = newMap; // remove extra
+															// levels
+									} else {
+										// down level
+										while (levelMap.size() < headLevel) {
+											levelMap.add(0); // create new
+																// levels
+										}
 									}
 								}
-							}
 
-							// search node of level in document tree
-							CourseTreeNode treeNode = null;
-							for (Integer lvl : levelMap) {
-								if (treeNode == null) {
-									// start node
-									if (courseModel.getNode(lvl) == null) {
-										// new node
-										courseModel.addNode(new CourseTreeNode(
-												paragraph.getText()));
+								// search node of level in document tree
+								CourseTreeNode treeNode = null;
+								for (Integer lvl : levelMap) {
+									if (treeNode == null) {
+										// start node
+										if (courseModel.getNode(lvl) == null) {
+											// new node
+											courseModel
+													.addNode(new CourseTreeNode(
+															paragraph.getText()));
+										}
+										treeNode = courseModel.getNode(lvl);
+									} else {
+										// other nodes
+										if (treeNode.getNode(lvl) == null) {
+											// new node
+											treeNode.addNode(new CourseTreeNode(
+													paragraph.getText()));
+										}
+										treeNode = treeNode.getNodes().get(lvl);
 									}
-									treeNode = courseModel.getNode(lvl);
-								} else {
-									// other nodes
-									if (treeNode.getNode(lvl) == null) {
-										// new node
-										treeNode.addNode(new CourseTreeNode(
-												paragraph.getText()));
-									}
-									treeNode = treeNode.getNodes().get(lvl);
 								}
-							}
 
-							if (page.getBlocks().isEmpty()) {
-								if (levelMap.size() > 1) {
-									CourseTreeNode node = courseModel
-											.getNode(levelMap.get(0));
-									for (Integer lvl : levelMap.subList(1,
-											levelMap.size() - 1)) {
-										node = node.getNodes().get(lvl);
-									}
-									if (page == node.getPage()) {
-										node.setPage(null);
-									}
-									treeNode.setPage(page);
+								if (!page.getBlocks().isEmpty()) {
+									// new page because prev node have old page
+									page = new CoursePage();
 								}
-							} else {
-								// adding the page to this node
-								page = new CoursePage();
+
+								// set page to node
 								treeNode.setPage(page);
 							}
 						}
@@ -114,6 +129,14 @@ public class CourseModelParser {
 				if (paragraphBlock instanceof ListBlock) {
 					i += ((ListBlock) paragraphBlock).getItems().size() - 1;
 				}
+
+				if (paragraphBlock != null) {
+					page.addBlock(paragraphBlock);
+				}
+			} else if (headLevel > maxHead) {
+				ParagraphHeaderBlock paragraphBlock = ParagraphHeaderParser
+						.parseDocx((XWPFParagraph) document.getBodyElements()
+								.get(i), headLevel - maxHead);
 
 				if (paragraphBlock != null) {
 					page.addBlock(paragraphBlock);
