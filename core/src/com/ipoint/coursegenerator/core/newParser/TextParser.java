@@ -33,7 +33,7 @@ public class TextParser extends AbstractParser {
 		return new TextBlock(block);
 	}
 
-	public static TextBlock parseDocx(List<XWPFRun> runs) {
+	public static TextBlock parse(List<XWPFRun> runs) {
 		ArrayList<AbstractTextItem> blockItems = null;
 		
 		if (runs != null) {

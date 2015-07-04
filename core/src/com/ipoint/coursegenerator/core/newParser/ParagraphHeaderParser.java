@@ -6,10 +6,10 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHeaderBlock;
 
 public class ParagraphHeaderParser extends ParagraphParser {
 
-	public static ParagraphHeaderBlock parseDocx(XWPFParagraph paragraph,
+	public static ParagraphHeaderBlock parse(XWPFParagraph paragraph,
 			Integer level) {
 		ParagraphHeaderBlock block = new ParagraphHeaderBlock(ParagraphParser
-				.parseDocx(paragraph).getItems(), level);
+				.parse(paragraph).getItems(), level);
 
 		return block;
 	}

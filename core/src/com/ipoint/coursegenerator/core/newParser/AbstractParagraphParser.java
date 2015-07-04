@@ -43,14 +43,14 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 					if (size == null) {
 						// is simple text with image
 						block = ParagraphParser
-								.parseDocx((XWPFParagraph) bodyElements.get(0));
+								.parse((XWPFParagraph) bodyElements.get(0));
 					} else {
 						// It is list
 						ArrayList<XWPFParagraph> listItems = new ArrayList<XWPFParagraph>();
 						for (int j = 0; j < size; j++) {
 							listItems.add((XWPFParagraph) bodyElements.get(j));
 						}
-						block = ListParser.parseDocx(listItems);
+						block = ListParser.parse(listItems);
 					}
 				} else if (paragraph.getCTP() != null) {
 					// TODO: formula as paragraph
@@ -62,7 +62,7 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 				}
 			} else if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.TABLE)) {
-				block = new TableParser().parseDocx((XWPFTable) bodyElements
+				block = new TableParser().parse((XWPFTable) bodyElements
 						.get(0));
 			}
 		}
