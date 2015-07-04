@@ -71,20 +71,16 @@ public class CoursePage implements Convertable {
 	 *            Is parent of page. If there is null then return false
 	 * @return If successful then true
 	 */
-	public boolean setParent(CourseTreeNode node) {
-		if (node == null) {
-			return false;
-		} else if (node != this.parentNode) {
+	public void setParent(CourseTreeNode node) {
+		if (node != this.parentNode) {
 			// because class CourseTreeNode have call of this method
 			// method that below need for set link between page and node
-			if (node.getPage() != null) {
-				node.getPage().setParent(null);
+			if (this.parentNode != null) {
+				this.parentNode.setPage(null);
 			}
 			this.parentNode = node;
 			node.setPage(this);
 		}
-		
-		return true;		
 	}
 
 	public CourseTreeNode getParent() {

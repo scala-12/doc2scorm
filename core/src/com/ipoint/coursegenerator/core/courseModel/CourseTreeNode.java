@@ -23,10 +23,10 @@ public class CourseTreeNode extends CourseTree {
 	 */
 	public CourseTreeNode(CoursePage page, String title) {
 		super();
-		this.setPage(page);
 		if (!this.setTitle(title)) {
 			// TODO:exception
 		}
+		this.setPage(page);
 	}
 
 	/**
@@ -65,14 +65,16 @@ public class CourseTreeNode extends CourseTree {
 
 	public void setPage(CoursePage page) {
 		if (page != null) {
-			if (page.getParent() != this) {
+			if ((page.getParent() != this) || (page.getParent() == null)) {
 				// because class CoursePage have call of this method
 				// method that below need for set link between page and node
 				page.setParent(this);
 			}
 		}
-		if (this.page != null) {
-			this.page.setParent(null);
+		if (this.page != page) {
+			if ((this.page != null) && (page != null)) {
+				this.page.setParent(null);
+			}
 		}
 		this.page = page;
 	}
