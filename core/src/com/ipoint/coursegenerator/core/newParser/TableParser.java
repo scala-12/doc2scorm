@@ -2,9 +2,6 @@ package com.ipoint.coursegenerator.core.newParser;
 
 import java.util.ArrayList;
 
-import org.apache.poi.xwpf.usermodel.BodyElementType;
-import org.apache.poi.xwpf.usermodel.IBodyElement;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -17,7 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
 
 /**
- * Parsing paragraph which includes only table
+ * Parsing to {@link TableBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -70,11 +67,11 @@ public class TableParser extends AbstractParser {
 	}
 
 	/**
-	 * Parse Table paragraph to Table Block
+	 * Parse to {@link TableBlock} from {@link XWPFTable}
 	 * 
 	 * @param table
-	 *            Table paragraph
-	 * @return Table block
+	 *            Table for parsing
+	 * @return {@link TableBlock}
 	 */
 	public TableBlock parseDocx(XWPFTable table) {
 		ArrayList<TableItem> block = new ArrayList<TableItem>();
@@ -86,7 +83,7 @@ public class TableParser extends AbstractParser {
 			for (int j = 0; j < tableRow.getTableCells().size(); j++) {
 				XWPFTableCell tableCell = tableRow.getCell(j);
 				TableCellItem cell = new TableCellItem();
-				
+
 				if (tableCell.getCTTc().getTcPr().getVMerge() != null) {
 					if (tableCell.getCTTc().getTcPr().getVMerge().getVal() == STMerge.RESTART) {
 						cell.setRowSpan(getRowSpan(table, i, j));
@@ -100,17 +97,19 @@ public class TableParser extends AbstractParser {
 						cell.setColSpan(tableCell.getCTTc().getTcPr()
 								.getGridSpan().getVal().intValue());
 					}
-					
+
 					if (!tableCell.getBodyElements().isEmpty()) {
 						ArrayList<AbstractParagraphBlock> blocks = new ArrayList<AbstractParagraphBlock>();
 						for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
 							AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
-									.parse(tableCell.getBodyElements().subList(k,
+									.parse(tableCell.getBodyElements().subList(
+											k,
 											tableCell.getBodyElements().size()));
 
 							if (paragraphBlock != null) {
 								if (paragraphBlock instanceof ListBlock) {
-									k += ((ListBlock) paragraphBlock).getItems().size() - 1;
+									k += ((ListBlock) paragraphBlock)
+											.getItems().size() - 1;
 								}
 
 								blocks.add(paragraphBlock);
@@ -120,7 +119,7 @@ public class TableParser extends AbstractParser {
 						cell.setValue(blocks);
 					}
 				}
-				
+
 				cells.add(cell);
 			}
 			block.add(new TableItem(cells));

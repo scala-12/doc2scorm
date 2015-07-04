@@ -181,8 +181,9 @@ public class Parser {
 		}
 		directory.mkdirs();
 		XWPFDocument doc = new XWPFDocument(stream);
+
 		CourseModel courseModel = CourseModelParser.parse((XWPFDocument) doc,
-				courseName);
+				courseName, Integer.valueOf(headerLevel));
 
 		this.createImsManifestFile(courseName);
 

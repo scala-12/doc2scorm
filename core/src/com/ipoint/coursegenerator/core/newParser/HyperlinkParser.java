@@ -8,7 +8,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
 
 /**
- * Parsing paragraph which includes only text and images as hyperlink
+ * Parsing to {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -16,13 +16,13 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
 public class HyperlinkParser extends TextParser {
 
 	/**
-	 * Parse runs with hyperlink to Hyperlink block
+	 * Parsing to {@link HyperlinkBlock} from list of {@link XWPFRun}
+	 * 
+	 * @return {@link HyperlinkBlock}
 	 */
-	public HyperlinkBlock parseDocx(List<XWPFRun> hyperRuns) {
+	public static HyperlinkBlock parseDocx(List<XWPFRun> hyperRuns) {
 		if (hyperRuns != null) {
-			if (hyperRuns.isEmpty()) {
-				return null;
-			} else {
+			if (!hyperRuns.isEmpty()) {
 				XWPFHyperlinkRun link = (XWPFHyperlinkRun) hyperRuns.get(0);
 				String url = (link.getHyperlinkId() == null) ? new String()
 						: link.getDocument()
@@ -33,12 +33,12 @@ public class HyperlinkParser extends TextParser {
 					url = url.concat("#").concat(link.getAnchor());
 				}
 
-				return new HyperlinkBlock(new TextParser().parseDocx(hyperRuns)
+				return new HyperlinkBlock(TextParser.parseDocx(hyperRuns)
 						.getItems(), url);
 			}
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
 }
