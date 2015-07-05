@@ -8,14 +8,15 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 
 /**
- * Text block which may include {@link AbstractTextItem}
+ * This block is analogue paragraph in life. Text block which may include
+ * {@link AbstractTextItem}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class TextBlock extends AbstractBlock {
+public class ParagraphTextBlock extends AbstractBlock {
 
-	public TextBlock(List<AbstractTextItem> runs) {
+	public ParagraphTextBlock(List<AbstractTextItem> runs) {
 		super(runs);
 	}
 
@@ -25,7 +26,7 @@ public class TextBlock extends AbstractBlock {
 	}
 
 	/**
-	 * @return html-element span
+	 * @return html-element p
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
@@ -34,23 +35,19 @@ public class TextBlock extends AbstractBlock {
 
 	/**
 	 * 
-	 * @see TextBlock#toHtml(Document)
+	 * @see ParagraphTextBlock#toHtml(Document)
 	 * 
-	 * @return html-element span that may includes tags "u" and "font" with
-	 *         color parameter
+	 * @return html-element p that may includes tags "u" and "font" with color
+	 *         parameter
 	 */
 	protected Element toHtml(Document creatorTags, boolean isHyperlink) {
-		Element span = creatorTags.createElement("span");
+		Element paragraph = creatorTags.createElement("p");
 
-		if (this.getItems().size() == 1) {
-			span = this.getItems().get(0).toHtml(creatorTags, isHyperlink);
-		} else {
-			for (AbstractTextItem run : this.getItems()) {
-				span.appendChild(run.toHtml(creatorTags, isHyperlink));
-			}
+		for (AbstractTextItem run : this.getItems()) {
+			paragraph.appendChild(run.toHtml(creatorTags, isHyperlink));
 		}
 
-		return span;
+		return paragraph;
 	}
 
 }

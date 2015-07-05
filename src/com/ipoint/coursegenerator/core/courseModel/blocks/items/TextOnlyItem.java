@@ -7,10 +7,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
 
 /**
- * Item for {@link TextBlock}. This item includes text and him properties.
+ * Item for {@link ParagraphTextBlock}. This item includes text and him properties.
  * 
  * @author Kalashnikov Vladislav
  *

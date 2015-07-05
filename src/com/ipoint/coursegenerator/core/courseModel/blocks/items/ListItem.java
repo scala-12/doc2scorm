@@ -3,12 +3,12 @@ package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
 
 /**
- * Item includes {@link HyperlinkBlock} and {@link TextBlock}
+ * Item includes {@link ParagraphHyperlinkBlock} and {@link ParagraphTextBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -52,6 +52,7 @@ public class ListItem extends AbstractItem {
 	public Element toHtml(Document creatorTags) {
 		Element listItem = creatorTags.createElement("li");
 		listItem.appendChild(this.getValue().toHtml(creatorTags));
+
 		return listItem;
 	}
 

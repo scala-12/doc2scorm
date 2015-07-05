@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
@@ -41,16 +41,13 @@ public class ParagraphHeaderBlock extends ParagraphBlock {
 		Element header = creatorTags.createElement("h".concat(String
 				.valueOf(this.getLevel() + 1)));
 
-		if (this.getItems().size() == 1) {
-			NodeList childs = this.getItems().get(0).toHtml(creatorTags)
-					.getChildNodes();
-			for (int i = 0; i < childs.getLength(); ++i) {
-				header.appendChild(childs.item(i));
+		for (ParagraphItem item : this.getItems()) {
+			Node text = item.toHtml(creatorTags).getFirstChild();
+			while (text.hasChildNodes()) {
+				// remove all tags for text style - only text
+				text = text.getFirstChild();
 			}
-		} else {
-			for (ParagraphItem item : this.getItems()) {
-				header.appendChild(item.toHtml(creatorTags));
-			}
+			header.appendChild(text);
 		}
 
 		return header;

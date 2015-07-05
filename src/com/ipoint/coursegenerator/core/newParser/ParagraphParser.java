@@ -11,7 +11,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
@@ -160,7 +160,7 @@ public class ParagraphParser extends AbstractParser {
 			// is text
 			int k = 0;
 			for (List<XWPFRun> runList : preParseParagraphOnPieces(paragraph)) {
-				TextBlock block = null;
+				ParagraphTextBlock block = null;
 
 				if (runList == null) {
 					block = new TextParser().parseDocx(formuls.get(k++));
