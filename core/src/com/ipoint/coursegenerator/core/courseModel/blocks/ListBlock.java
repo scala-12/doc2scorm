@@ -8,8 +8,8 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
 
 /**
- * List block which may includes several {@link TextBlock} or
- * {@link HyperlinkBlock} as one item
+ * List block which may includes several {@link ParagraphTextBlock} or
+ * {@link ParagraphHyperlinkBlock} as one item
  * 
  * @author Kalashnikov Vladislav
  *

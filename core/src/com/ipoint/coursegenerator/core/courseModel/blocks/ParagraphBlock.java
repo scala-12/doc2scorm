@@ -8,8 +8,8 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
- * This block is an analogue of text paragraph. These includes {@link TextBlock}
- * , {@link HyperlinkBlock}
+ * This block is an analogue of text paragraph. These includes
+ * {@link ParagraphTextBlock} , {@link ParagraphHyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -30,13 +30,7 @@ public class ParagraphBlock extends AbstractParagraphBlock {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element paragraph = creatorTags.createElement("p");
-
-		for (ParagraphItem item : this.getItems()) {
-			paragraph.appendChild(item.toHtml(creatorTags));
-		}
-
-		return paragraph;
+		return this.getItems().get(0).toHtml(creatorTags);
 	}
 
 }

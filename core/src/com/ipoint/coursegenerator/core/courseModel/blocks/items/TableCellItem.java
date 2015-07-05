@@ -7,13 +7,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 
 /**
- * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or
- * {@link TableBlock} blocks or null
+ * This item may includes {@link ParagraphTextBlock},
+ * {@link ParagraphHyperlinkBlock} or {@link TableBlock} blocks or null
  * 
  * @author Kalashnikov Vladislav
  *
