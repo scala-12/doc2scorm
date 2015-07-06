@@ -13,7 +13,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class FormulaBlock extends AbstractParagraphBlock {
+public class FormulaBlock extends AbstractTextualParagraphBlock {
 
 	public FormulaBlock(FormulaItem item) {
 		super(toList(item));

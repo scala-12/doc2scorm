@@ -3,7 +3,6 @@ package com.ipoint.coursegenerator.core.newParser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
@@ -11,7 +10,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
@@ -90,60 +89,6 @@ public class ParagraphParser extends AbstractParser {
 		return runBlocks;
 	}
 
-	// TODO: check method which below
-	/**
-	 * Checking that is paragraph list item
-	 * 
-	 * @param par
-	 *            Paragraph
-	 * @return true if this paragraph is item of list
-	 */
-	private static boolean isListElement(XWPFParagraph par) {
-		if ((par.getStyleID() != null) && (par.getNumID() != null)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Search end of list
-	 * 
-	 * @param start
-	 *            Number of first item in list
-	 * @param head
-	 *            Item in list with number
-	 * @return Count of list items of list
-	 */
-	public static Integer listSize(int start, XWPFParagraph head,
-			List<IBodyElement> elements) {
-		int size = 1;
-		if (isListElement(head)) {
-			if (head == elements.get(start)) {
-				int listNumber = head.getNumID().intValue();
-				int listLevel = head.getNumIlvl().intValue();
-				boolean isAtomList = true;
-				for (int i = start + 1; i < elements.size() && isAtomList; i++) {
-					XWPFParagraph par = (XWPFParagraph) elements.get(i);
-					isAtomList = ((par.getNumID() != null));
-					if (isAtomList) {
-						if ((par.getNumID().intValue() == listNumber)
-								&& (par.getNumIlvl().intValue() == listLevel)) {
-							size++;
-						} else {
-							isAtomList = false;
-						}
-					}
-				}
-				return size;
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
-
 	/**
 	 * Parse to {@link ParagraphBlock} which includes only text and images from
 	 * {@link XWPFParagraph}
@@ -160,7 +105,7 @@ public class ParagraphParser extends AbstractParser {
 			// is text
 			int k = 0;
 			for (List<XWPFRun> runList : preParseParagraphOnPieces(paragraph)) {
-				ParagraphTextBlock block = null;
+				TextBlock block = null;
 
 				if (runList == null) {
 					block = new TextParser().parseDocx(formuls.get(k++));

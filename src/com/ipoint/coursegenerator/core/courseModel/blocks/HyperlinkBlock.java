@@ -8,16 +8,16 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 
 /**
- * Hyperlink block. This block is {@link ParagraphTextBlock} with hyperlink
+ * Hyperlink block. This block is {@link TextBlock} with hyperlink
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphHyperlinkBlock extends ParagraphTextBlock {
+public class HyperlinkBlock extends TextBlock {
 
 	private String url;
 
-	public ParagraphHyperlinkBlock(List<AbstractTextItem> items, String url) {
+	public HyperlinkBlock(List<AbstractTextItem> items, String url) {
 		super(items);
 		if (!this.setUrl(url)) {
 			// TODO: Exception

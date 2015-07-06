@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
 
 import schemasMicrosoftComVml.CTImageData;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ImageOnlyItem;
@@ -26,14 +26,14 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.TextOnlyItem;
  */
 public class TextParser extends AbstractParser {
 	
-	public ParagraphTextBlock parseDocx(CTOMath formula) {
+	public TextBlock parseDocx(CTOMath formula) {
 		ArrayList<AbstractTextItem> block = new ArrayList<AbstractTextItem>();
 		block.add(new FormulaItem(formula));
 		
-		return new ParagraphTextBlock(block);
+		return new TextBlock(block);
 	}
 
-	public static ParagraphTextBlock parse(List<XWPFRun> runs) {
+	public static TextBlock parse(List<XWPFRun> runs) {
 		ArrayList<AbstractTextItem> blockItems = null;
 		
 		if (runs != null) {
@@ -112,7 +112,7 @@ public class TextParser extends AbstractParser {
 			}
 		}
 
-		return (blockItems.isEmpty()) ? null : new ParagraphTextBlock(blockItems);
+		return (blockItems.isEmpty()) ? null : new TextBlock(blockItems);
 	}
 
 }

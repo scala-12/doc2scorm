@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractTextualParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
@@ -133,14 +134,23 @@ public class CoursePage implements Convertable {
 		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
 
 		for (AbstractParagraphBlock block : blocks) {
-			if (block instanceof ParagraphBlock) {
-				images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
-
-			} else if (block instanceof ListBlock) {
-				for (ListItem listItem : ((ListBlock) block).getItems()) {
-					images.addAll(this.getImagesOfParagraph(listItem.getValue()));
+			if (block instanceof AbstractTextualParagraphBlock) {
+				if (block instanceof ParagraphBlock) {
+					images.addAll(this
+							.getImagesOfParagraph((ParagraphBlock) block));
+				} else if (block instanceof ListBlock) {
+					for (ListItem listItem : ((ListBlock) block).getItems()) {
+						if (listItem.getValue() instanceof ParagraphBlock) {
+							images.addAll(this
+									.getImagesOfParagraph((ParagraphBlock) listItem
+											.getValue()));
+						} else if (listItem.getValue() instanceof ListBlock) {
+							ArrayList<AbstractParagraphBlock> listBlock = new ArrayList<AbstractParagraphBlock>();
+							listBlock.add((ListBlock) listItem.getValue());
+							images.addAll(this.getImagesRecursive(listBlock));
+						}
+					}
 				}
-
 			} else if (block instanceof TableBlock) {
 				for (TableItem row : ((TableBlock) block).getItems()) {
 					for (TableCellItem cell : row.getValue()) {

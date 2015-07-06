@@ -3,25 +3,25 @@ package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.TextBlock;
 
 /**
- * This item is other block: {@link ParagraphTextBlock} or
- * {@link ParagraphHyperlinkBlock}
+ * This item is other block: {@link TextBlock} or
+ * {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
 public class ParagraphItem extends AbstractItem {
 
-	private ParagraphTextBlock value;
+	private TextBlock value;
 
-	public ParagraphItem(ParagraphTextBlock textBlock) {
+	public ParagraphItem(TextBlock textBlock) {
 		this.setValue(textBlock);
 	}
 
-	public ParagraphTextBlock getValue() {
+	public TextBlock getValue() {
 		return value;
 	}
 
@@ -32,7 +32,7 @@ public class ParagraphItem extends AbstractItem {
 	 *            Text as block. If there is null then return false
 	 * @return If successful then true
 	 */
-	public boolean setValue(ParagraphTextBlock textBlock) {
+	public boolean setValue(TextBlock textBlock) {
 		if (textBlock == null) {
 			return false;
 		} else {
@@ -42,8 +42,8 @@ public class ParagraphItem extends AbstractItem {
 	}
 
 	/**
-	 * @see ParagraphTextBlock#toHtml(Document)
-	 * @see ParagraphHyperlinkBlock#toHtml(Document)
+	 * @see TextBlock#toHtml(Document)
+	 * @see HyperlinkBlock#toHtml(Document)
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
