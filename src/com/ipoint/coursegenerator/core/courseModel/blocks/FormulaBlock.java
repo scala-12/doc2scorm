@@ -27,7 +27,7 @@ public class FormulaBlock extends AbstractTextualParagraphBlock {
 
 	@Override
 	public Element toHtml(Document creatorTags) {
-		// TODO Auto-generated method stub
+		// TODO to image
 		return null;
 	}
 }
