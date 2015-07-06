@@ -3,31 +3,31 @@ package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractTextualParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphTextBlock;
 
 /**
- * Item includes {@link ParagraphHyperlinkBlock} and {@link ParagraphTextBlock}
+ * Item includes {@link ParagraphBlock} or {@link ListBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
 public class ListItem extends AbstractItem {
 
-	private ParagraphBlock value;
+	private AbstractTextualParagraphBlock value;
 
 	/**
 	 * @param paragraph
 	 *            Paragraph. There cannot be null
 	 */
-	public ListItem(ParagraphBlock paragraph) {
+	public ListItem(AbstractTextualParagraphBlock paragraph) {
 		if (!this.setValue(paragraph)) {
 			// TODO:exception
 		}
 	}
 
-	public ParagraphBlock getValue() {
+	public AbstractTextualParagraphBlock getValue() {
 		return this.value;
 	}
 
@@ -36,7 +36,7 @@ public class ListItem extends AbstractItem {
 	 *            Paragraph. If there is null then return false
 	 * @return if successful then true
 	 */
-	public boolean setValue(ParagraphBlock block) {
+	public boolean setValue(AbstractTextualParagraphBlock block) {
 		if (block == null) {
 			return false;
 		} else {

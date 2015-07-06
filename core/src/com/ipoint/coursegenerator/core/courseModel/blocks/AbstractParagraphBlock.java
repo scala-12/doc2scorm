@@ -5,8 +5,8 @@ import java.util.List;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractItem;
 
 /**
- * Abstract paragraph block. These may be {@link ParagraphBlock},
- * {@link TableBlock} or {@link ListBlock}
+ * Abstract paragraph block. These may be {@link TableBlock} or
+ * {@link AbstractTextualParagraphBlock}
  * 
  * @author Kalashnikov Vladislav
  *

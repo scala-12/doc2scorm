@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HyperlinkBlock;
 
 /**
- * Parsing to {@link ParagraphHyperlinkBlock}
+ * Parsing to {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -16,11 +16,11 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHyperlinkBloc
 public class HyperlinkParser extends TextParser {
 
 	/**
-	 * Parsing to {@link ParagraphHyperlinkBlock} from list of {@link XWPFRun}
+	 * Parsing to {@link HyperlinkBlock} from list of {@link XWPFRun}
 	 * 
-	 * @return {@link ParagraphHyperlinkBlock}
+	 * @return {@link HyperlinkBlock}
 	 */
-	public static ParagraphHyperlinkBlock parse(List<XWPFRun> hyperRuns) {
+	public static HyperlinkBlock parse(List<XWPFRun> hyperRuns) {
 		if (hyperRuns != null) {
 			if (!hyperRuns.isEmpty()) {
 				XWPFHyperlinkRun link = (XWPFHyperlinkRun) hyperRuns.get(0);
@@ -33,7 +33,7 @@ public class HyperlinkParser extends TextParser {
 					url = url.concat("#").concat(link.getAnchor());
 				}
 
-				return new ParagraphHyperlinkBlock(TextParser.parse(hyperRuns)
+				return new HyperlinkBlock(TextParser.parse(hyperRuns)
 						.getItems(), url);
 			}
 		}

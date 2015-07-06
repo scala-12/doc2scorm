@@ -9,12 +9,12 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
 /**
  * This block is an analogue of text paragraph. These includes
- * {@link ParagraphTextBlock} , {@link ParagraphHyperlinkBlock}
+ * {@link TextBlock} , {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractParagraphBlock {
+public class ParagraphBlock extends AbstractTextualParagraphBlock {
 
 	public ParagraphBlock(List<ParagraphItem> items) {
 		super(items);

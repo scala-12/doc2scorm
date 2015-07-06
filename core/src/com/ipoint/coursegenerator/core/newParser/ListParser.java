@@ -29,8 +29,20 @@ public class ListParser extends AbstractParser {
 		if (paragraphs != null) {
 			if (!paragraphs.isEmpty()) {
 				ArrayList<ListItem> items = new ArrayList<ListItem>();
-				for (XWPFParagraph par : paragraphs) {
-					items.add(new ListItem(ParagraphParser.parse(par)));
+				int number = paragraphs.get(0).getNumID().intValue();
+				int level = paragraphs.get(0).getNumIlvl().intValue();
+				for (int i = 0; i < paragraphs.size(); ++i) {
+					XWPFParagraph par = paragraphs.get(i);
+					if ((par.getNumID().intValue() == number)
+							&& (par.getNumIlvl().intValue() > level)) {
+						ArrayList<XWPFParagraph> pars = new ArrayList<XWPFParagraph>();
+						int size = getAtomListSize(i, paragraphs);
+						pars.addAll(paragraphs.subList(i, i + size));
+						items.add(new ListItem(ListParser.parse(pars)));
+						i += size - 1;
+					} else {
+						items.add(new ListItem(ParagraphParser.parse(par)));
+					}
 				}
 				block = new ListBlock(items);
 
@@ -41,6 +53,23 @@ public class ListParser extends AbstractParser {
 		}
 
 		return block;
+	}
+
+	private static int getAtomListSize(int start, List<XWPFParagraph> paragraphs) {
+		int number = paragraphs.get(start).getNumID().intValue();
+		int level = paragraphs.get(start).getNumIlvl().intValue();
+		boolean isAtom = true;
+		int end = start;
+		for (; (end < paragraphs.size()) && isAtom; ++end) {
+			XWPFParagraph par = paragraphs.get(end);
+			isAtom = (number == par.getNumID().intValue())
+					&& (level == par.getNumIlvl().intValue());
+			if (!isAtom) {
+				--end;
+			}
+		}
+
+		return end - start;
 	}
 
 }

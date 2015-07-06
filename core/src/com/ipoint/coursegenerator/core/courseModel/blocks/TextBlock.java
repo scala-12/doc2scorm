@@ -14,9 +14,9 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphTextBlock extends AbstractBlock {
+public class TextBlock extends AbstractBlock {
 
-	public ParagraphTextBlock(List<AbstractTextItem> runs) {
+	public TextBlock(List<AbstractTextItem> runs) {
 		super(runs);
 	}
 
@@ -35,7 +35,7 @@ public class ParagraphTextBlock extends AbstractBlock {
 
 	/**
 	 * 
-	 * @see ParagraphTextBlock#toHtml(Document)
+	 * @see TextBlock#toHtml(Document)
 	 * 
 	 * @return html-element p that may includes tags "u" and "font" with color
 	 *         parameter

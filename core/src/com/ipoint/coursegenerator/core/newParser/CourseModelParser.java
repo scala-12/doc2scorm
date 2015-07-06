@@ -12,7 +12,7 @@ import com.ipoint.coursegenerator.core.courseModel.CoursePage;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphHeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.HeaderBlock;
 
 /**
  * Class for parsing to {@link CourseModel}
@@ -127,14 +127,14 @@ public class CourseModelParser {
 								document.getBodyElements().size()));
 
 				if (paragraphBlock instanceof ListBlock) {
-					i += ((ListBlock) paragraphBlock).getItems().size() - 1;
+					i += ((ListBlock) paragraphBlock).getSize() - 1;
 				}
 
 				if (paragraphBlock != null) {
 					page.addBlock(paragraphBlock);
 				}
 			} else if (headLevel > maxHead) {
-				ParagraphHeaderBlock paragraphBlock = ParagraphHeaderParser
+				HeaderBlock paragraphBlock = ParagraphHeaderParser
 						.parse((XWPFParagraph) document.getBodyElements()
 								.get(i), headLevel - maxHead);
 

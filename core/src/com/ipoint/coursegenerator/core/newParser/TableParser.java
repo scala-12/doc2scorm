@@ -73,7 +73,7 @@ public class TableParser extends AbstractParser {
 	 *            Table for parsing
 	 * @return {@link TableBlock}
 	 */
-	public TableBlock parse(XWPFTable table) {
+	public static TableBlock parse(XWPFTable table) {
 		ArrayList<TableItem> block = new ArrayList<TableItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {

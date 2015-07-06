@@ -8,15 +8,15 @@ import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
 
-public class ParagraphHeaderBlock extends ParagraphBlock {
+public class HeaderBlock extends ParagraphBlock {
 
 	private int level;
 
-	public ParagraphHeaderBlock(List<ParagraphItem> items) {
+	public HeaderBlock(List<ParagraphItem> items) {
 		this(items, null);
 	}
 
-	public ParagraphHeaderBlock(List<ParagraphItem> items, Integer level) {
+	public HeaderBlock(List<ParagraphItem> items, Integer level) {
 		super(items);
 		this.setLevel(level);
 	}
