@@ -6,7 +6,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.items.TextOnlyItem;
 
 public class HeaderBlock extends ParagraphBlock {
 
@@ -41,13 +43,16 @@ public class HeaderBlock extends ParagraphBlock {
 		Element header = creatorTags.createElement("h".concat(String
 				.valueOf(this.getLevel() + 1)));
 
-		for (ParagraphItem item : this.getItems()) {
-			Node text = item.toHtml(creatorTags).getFirstChild();
-			while (text.hasChildNodes()) {
-				// remove all tags for text style - only text
-				text = text.getFirstChild();
+		for (AbstractTextItem item : this.getItems().get(0).getValue()
+				.getItems()) {
+			if (item instanceof TextOnlyItem) {
+				Node text = item.toHtml(creatorTags).getFirstChild();
+				while (text.hasChildNodes()) {
+					// remove all tags for text style - only text
+					text = text.getFirstChild();
+				}
+				header.appendChild(text);
 			}
-			header.appendChild(text);
 		}
 
 		return header;

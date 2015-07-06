@@ -10,7 +10,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.HeaderBlock;
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphHeaderParser extends ParagraphParser {
+public class HeaderParser extends ParagraphParser {
 
 	/**
 	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}

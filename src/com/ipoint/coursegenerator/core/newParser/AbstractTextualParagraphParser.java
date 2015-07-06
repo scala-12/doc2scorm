@@ -16,7 +16,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.items.FormulaItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class AbstractParagraphTextualParser extends AbstractParagraphParser {
+public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 
 	/**
 	 * Parsing from list of {@link IBodyElement} to

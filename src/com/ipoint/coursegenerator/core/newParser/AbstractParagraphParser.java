@@ -31,7 +31,7 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 		if (!bodyElements.isEmpty()) {
 			if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.PARAGRAPH)) {
-				block = AbstractParagraphTextualParser.parse(bodyElements);
+				block = AbstractTextualParagraphParser.parse(bodyElements);
 			} else if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.TABLE)) {
 				block = TableParser.parse((XWPFTable) bodyElements.get(0));
