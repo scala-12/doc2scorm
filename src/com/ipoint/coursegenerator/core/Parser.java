@@ -106,16 +106,15 @@ public class Parser {
 	private void addImagesToManifest(ManifestType manifest, String path,
 			String pageName, List<ImageInfo> images, String resourseId) {
 		ResourceType itemResource = ResourcesProcessor.createResource(manifest,
-				path.concat(pageName).concat(FileWork.HTML_SUFFIX), resourseId);
+				path + pageName + FileWork.HTML_SUFFIX, resourseId);
 
 		ArrayList<String> imagesNames = new ArrayList<String>();
 		for (ImageInfo image : images) {
 			imagesNames.add(image.getImageName());
 		}
 
-		ResourcesProcessor.addFilesToResource(
-				path.concat("img").concat(File.separator), itemResource,
-				imagesNames);
+		ResourcesProcessor.addFilesToResource(path + "img" + File.separator,
+				itemResource, imagesNames);
 	}
 
 	private void addPageToCourse(CourseTreeNode node, String templateDir,
@@ -125,10 +124,10 @@ public class Parser {
 				.appendChild(node.getPage().toHtml(html));
 
 		boolean pageAdded = FileWork.saveHTMLDocument(html, templateDir,
-				coursePath, pagePath, pageName.concat(FileWork.HTML_SUFFIX));
+				coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(),
-					coursePath.concat(pagePath).concat(FileWork.IMAGE_PATH));
+			FileWork.saveImages(node.getPage().getImages(), coursePath
+					+ pagePath + FileWork.IMAGE_PATH);
 		}
 	}
 
@@ -137,12 +136,11 @@ public class Parser {
 			String path, String level, XmlObject parentItem) {
 		int numberOnLevel = 0;
 		String part = (level == null) ? FileWork.HTML_PREFIX
-				: FileWork.HTML_PREFIX.concat(level).concat("-");
+				: (FileWork.HTML_PREFIX + level + "-");
 		for (CourseTreeNode item : items) {
 			// title of page
 			// page name with level number
-			String pageTitle = part.concat(String.valueOf(++numberOnLevel))
-					.concat("_");
+			String pageTitle = part + String.valueOf(++numberOnLevel) + "_";
 			pageTitle = pageTitle.concat(TransliterationTool
 					.convertRU2ENString(item.getTitle()));
 			pageTitle = pageTitle.replaceAll(" ", "_");
@@ -158,15 +156,11 @@ public class Parser {
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(
-						item.getNodes(),
-						manifest,
-						templateDir,
-						coursePath,
-						path.concat(pageTitle).concat(File.separator),
-						(level == null) ? String.valueOf(numberOnLevel) : level
-								.concat("-").concat(
-										String.valueOf(numberOnLevel)),
+				this.recursiveSaveCourse(item.getNodes(), manifest,
+						templateDir, coursePath, path + pageTitle
+								+ File.separator,
+						(level == null) ? String.valueOf(numberOnLevel) : (level
+								+ "-" + String.valueOf(numberOnLevel)),
 						manifestItem);
 			}
 		}

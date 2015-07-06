@@ -72,8 +72,7 @@ public class FileWork {
 			if (!pathInCourseToPage.isEmpty()) {
 				for (String dirLevel : pathInCourseToPage.split((File.separator
 						.equals("\\")) ? "\\\\" : File.separator)) {
-					fullPathToHtml = fullPathToHtml.concat(dirLevel).concat(
-							File.separator);
+					fullPathToHtml = fullPathToHtml + dirLevel + File.separator;
 					File f = new File(fullPathToHtml);
 					if (!f.exists()) {
 						f.mkdirs();
@@ -89,7 +88,7 @@ public class FileWork {
 			body.put("bodycontent", buffer.toString());
 			body.put("upToLevel", upToLevel);
 			Writer out = new OutputStreamWriter(new FileOutputStream(
-					fullPathToHtml.concat(pageName)));
+					fullPathToHtml + pageName));
 			temp.process(body, out);
 			out.flush();
 			return true;

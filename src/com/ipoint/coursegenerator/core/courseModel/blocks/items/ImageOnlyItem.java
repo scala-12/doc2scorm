@@ -29,7 +29,7 @@ public class ImageOnlyItem extends AbstractTextItem {
 	}
 
 	public String getImageName() {
-		return IMAGE_PREFIX.concat(String.valueOf(this.value.hashCode()));
+		return IMAGE_PREFIX + String.valueOf(this.value.hashCode());
 	}
 
 	public XWPFPictureData getValue() {
@@ -73,7 +73,7 @@ public class ImageOnlyItem extends AbstractTextItem {
 	}
 
 	public String getImageFullName() {
-		return this.getImageName().concat(".").concat(this.getImageType());
+		return this.getImageName() + "." + this.getImageType();
 	}
 
 	/**
@@ -82,8 +82,7 @@ public class ImageOnlyItem extends AbstractTextItem {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
-		img.setAttribute("src",
-				FileWork.IMAGE_PATH.concat(this.getImageFullName()));
+		img.setAttribute("src", FileWork.IMAGE_PATH + this.getImageFullName());
 
 		return img;
 	}
