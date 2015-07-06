@@ -2,6 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.blocks.items;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractTextualParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
@@ -51,7 +52,12 @@ public class ListItem extends AbstractItem {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element listItem = creatorTags.createElement("li");
-		listItem.appendChild(this.getValue().toHtml(creatorTags));
+		Node itemValue = this.getValue().toHtml(creatorTags);
+		if (this.getValue() instanceof ParagraphBlock) {
+			// because in this situation tag p equal tag li
+			itemValue = itemValue.getFirstChild();
+		}
+		listItem.appendChild(itemValue);
 
 		return listItem;
 	}

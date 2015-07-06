@@ -30,7 +30,7 @@ public class HyperlinkParser extends TextParser {
 								.getURL();
 
 				if (link.getAnchor() != null) {
-					url = url.concat("#").concat(link.getAnchor());
+					url = url + "#" + link.getAnchor();
 				}
 
 				return new HyperlinkBlock(TextParser.parse(hyperRuns)
