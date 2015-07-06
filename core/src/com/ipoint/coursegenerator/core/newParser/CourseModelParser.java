@@ -134,7 +134,7 @@ public class CourseModelParser {
 					page.addBlock(paragraphBlock);
 				}
 			} else if (headLevel > maxHead) {
-				HeaderBlock paragraphBlock = ParagraphHeaderParser
+				HeaderBlock paragraphBlock = HeaderParser
 						.parse((XWPFParagraph) document.getBodyElements()
 								.get(i), headLevel - maxHead);
 
