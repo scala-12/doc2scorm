@@ -33,8 +33,10 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.ipoint.coursegenerator.client.presenter.CourseGeneratorFormPresenter;
 import com.ipoint.coursegenerator.client.presenter.uihandlers.FileSelectUIHandler;
 
-public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHandler> implements
-		CourseGeneratorFormPresenter.MyView, ChangeHandler, SubmitCompleteHandler {
+public class CourseGeneratorFormView extends
+		ViewWithUiHandlers<FileSelectUIHandler> implements
+		CourseGeneratorFormPresenter.MyView, ChangeHandler,
+		SubmitCompleteHandler {
 
 	private final Widget widget;
 
@@ -79,10 +81,10 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 
 	@UiField
 	HelpBlock elementsPopup;
-	
+
 	@UiField
 	SubmitButton generateButton;
-	
+
 	public interface Binder extends UiBinder<Widget, CourseGeneratorFormView> {
 	}
 
@@ -110,7 +112,8 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	public void onClicked(ClickEvent event) {
 		getUiHandlers().generateButtonClicked();
 		generateProgressBar.setVisible(true);
-		waitMessageLabel.setText(getUiHandlers().getMessages().processingDocument());
+		waitMessageLabel.setText(getUiHandlers().getMessages()
+				.processingDocument());
 		waitMessageLabel.setVisible(true);
 	}
 
@@ -124,8 +127,7 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	@Override
 	public void onChange(ChangeEvent event) {
 		if (sourceDocFile.getFilename() != null
-				&& (sourceDocFile.getFilename().toLowerCase().endsWith(".doc") || sourceDocFile.getFilename()
-						.toLowerCase().endsWith(".docx"))) {
+				&& sourceDocFile.getFilename().toLowerCase().endsWith(".docx")) {
 			sourceDocUploadForm.submit();
 			fileUploadProgressBar.setColor(ProgressBar.Color.DEFAULT);
 			fileUploadProgressBar.setType(ProgressBar.Style.ANIMATED);
@@ -144,13 +146,17 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 		helpBlock.setVisible(true);
 		try {
 			JSONObject response = (JSONObject) JSONParser.parseStrict(body);
-			uuidFileName.setValue(((JSONString) response.get("uuidFileName")).stringValue());
-			sourceFileName.setValue(((JSONString) response.get("sourceFileName")).stringValue());
+			uuidFileName.setValue(((JSONString) response.get("uuidFileName"))
+					.stringValue());
+			sourceFileName.setValue(((JSONString) response
+					.get("sourceFileName")).stringValue());
 			fileUploadProgressBar.setColor(ProgressBar.Color.SUCCESS);
 			fileUploadControlGroup.setType(ControlGroupType.SUCCESS);
-			helpBlock.setText(getUiHandlers().getMessages().uploadingFileSuccess());
+			helpBlock.setText(getUiHandlers().getMessages()
+					.uploadingFileSuccess());
 		} catch (UmbrellaException e) {
-			helpBlock.setText(getUiHandlers().getMessages().uploadingFileFailure());
+			helpBlock.setText(getUiHandlers().getMessages()
+					.uploadingFileFailure());
 			fileUploadProgressBar.setColor(ProgressBar.Color.DANGER);
 			fileUploadControlGroup.setType(ControlGroupType.ERROR);
 		}
@@ -175,28 +181,32 @@ public class CourseGeneratorFormView extends ViewWithUiHandlers<FileSelectUIHand
 	@Override
 	public String getCourseName() {
 		if (useFilenameAsCourseName.getValue()) {
-			return sourceFileName.getValue().substring(0, sourceFileName.getValue().lastIndexOf('.'));
+			return sourceFileName.getValue().substring(0,
+					sourceFileName.getValue().lastIndexOf('.'));
 		}
 		return courseName.getValue();
 	}
 
 	@Override
 	public String getFileType() {
-		return sourceFileName.getValue().substring(sourceFileName.getValue().lastIndexOf('.'));
+		return sourceFileName.getValue().substring(
+				sourceFileName.getValue().lastIndexOf('.'));
 	}
 
 	@Override
 	public void setGenerateProgressBarCompleted() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.SUCCESS);
-		waitMessageLabel.setText(getUiHandlers().getMessages().convertSuccessful());
+		waitMessageLabel.setText(getUiHandlers().getMessages()
+				.convertSuccessful());
 	}
 
 	@Override
 	public void setGenerateProgressBarFailed() {
 		generateProgressBar.setType(ProgressBar.Style.DEFAULT);
 		generateProgressBar.setColor(ProgressBar.Color.DANGER);
-		waitMessageLabel.setText(getUiHandlers().getMessages().convertFailure());
+		waitMessageLabel
+				.setText(getUiHandlers().getMessages().convertFailure());
 	}
 
 	@Override
