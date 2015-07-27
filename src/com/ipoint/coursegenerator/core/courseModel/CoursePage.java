@@ -7,17 +7,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractTextualParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractTextItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.ImageOnlyItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.ListItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableCellItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tableCell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
 import com.ipoint.coursegenerator.core.utils.ImageInfo;
 
 /**
@@ -117,11 +117,12 @@ public class CoursePage implements Convertable {
 		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
 
 		for (ParagraphItem parItem : paragraph.getItems()) {
-			for (AbstractTextItem item : parItem.getValue().getItems()) {
-				if (item instanceof ImageOnlyItem) {
-					ImageOnlyItem imageItem = (ImageOnlyItem) item;
-					images.add(new ImageInfo(imageItem.getImageFullName(),
-							imageItem.getValue()));
+			for (AbstractContentItem item : parItem.getValue().getItems()) {
+				if (item instanceof ImageOptionItem) {
+					ImageOptionItem imageItem = (ImageOptionItem) item;
+					ImageInfo image = new ImageInfo(
+							imageItem.getImageFullName(), imageItem.getValue());
+					images.add(image);
 				}
 			}
 		}
@@ -153,10 +154,10 @@ public class CoursePage implements Convertable {
 				}
 			} else if (block instanceof TableBlock) {
 				for (TableItem row : ((TableBlock) block).getItems()) {
-					for (TableCellItem cell : row.getValue()) {
-						if (cell.getValue() != null) {
+					for (CellBlock cell : row.getValue()) {
+						if (cell.getItem().getValue() != null) {
 							images.addAll(this.getImagesRecursive(cell
-									.getValue()));
+									.getItem().getValue()));
 						}
 					}
 				}

@@ -3,7 +3,6 @@ package com.ipoint.coursegenerator.core.courseModel.blocks;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
-import com.ipoint.coursegenerator.core.courseModel.blocks.items.AbstractItem;
 
 /**
  * Abstract block which includes items. These can't have empty items.
@@ -29,6 +28,10 @@ public abstract class AbstractBlock implements Convertable {
 
 	protected List<? extends AbstractItem> getItems() {
 		return this.items;
+	}
+
+	protected AbstractItem getFirstItem() {
+		return this.getItems().get(0);
 	}
 
 }
