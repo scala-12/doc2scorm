@@ -24,7 +24,7 @@ import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.newParser.CourseModelParser;
+import com.ipoint.coursegenerator.core.parser.courseModel.CourseModelParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.ImageInfo;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
