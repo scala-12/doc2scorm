@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
@@ -44,7 +45,15 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.getItems().get(0).toHtml(creatorTags);
+		Element par = creatorTags.createElement("p");
+		for (ParagraphItem item : this.getItems()) {
+			NodeList nodes = item.toHtml(creatorTags).getChildNodes();
+			for (int i = 0; i < nodes.getLength(); ++i) {
+				par.appendChild(nodes.item(i));
+			}
+		}
+
+		return par;
 	}
 
 }

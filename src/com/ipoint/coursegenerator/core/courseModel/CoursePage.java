@@ -18,7 +18,6 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
-import com.ipoint.coursegenerator.core.utils.ImageInfo;
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}

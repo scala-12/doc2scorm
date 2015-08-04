@@ -8,6 +8,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListItem;
 import com.ipoint.coursegenerator.core.parser.AbstractParser;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.ParagraphParser;
 
 /**
@@ -23,9 +24,12 @@ public class ListParser extends AbstractParser {
 	 * 
 	 * @param paragraphs
 	 *            Paragraphs as items of list
+	 * @param mathInfo
+	 *            Info about MathML formulas
 	 * @return {@link ListBlock}
 	 */
-	public static ListBlock parse(List<XWPFParagraph> paragraphs) {
+	public static ListBlock parse(List<XWPFParagraph> paragraphs,
+			MathInfo mathInfo) {
 		ListBlock block = null;
 
 		if (paragraphs != null) {
@@ -40,10 +44,11 @@ public class ListParser extends AbstractParser {
 						ArrayList<XWPFParagraph> pars = new ArrayList<XWPFParagraph>();
 						int size = getAtomListSize(i, paragraphs);
 						pars.addAll(paragraphs.subList(i, i + size));
-						items.add(new ListItem(ListParser.parse(pars)));
+						items.add(new ListItem(ListParser.parse(pars, mathInfo)));
 						i += size - 1;
 					} else {
-						items.add(new ListItem(ParagraphParser.parse(par)));
+						items.add(new ListItem(ParagraphParser.parse(par,
+								mathInfo)));
 					}
 				}
 				block = new ListBlock(items);

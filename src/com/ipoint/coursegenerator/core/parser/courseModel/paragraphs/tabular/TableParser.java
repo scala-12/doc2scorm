@@ -14,6 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tab
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tableCell.CellItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.parser.AbstractParser;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.AbstractParagraphParser;
 
 /**
@@ -74,9 +75,11 @@ public class TableParser extends AbstractParser {
 	 * 
 	 * @param table
 	 *            Table for parsing
+	 * @param mathInfo
+	 *            Info about MathML formulas
 	 * @return {@link TableBlock}
 	 */
-	public static TableBlock parse(XWPFTable table) {
+	public static TableBlock parse(XWPFTable table, MathInfo mathInfo) {
 		ArrayList<TableItem> block = new ArrayList<TableItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {
@@ -107,7 +110,8 @@ public class TableParser extends AbstractParser {
 							AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
 									.parse(tableCell.getBodyElements().subList(
 											k,
-											tableCell.getBodyElements().size()));
+											tableCell.getBodyElements().size()),
+											mathInfo);
 
 							if (paragraphBlock != null) {
 								if (paragraphBlock instanceof ListBlock) {

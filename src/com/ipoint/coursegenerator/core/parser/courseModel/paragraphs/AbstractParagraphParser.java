@@ -8,6 +8,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.parser.AbstractParser;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.tabular.TableParser;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.AbstractTextualParagraphParser;
 
@@ -20,24 +21,31 @@ import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.Abs
 public abstract class AbstractParagraphParser extends AbstractParser {
 
 	/**
+	 * 
+	 * 
 	 * Parsing to one {@link AbstractParagraphBlock} from list of
 	 * {@link IBodyElement}
 	 * 
 	 * @param bodyElements
 	 *            List of paragraphs. If first paragraph is not list then
 	 *            parsing only it.
+	 * @param mathInfo
+	 *            Info about MathML formulas
 	 * @return {@link AbstractParagraphBlock} of paragraph
 	 */
-	public static AbstractParagraphBlock parse(List<IBodyElement> bodyElements) {
+	public static AbstractParagraphBlock parse(List<IBodyElement> bodyElements,
+			MathInfo mathInfo) {
 		AbstractParagraphBlock block = null;
 
 		if (!bodyElements.isEmpty()) {
 			if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.PARAGRAPH)) {
-				block = AbstractTextualParagraphParser.parse(bodyElements);
+				block = AbstractTextualParagraphParser.parse(bodyElements,
+						mathInfo);
 			} else if (bodyElements.get(0).getElementType()
 					.equals(BodyElementType.TABLE)) {
-				block = TableParser.parse((XWPFTable) bodyElements.get(0));
+				block = TableParser.parse((XWPFTable) bodyElements.get(0),
+						mathInfo);
 			}
 		}
 

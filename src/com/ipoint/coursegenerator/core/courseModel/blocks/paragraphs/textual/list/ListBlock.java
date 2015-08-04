@@ -21,7 +21,6 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  */
 public class ListBlock extends AbstractTextualParagraphBlock {
 
-	// TODO: change type of marker on Integer
 	public static final int SIMPLE_MARKER = 0;
 	public static final int UPPER_LETTER_MARKER = 1;
 	public static final int LOWER_LETTER_MARKER = 2;
