@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.utils;
+package com.ipoint.coursegenerator.core.courseModel;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 

@@ -13,7 +13,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
@@ -24,9 +23,9 @@ import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
 import com.ipoint.coursegenerator.core.parser.courseModel.CourseModelParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
-import com.ipoint.coursegenerator.core.utils.ImageInfo;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -156,11 +155,14 @@ public class Parser {
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(item.getNodes(), manifest,
-						templateDir, coursePath, path + pageTitle
-								+ File.separator,
-						(level == null) ? String.valueOf(numberOnLevel) : (level
-								+ "-" + String.valueOf(numberOnLevel)),
+				this.recursiveSaveCourse(
+						item.getNodes(),
+						manifest,
+						templateDir,
+						coursePath,
+						path + pageTitle + File.separator,
+						(level == null) ? String.valueOf(numberOnLevel)
+								: (level + "-" + String.valueOf(numberOnLevel)),
 						manifestItem);
 			}
 		}
@@ -174,9 +176,8 @@ public class Parser {
 			FileUtils.deleteDirectory(directory);
 		}
 		directory.mkdirs();
-		XWPFDocument doc = new XWPFDocument(stream);
 
-		CourseModel courseModel = CourseModelParser.parse((XWPFDocument) doc,
+		CourseModel courseModel = new CourseModelParser().parse(stream,
 				courseName, Integer.valueOf(headerLevel));
 
 		this.createImsManifestFile(courseName);

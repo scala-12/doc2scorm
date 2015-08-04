@@ -1,10 +1,11 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
 
-import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 
 /**
  * Item which includes Math formula
@@ -14,27 +15,23 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  */
 public class FormulaOptionItem extends AbstractContentItem {
 
-	private CTOMath value;
+	private Node mathML;
 
-	private boolean isParagraph;
+	private boolean paragraphFlag;
 
-	public FormulaOptionItem(CTOMath formula) {
-		this(formula, false);
-	}
-
-	public FormulaOptionItem(CTOMath formula, boolean paragraph) {
-		if (!this.setValue(formula)) {
+	public FormulaOptionItem(MathInfo mathInfo, boolean paragraphFlag) {
+		if (!this.setValue(mathInfo)) {
 			// TODO:exception
 		}
-		this.isParagraph = paragraph;
+		this.setParagraphFlag(paragraphFlag);
 	}
 
 	public boolean isParagraph() {
-		return this.isParagraph;
+		return this.paragraphFlag;
 	}
 
-	public CTOMath getValue() {
-		return this.value;
+	public Node getValue() {
+		return this.mathML;
 	}
 
 	/**
@@ -42,23 +39,36 @@ public class FormulaOptionItem extends AbstractContentItem {
 	 *            Formula. If it is null then return false
 	 * @return If successful then true
 	 */
-	public boolean setValue(CTOMath formula) {
-		if (formula == null) {
+	public boolean setValue(MathInfo mathInfo) {
+		if (mathInfo == null) {
 			return false;
 		} else {
-			this.value = formula;
+			this.mathML = mathInfo.read();
+
 			return true;
 		}
 	}
 
+	public void setParagraphFlag(boolean flag) {
+		this.paragraphFlag = flag;
+	}
+
+	/**
+	 * Returns html-object math
+	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element span = creatorTags.createElement("span");
+		Element mathML = (Element) creatorTags
+				.importNode(this.getValue(), true);
+
+		mathML.removeAttribute("display");
 		if (this.isParagraph()) {
-			span.setAttribute("class", "formuls");
+			mathML.setAttribute("display", "block");
+		} else {
+			mathML.setAttribute("display", "inline");
 		}
 
-		return span;
+		return mathML;
 	}
 
 }

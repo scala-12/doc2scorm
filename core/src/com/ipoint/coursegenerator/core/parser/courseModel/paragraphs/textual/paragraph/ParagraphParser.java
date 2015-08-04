@@ -6,13 +6,14 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
+import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.parser.AbstractParser;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.content.HyperlinkParser;
 import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.content.TextParser;
 
@@ -31,7 +32,7 @@ public class ParagraphParser extends AbstractParser {
 	 *            Paragraph for parsing
 	 * @return List of text and hyperlink ({@link XWPFRun})
 	 */
-	private static List<List<XWPFRun>> preParseParagraphOnPieces(
+	private static List<List<XWPFRun>> parseParagraphOnPieces(
 			XWPFParagraph paragraph) {
 		ArrayList<List<XWPFRun>> runBlocks = new ArrayList<List<XWPFRun>>();
 
@@ -98,35 +99,48 @@ public class ParagraphParser extends AbstractParser {
 	 * 
 	 * @param paragraph
 	 *            Paragraph with text and images
+	 * @param mathInfo
+	 *            Info about MathML formulas
 	 * @return {@link ParagraphBlock}
 	 */
-	public static ParagraphBlock parse(XWPFParagraph paragraph) {
+	public static ParagraphBlock parse(XWPFParagraph paragraph,
+			MathInfo mathInfo) {
 		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
+		boolean hasFormuls = mathInfo != null;
+		if (hasFormuls) {
+			hasFormuls = !mathInfo.isReed();
+		}
 
-		if (paragraph.getRuns().isEmpty()) {
-			for (CTOMath formula : paragraph.getCTP().getOMathParaList().get(0)
-					.getOMathList()) {
-				TextBlock block = TextParser.parse(formula, true);
-				itemsOfParagraph.add(new ParagraphItem(block));
+		if (paragraph.getRuns().isEmpty() && hasFormuls) {
+			for (CTOMathPara mathPara : paragraph.getCTP().getOMathParaList()) {
+				for (int i = 0; i < mathPara.getOMathList().size(); ++i) {
+					TextBlock block = TextParser.parse(mathInfo, true);
+					itemsOfParagraph.add(new ParagraphItem(block));
+				}
 			}
 		} else {
-			int k = 0;
-			List<CTOMath> formuls = paragraph.getCTP().getOMathList();
-			for (List<XWPFRun> runList : preParseParagraphOnPieces(paragraph)) {
+			for (List<XWPFRun> runList : parseParagraphOnPieces(paragraph)) {
 				TextBlock block = null;
-				if (runList == null) {
-					block = TextParser.parse(formuls.get(k++), false);
-				} else if (runList.get(0) instanceof XWPFHyperlinkRun) {
-					block = HyperlinkParser.parse(runList);
-				} else {
-					block = TextParser.parse(runList);
+				if ((runList == null) && hasFormuls) {
+					if (paragraph.getCTP().getOMathList() != null) {
+						block = TextParser.parse(mathInfo, false);
+					}
+				} else if (!runList.isEmpty()) {
+					if (runList.get(0) instanceof XWPFHyperlinkRun) {
+						block = HyperlinkParser.parse(runList);
+					} else {
+						block = TextParser.parse(runList);
+					}
 				}
 
-				itemsOfParagraph.add(new ParagraphItem(block));
+				if (block != null) {
+					itemsOfParagraph.add(new ParagraphItem(block));
+				}
 			}
 		}
 
-		return new ParagraphBlock(itemsOfParagraph);
+		return (itemsOfParagraph.isEmpty()) ? null : new ParagraphBlock(
+				itemsOfParagraph);
 	}
 
 }

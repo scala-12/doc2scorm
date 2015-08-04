@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMath;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -18,6 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.TextOptionItem;
 import com.ipoint.coursegenerator.core.parser.AbstractParser;
+import com.ipoint.coursegenerator.core.parser.MathInfo;
 
 /**
  * Parsing paragraph which includes only text and images
@@ -27,10 +27,24 @@ import com.ipoint.coursegenerator.core.parser.AbstractParser;
  */
 public class TextParser extends AbstractParser {
 
-	public static TextBlock parse(CTOMath formula, boolean paragraph) {
-		return new TextBlock(new FormulaOptionItem(formula, paragraph));
+	/**
+	 * Return text block with formula
+	 * 
+	 * @param mathInfo
+	 *            Info about MathML formulas
+	 * @param paragraphFlag
+	 *            Flag that formula is paragraph
+	 * @return Text block with formula
+	 */
+	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
+		return new TextBlock(new FormulaOptionItem(mathInfo, paragraphFlag));
 	}
 
+	/**
+	 * Return Text block there are includes text and images
+	 * @param runs
+	 * @return
+	 */
 	public static TextBlock parse(List<XWPFRun> runs) {
 		ArrayList<AbstractContentItem> blockItems = null;
 

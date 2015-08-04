@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>iLogos Course Generator Core</name>
 	<properties>
-	    <poi.version>3.11</poi.version>
+		<poi.version>3.11</poi.version>
 		<batik.version>1.7</batik.version>
 	</properties>
 	<build>
@@ -20,7 +20,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-		</plugins>		
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -54,9 +54,19 @@
 			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>local.ilogos</groupId>
-			<artifactId>ilogos_libs</artifactId>
+			<groupId>local</groupId>
+			<artifactId>imsglobal</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>local</groupId>
+			<artifactId>fMath</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.htmlparser</groupId>
@@ -78,8 +88,6 @@
 			<artifactId>ooxml-schemas</artifactId>
 			<version>1.1</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.docx4j</groupId>
 			<artifactId>docx4j</artifactId>

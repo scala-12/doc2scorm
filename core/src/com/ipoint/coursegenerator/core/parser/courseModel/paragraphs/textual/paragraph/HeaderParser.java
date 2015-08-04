@@ -21,10 +21,9 @@ public class HeaderParser extends ParagraphParser {
 	 *            Level of header
 	 * @return {@link HeaderBlock}
 	 */
-	public static HeaderBlock parse(XWPFParagraph paragraph,
-			Integer level) {
-		HeaderBlock block = new HeaderBlock(ParagraphParser
-				.parse(paragraph).getItems(), level);
+	public static HeaderBlock parse(XWPFParagraph paragraph, Integer level) {
+		HeaderBlock block = new HeaderBlock(ParagraphParser.parse(paragraph,
+				null).getItems(), level);
 
 		return block;
 	}
