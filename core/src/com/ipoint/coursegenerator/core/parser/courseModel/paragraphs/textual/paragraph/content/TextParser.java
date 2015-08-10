@@ -56,16 +56,19 @@ public class TextParser extends AbstractParser {
 					if (run.toString().isEmpty()) {
 						// this run is not simple text
 						XWPFPictureData pictureData = null;
+						String picStyle = null;
+						
 						if (!run.getEmbeddedPictures().isEmpty()) {
 							pictureData = run.getEmbeddedPictures().get(0)
 									.getPictureData();
 						} else if (!run.getCTR().getPictList().isEmpty()) {
-							NodeList pic = run.getCTR().getPictList().get(0)
+							NodeList pictures = run.getCTR().getPictList().get(0)
 									.getDomNode().getChildNodes();
-							for (int j = 0; j < pic.getLength(); j++) {
-								if (pic.item(j).getLocalName()
+							for (int j = 0; j < pictures.getLength(); j++) {
+								if (pictures.item(j).getLocalName()
 										.equalsIgnoreCase("shape")) {
-									Node node = pic.item(j).getFirstChild();
+									picStyle = pictures.item(j).getAttributes().getNamedItem("style").getNodeValue();
+									Node node = pictures.item(j).getFirstChild();
 									for (; !node.getLocalName().equals(
 											"imagedata")
 											&& (node != null); node = node
@@ -116,7 +119,7 @@ public class TextParser extends AbstractParser {
 							}
 						}
 
-						blockItems.add(new ImageOptionItem(pictureData));
+						blockItems.add(new ImageOptionItem(pictureData, picStyle));
 					} else {
 						blockItems.add(new TextOptionItem(run));
 					}
