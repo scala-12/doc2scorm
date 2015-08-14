@@ -32,8 +32,7 @@ public class ParagraphParser extends AbstractParser {
 	 *            Paragraph for parsing
 	 * @return List of text and hyperlink ({@link XWPFRun})
 	 */
-	private static List<List<XWPFRun>> parseParagraphOnPieces(
-			XWPFParagraph paragraph) {
+	private static List<List<XWPFRun>> parseParagraphOnPieces(XWPFParagraph paragraph) {
 		ArrayList<List<XWPFRun>> runBlocks = new ArrayList<List<XWPFRun>>();
 
 		ArrayList<Integer> formula = new ArrayList<Integer>();
@@ -55,12 +54,9 @@ public class ParagraphParser extends AbstractParser {
 			XWPFRun run = runs.get(i);
 			Integer last = null; // number of last element in run
 			if (run instanceof XWPFHyperlinkRun) {
-				last = i
-						+ run.getCTR().getDomNode().getParentNode()
-								.getChildNodes().getLength();
+				last = i + run.getCTR().getDomNode().getParentNode().getChildNodes().getLength();
 			} else {
-				for (last = i; (last < runs.size())
-						&& !(runs.get(last) instanceof XWPFHyperlinkRun); last++) {
+				for (last = i; (last < runs.size()) && !(runs.get(last) instanceof XWPFHyperlinkRun); last++) {
 					// waiting
 				}
 			}
@@ -72,8 +68,7 @@ public class ParagraphParser extends AbstractParser {
 					runBlocks.add(runs.subList(start, formula.get(k)));
 					start = formula.get(k);
 					runBlocks.add(null);
-					for (; (k < formula.size() - 1)
-							&& (formula.get(k) != formula.get(k + 1)); k++) {
+					for (; (k < formula.size() - 1) && (formula.get(k) != formula.get(k + 1)); k++) {
 						runBlocks.add(null);
 					}
 
@@ -103,8 +98,7 @@ public class ParagraphParser extends AbstractParser {
 	 *            Info about MathML formulas
 	 * @return {@link ParagraphBlock}
 	 */
-	public static ParagraphBlock parse(XWPFParagraph paragraph,
-			MathInfo mathInfo) {
+	public static ParagraphBlock parse(XWPFParagraph paragraph, MathInfo mathInfo) {
 		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
 		boolean hasFormuls = mathInfo != null;
 		if (hasFormuls) {
@@ -139,8 +133,9 @@ public class ParagraphParser extends AbstractParser {
 			}
 		}
 
-		return (itemsOfParagraph.isEmpty()) ? null : new ParagraphBlock(
-				itemsOfParagraph);
+		return (itemsOfParagraph.isEmpty()) ? null
+				: new ParagraphBlock(itemsOfParagraph,
+						ParagraphBlock.convertAlignValue(paragraph.getAlignment()));
 	}
 
 }

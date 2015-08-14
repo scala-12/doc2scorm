@@ -26,7 +26,7 @@ public class HeaderBlock extends ParagraphBlock {
 	}
 
 	public HeaderBlock(List<ParagraphItem> items, Integer level) {
-		super(items);
+		super(items, null);
 		this.setLevel(level);
 	}
 
