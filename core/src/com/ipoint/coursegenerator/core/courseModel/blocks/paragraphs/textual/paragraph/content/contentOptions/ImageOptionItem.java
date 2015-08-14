@@ -17,6 +17,26 @@ public class ImageOptionItem extends AbstractContentItem {
 
 	private XWPFPictureData value;
 
+	private Integer position;
+
+	private int zPosition;
+
+	public static final int LEFT_POSITION = 0;
+
+	public static final int CENTER_POSITION = 1;
+
+	public static final int RIGHT_POSITION = 2;
+
+	public static final int BEHIND_POSITION = 0;
+
+	public static final int INTO_POSITION = 1;
+
+	public static final int FRONT_POSITION = 2;
+
+	private static final String BEHIND_CLASS = "behind_text";
+
+	private static final String FRON_CLASS = "before_text";
+
 	/**
 	 * Height of picture in pixels
 	 */
@@ -28,27 +48,30 @@ public class ImageOptionItem extends AbstractContentItem {
 	private Integer width;
 
 	/**
-	 * @param imageData
-	 *            Image that can't be null
-	 */
-	public ImageOptionItem(XWPFPictureData imageData) {
-		this(imageData, null);
-	}
-
-	/**
 	 * 
 	 * @param imageData
 	 *            Image that can't be null
 	 * @param style
 	 *            Style of picture
+	 * @param isWrap
+	 *            If it is true then picture in text else behind or front
 	 */
-	public ImageOptionItem(XWPFPictureData imageData, String style) {
+	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap) {
 		if (!this.setValue(imageData)) {
 			// TODO:exception
 		}
 
+		if (isWrap || (getStyleValue(style, "mso-position-horizontal") == null)) {
+			this.zPosition = INTO_POSITION;
+		} else if (getStyleValue(style, "z-index").contains("-")) {
+			this.zPosition = BEHIND_POSITION;
+		} else {
+			this.zPosition = FRONT_POSITION;
+		}
+
 		this.height = toPxSize(getStyleValue(style, "height"));
 		this.width = toPxSize(getStyleValue(style, "width"));
+		this.position = getPositionFromMSWord(getStyleValue(style, "mso-position-horizontal"));
 	}
 
 	/**
@@ -104,6 +127,20 @@ public class ImageOptionItem extends AbstractContentItem {
 		return size;
 	}
 
+	private static Integer getPositionFromMSWord(String positionMS) {
+		if (positionMS != null) {
+			if ("right".equalsIgnoreCase(positionMS)) {
+				return RIGHT_POSITION;
+			} else if ("left".equalsIgnoreCase(positionMS)) {
+				return LEFT_POSITION;
+			} else if ("center".equalsIgnoreCase(positionMS)) {
+				return CENTER_POSITION;
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Returns height of picture in pixels
 	 * 
@@ -141,6 +178,15 @@ public class ImageOptionItem extends AbstractContentItem {
 		}
 	}
 
+	/**
+	 * Returns position code of image
+	 * 
+	 * @return position code of image
+	 */
+	public Integer getPosition() {
+		return this.position;
+	}
+
 	public XWPFPictureData getValue() {
 		return this.value;
 	}
@@ -152,6 +198,15 @@ public class ImageOptionItem extends AbstractContentItem {
 	 */
 	public Integer getWidth() {
 		return this.width;
+	}
+
+	/**
+	 * Returns z-index code position of picture
+	 * 
+	 * @return z-index code position of picture
+	 */
+	public int getZPosition() {
+		return this.zPosition;
 	}
 
 	/**
@@ -175,11 +230,33 @@ public class ImageOptionItem extends AbstractContentItem {
 	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
 		img.setAttribute("src", FileWork.IMAGE_PATH + this.getImageFullName());
+
 		if (this.getHeight() != null) {
 			img.setAttribute("height", String.valueOf(this.getHeight()));
 		}
+
 		if (this.getWidth() != null) {
 			img.setAttribute("width", String.valueOf(this.getWidth()));
+		}
+
+		if (this.getPosition() != null) {
+			switch (this.getPosition()) {
+			case CENTER_POSITION:
+				img.setAttribute("align", "center");
+				break;
+			case LEFT_POSITION:
+				img.setAttribute("align", "left");
+				break;
+			case RIGHT_POSITION:
+				img.setAttribute("align", "right");
+				break;
+			}
+		}
+
+		if (this.getZPosition() == FRONT_POSITION) {
+			img.setAttribute("class", FRON_CLASS);
+		} else if (this.getZPosition() == BEHIND_POSITION) {
+			img.setAttribute("class", BEHIND_CLASS);
 		}
 
 		return img;
