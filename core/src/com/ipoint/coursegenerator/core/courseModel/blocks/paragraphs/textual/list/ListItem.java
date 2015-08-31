@@ -14,36 +14,10 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ListItem extends AbstractItem {
+public class ListItem extends AbstractItem<AbstractTextualParagraphBlock<?>> {
 
-	private AbstractTextualParagraphBlock value;
-
-	/**
-	 * @param paragraph
-	 *            Paragraph. There cannot be null
-	 */
-	public ListItem(AbstractTextualParagraphBlock paragraph) {
-		if (!this.setValue(paragraph)) {
-			// TODO:exception
-		}
-	}
-
-	public AbstractTextualParagraphBlock getValue() {
-		return this.value;
-	}
-
-	/**
-	 * @param block
-	 *            Paragraph. If there is null then return false
-	 * @return if successful then true
-	 */
-	public boolean setValue(AbstractTextualParagraphBlock block) {
-		if (block == null) {
-			return false;
-		} else {
-			this.value = block;
-			return true;
-		}
+	public ListItem(AbstractTextualParagraphBlock<?> paragraph) {
+		super(paragraph);
 	}
 
 	/**

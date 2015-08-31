@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tableCell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -13,15 +12,13 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
 
 /**
- * This item may includes {@link TextBlock},
- * {@link HyperlinkBlock} or {@link TableBlock} blocks or null
+ * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or
+ * {@link TableBlock} blocks or null
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class CellItem extends AbstractItem {
-
-	private List<AbstractParagraphBlock> value;
+public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 
 	/**
 	 * Count of cells which combined in row
@@ -33,8 +30,8 @@ public class CellItem extends AbstractItem {
 	 */
 	private Integer colSpan;
 
-	public CellItem(List<AbstractParagraphBlock> blocks) {
-		this.setValue(blocks);
+	public CellItem(List<AbstractParagraphBlock<?>> blocks) {
+		super(blocks);
 		this.setRowSpan(0);
 		this.setColSpan(0);
 	}
@@ -97,40 +94,22 @@ public class CellItem extends AbstractItem {
 		return this.colSpan;
 	}
 
-	public List<AbstractParagraphBlock> getValue() {
-		return this.value;
-	}
-
 	/**
 	 * Setup value of cell
 	 * 
 	 * @param paragraphs
 	 *            Value of cell. May be null
 	 */
-	public void setValue(List<AbstractParagraphBlock> paragraphs) {
+	@Override
+	public boolean setValue(List<AbstractParagraphBlock<?>> paragraphs) {
 		this.value = paragraphs;
 		if (paragraphs != null) {
 			if (paragraphs.isEmpty()) {
 				this.value = null;
 			}
 		}
-	}
 
-	/**
-	 * Setup paragraph as value of cell
-	 * 
-	 * @param paragraph
-	 *            Paragraph
-	 * @return true if it's all right
-	 */
-	public void setValue(AbstractParagraphBlock paragraph) {
-		if (value != null) {
-			ArrayList<AbstractParagraphBlock> valueAsList = new ArrayList<AbstractParagraphBlock>();
-			valueAsList.add(paragraph);
-			this.setValue(valueAsList);
-		} else {
-			this.value = null;
-		}
+		return true;
 	}
 
 	public void setFantom() {
@@ -154,7 +133,7 @@ public class CellItem extends AbstractItem {
 				tCell.setAttribute("rowspan", this.getRowSpan().toString());
 			}
 			if (this.getValue() != null) {
-				for (AbstractParagraphBlock par : this.getValue()) {
+				for (AbstractParagraphBlock<?> par : this.getValue()) {
 					Element tPar = par.toHtml(creatorTags);
 					tCell.appendChild(tPar);
 				}

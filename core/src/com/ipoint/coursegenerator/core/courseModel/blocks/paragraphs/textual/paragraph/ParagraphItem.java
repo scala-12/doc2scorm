@@ -8,38 +8,15 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
 
 /**
- * This item is other block: {@link TextBlock} or
- * {@link HyperlinkBlock}
+ * This item is other block: {@link TextBlock} or {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphItem extends AbstractItem {
+public class ParagraphItem extends AbstractItem<TextBlock> {
 
-	private TextBlock value;
-
-	public ParagraphItem(TextBlock textBlock) {
-		this.setValue(textBlock);
-	}
-
-	public TextBlock getValue() {
-		return this.value;
-	}
-
-	/**
-	 * Set value of item
-	 * 
-	 * @param textBlock
-	 *            Text as block. If there is null then return false
-	 * @return If successful then true
-	 */
-	public boolean setValue(TextBlock textBlock) {
-		if (textBlock == null) {
-			return false;
-		} else {
-			this.value = textBlock;
-			return true;
-		}
+	public ParagraphItem(TextBlock value) {
+		super(value);
 	}
 
 	/**

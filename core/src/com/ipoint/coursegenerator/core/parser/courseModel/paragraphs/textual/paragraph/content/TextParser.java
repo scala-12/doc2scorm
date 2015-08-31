@@ -36,7 +36,7 @@ public class TextParser extends AbstractParser {
 	 * @return Text block with formula
 	 */
 	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
-		return new TextBlock(new FormulaOptionItem(mathInfo, paragraphFlag));
+		return new TextBlock(new FormulaOptionItem(mathInfo.read(), paragraphFlag));
 	}
 
 	/**
@@ -46,11 +46,11 @@ public class TextParser extends AbstractParser {
 	 * @return
 	 */
 	public static TextBlock parse(List<XWPFRun> runs) {
-		ArrayList<AbstractContentItem> blockItems = null;
+		ArrayList<AbstractContentItem<?>> blockItems = null;
 
 		if (runs != null) {
 			if (!runs.isEmpty()) {
-				blockItems = new ArrayList<AbstractContentItem>();
+				blockItems = new ArrayList<>();
 
 				for (XWPFRun run : runs) {
 					if (run.toString().isEmpty()) {

@@ -12,11 +12,13 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.Abs
  * {@link AbstractTextualParagraphBlock}
  * 
  * @author Kalashnikov Vladislav
- *
+ * 
+ * @param <T>
+ *            Type of item that included in block
  */
-public abstract class AbstractParagraphBlock extends AbstractBlock {
+public abstract class AbstractParagraphBlock<T extends AbstractItem<?>> extends AbstractBlock<T> {
 
-	protected AbstractParagraphBlock(List<? extends AbstractItem> items) {
+	protected AbstractParagraphBlock(List<T> items) {
 		super(items);
 	}
 

@@ -40,21 +40,18 @@ public class TableParser extends AbstractParser {
 		int factCell = col; // The actual number of this cell in column
 		for (int j = 0; j < col; j++) {
 			if (tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan() != null) {
-				factCell += tbl.getRow(row).getCell(j).getCTTc().getTcPr()
-						.getGridSpan().getVal().intValue();
+				factCell += tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan().getVal().intValue();
 			}
 		}
 
 		int rowSpan = 1;
-		for (int i = row + 1, factNum = factCell; (i < tbl.getNumberOfRows())
-				&& (factNum == factCell); i++) {
+		for (int i = row + 1, factNum = factCell; (i < tbl.getNumberOfRows()) && (factNum == factCell); i++) {
 			factNum = 0; // The actual number of cell for compare
 			XWPFTableRow tblRow = tbl.getRow(i);
 			int j = 0;
 			while ((j < tblRow.getTableCells().size()) && (factNum != factCell)) {
 				if (tblRow.getCell(j).getCTTc().getTcPr().getGridSpan() != null) {
-					factNum += tblRow.getCell(j).getCTTc().getTcPr()
-							.getGridSpan().getVal().intValue();
+					factNum += tblRow.getCell(j).getCTTc().getTcPr().getGridSpan().getVal().intValue();
 				} else {
 					factNum++;
 				}
@@ -100,23 +97,19 @@ public class TableParser extends AbstractParser {
 
 				if (cell.getRowSpan() != null) {
 					if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
-						cell.setColSpan(tableCell.getCTTc().getTcPr()
-								.getGridSpan().getVal().intValue());
+						cell.setColSpan(tableCell.getCTTc().getTcPr().getGridSpan().getVal().intValue());
 					}
 
 					if (!tableCell.getBodyElements().isEmpty()) {
-						ArrayList<AbstractParagraphBlock> blocks = new ArrayList<AbstractParagraphBlock>();
+						ArrayList<AbstractParagraphBlock<?>> blocks = new ArrayList<>();
 						for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
-							AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
-									.parse(tableCell.getBodyElements().subList(
-											k,
-											tableCell.getBodyElements().size()),
-											mathInfo);
+							AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser.parse(
+									tableCell.getBodyElements().subList(k, tableCell.getBodyElements().size()),
+									mathInfo);
 
 							if (paragraphBlock != null) {
 								if (paragraphBlock instanceof ListBlock) {
-									k += ((ListBlock) paragraphBlock)
-											.getItems().size() - 1;
+									k += ((ListBlock) paragraphBlock).getItems().size() - 1;
 								}
 
 								blocks.add(paragraphBlock);

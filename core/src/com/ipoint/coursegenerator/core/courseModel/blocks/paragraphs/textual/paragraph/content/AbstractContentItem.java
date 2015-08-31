@@ -1,30 +1,24 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.FormulaOptionItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.TextOptionItem;
 
-/***
+/**
  * Item that may be {@link TextOptionItem}, {@link FormulaOptionItem} or
  * {@link ImageOptionItem}
  * 
  * @author Kalashnikov Vladislav
+ * 
+ * @param <T>
+ *            Type of item that included in block
  *
  */
-public abstract class AbstractContentItem extends AbstractItem {
+public abstract class AbstractContentItem<T> extends AbstractItem<T> {
 
-	/**
-	 * @param isHyperlink
-	 *            If true then don't uses tags "u" and "font" with parameter
-	 *            "color"
-	 * @return html-element span. There may have underline and color parameters
-	 */
-	public Element toHtml(Document creatorTags, boolean isHyperlink) {
-		return this.toHtml(creatorTags);
+	protected AbstractContentItem(T value) {
+		super(value);
 	}
 
 }

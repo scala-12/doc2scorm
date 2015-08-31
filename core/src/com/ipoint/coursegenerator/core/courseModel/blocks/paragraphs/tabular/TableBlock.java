@@ -1,12 +1,10 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
 
 /**
@@ -15,20 +13,10 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractPar
  * @author Kalashnikov Vladislav
  *
  */
-public class TableBlock extends AbstractParagraphBlock {
+public class TableBlock extends AbstractParagraphBlock<TableItem> {
 
 	public TableBlock(List<TableItem> rows) {
 		super(rows);
-	}
-
-	@Override
-	public List<TableItem> getItems() {
-		ArrayList<TableItem> items = new ArrayList<TableItem>();
-		for (AbstractItem item : super.getItems()) {
-			items.add((TableItem) item);
-		}
-
-		return items;
 	}
 
 	/**

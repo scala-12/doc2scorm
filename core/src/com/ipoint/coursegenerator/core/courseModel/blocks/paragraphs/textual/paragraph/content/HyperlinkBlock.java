@@ -15,10 +15,10 @@ public class HyperlinkBlock extends TextBlock {
 
 	private String url;
 
-	public HyperlinkBlock(List<AbstractContentItem> items, String url) {
-		super(items);
+	public HyperlinkBlock(List<AbstractContentItem<?>> runs, String url) {
+		super(runs);
 		if (!this.setUrl(url)) {
-			// TODO: Exception
+			// TODO: Exception empty url of link
 		}
 	}
 
@@ -37,6 +37,7 @@ public class HyperlinkBlock extends TextBlock {
 		if (url != null) {
 			if (!url.isEmpty()) {
 				this.url = url;
+
 				return true;
 			}
 		}
@@ -50,7 +51,7 @@ public class HyperlinkBlock extends TextBlock {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element hyperlink = creatorTags.createElement("a");
-		hyperlink.appendChild(super.toHtml(creatorTags, true));
+		hyperlink.appendChild(super.toHtml(creatorTags));
 		hyperlink.setAttribute("href", this.getUrl());
 
 		return hyperlink;

@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.parser.MathInfo;
 
 /**
  * Item which includes Math formula
@@ -13,40 +12,17 @@ import com.ipoint.coursegenerator.core.parser.MathInfo;
  * @author Kalashnikov Vladislav
  *
  */
-public class FormulaOptionItem extends AbstractContentItem {
-
-	private Node mathML;
+public class FormulaOptionItem extends AbstractContentItem<Node> {
 
 	private boolean paragraphFlag;
 
-	public FormulaOptionItem(MathInfo mathInfo, boolean paragraphFlag) {
-		if (!this.setValue(mathInfo)) {
-			// TODO:exception
-		}
+	public FormulaOptionItem(Node math, boolean paragraphFlag) {
+		super(math);
 		this.setParagraphFlag(paragraphFlag);
 	}
 
 	public boolean isParagraph() {
 		return this.paragraphFlag;
-	}
-
-	public Node getValue() {
-		return this.mathML;
-	}
-
-	/**
-	 * @param formula
-	 *            Formula. If it is null then return false
-	 * @return If successful then true
-	 */
-	public boolean setValue(MathInfo mathInfo) {
-		if (mathInfo == null) {
-			return false;
-		} else {
-			this.mathML = mathInfo.read();
-
-			return true;
-		}
 	}
 
 	public void setParagraphFlag(boolean flag) {
@@ -58,8 +34,7 @@ public class FormulaOptionItem extends AbstractContentItem {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element mathML = (Element) creatorTags
-				.importNode(this.getValue(), true);
+		Element mathML = (Element) creatorTags.importNode(this.getValue(), true);
 
 		mathML.removeAttribute("display");
 		if (this.isParagraph()) {

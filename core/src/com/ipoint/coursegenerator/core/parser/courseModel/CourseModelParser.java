@@ -339,7 +339,7 @@ public class CourseModelParser extends AbstractParser {
 				}
 
 				if (headLevel == null) {
-					AbstractParagraphBlock paragraphBlock = AbstractParagraphParser
+					AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
 							.parse(document.getBodyElements().subList(i,
 									document.getBodyElements().size()),
 									mathInfo);

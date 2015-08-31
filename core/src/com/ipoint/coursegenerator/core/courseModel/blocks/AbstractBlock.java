@@ -9,29 +9,41 @@ import com.ipoint.coursegenerator.core.courseModel.Convertable;
  * 
  * @author Kalashnikov Vladislav
  *
+ * @param <T>
+ *            Type of item that included in block
  */
-public abstract class AbstractBlock implements Convertable {
+public abstract class AbstractBlock<T extends AbstractItem<?>> implements Convertable {
 
-	private List<? extends AbstractItem> items;
+	private List<T> items;
 
-	protected AbstractBlock(List<? extends AbstractItem> items) {
+	protected AbstractBlock(List<T> items) {
 		if (items != null) {
 			if (items.isEmpty()) {
-				// TODO:exception
+				// TODO: exception empty list items
 			} else {
 				this.items = items;
 			}
 		} else {
-			// TODO: exception
+			// TODO: exception null pointer value for block
 		}
 	}
 
-	protected List<? extends AbstractItem> getItems() {
-		return this.items;
+	/**
+	 * Returns first item of block
+	 * 
+	 * @return First item of block
+	 */
+	public T getFirstItem() {
+		return this.getItems().get(0);
 	}
 
-	protected AbstractItem getFirstItem() {
-		return this.getItems().get(0);
+	/**
+	 * Returns all items of block
+	 * 
+	 * @return All items of block
+	 */
+	public List<T> getItems() {
+		return this.items;
 	}
 
 }

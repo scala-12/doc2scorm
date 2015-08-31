@@ -16,9 +16,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class TextOptionItem extends AbstractContentItem {
-
-	private String value;
+public class TextOptionItem extends AbstractContentItem<String> {
 
 	// properties of text
 	private boolean bold;
@@ -35,9 +33,7 @@ public class TextOptionItem extends AbstractContentItem {
 	 *            Run of text
 	 */
 	public TextOptionItem(XWPFRun run) {
-		if (!this.setValue(run.toString())) {
-			// TODO: exception
-		}
+		super(run.toString());
 
 		boolean isHyperlink = (run instanceof XWPFHyperlinkRun);
 
@@ -45,8 +41,7 @@ public class TextOptionItem extends AbstractContentItem {
 		this.setItalic(run.isItalic());
 		this.setSuperscript(run.getSubscript() == VerticalAlign.SUPERSCRIPT);
 		this.setSubscript(run.getSubscript() == VerticalAlign.SUBSCRIPT);
-		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE)
-				&& !isHyperlink);
+		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE) && !isHyperlink);
 
 		// TODO: what is it?
 		// if ((styleNumber < 1) || (styleNumber > 9)) {
@@ -71,6 +66,7 @@ public class TextOptionItem extends AbstractContentItem {
 		if (text != null) {
 			if (!text.isEmpty()) {
 				this.value = text;
+
 				return true;
 			}
 		}
@@ -136,7 +132,7 @@ public class TextOptionItem extends AbstractContentItem {
 	 * @return html-element span
 	 */
 	@Override
-	public Element toHtml(Document creatorTags, boolean isHyperlink) {
+	public Element toHtml(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 
 		if (this.isBold()) {
@@ -161,32 +157,22 @@ public class TextOptionItem extends AbstractContentItem {
 			span = subscript;
 		}
 
-		if (!isHyperlink) {
-			if (this.isUnderline()) {
-				Element underline = creatorTags.createElement("u");
-				span.appendChild(underline);
-				span = underline;
-			}
+		if (this.isUnderline()) {
+			Element underline = creatorTags.createElement("u");
+			span.appendChild(underline);
+			span = underline;
+		}
 
-			if (this.getColor() != null) {
-				Element font = creatorTags.createElement("font");
-				font.setAttribute("color", this.getColor());
-				span.appendChild(font);
-				span = font;
-			}
+		if (this.getColor() != null) {
+			Element font = creatorTags.createElement("font");
+			font.setAttribute("color", this.getColor());
+			span.appendChild(font);
+			span = font;
 		}
 
 		span.setTextContent(this.getValue());
 
 		return span;
-	}
-
-	/**
-	 * @return html-element span. With underline and color parameters
-	 */
-	@Override
-	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
 	}
 
 }

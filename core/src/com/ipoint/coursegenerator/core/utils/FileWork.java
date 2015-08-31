@@ -31,8 +31,6 @@ public class FileWork {
 
 	public final static String HTML_PREFIX = "part_";
 	public final static String HTML_SUFFIX = ".html";
-	public final static String IMAGE_PATH = "img".concat(File.separator);
-	public final static String IMAGE_PREFIX = "img_";
 	public final static String IMAGE_WMF = "image/x-wmf";
 	public final static String IMAGE_PNG = "image/png";
 	public final static String FILETYPE_DOCX = ".docx";
