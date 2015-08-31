@@ -30,21 +30,20 @@ public class CoursePage implements Convertable {
 
 	public final static String CONTENT_DIV_ID = "content_div";
 
-	private ArrayList<AbstractParagraphBlock> blocks;
+	private ArrayList<AbstractParagraphBlock<?>> blocks;
 
 	private CourseTreeNode parentNode;
 
 	public CoursePage() {
-		this.blocks = new ArrayList<AbstractParagraphBlock>();
+		this.blocks = new ArrayList<>();
 		this.parentNode = null;
 	}
 
-	public AbstractBlock getBlock(int index) {
-		return ((this.blocks.size() <= index) || this.blocks.isEmpty()) ? null
-				: this.blocks.get(index);
+	public AbstractBlock<?> getBlock(int index) {
+		return ((this.blocks.size() <= index) || this.blocks.isEmpty()) ? null : this.blocks.get(index);
 	}
 
-	public List<AbstractParagraphBlock> getBlocks() {
+	public List<AbstractParagraphBlock<?>> getBlocks() {
 		return this.blocks;
 	}
 
@@ -55,7 +54,7 @@ public class CoursePage implements Convertable {
 	 *            Block for adding. If it is null then return false
 	 * @return If successful then true
 	 */
-	public boolean addBlock(AbstractParagraphBlock block) {
+	public boolean addBlock(AbstractParagraphBlock<?> block) {
 		if (block == null) {
 			return false;
 		} else {
@@ -101,7 +100,7 @@ public class CoursePage implements Convertable {
 			pageBody.appendChild(pageHeader);
 		}
 
-		for (AbstractParagraphBlock par : this.getBlocks()) {
+		for (AbstractParagraphBlock<?> par : this.getBlocks()) {
 			pageBody.appendChild(par.toHtml(creatorTags));
 		}
 
@@ -116,11 +115,10 @@ public class CoursePage implements Convertable {
 		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
 
 		for (ParagraphItem parItem : paragraph.getItems()) {
-			for (AbstractContentItem item : parItem.getValue().getItems()) {
+			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
 				if (item instanceof ImageOptionItem) {
 					ImageOptionItem imageItem = (ImageOptionItem) item;
-					ImageInfo image = new ImageInfo(
-							imageItem.getImageFullName(), imageItem.getValue());
+					ImageInfo image = new ImageInfo(imageItem.getImageFullName(), imageItem.getValue());
 					images.add(image);
 				}
 			}
@@ -129,23 +127,19 @@ public class CoursePage implements Convertable {
 		return images;
 	}
 
-	private List<ImageInfo> getImagesRecursive(
-			List<AbstractParagraphBlock> blocks) {
+	private List<ImageInfo> getImagesRecursive(List<AbstractParagraphBlock<?>> blocks) {
 		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
 
-		for (AbstractParagraphBlock block : blocks) {
+		for (AbstractParagraphBlock<?> block : blocks) {
 			if (block instanceof AbstractTextualParagraphBlock) {
 				if (block instanceof ParagraphBlock) {
-					images.addAll(this
-							.getImagesOfParagraph((ParagraphBlock) block));
+					images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
 				} else if (block instanceof ListBlock) {
 					for (ListItem listItem : ((ListBlock) block).getItems()) {
 						if (listItem.getValue() instanceof ParagraphBlock) {
-							images.addAll(this
-									.getImagesOfParagraph((ParagraphBlock) listItem
-											.getValue()));
+							images.addAll(this.getImagesOfParagraph((ParagraphBlock) listItem.getValue()));
 						} else if (listItem.getValue() instanceof ListBlock) {
-							ArrayList<AbstractParagraphBlock> listBlock = new ArrayList<AbstractParagraphBlock>();
+							ArrayList<AbstractParagraphBlock<?>> listBlock = new ArrayList<>();
 							listBlock.add((ListBlock) listItem.getValue());
 							images.addAll(this.getImagesRecursive(listBlock));
 						}
@@ -154,9 +148,8 @@ public class CoursePage implements Convertable {
 			} else if (block instanceof TableBlock) {
 				for (TableItem row : ((TableBlock) block).getItems()) {
 					for (CellBlock cell : row.getValue()) {
-						if (cell.getItem().getValue() != null) {
-							images.addAll(this.getImagesRecursive(cell
-									.getItem().getValue()));
+						if (cell.getFirstItem().getValue() != null) {
+							images.addAll(this.getImagesRecursive(cell.getFirstItem().getValue()));
 						}
 					}
 				}

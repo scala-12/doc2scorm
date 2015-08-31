@@ -6,9 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
 
 /**
  * This block is analogue paragraph in life. Text block which may include
@@ -17,24 +15,21 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
  * @author Kalashnikov Vladislav
  *
  */
-public class TextBlock extends AbstractBlock {
+public class TextBlock extends AbstractBlock<AbstractContentItem<?>> {
 
-	public TextBlock(List<AbstractContentItem> runs) {
+	public TextBlock(List<AbstractContentItem<?>> runs) {
 		super(runs);
 	}
 
-	public TextBlock(AbstractContentItem run) {
-		this(Lists.newArrayList(run));
+	public TextBlock(AbstractContentItem<?> run) {
+		this(toList(run));
 	}
 
-	@Override
-	public List<AbstractContentItem> getItems() {
-		ArrayList<AbstractContentItem> items = new ArrayList<AbstractContentItem>();
-		for (AbstractItem item : super.getItems()) {
-			items.add((AbstractContentItem) item);
-		}
+	private static ArrayList<AbstractContentItem<?>> toList(AbstractContentItem<?> run) {
+		ArrayList<AbstractContentItem<?>> list = new ArrayList<>();
+		list.add(run);
 
-		return items;
+		return list;
 	}
 
 	/**
@@ -42,21 +37,10 @@ public class TextBlock extends AbstractBlock {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	/**
-	 * 
-	 * @see TextBlock#toHtml(Document)
-	 * 
-	 * @return html-element p that may includes tags "u" and "font" with color
-	 *         parameter
-	 */
-	protected Element toHtml(Document creatorTags, boolean isHyperlink) {
 		Element paragraph = creatorTags.createElement("p");
 
-		for (AbstractContentItem run : this.getItems()) {
-			paragraph.appendChild(run.toHtml(creatorTags, isHyperlink));
+		for (AbstractContentItem<?> run : this.getItems()) {
+			paragraph.appendChild(run.toHtml(creatorTags));
 		}
 
 		return paragraph;

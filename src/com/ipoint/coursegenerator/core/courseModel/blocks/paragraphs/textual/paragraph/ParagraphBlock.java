@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -9,21 +8,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
 
 /**
- * This block is an analogue of text paragraph. These includes {@link TextBlock}
- * , {@link HyperlinkBlock}
+ * This block is an analogue of text paragraph. These includes several
+ * {@link TextBlock}, {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractTextualParagraphBlock {
-
-	private Integer alignment;
+public class ParagraphBlock extends AbstractTextualParagraphBlock<ParagraphItem> {
 
 	public static final int LEFT_ALIGN = 0;
 
@@ -41,6 +37,8 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock {
 
 	private static final String JUST_ALIGN_CLASS = "justify_align";
 
+	private Integer alignment;
+
 	public ParagraphBlock(List<ParagraphItem> items, Integer align) {
 		super(items);
 		this.alignment = align;
@@ -48,6 +46,10 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock {
 
 	public ParagraphBlock(ParagraphItem item, Integer align) {
 		this(Lists.newArrayList(item), align);
+	}
+
+	public Integer getAlignment() {
+		return this.alignment;
 	}
 
 	public static Integer convertAlignValue(ParagraphAlignment align) {
@@ -62,20 +64,6 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock {
 		}
 
 		return null;
-	}
-
-	public Integer getAlignment() {
-		return this.alignment;
-	}
-
-	@Override
-	public List<ParagraphItem> getItems() {
-		ArrayList<ParagraphItem> items = new ArrayList<ParagraphItem>();
-		for (AbstractItem item : super.getItems()) {
-			items.add((ParagraphItem) item);
-		}
-
-		return items;
 	}
 
 	/**

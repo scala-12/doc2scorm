@@ -14,9 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tab
  * @author Kalashnikov Vladislav
  *
  */
-public class TableItem extends AbstractItem {
-
-	private List<CellBlock> value;
+public class TableItem extends AbstractItem<List<CellBlock>> {
 
 	/**
 	 * Create row as block item
@@ -25,31 +23,7 @@ public class TableItem extends AbstractItem {
 	 *            Cells of row. There cannot be null
 	 */
 	public TableItem(List<CellBlock> cells) {
-		if (!setValue(cells)) {
-			// TODO:exception
-		}
-	}
-
-	public List<CellBlock> getValue() {
-		return this.value;
-	}
-
-	/**
-	 * Set value of row
-	 * 
-	 * @param cells
-	 *            Value of row. If there is null then return false
-	 * @return If successful then true
-	 */
-	public boolean setValue(List<CellBlock> cells) {
-		if (cells != null) {
-			if (!cells.isEmpty()) {
-				this.value = cells;
-				return true;
-			}
-		}
-
-		return false;
+		super(cells);
 	}
 
 	/**

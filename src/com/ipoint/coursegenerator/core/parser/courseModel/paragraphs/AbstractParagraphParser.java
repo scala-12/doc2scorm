@@ -33,19 +33,14 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 	 *            Info about MathML formulas
 	 * @return {@link AbstractParagraphBlock} of paragraph
 	 */
-	public static AbstractParagraphBlock parse(List<IBodyElement> bodyElements,
-			MathInfo mathInfo) {
-		AbstractParagraphBlock block = null;
+	public static AbstractParagraphBlock<?> parse(List<IBodyElement> bodyElements, MathInfo mathInfo) {
+		AbstractParagraphBlock<?> block = null;
 
 		if (!bodyElements.isEmpty()) {
-			if (bodyElements.get(0).getElementType()
-					.equals(BodyElementType.PARAGRAPH)) {
-				block = AbstractTextualParagraphParser.parse(bodyElements,
-						mathInfo);
-			} else if (bodyElements.get(0).getElementType()
-					.equals(BodyElementType.TABLE)) {
-				block = TableParser.parse((XWPFTable) bodyElements.get(0),
-						mathInfo);
+			if (bodyElements.get(0).getElementType().equals(BodyElementType.PARAGRAPH)) {
+				block = AbstractTextualParagraphParser.parse(bodyElements, mathInfo);
+			} else if (bodyElements.get(0).getElementType().equals(BodyElementType.TABLE)) {
+				block = TableParser.parse((XWPFTable) bodyElements.get(0), mathInfo);
 			}
 		}
 

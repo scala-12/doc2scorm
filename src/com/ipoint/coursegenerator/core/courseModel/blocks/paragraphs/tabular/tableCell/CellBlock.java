@@ -13,19 +13,15 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
  * @author Kalashnikov Vladislav
  *
  */
-public class CellBlock extends AbstractBlock {
+public class CellBlock extends AbstractBlock<CellItem> {
 
 	public CellBlock(CellItem item) {
 		super(Lists.newArrayList(item));
 	}
 
-	public CellItem getItem() {
-		return (CellItem) super.getFirstItem();
-	}
-
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.getItem().toHtml(creatorTags);
+		return this.getFirstItem().toHtml(creatorTags);
 	}
 
 }

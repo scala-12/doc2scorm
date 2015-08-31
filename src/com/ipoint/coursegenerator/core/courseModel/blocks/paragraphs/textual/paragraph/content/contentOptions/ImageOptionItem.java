@@ -1,11 +1,12 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
 
+import java.io.File;
+
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
  * Item that includes picture data
@@ -13,29 +14,25 @@ import com.ipoint.coursegenerator.core.utils.FileWork;
  * @author Kalashnikov Vladislav
  *
  */
-public class ImageOptionItem extends AbstractContentItem {
-
-	private XWPFPictureData value;
+public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 
 	private Integer position;
 
 	private int zPosition;
 
 	public static final int LEFT_POSITION = 0;
-
 	public static final int CENTER_POSITION = 1;
-
 	public static final int RIGHT_POSITION = 2;
 
 	public static final int BEHIND_POSITION = 0;
-
 	public static final int INTO_POSITION = 1;
-
 	public static final int FRONT_POSITION = 2;
 
 	private static final String BEHIND_CLASS = "behind_text";
-
 	private static final String FRON_CLASS = "before_text";
+
+	public final static String IMAGE_DIR_PATH = "img".concat(File.separator);
+	public final static String IMAGE_PREFIX = "img_";
 
 	/**
 	 * Height of picture in pixels
@@ -57,21 +54,19 @@ public class ImageOptionItem extends AbstractContentItem {
 	 *            If it is true then picture in text else behind or front
 	 */
 	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap) {
-		if (!this.setValue(imageData)) {
-			// TODO:exception
-		}
+		super(imageData);
 
-		if (isWrap || (getStyleValue(style, "mso-position-horizontal") == null)) {
+		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {
 			this.zPosition = INTO_POSITION;
-		} else if (getStyleValue(style, "z-index").contains("-")) {
+		} else if (getAttrValue(style, "z-index").contains("-")) {
 			this.zPosition = BEHIND_POSITION;
 		} else {
 			this.zPosition = FRONT_POSITION;
 		}
 
-		this.height = toPxSize(getStyleValue(style, "height"));
-		this.width = toPxSize(getStyleValue(style, "width"));
-		this.position = getPositionFromMSWord(getStyleValue(style, "mso-position-horizontal"));
+		this.height = toPxSize(getAttrValue(style, "height"));
+		this.width = toPxSize(getAttrValue(style, "width"));
+		this.position = getPositionFromMSWord(getAttrValue(style, "mso-position-horizontal"));
 	}
 
 	/**
@@ -83,7 +78,7 @@ public class ImageOptionItem extends AbstractContentItem {
 	 *            Style attribute name
 	 * @return attribute from style string or null if attribute not founded
 	 */
-	private static String getStyleValue(String style, String attributeName) {
+	private static String getAttrValue(String style, String attributeName) {
 		if (style != null) {
 			int startPos = style.indexOf(attributeName);
 			if (startPos != -1) {
@@ -155,7 +150,7 @@ public class ImageOptionItem extends AbstractContentItem {
 	}
 
 	public String getImageName() {
-		return FileWork.IMAGE_PREFIX + String.valueOf(this.value.hashCode());
+		return IMAGE_PREFIX + String.valueOf(this.value.hashCode());
 	}
 
 	private String getImageType() {
@@ -187,10 +182,6 @@ public class ImageOptionItem extends AbstractContentItem {
 		return this.position;
 	}
 
-	public XWPFPictureData getValue() {
-		return this.value;
-	}
-
 	/**
 	 * Returns width of picture in pixels
 	 * 
@@ -210,26 +201,12 @@ public class ImageOptionItem extends AbstractContentItem {
 	}
 
 	/**
-	 * @param imageData
-	 *            Image. If it is null then return false
-	 * @return If successful then true
-	 */
-	public boolean setValue(XWPFPictureData imageData) {
-		if (imageData == null) {
-			return false;
-		} else {
-			this.value = imageData;
-			return true;
-		}
-	}
-
-	/**
 	 * @return html element img
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
-		img.setAttribute("src", FileWork.IMAGE_PATH + this.getImageFullName());
+		img.setAttribute("src", IMAGE_DIR_PATH + this.getImageFullName());
 
 		if (this.getHeight() != null) {
 			img.setAttribute("height", String.valueOf(this.getHeight()));

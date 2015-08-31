@@ -29,17 +29,15 @@ public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 	 *            Info about MathML formulas
 	 * @return {@link AbstractTextualParagraphBlock}
 	 */
-	public static AbstractTextualParagraphBlock parse(
-			List<IBodyElement> bodyElements, MathInfo mathInfo) {
+	public static AbstractTextualParagraphBlock<?> parse(List<IBodyElement> bodyElements, MathInfo mathInfo) {
 		XWPFParagraph paragraph = (XWPFParagraph) bodyElements.get(0);
-		AbstractTextualParagraphBlock block = null;
+		AbstractTextualParagraphBlock<?> block = null;
 
 		if (!paragraph.getRuns().isEmpty() || (paragraph.getCTP() != null)) {
 			Integer size = getListSize(0, paragraph, bodyElements);
 			if (size == null) {
 				// is simple text with image or formula
-				block = ParagraphParser.parse(
-						(XWPFParagraph) bodyElements.get(0), mathInfo);
+				block = ParagraphParser.parse((XWPFParagraph) bodyElements.get(0), mathInfo);
 			} else {
 				// It is list
 				ArrayList<XWPFParagraph> listItems = new ArrayList<XWPFParagraph>();
@@ -77,8 +75,7 @@ public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 	 *            Item in list with number
 	 * @return Count of list items of list
 	 */
-	private static Integer getListSize(int start, XWPFParagraph head,
-			List<IBodyElement> elements) {
+	private static Integer getListSize(int start, XWPFParagraph head, List<IBodyElement> elements) {
 		int size = 1;
 		if (isListElement(head)) {
 			if (head == elements.get(start)) {

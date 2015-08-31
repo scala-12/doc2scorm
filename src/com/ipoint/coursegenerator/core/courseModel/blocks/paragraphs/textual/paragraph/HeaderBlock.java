@@ -21,37 +21,57 @@ public class HeaderBlock extends ParagraphBlock {
 
 	private int level;
 
+	private static final int MIN_HEADER_LEVEL = 1;
+	// started from 1 because 0 is level of page header
+
+	private static final int LEVEL_OFFSET = 1;
+	// because in model header of page is 0, but in HTML it is 1
+
 	public HeaderBlock(List<ParagraphItem> items) {
-		this(items, null);
+		this(items, 1);
 	}
 
-	public HeaderBlock(List<ParagraphItem> items, Integer level) {
+	public HeaderBlock(List<ParagraphItem> items, int level) {
 		super(items, null);
-		this.setLevel(level);
-	}
-
-	public boolean setLevel(Integer level) {
-		if (level != null) {
-			if (level >= 0) {
-				this.level = level;
-				return true;
-			}
+		if (!this.setLevel(level)) {
+			this.setLevel(MIN_HEADER_LEVEL);
 		}
-
-		return false;
 	}
 
+	/**
+	 * Returns level of header on page. More that 0 (level of header of page)
+	 * 
+	 * @return level of header on page
+	 */
 	public int getLevel() {
 		return this.level;
 	}
 
+	/**
+	 * Set level of header
+	 * 
+	 * @param level
+	 *            Level of header. More than 0
+	 * @return If successful then true
+	 */
+	public boolean setLevel(int level) {
+		if (level >= MIN_HEADER_LEVEL) {
+			this.level = level;
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns html-element of header
+	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element header = creatorTags.createElement("h".concat(String
-				.valueOf(this.getLevel() + 1)));
+		Element header = creatorTags.createElement("h".concat(String.valueOf(this.getLevel() + LEVEL_OFFSET)));
 
-		for (AbstractContentItem item : this.getItems().get(0).getValue()
-				.getItems()) {
+		for (AbstractContentItem<?> item : this.getItems().get(0).getValue().getItems()) {
 			if (item instanceof TextOptionItem) {
 				Node text = item.toHtml(creatorTags).getFirstChild();
 				while (text.hasChildNodes()) {

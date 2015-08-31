@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
+import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
 import com.ipoint.coursegenerator.core.parser.courseModel.CourseModelParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
@@ -126,7 +127,7 @@ public class Parser {
 				coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
 			FileWork.saveImages(node.getPage().getImages(), coursePath
-					+ pagePath + FileWork.IMAGE_PATH);
+					+ pagePath + ImageOptionItem.IMAGE_DIR_PATH);
 		}
 	}
 
@@ -233,8 +234,7 @@ public class Parser {
 		String sdate = "_"
 				+ new Integer(date.get(GregorianCalendar.YEAR)).toString()
 				+ "-"
-				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString()
-				+ "-"
+				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString() + "-"
 				+ new Integer(date.get(GregorianCalendar.DATE)).toString();
 		zipCourseFileName = zipCourseFileName + sdate + ".zip";
 		return zipCourseFileName;

@@ -1,12 +1,10 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
@@ -19,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ListBlock extends AbstractTextualParagraphBlock {
+public class ListBlock extends AbstractTextualParagraphBlock<ListItem> {
 
 	public static final int SIMPLE_MARKER = 0;
 	public static final int UPPER_LETTER_MARKER = 1;
@@ -31,26 +29,17 @@ public class ListBlock extends AbstractTextualParagraphBlock {
 	/**
 	 * Type list marker
 	 */
-	private Integer type;
+	private int type;
 
 	/**
 	 * Create list block first level and with simple marker
 	 * 
 	 * @param items
+	 *            Items of block
 	 */
 	public ListBlock(List<ListItem> items) {
 		super(items);
 		this.setMarkerType(SIMPLE_MARKER);
-	}
-
-	@Override
-	public List<ListItem> getItems() {
-		ArrayList<ListItem> items = new ArrayList<ListItem>();
-		for (AbstractItem item : super.getItems()) {
-			items.add((ListItem) item);
-		}
-
-		return items;
 	}
 
 	/**
@@ -60,18 +49,15 @@ public class ListBlock extends AbstractTextualParagraphBlock {
 	 *            Type of marker
 	 * @return if successful then true
 	 */
-	public boolean setMarkerType(Integer type) {
-		if (type != null) {
-			if ((type == DECIMAL_MARKER) || (type == LOWER_LETTER_MARKER)
-					|| (type == LOWER_ROMAN_MARKER)
-					|| (type == UPPER_LETTER_MARKER)
-					|| (type == UPPER_ROMAN_MARKER) || (type == SIMPLE_MARKER)) {
-				this.type = type;
-				return true;
-			}
-		}
+	public boolean setMarkerType(int type) {
+		if ((type == DECIMAL_MARKER) || (type == LOWER_LETTER_MARKER) || (type == LOWER_ROMAN_MARKER)
+				|| (type == UPPER_LETTER_MARKER) || (type == UPPER_ROMAN_MARKER) || (type == SIMPLE_MARKER)) {
+			this.type = type;
 
-		return false;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -79,54 +65,8 @@ public class ListBlock extends AbstractTextualParagraphBlock {
 	 * 
 	 * @return type of list marker
 	 */
-	public Integer getMarkerType() {
+	public int getMarkerType() {
 		return this.type;
-	}
-
-	/**
-	 * @return html element ol (if there is numbered) or ul (if another)
-	 */
-	@Override
-	public Element toHtml(Document creatorTags) {
-		String typeMarker = null;
-		if (this.type != null) {
-			if (this.type == UPPER_LETTER_MARKER) {
-				typeMarker = "A";
-			} else if (this.type == LOWER_LETTER_MARKER) {
-				typeMarker = "a";
-			} else if (this.type == UPPER_ROMAN_MARKER) {
-				typeMarker = "I";
-			} else if (this.type == LOWER_ROMAN_MARKER) {
-				typeMarker = "i";
-			} else if (this.type == DECIMAL_MARKER) {
-				typeMarker = "1";
-			}
-		}
-
-		Element list = null;
-		if (typeMarker == null) {
-			list = creatorTags.createElement("ul");
-		} else {
-			list = creatorTags.createElement("ol");
-			list.setAttribute("type", typeMarker);
-		}
-
-		for (int i = 0; i < this.getItems().size(); ++i) {
-			Element listItem = this.getItems().get(i).toHtml(creatorTags);
-			list.appendChild(listItem);
-			if ((i + 1) < this.getItems().size()) {
-				if (this.getItems().get(i + 1).getValue() instanceof ListBlock) {
-					// first child because this method returns <li>, but we need
-					// insert into listItem a other list. If don't do it then
-					// another list inserted into new list item - It is looks
-					// not correct.
-					listItem.appendChild(this.getItems().get(++i)
-							.toHtml(creatorTags).getFirstChild());
-				}
-			}
-		}
-
-		return list;
 	}
 
 	public int getSize() {
@@ -141,6 +81,49 @@ public class ListBlock extends AbstractTextualParagraphBlock {
 		}
 
 		return size;
+	}
+
+	/**
+	 * @return html element ol (if there is numbered) or ul (if another)
+	 */
+	@Override
+	public Element toHtml(Document creatorTags) {
+		Element list = null;
+		if (this.getMarkerType() == SIMPLE_MARKER) {
+			list = creatorTags.createElement("ul");
+		} else {
+			String typeMarker = null;
+			if (this.getMarkerType() == UPPER_LETTER_MARKER) {
+				typeMarker = "A";
+			} else if (this.getMarkerType() == LOWER_LETTER_MARKER) {
+				typeMarker = "a";
+			} else if (this.getMarkerType() == UPPER_ROMAN_MARKER) {
+				typeMarker = "I";
+			} else if (this.getMarkerType() == LOWER_ROMAN_MARKER) {
+				typeMarker = "i";
+			} else if (this.getMarkerType() == DECIMAL_MARKER) {
+				typeMarker = "1";
+			}
+
+			list = creatorTags.createElement("ol");
+			list.setAttribute("type", typeMarker);
+		}
+
+		for (int i = 0; i < this.getItems().size(); ++i) {
+			Element listItem = this.getItems().get(i).toHtml(creatorTags);
+			list.appendChild(listItem);
+			if ((i + 1) < this.getItems().size()) {
+				if (this.getItems().get(i + 1).getValue() instanceof ListBlock) {
+					// first child because this method returns <li>, but we need
+					// insert into listItem a other list. If don't do it then
+					// another list inserted into new list item - It is looks
+					// not correct.
+					listItem.appendChild(this.getItems().get(++i).toHtml(creatorTags).getFirstChild());
+				}
+			}
+		}
+
+		return list;
 	}
 
 }
