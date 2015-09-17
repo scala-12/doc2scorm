@@ -49,7 +49,7 @@
 							</t:ListBox>
 						</t:Controls>
 					</t:ControlGroup>
-					<t:ControlGroup>
+					<t:ControlGroup visible="false">
 						<t:ControlLabel for="templateForCoursePages"><ui:text from='{msg.template}' /></t:ControlLabel>
 						<t:Controls>
 							<t:ListBox ui:field="templateForCoursePages">
