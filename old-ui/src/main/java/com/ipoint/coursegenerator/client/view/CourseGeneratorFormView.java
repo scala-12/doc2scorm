@@ -180,11 +180,11 @@ public class CourseGeneratorFormView extends
 
 	@Override
 	public String getCourseName() {
-		if (useFilenameAsCourseName.getValue()) {
-			return sourceFileName.getValue().substring(0,
-					sourceFileName.getValue().lastIndexOf('.'));
+		if (useFilenameAsCourseName.getValue() || courseName.getValue().isEmpty()) {
+			return sourceFileName.getValue().substring(0, sourceFileName.getValue().lastIndexOf('.'));
+		} else {
+			return courseName.getValue();
 		}
-		return courseName.getValue();
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 
 @Controller
 public class FileUploadController implements ServletContextAware {
@@ -38,7 +39,8 @@ public class FileUploadController implements ServletContextAware {
 				fos.write(bytes);
 				fos.close();
 				UploadFileName ufn = new UploadFileName();
-				ufn.setSourceFileName(sourceDocFile.getOriginalFilename());
+				ufn.setSourceFileName(TransliterationTool.convertRU2ENString(
+						new String(sourceDocFile.getOriginalFilename().getBytes("ISO-8859-1"), "UTF-8")));
 				ufn.setUuidFileName(uuid);
 				HttpHeaders responseHeaders = new HttpHeaders();
 				responseHeaders.setContentType(MediaType.TEXT_HTML);
