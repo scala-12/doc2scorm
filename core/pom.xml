@@ -8,6 +8,8 @@
 	<properties>
 		<poi.version>3.11</poi.version>
 		<batik.version>1.7</batik.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -22,7 +24,25 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<!--local repositories-->
+		<repository>
+			<id>project.local</id>
+			<name>project</name>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
+	</repositories>
 	<dependencies>
+		<dependency>
+			<groupId>local</groupId>
+			<artifactId>imsglobal</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>local</groupId>
+			<artifactId>fMath</artifactId>
+			<version>2.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
@@ -54,16 +74,7 @@
 			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>local</groupId>
-			<artifactId>imsglobal</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>local</groupId>
-			<artifactId>fMath</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
+			<!--used for fMath-->
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
