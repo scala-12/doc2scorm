@@ -2,6 +2,7 @@ package com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.tabular;
 
 import java.util.ArrayList;
 
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -40,12 +41,15 @@ public class TableParser extends AbstractParser {
 		int factCell = col; // The actual number of this cell in column
 		for (int j = 0; j < col; j++) {
 			if (tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan() != null) {
-				factCell += tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan().getVal().intValue();
+				factCell += tbl.getRow(row).getCell(j).getCTTc().getTcPr().getGridSpan().getVal().intValue() - 1;
 			}
 		}
 
+		boolean isEmptyRuns = true;
 		int rowSpan = 1;
-		for (int i = row + 1, factNum = factCell; (i < tbl.getNumberOfRows()) && (factNum == factCell); i++) {
+		for (int i = row + 1, factNum = factCell;
+				(i < tbl.getNumberOfRows()) && (factNum == factCell)
+				&& isEmptyRuns; i++) {
 			factNum = 0; // The actual number of cell for compare
 			XWPFTableRow tblRow = tbl.getRow(i);
 			int j = 0;
@@ -59,7 +63,15 @@ public class TableParser extends AbstractParser {
 			}
 			if (factNum == factCell) {
 				if (tblRow.getCell(j).getCTTc().getTcPr().getVMerge() != null) {
-					rowSpan++;
+					for (XWPFParagraph par : tblRow.getCell(j).getParagraphs()) {
+						for (int k = 0; (k < par.getRuns().size())
+								&& isEmptyRuns; ++k) {
+							isEmptyRuns = par.getRuns().get(k).toString().isEmpty();
+						}
+					}
+					if (isEmptyRuns) {
+						rowSpan++;
+					}
 				}
 			}
 		}
@@ -91,36 +103,39 @@ public class TableParser extends AbstractParser {
 					if (tableCell.getCTTc().getTcPr().getVMerge().getVal() == STMerge.RESTART) {
 						cell.setRowSpan(getRowSpan(table, i, j));
 					} else {
-						cell.setFantom();
+						cell = null;
 					}
 				}
 
-				if (cell.getRowSpan() != null) {
-					if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
-						cell.setColSpan(tableCell.getCTTc().getTcPr().getGridSpan().getVal().intValue());
-					}
-
-					if (!tableCell.getBodyElements().isEmpty()) {
-						ArrayList<AbstractParagraphBlock<?>> blocks = new ArrayList<>();
-						for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
-							AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser.parse(
-									tableCell.getBodyElements().subList(k, tableCell.getBodyElements().size()),
-									mathInfo);
-
-							if (paragraphBlock != null) {
-								if (paragraphBlock instanceof ListBlock) {
-									k += ((ListBlock) paragraphBlock).getItems().size() - 1;
-								}
-
-								blocks.add(paragraphBlock);
-							}
+				if (cell != null) {
+					if (cell.getRowSpan() != null) {
+						if (tableCell.getCTTc().getTcPr().getGridSpan() != null) {
+							cell.setColSpan(tableCell.getCTTc().getTcPr().getGridSpan().getVal().intValue());
 						}
-
-						cell.setValue(blocks);
+	
+						if (!tableCell.getBodyElements().isEmpty()) {
+							ArrayList<AbstractParagraphBlock<?>> blocks = new ArrayList<>();
+							for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
+								AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser.parse(
+										tableCell.getBodyElements().subList(k, tableCell.getBodyElements().size()),
+										mathInfo);
+	
+								if (paragraphBlock != null) {
+									if (paragraphBlock instanceof ListBlock) {
+										k += ((ListBlock) paragraphBlock).getItems().size() - 1;
+									}
+	
+									blocks.add(paragraphBlock);
+								}
+							}
+	
+							cell.setValue(blocks);
+						}
 					}
+					
+					cells.add(new CellBlock(cell));
 				}
 
-				cells.add(new CellBlock(cell));
 			}
 			block.add(new TableItem(cells));
 		}

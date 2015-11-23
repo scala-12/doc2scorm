@@ -112,13 +112,7 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 		return true;
 	}
 
-	public void setFantom() {
-		this.value = null;
-		this.colSpan = null;
-		this.rowSpan = null;
-	}
-
-	/**
+		/**
 	 * @return html element td
 	 */
 	@Override
