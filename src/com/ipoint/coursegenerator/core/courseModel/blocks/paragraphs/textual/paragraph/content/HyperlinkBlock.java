@@ -53,6 +53,7 @@ public class HyperlinkBlock extends TextBlock {
 		Element hyperlink = creatorTags.createElement("a");
 		hyperlink.appendChild(super.toHtml(creatorTags));
 		hyperlink.setAttribute("href", this.getUrl());
+		hyperlink.setAttribute("target", "_blank");
 
 		return hyperlink;
 	}
