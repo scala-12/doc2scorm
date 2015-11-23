@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
 
@@ -33,14 +34,17 @@ public class TextBlock extends AbstractBlock<AbstractContentItem<?>> {
 	}
 
 	/**
-	 * @return html-element p
+	 * @return html-element span as paragraph
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element paragraph = creatorTags.createElement("p");
-
+		Element paragraph = creatorTags.createElement("span");
 		for (AbstractContentItem<?> run : this.getItems()) {
-			paragraph.appendChild(run.toHtml(creatorTags));
+			NodeList childs = run.toHtml(creatorTags).getChildNodes();
+			while (childs.getLength() != 0) {
+				// node move from nodes to par
+				paragraph.appendChild(childs.item(0));
+			}
 		}
 
 		return paragraph;

@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
@@ -73,11 +72,8 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock<ParagraphItem>
 	public Element toHtml(Document creatorTags) {
 		Element par = creatorTags.createElement("p");
 		for (ParagraphItem item : this.getItems()) {
-			NodeList nodes = item.toHtml(creatorTags).getChildNodes();
-			while (nodes.getLength() != 0) {
-				// node move from nodes to par
-				par.appendChild(nodes.item(0));
-			}
+			par.appendChild(item.toHtml(creatorTags));
+				
 		}
 
 		if (this.getAlignment() != null) {
