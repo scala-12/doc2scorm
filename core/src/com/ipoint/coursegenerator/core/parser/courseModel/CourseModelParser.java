@@ -16,6 +16,7 @@ import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -56,9 +57,8 @@ public class CourseModelParser extends AbstractParser {
 	 */
 	private static ArrayList<Node> getMathMLFromDocStream(InputStream stream) {
 
-		String mathML = fmath.conversion.ConvertFromWordToMathML
-				.getMathMLFromDocStream(stream,
-						StandardCharsets.ISO_8859_1.displayName());
+		String mathML = fmath.conversion.ConvertFromWordToMathML.getMathMLFromDocStream(stream,
+				StandardCharsets.ISO_8859_1.displayName());
 
 		if (mathML != null) {
 			ArrayList<Node> mathMLList = new ArrayList<Node>();
@@ -66,26 +66,21 @@ public class CourseModelParser extends AbstractParser {
 			int pos = mathML.indexOf("<", 0);
 			while (pos != -1) {
 				int oldLenght = mathML.length();
-				mathML = mathML.substring(0, pos).trim()
-						+ mathML.substring(pos);
-				pos = mathML.indexOf("<", pos - (oldLenght - mathML.length())
-						+ 1);
+				mathML = mathML.substring(0, pos).trim() + mathML.substring(pos);
+				pos = mathML.indexOf("<", pos - (oldLenght - mathML.length()) + 1);
 			}
 
 			pos = mathML.lastIndexOf(">");
 			while (pos != -1) {
 				int oldLenght = mathML.length();
-				mathML = mathML.substring(0, pos).trim()
-						+ mathML.substring(pos);
-				pos = mathML.lastIndexOf(">",
-						pos - (oldLenght - mathML.length()) - 1);
+				mathML = mathML.substring(0, pos).trim() + mathML.substring(pos);
+				pos = mathML.lastIndexOf(">", pos - (oldLenght - mathML.length()) - 1);
 			}
 
 			if (!mathML.equalsIgnoreCase(MATH_START + MATH_END)) {
 				mathML = replaceSpecialSymbols(mathML);
 
-				String[] mathParts = mathML
-						.split("<mspace linebreak='newline'/>");
+				String[] mathParts = mathML.split("<mspace linebreak='newline'/>");
 				String prefix = new String();
 				String suffix = "</math>";
 				int count = mathParts.length - 1;
@@ -95,19 +90,14 @@ public class CourseModelParser extends AbstractParser {
 					}
 
 					try {
-						Node mathMLNode = DocumentBuilderFactory
-								.newInstance()
-								.newDocumentBuilder()
-								.parse(new InputSource(new StringReader(prefix
-										+ mathParts[i] + suffix)))
+						Node mathMLNode = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+								.parse(new InputSource(new StringReader(prefix + mathParts[i] + suffix)))
 								.getDocumentElement();
 
 						normalizeNodes(mathMLNode.getChildNodes());
 						mathMLList.add(mathMLNode);
-					} catch (SAXException | IOException
-							| ParserConfigurationException e) {
-						System.err.println("Error : Cannot converting "
-								+ mathParts[i] + " in MathML element!");
+					} catch (SAXException | IOException | ParserConfigurationException e) {
+						System.err.println("Error : Cannot converting " + mathParts[i] + " in MathML element!");
 						e.printStackTrace();
 					}
 
@@ -166,8 +156,7 @@ public class CourseModelParser extends AbstractParser {
 			Node node = nodes.item(i);
 			String value = node.getNodeValue();
 			if (value != null) {
-				value = value.replace("&apos;", "'").replace("&quot;", "\"")
-						.replace("&amp;", "&");
+				value = value.replace("&apos;", "'").replace("&quot;", "\"").replace("&amp;", "&");
 				node.setNodeValue(value);
 			}
 
@@ -193,10 +182,8 @@ public class CourseModelParser extends AbstractParser {
 			int pos = str.indexOf(oldStr[i], 0);
 			while (pos != -1) {
 				if (str.indexOf("<", pos) < str.indexOf(">", pos)) {
-					str = str.substring(0, pos) + newStr[i]
-							+ str.substring(pos + 1);
-					pos = str.indexOf(oldStr[i], pos + oldStr[i].length()
-							- newStr[i].length() + 1);
+					str = str.substring(0, pos) + newStr[i] + str.substring(pos + 1);
+					pos = str.indexOf(oldStr[i], pos + oldStr[i].length() - newStr[i].length() + 1);
 				} else {
 					pos = str.indexOf(oldStr[i], pos + 1);
 				}
@@ -220,12 +207,10 @@ public class CourseModelParser extends AbstractParser {
 	 *            Current level of header
 	 * @return node of course model
 	 */
-	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel,
-			String levelTitle, int headerLevel) {
+	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel, String levelTitle, int headerLevel) {
 		if (this.levelMap.size() == headerLevel) {
 			// current level is now,
-			this.levelMap.set(this.levelMap.size() - 1,
-					this.levelMap.get(this.levelMap.size() - 1) + 1);
+			this.levelMap.set(this.levelMap.size() - 1, this.levelMap.get(this.levelMap.size() - 1) + 1);
 		} else {
 			// have new level
 			if (this.levelMap.size() > headerLevel) {
@@ -280,12 +265,10 @@ public class CourseModelParser extends AbstractParser {
 	 *            first level
 	 * @return {@link CourseModel} of course
 	 */
-	public CourseModel parse(InputStream stream, String courseName,
-			Integer maxHeaderLevel) {
+	public CourseModel parse(InputStream stream, String courseName, Integer maxHeaderLevel) {
 
 		CourseModel courseModel = new CourseModel(courseName);
-		int maxHead = (maxHeaderLevel == null) ? 1 : ((maxHeaderLevel < 1) ? 1
-				: maxHeaderLevel);
+		int maxHead = (maxHeaderLevel == null) ? 1 : ((maxHeaderLevel < 1) ? 1 : maxHeaderLevel);
 
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -311,15 +294,13 @@ public class CourseModelParser extends AbstractParser {
 			for (int i = 0; i < document.getBodyElements().size(); i++) {
 				IBodyElement bodyElement = document.getBodyElements().get(i);
 				Integer headLevel = null;
-				if (bodyElement.getElementType().equals(
-						BodyElementType.PARAGRAPH)) {
+				if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 					XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 
 					if (!paragraph.getRuns().isEmpty()) {
 						// search header
-						if (paragraph.getStyleID() != null) {
-							headLevel = getNumberOfHeader(paragraph
-									.getStyleID());
+						if ((paragraph.getStyleID() != null) && !isEmptyRuns(paragraph.getRuns())) {
+							headLevel = getNumberOfHeader(paragraph.getStyleID());
 							if (headLevel != null) {// This it is header
 								if (headLevel <= maxHead) {
 									if (!page.getBlocks().isEmpty()) {
@@ -329,8 +310,7 @@ public class CourseModelParser extends AbstractParser {
 									}
 
 									// set page to node
-									this.getOrCreateCourseNode(courseModel,
-											paragraph.getText(), headLevel)
+									this.getOrCreateCourseNode(courseModel, paragraph.getText(), headLevel)
 											.setPage(page);
 								}
 							}
@@ -340,9 +320,7 @@ public class CourseModelParser extends AbstractParser {
 
 				if (headLevel == null) {
 					AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
-							.parse(document.getBodyElements().subList(i,
-									document.getBodyElements().size()),
-									mathInfo);
+							.parse(document.getBodyElements().subList(i, document.getBodyElements().size()), mathInfo);
 
 					if (paragraphBlock instanceof ListBlock) {
 						i += ((ListBlock) paragraphBlock).getSize() - 1;
@@ -352,8 +330,7 @@ public class CourseModelParser extends AbstractParser {
 						page.addBlock(paragraphBlock);
 					}
 				} else if (headLevel > maxHead) {
-					HeaderBlock paragraphBlock = HeaderParser.parse(
-							(XWPFParagraph) document.getBodyElements().get(i),
+					HeaderBlock paragraphBlock = HeaderParser.parse((XWPFParagraph) document.getBodyElements().get(i),
 							headLevel - maxHead);
 
 					if (paragraphBlock != null) {
@@ -362,12 +339,20 @@ public class CourseModelParser extends AbstractParser {
 				}
 			}
 		} catch (IOException e) {
-			System.err
-					.println("Error : Cannot convert create XWPFDocument from input stream!");
+			System.err.println("Error : Cannot convert create XWPFDocument from input stream!");
 			e.printStackTrace();
 		}
 
 		return courseModel;
+	}
+
+	private boolean isEmptyRuns(List<XWPFRun> runs) {
+		boolean isEmptyRuns = true;
+		for (int i = 0; (i < runs.size()) && isEmptyRuns; ++i) {
+			isEmptyRuns = runs.get(i).toString().trim().isEmpty();
+		}
+
+		return isEmptyRuns;
 	}
 
 }
