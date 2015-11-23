@@ -29,9 +29,12 @@ public class ListItem extends AbstractItem<AbstractTextualParagraphBlock<?>> {
 		Node itemValue = this.getValue().toHtml(creatorTags);
 		if (this.getValue() instanceof ParagraphBlock) {
 			// because in this situation tag p equal tag li
-			itemValue = itemValue.getFirstChild();
+			while (itemValue.hasChildNodes()) {
+				listItem.appendChild(itemValue.getFirstChild());
+			}
+		} else {
+			listItem.appendChild(itemValue);
 		}
-		listItem.appendChild(itemValue);
 
 		return listItem;
 	}

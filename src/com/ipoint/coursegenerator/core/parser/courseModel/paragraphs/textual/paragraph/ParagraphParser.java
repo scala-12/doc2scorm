@@ -54,10 +54,17 @@ public class ParagraphParser extends AbstractParser {
 			XWPFRun run = runs.get(i);
 			Integer last = null; // number of last element in run
 			if (run instanceof XWPFHyperlinkRun) {
-				last = i + run.getCTR().getDomNode().getParentNode().getChildNodes().getLength();
+				int childCount = run.getCTR().getDomNode().getParentNode().getChildNodes().getLength();
+				last = i;
+				for (int ind = 0; ind < childCount; ++ind) {
+					// search latest run of hyperlink
+					if ("r".equalsIgnoreCase(run.getCTR().getDomNode().getParentNode().getChildNodes().item(ind).getLocalName())) {
+						++last;
+					}
+				}
 			} else {
 				for (last = i; (last < runs.size()) && !(runs.get(last) instanceof XWPFHyperlinkRun); last++) {
-					// waiting
+					// search latest non-hyperlink run
 				}
 			}
 
