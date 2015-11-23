@@ -104,22 +104,40 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	 * @return Size in pixels as Integer or null if error
 	 */
 	private static Integer toPxSize(String nonPxSize) {
-		Integer size = null;
 		if (nonPxSize != null) {
-			if (nonPxSize.endsWith("in")) {
-				String sizeIn = nonPxSize.substring(0, nonPxSize.indexOf("in"));
-				if (sizeIn != null) {
-					size = (int) (4 / 3 * 72 * Float.valueOf(sizeIn));
+			if (!nonPxSize.isEmpty()) {
+				Float size = null;
+				nonPxSize = nonPxSize.toLowerCase();
+				if (nonPxSize.endsWith("in")) {
+					String sizeIn = nonPxSize.substring(0, nonPxSize.indexOf("in"));
+					if (sizeIn != null) {
+						size = 4 / 3 * 72 * Float.parseFloat(sizeIn);
+					}
+				} else if (nonPxSize.endsWith("pt")) {
+					String sizePt = nonPxSize.substring(0, nonPxSize.indexOf("pt"));
+					if (sizePt != null) {
+						size = 4 / 3 * Float.parseFloat(sizePt);
+					}
+				} else if (nonPxSize.endsWith("px")) {
+					String sizePx = nonPxSize.substring(0, nonPxSize.indexOf("px"));
+					if (sizePx != null) {
+						size = Float.parseFloat(sizePx);
+					}
+				} else {
+					try {
+						size = Float.parseFloat(nonPxSize);
+					} catch (NumberFormatException e) {
+						size = null;
+					}
 				}
-			} else if (nonPxSize.endsWith("pt")) {
-				String sizePt = nonPxSize.substring(0, nonPxSize.indexOf("pt"));
-				if (sizePt != null) {
-					size = (int) (4 / 3 * Float.valueOf(sizePt));
+				
+				if (size != null) {
+					return size.intValue();
 				}
 			}
 		}
-
-		return size;
+		
+		return null;
 	}
 
 	private static Integer getPositionFromMSWord(String positionMS) {

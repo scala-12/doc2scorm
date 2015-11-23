@@ -38,6 +38,8 @@ public class TextParser extends AbstractParser {
 	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
 		return new TextBlock(new FormulaOptionItem(mathInfo.read(), paragraphFlag));
 	}
+	
+	private static final int EMU_TO_PX_COEF = 9525;
 
 	/**
 	 * Return Text block there are includes text and images
@@ -50,6 +52,7 @@ public class TextParser extends AbstractParser {
 
 		if (runs != null) {
 			if (!runs.isEmpty()) {
+				// image
 				blockItems = new ArrayList<>();
 
 				for (XWPFRun run : runs) {
@@ -60,9 +63,30 @@ public class TextParser extends AbstractParser {
 						boolean isWrap = true;
 
 						if (!run.getEmbeddedPictures().isEmpty()) {
-							// TODO: What is it?
+							// TODO: Why is it? Maybe, it's for EMF?
+							picStyle = "";
+							if (!run.getCTR().getDrawingArray(0).getAnchorList().isEmpty()) {
+								// square, Through, Tight, TopAndBottom
+								isWrap = !run.getCTR().getDrawingArray(0).getAnchorArray(0).isSetWrapNone();
+								if (!isWrap) {
+									picStyle = picStyle + "z-index:"
+											+ ((run.getCTR().getDrawingArray(0).getAnchorArray(0).getBehindDoc()) ? "-"
+													: "")
+											+ "1;";
+								}
+							}
+
 							pictureData = run.getEmbeddedPictures().get(0).getPictureData();
+							picStyle = picStyle + "width:" + String.valueOf(
+									run.getEmbeddedPictures().get(0).getCTPicture().getSpPr().getXfrm().getExt().getCx()
+											/ EMU_TO_PX_COEF)
+									+ "px;";
+							picStyle = picStyle + "height:" + String.valueOf(
+									run.getEmbeddedPictures().get(0).getCTPicture().getSpPr().getXfrm().getExt().getCy()
+											/ EMU_TO_PX_COEF)
+									+ "px;";
 						} else if (!run.getCTR().getPictList().isEmpty()) {
+							// TODO: and Why do it? Maybe, for other pictures?
 							CTShape shape = (CTShape) run.getCTR().getPictList().get(0).selectPath(
 									"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape")[0];
 							picStyle = shape.selectAttribute("", "style").getDomNode().getNodeValue();
@@ -84,6 +108,7 @@ public class TextParser extends AbstractParser {
 							}
 
 						} else if (run.getCTR().sizeOfObjectArray() > 0) {
+							// Object as image
 							for (CTObject picture : run.getCTR().getObjectList()) {
 								CTShape[] shapes = (CTShape[]) picture.selectPath(
 										"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape");
@@ -108,6 +133,7 @@ public class TextParser extends AbstractParser {
 							blockItems.add(new ImageOptionItem(pictureData, picStyle, isWrap));
 						}
 					} else {
+						// Text
 						blockItems.add(new TextOptionItem(run));
 					}
 				}
