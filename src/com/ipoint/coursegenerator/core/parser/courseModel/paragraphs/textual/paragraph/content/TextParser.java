@@ -38,7 +38,7 @@ public class TextParser extends AbstractParser {
 	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
 		return new TextBlock(new FormulaOptionItem(mathInfo.read(), paragraphFlag));
 	}
-	
+
 	private static final int EMU_TO_PX_COEF = 9525;
 
 	/**
@@ -61,6 +61,7 @@ public class TextParser extends AbstractParser {
 						XWPFPictureData pictureData = null;
 						String picStyle = null;
 						boolean isWrap = true;
+						float scale = 1;
 
 						if (!run.getEmbeddedPictures().isEmpty()) {
 							// TODO: Why is it? Maybe, it's for EMF?
@@ -109,13 +110,12 @@ public class TextParser extends AbstractParser {
 
 						} else if (run.getCTR().sizeOfObjectArray() > 0) {
 							// Object as image
+							scale = (float) 1.3; // because object is small
 							for (CTObject picture : run.getCTR().getObjectList()) {
 								CTShape[] shapes = (CTShape[]) picture.selectPath(
 										"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape");
 								if (shapes.length != 0) {
-									// style not used because size is small
-									// picStyle = shapes[0].selectAttribute("",
-									// "style").getDomNode().getNodeValue();
+									picStyle = shapes[0].selectAttribute("", "style").getDomNode().getNodeValue();
 
 									CTImageData imageData = (CTImageData) shapes[0]
 											.selectPath("declare namespace v='urn:schemas-microsoft-com:vml' "
@@ -130,7 +130,7 @@ public class TextParser extends AbstractParser {
 						}
 
 						if (pictureData != null) {
-							blockItems.add(new ImageOptionItem(pictureData, picStyle, isWrap));
+							blockItems.add(new ImageOptionItem(pictureData, picStyle, isWrap, scale));
 						}
 					} else {
 						// Text

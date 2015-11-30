@@ -1,7 +1,5 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
 
-import java.io.File;
-
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,7 +29,7 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	private static final String BEHIND_CLASS = "behind_text";
 	private static final String FRON_CLASS = "before_text";
 
-	public final static String IMAGE_DIR_PATH = "img".concat(File.separator);
+	public final static String IMAGE_DIR_PATH = "img/";
 	public final static String IMAGE_PREFIX = "img_";
 
 	/**
@@ -52,8 +50,29 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	 *            Style of picture
 	 * @param isWrap
 	 *            If it is true then picture in text else behind or front
+	 * @param multiplierSize
+	 *            Multiplier of size
+	 * 
+	 */
+	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap, float multiplierSize) {
+		this(imageData, style, isWrap, new Float(multiplierSize));
+	}
+
+	/**
+	 * 
+	 * @param imageData
+	 *            Image that can't be null
+	 * @param style
+	 *            Style of picture
+	 * @param isWrap
+	 *            If it is true then picture in text else behind or front
+	 * 
 	 */
 	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap) {
+		this(imageData, style, isWrap, null);
+	}
+
+	private ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap, Float multiplierSize) {
 		super(imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {
@@ -64,8 +83,12 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 			this.zPosition = FRONT_POSITION;
 		}
 
-		this.height = toPxSize(getAttrValue(style, "height"));
-		this.width = toPxSize(getAttrValue(style, "width"));
+		this.height = Float
+				.valueOf(toPxSize(getAttrValue(style, "height")) * ((multiplierSize == null) ? 1 : multiplierSize))
+				.intValue();
+		this.width = Float
+				.valueOf(toPxSize(getAttrValue(style, "width")) * ((multiplierSize == null) ? 1 : multiplierSize))
+				.intValue();
 		this.position = getPositionFromMSWord(getAttrValue(style, "mso-position-horizontal"));
 	}
 
@@ -103,7 +126,7 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	 *            "12pt")
 	 * @return Size in pixels as Integer or null if error
 	 */
-	private static Integer toPxSize(String nonPxSize) {
+	private static Float toPxSize(String nonPxSize) {
 		if (nonPxSize != null) {
 			if (!nonPxSize.isEmpty()) {
 				Float size = null;
@@ -130,13 +153,13 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 						size = null;
 					}
 				}
-				
+
 				if (size != null) {
-					return size.intValue();
+					return size;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -182,7 +205,7 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
 			return "jpg";
 		default:
-			if (!this.value.getPackagePart().getContentType().equals("image/x-emf")
+			if (this.value.getPackagePart().getContentType().equals("image/x-emf")
 					|| this.value.getPackagePart().getContentType().equals("image/emf")) {
 				return "png";
 			} else {
