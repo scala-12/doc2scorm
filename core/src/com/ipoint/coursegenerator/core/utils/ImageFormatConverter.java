@@ -12,6 +12,11 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -42,7 +47,9 @@ public class ImageFormatConverter {
 
 	private final static Logger log = Logger.getLogger(ImageFormatConverter.class.getName());
 
-	private final static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	private final static DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
+
+	private final static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	public static byte[] transcodeWMFtoPNG(byte[] data) {
 		return transcodeWMFtoPNG(data, null, null);
@@ -59,14 +66,23 @@ public class ImageFormatConverter {
 			ByteArrayInputStream in = new ByteArrayInputStream(data);
 			parser.parse(in, gdi);
 
-			byte[] pngData = transcodeSVGtoPNG(gdi.getDocument(), width, height);
+			Transformer transformer = transformerFactory.newTransformer();
+			ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
+			StreamResult convertedSvgSR = new StreamResult(svgBOS);
+			transformer.transform(new DOMSource(gdi.getDocument()), convertedSvgSR);
+			svgBOS.close();
+			ByteArrayInputStream svgBIS = new ByteArrayInputStream(svgBOS.toByteArray());
 
-			return pngData;
+			String docParser = XMLResourceDescriptor.getXMLParserClassName();
+			Document svg = new SAXSVGDocumentFactory(docParser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
+					svgBIS);
+
+			return transcodeSVGtoPNG(svg, width, height);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (WmfParseException e) {
+		} catch (SvgGdiException | WmfParseException e) {
 			e.printStackTrace();
-		} catch (SvgGdiException e) {
+		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 
@@ -262,7 +278,7 @@ public class ImageFormatConverter {
 
 			emfAsStr.append("</emfPart>");
 			emfPartBIS = new ByteArrayInputStream(emfAsStr.toString().getBytes());
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			DocumentBuilder builder = docBuildFactory.newDocumentBuilder();
 
 			return builder.parse(emfPartBIS).getElementsByTagName("emfPart").item(0);
 		} catch (IOException | SAXException e) {
