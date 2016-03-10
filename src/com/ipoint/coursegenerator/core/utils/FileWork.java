@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class FileWork {
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
 			body.put("upToLevel", upToLevel);
-			Writer out = new OutputStreamWriter(new FileOutputStream(fullPathToHtml + pageName));
+			Writer out = new OutputStreamWriter(new FileOutputStream(fullPathToHtml + pageName),Charset.forName("UTF-8").newEncoder());
 			temp.process(body, out);
 			out.flush();
 			out.close();
