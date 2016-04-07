@@ -1,0 +1,12 @@
+.settings
+bin
+lib
+logs
+target
+project/project
+project/target
+.cache-main
+.cache-tests
+.classpath
+.project
+conf/local.conf
