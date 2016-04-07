@@ -1,0 +1,24 @@
+<h3>Пользователи</h3>
+
+<div *ngIf="users" class="admin panel panel-default">
+	<div class="panel-body">
+		<table class="table table-striped">
+			<thead>
+				<th>ID</th>
+				<th>Пользователь</th>
+				<th>Email</th>
+				<th>Дата регистрации</th>
+				<th>Разрешение на конвертацию</th>
+			</thead>
+			<tbody>
+				<tr *ngFor="#user of users">
+					<td>{{ user.id }}</td>
+					<td class="as-link" (click)="edit(user)">{{ user.name }}</td>
+					<td>{{ user.email }}</td>
+					<td>{{formatDate(user.registrationTime)}}</td>
+					<td>{{ permission(user) }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

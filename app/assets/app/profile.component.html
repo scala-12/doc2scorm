@@ -1,0 +1,13 @@
+<h3>Мой профиль</h3>
+<div *ngIf="user" class="profile">
+  <div class="info">
+  	<ul class="list-group">
+		<li class="list-group-item"><span class="user-property">Имя:</span><b>{{user.name}}</b></li>
+		<li class="list-group-item"><span class="user-property">Email:</span><b>{{user.email}}</b></li>
+		<li class="list-group-item"><span class="user-property">Дата регистрации:</span><b>{{formatDate(user.registrationTime)}}</b></li>
+		<li class="list-group-item"><span class="user-property">Количество документов:</span><b>{{user.docs}}</b></li>
+	</ul>
+  </div>
+</div>
+
+

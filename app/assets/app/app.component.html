@@ -1,0 +1,36 @@
+
+<div class="page-wrap">
+	<tabset> <tab heading="Doc2SCORM" (select)="goto('Dashboard')"
+		[active]="isRouteActive('/Dashboard')"></tab>
+		
+	<tab *ngIf="user && user.role=='ADMIN'" heading="Администрирование" (select)="goto('Admin')"
+		[active]="isRouteActive('/Admin')"></tab>
+		
+	</tabset>
+	<!-- <div *ngIf="user" class="user-info">{{user.name}}</div> -->
+
+	<!-- <nav> -->
+	<!-- 	<a [routerLink]="['Dashboard']">Dashboard</a> -->
+	<!-- 	<a [routerLink]="['Heroes']">Heroes</a> -->
+	<!-- </nav> -->
+	<div *ngIf="user" class="user-info">
+		<span dropdown> <a href id="simple-dropdown" dropdownToggle>
+				{{user.name}} </a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+				<li role="menuitem"><a class="dropdown-item"
+					[routerLink]="['Profile']">Профиль</a></li>
+				<li class="divider dropdown-divider"></li>
+				<li role="menuitem"><a class="dropdown-item" href="/signOut">Выход</a></li>
+			</ul>
+		</span>
+	</div>
+
+	<router-outlet></router-outlet>
+</div>
+<footer>
+	<hr />
+	<div>
+		Все права защищены, ООО НПК "Ай-Поинт рус" 2012-2016, <a
+			href="http://ipoint.ru">ipoint.ru</a>
+	</div>
+</footer>
