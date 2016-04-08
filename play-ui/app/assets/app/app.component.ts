@@ -9,7 +9,6 @@ import { ProfileComponent } from './profile.component';
 import { Router, RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 import {CORE_DIRECTIVES, NgClass} from 'angular2/common';
-import {TAB_DIRECTIVES, DROPDOWN_DIRECTIVES} from 'ng2-bootstrap/ng2-bootstrap';
 
 
 @RouteConfig([
@@ -41,7 +40,7 @@ import {TAB_DIRECTIVES, DROPDOWN_DIRECTIVES} from 'ng2-bootstrap/ng2-bootstrap';
     templateUrl: 'assets/app/app.component.html',
     styleUrls: ['assets/app/app.component.css'],
     inputs: ['route'],
-    directives: [ROUTER_DIRECTIVES, TAB_DIRECTIVES, CORE_DIRECTIVES, DROPDOWN_DIRECTIVES, NgClass],
+    directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, NgClass],
     providers: [
         ROUTER_PROVIDERS,
         UserService,
@@ -54,6 +53,7 @@ export class AppComponent implements OnInit {
 
     public user: User;
     public route = 'Dasboard';
+    public showMenu = false;
 
     constructor(private _router: Router,
         private _userService: UserService) {
@@ -69,11 +69,6 @@ export class AppComponent implements OnInit {
         this._router.navigate([component, {}]);
     }
 
-    private toggleDropdown($event: MouseEvent): void {
-        $event.preventDefault();
-        $event.stopPropagation();
-    }
-    
     isRouteActive(route: String) {
         return this._router.isRouteActive(this._router.generate([route]));
     }    

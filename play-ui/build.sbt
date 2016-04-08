@@ -67,10 +67,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "zone.js" % "0.6.4",
   "org.webjars.npm" % "typescript" % "1.8.7",
   
-  "org.webjars.npm" % "ng2-bootstrap" % "1.0.7",
   "org.webjars.npm" % "bootstrap" % "3.3.6",
-  "org.webjars.bower" % "FileSaver.js" % "0.0.2",
-  //"org.webjars.npm" % "ng2-file-upload" % "1.0.0-beta.1",
 
   //tslint dependency
   "org.webjars.npm" % "tslint-eslint-rules" % "1.0.1"
@@ -103,7 +100,7 @@ libraryDependencies ++= Seq(
   "org.jdom" % "jdom" % "1.1",
   "org.freehep" % "freehep-graphicsio-emf" % "2.4",
   "org.freehep" % "freehep-graphicsio-svg" % "2.4",
-  "net.arnx" % "wmf2svg" % "0.9.8",
+  "net.arnx" % "wmf2svg" % "0.9.0",
   "org.apache.xmlgraphics" % "batik-transcoder" % "1.8",
   "org.apache.xmlgraphics" % "batik-codec" % "1.8",
   "org.apache.commons" % "commons-lang3" % "3.4",

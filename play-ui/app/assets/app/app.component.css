@@ -29,7 +29,7 @@ nav a.router-link-active {
 
 .user-info {
 	position: absolute;
-	right: 10px;
+	right: 15px;
 	top: 16px;
 	color: #3f42a9;
 	cursor: pointer;
