@@ -1,24 +1,21 @@
-
+﻿
 <div class="page-wrap">
-	<tabset> <tab heading="Doc2SCORM" (select)="goto('Dashboard')"
-		[active]="isRouteActive('/Dashboard')"></tab>
-		
-	<tab *ngIf="user && user.role=='ADMIN'" heading="Администрирование" (select)="goto('Admin')"
-		[active]="isRouteActive('/Admin')"></tab>
-		
-	</tabset>
-	<!-- <div *ngIf="user" class="user-info">{{user.name}}</div> -->
+	<ul class="nav nav-tabs">
+		<li [ngClass]="{active: isRouteActive('/Dashboard')}"><a
+			(click)="goto('Dashboard')">Doc2SCORM</a></li>
 
-	<!-- <nav> -->
-	<!-- 	<a [routerLink]="['Dashboard']">Dashboard</a> -->
-	<!-- 	<a [routerLink]="['Heroes']">Heroes</a> -->
-	<!-- </nav> -->
+		<li *ngIf="user && user.role=='ADMIN'"
+			[ngClass]="{active: isRouteActive('/Admin')}"><a
+			(click)="goto('Admin')">Администрирование</a></li>
+
+	</ul>
+
 	<div *ngIf="user" class="user-info">
-		<span dropdown> <a href id="simple-dropdown" dropdownToggle>
+		<span  [ngClass]="{open: showMenu}"> <a id="simple-dropdown" (click)="showMenu=!showMenu">
 				{{user.name}} </a>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
 				<li role="menuitem"><a class="dropdown-item"
-					[routerLink]="['Profile']">Профиль</a></li>
+					[routerLink]="['Profile']" (click)="showMenu=false">Профиль</a></li>
 				<li class="divider dropdown-divider"></li>
 				<li role="menuitem"><a class="dropdown-item" href="/signOut">Выход</a></li>
 			</ul>
