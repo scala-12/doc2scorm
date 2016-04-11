@@ -38,6 +38,7 @@ footer {
 	color: #777; /* Цвет текста */
 	width: 100%; /* Ширина слоя */
 	text-align: center;
+	background-color: white;
 }
 
 .google:hover {

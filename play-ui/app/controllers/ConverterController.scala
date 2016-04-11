@@ -34,7 +34,8 @@ class ConverterController @Inject() (
   val env: Environment[User, CookieAuthenticator],
   socialProviderRegistry: SocialProviderRegistry,
   dbConfigProvider: DatabaseConfigProvider,
-  conversionDao: ConversionDao)
+  conversionDao: ConversionDao,
+  configuration: play.api.Configuration)
     extends Silhouette[User, CookieAuthenticator] {
 
   implicit val rds = (
@@ -48,7 +49,7 @@ class ConverterController @Inject() (
       import java.io.File
       val filename = doc.filename
       val contentType = doc.contentType
-      var tmpDir = Play.application().configuration().getString("tmp.dir")
+      var tmpDir = configuration.getString("tmp.dir").get
       val dir = new File(tmpDir)
       dir.mkdirs()
       val uuid = java.util.UUID.randomUUID().toString()
@@ -70,7 +71,7 @@ class ConverterController @Inject() (
               val doc = new File(lastDoc)
               val fileName = doc.getName
               val headerLevel = header
-              val templateDir = "" + Play.application().configuration().getString("default.template.dir")
+              val templateDir = configuration.getString("default.template.dir").get
               val courseName = course
               val tempDir = doc.getAbsolutePath().replaceFirst("[.][^.]+$", "") + "_dir";
               val docType = ".docx"
