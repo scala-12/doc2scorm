@@ -117,3 +117,10 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += evolutions
+
+// Testing
+libraryDependencies ++= Seq(
+	"org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test"
+)
+
+//javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
