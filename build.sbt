@@ -124,3 +124,7 @@ libraryDependencies ++= Seq(
 )
 
 //javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+
+libraryDependencies ++= Seq(
+	"org.webjars.npm" % "jasmine-core" % "2.4.1"
+)
