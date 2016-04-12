@@ -21,7 +21,7 @@ class ApplicationController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, CookieAuthenticator],
   socialProviderRegistry: SocialProviderRegistry)
-  extends Silhouette[User, CookieAuthenticator] {
+    extends Silhouette[User, CookieAuthenticator] {
 
   /**
    * Handles the index action.
@@ -41,7 +41,7 @@ class ApplicationController @Inject() (
     request.identity match {
       case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()))
       //case None => Future.successful(Ok(views.html.signIn(SignInForm.form, socialProviderRegistry)))
-      case None => Future.successful(Ok(views.html.signInGoogle()))
+      case None       => Future.successful(Ok(views.html.signInGoogle()))
     }
   }
 
@@ -53,7 +53,7 @@ class ApplicationController @Inject() (
   def signUp = UserAwareAction.async { implicit request =>
     request.identity match {
       case Some(user) => Future.successful(Redirect(routes.ApplicationController.index()))
-      case None => Future.successful(Ok(views.html.signUp(SignUpForm.form)))
+      case None       => Future.successful(Ok(views.html.signUp(SignUpForm.form)))
     }
   }
 
@@ -68,8 +68,12 @@ class ApplicationController @Inject() (
 
     env.authenticatorService.discard(request.authenticator, result)
   }
-  
+
   def admin(id: Int) = Action {
     Redirect("/");
+  }
+
+  def jasmine = Action {
+    Ok(views.html.jasmine())
   }
 }

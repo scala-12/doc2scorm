@@ -12,4 +12,5 @@ System.config({
 		moment : 'assets/lib/moment/moment.js'
 	}
 });
+
 System.import('assets/app/main').then(null, console.error.bind(console));
