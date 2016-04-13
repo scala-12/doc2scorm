@@ -10,7 +10,6 @@ import { Router, RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angula
 
 import {CORE_DIRECTIVES, NgClass} from 'angular2/common';
 
-
 @RouteConfig([
     {
         path: '/dashboard',
@@ -49,6 +48,7 @@ import {CORE_DIRECTIVES, NgClass} from 'angular2/common';
 })
 
 export class AppComponent implements OnInit {
+        
     title = 'Tour of Heroes';
 
     public user: User;
@@ -71,5 +71,6 @@ export class AppComponent implements OnInit {
 
     isRouteActive(route: String) {
         return this._router.isRouteActive(this._router.generate([route]));
-    }    
+    }
+    
 }

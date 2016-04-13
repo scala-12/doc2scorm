@@ -1,19 +1,20 @@
 <div *ngIf="currentUser && model" class="user-editor">
 	<h3>Редактирование пользователя</h3>
-	
+
 	<div class="admin panel panel-default">
 		<div class="panel-body">
 			<form>
 				<div class="form-group">
-					<label for="name">Пользователь</label> <input type="text"
-						[(ngModel)]="model.name" class="form-control" required>
+					<label for="name">Пользователь</label> <input id="input-user-name"
+						type="text" [(ngModel)]="model.name" class="form-control" required>
 				</div>
 				<div class="form-group">
-					<label for="email">Email</label> <input type="text"
-						[(ngModel)]="model.email" class="form-control" [disabled]="true">
+					<label for="email">Email</label> <input id="input-user-email"
+						type="text" [(ngModel)]="model.email" class="form-control"
+						[disabled]="true">
 				</div>
 				<div class="form-group">
-					<label for="power">Разрешение на конвертацию</label> 
+					<label for="power">Разрешение на конвертацию</label>
 					<div *ngIf="model.role==='ADMIN'">
 						<select class="form-control" [disabled]="true">
 							<option>Доступ разрешен</option>
@@ -26,9 +27,10 @@
 							<option value="GUEST">Доступ запрещен</option>
 						</select>
 					</div>
-					
+
 				</div>
-				<button type="submit" class="btn btn-default" (click)="save(model,$event)">Сохранить</button>
+				<button type="submit" class="btn btn-default"
+					(click)="save(model,$event)">Сохранить</button>
 			</form>
 		</div>
 	</div>

@@ -1,24 +1,25 @@
-﻿import {Component, OnInit} from 'angular2/core';
+﻿import {Component, OnInit, Input} from 'angular2/core';
 import {User} from './services/user';
-import {RouteParams} from 'angular2/router';
 import {UserService} from './services/user.service';
 
 @Component({
     selector: 'user-profile',
     templateUrl: 'assets/app/profile.component.html',
     styleUrls: ['assets/app/profile.component.css'],
+    providers: [],
+    directives: []
 })
 
 export class ProfileComponent implements OnInit {
+        
     public user: User;
 
     constructor(
-        private _userService: UserService,
-        private _routeParams: RouteParams) {
+        private _userService: UserService) {
     }
 
-    ngOnInit() {
-        this._userService.getCurrentUser()
+    ngOnInit(): Promise<any> {
+        return this._userService.getCurrentUser()
             .then(user => this.user = user);
     }
 
@@ -29,4 +30,5 @@ export class ProfileComponent implements OnInit {
     //    goBack() {
     //      window.history.back();
     //    }
+    
 }

@@ -6,7 +6,9 @@ import { Router } from 'angular2/router';
 @Component({
     selector: 'my-admin',
     templateUrl: 'assets/app/admin.component.html',
-    styleUrls: ['assets/app/admin.component.css']
+    styleUrls: ['assets/app/admin.component.css'],
+    providers: [],
+    directives: []
 })
 
 export class AdminComponent implements OnInit {
@@ -17,17 +19,21 @@ export class AdminComponent implements OnInit {
         private _router: Router,
         private _userService: UserService) { }
 
-    ngOnInit() {
-        this._userService.getCurrentUser()
-            .then(user => {
-            this.currentUser = user;
-                if (!user || user.role !== "ADMIN") {
-                    this._router.navigate(['Dashboard', {}]);
-                } else {
-                    this._userService.getUsers()
-                        .then(users => this.users = users);
-                }
-            });
+    ngOnInit(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this._userService.getCurrentUser()
+                .then(user => {
+                    this.currentUser = user;
+                    if (!user || user.role !== "ADMIN") {
+                        this._router.navigate(['Dashboard', {}]);
+                        resolve();
+                    } else {
+                        this._userService.getUsers()
+                            .then(users => { this.users = users; resolve() });
+                    }
+
+                });
+        });
     }
 
     permission(user: User): String {
@@ -42,9 +48,9 @@ export class AdminComponent implements OnInit {
         let link = ['UserEdit', { id: user.id }];
         this._router.navigate(link);
     }
-    
+
     formatDate(inMilliseconds: number) {
-    	return new Date(inMilliseconds).toLocaleDateString();
+        return new Date(inMilliseconds).toLocaleDateString();
     }
 
 }
