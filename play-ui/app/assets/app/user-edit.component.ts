@@ -6,10 +6,13 @@ import {UserService} from './services/user.service';
 @Component({
     selector: 'my-user-edit',
     templateUrl: 'assets/app/user-edit.component.html',
-    styleUrls: ['assets/app/user-edit.component.css']
+    styleUrls: ['assets/app/user-edit.component.css'],
+    providers: [],
+    directives: []
 })
 
 export class UserEditComponent implements OnInit {
+
     currentUser: User;
     public model: User;
 
@@ -19,21 +22,28 @@ export class UserEditComponent implements OnInit {
         private _routeParams: RouteParams) {
     }
 
-    ngOnInit() {
+    ngOnInit(): Promise<any> {
         let id = +this._routeParams.get('id');
-        this._userService.getCurrentUser()
-            .then(user => {
 
-                this.currentUser = user;
+        return new Promise((resolve, reject) => {
+            this._userService.getCurrentUser()
+                .then(user => {
 
-                //console.log(user);
-                if (user && user.role === "ADMIN") {
-                    this._userService.getUserById(id).then(user => { this.model = Object.assign({}, user) });
-                } else {
-                    this._router.navigate(['Dashboard', {}]);
-                }
+                    this.currentUser = user;
 
-            });
+                    if (user && user.role === "ADMIN") {
+                        this._userService.getUserById(id).then(user => {
+                            this.model = Object.assign({}, user);
+                            resolve();
+                        });
+                    } else {
+                        resolve();
+                        this._router.navigate(['Dashboard', {}]);
+                    }
+
+                });
+        });
+
     }
 
     save(user: User, event: any) {

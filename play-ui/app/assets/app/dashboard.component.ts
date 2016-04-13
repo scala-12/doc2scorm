@@ -1,15 +1,15 @@
-import { Component, OnInit, ElementRef} from 'angular2/core';
+import { Component, OnInit, ElementRef } from 'angular2/core';
 import { User } from './services/user';
 import { UserService } from './services/user.service';
 import { ConverterService } from './services/converter.service';
-import { Router } from 'angular2/router';
-import { FORM_DIRECTIVES} from 'angular2/common';
+import { FORM_DIRECTIVES } from 'angular2/common';
 
 @Component({
     selector: 'my-dashboard',
     templateUrl: 'assets/app/dashboard.component.html',
     styleUrls: ['assets/app/dashboard.component.css'],
-    directives: [FORM_DIRECTIVES]
+    directives: [FORM_DIRECTIVES],
+    providers: []
 })
 
 export class DashboardComponent implements OnInit {
@@ -29,14 +29,13 @@ export class DashboardComponent implements OnInit {
     public filename: String = '';
 
     constructor(
-        private _router: Router,
         private _userService: UserService,
         private _converterService: ConverterService,
         public _element: ElementRef) {
     }
 
-    ngOnInit() {
-        this._userService.getCurrentUser()
+    ngOnInit(): Promise<any> {
+        return this._userService.getCurrentUser()
             .then(user => this.user = user);
     }
 

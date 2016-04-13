@@ -1,5 +1,5 @@
-import {Injectable} from 'angular2/core';
-import {Http, Response, Headers, BrowserXhr} from 'angular2/http';
+import { Injectable } from 'angular2/core';
+import { Http, Response, Headers, BrowserXhr } from 'angular2/http';
 
 declare var saveAs: any;
 
@@ -66,4 +66,5 @@ export class ConverterService extends BrowserXhr {
             xhr.send(data);
         });
     }
+
 }        
