@@ -16,14 +16,12 @@ import db.models.Tables
 import slick.driver.MySQLDriver.api._
 import scala.concurrent.ExecutionContext.Implicits.global
 import db.models.DBUser
-import db.models.DBUser
 import java.util.Calendar
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.language.postfixOps
 import db.models.DBConversion
 import db.models.daos.DBUserDao
-import db.models.DBUser
 import db.models.daos.ConversionDao
 
 class UserController @Inject() (
