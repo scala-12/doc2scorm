@@ -1,33 +1,28 @@
 package controllers
 
-import javax.inject.Inject
-import play.api.mvc._
-import scala.concurrent.Future
-import play.api.data._
-import play.api.data.Forms._
-import play.api.i18n.MessagesApi
-import forms._
-import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
-import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
-import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
-import models.User
-import com.ipoint.coursegenerator.core.Parser
 import java.io.File
 import java.io.FileInputStream
-import scala.util.control.NonFatal
-import play.api.libs.json._
-import play.api.libs.json.JsObject
-import play.api.db.slick.DatabaseConfigProvider
-import slick.driver.JdbcProfile
-import slick.driver.MySQLDriver.api._
-import scala.concurrent.ExecutionContext.Implicits.global
-import db.models.DBConversion
 import java.util.Calendar
-import play.Play
-import db.models.Tables
+
+import scala.concurrent.Future
 import scala.language.postfixOps
-import play.api.libs.functional.syntax._
+
+import com.ipoint.coursegenerator.core.Parser
+import com.mohiva.play.silhouette.api.Environment
+import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
+
+import db.models.DBConversion
 import db.models.daos.ConversionDao
+import javax.inject.Inject
+import models.User
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.i18n.MessagesApi
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.__
+import play.api.mvc.Action
+import play.api.mvc.Results
 
 class ConverterController @Inject() (
   val messagesApi: MessagesApi,
@@ -73,7 +68,7 @@ class ConverterController @Inject() (
               val headerLevel = header
               val templateDir = configuration.getString("default.template.dir").get
               val courseName = course
-              val tempDir = doc.getAbsolutePath().replaceFirst("[.][^.]+$", "") + "_dir";
+              val tempDir = doc.getAbsolutePath() + "_dir";
               val docType = ".docx"
 
               var success: Boolean = false
