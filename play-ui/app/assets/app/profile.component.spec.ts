@@ -82,11 +82,11 @@ describe('ProfileComponent', () => {
         });
     }));
 
-    it('show user docs test', injectAsync([], () => {
+    it('show user success docs test', injectAsync([], () => {
         return this.listComponentFixture.debugElement.componentInstance.ngOnInit().then(() => {
             this.listComponentFixture.detectChanges();
             const element = this.listComponentFixture.nativeElement;
-            expect(element.querySelectorAll('#user-docs')[0].textContent).toBe('' + MockUserData.CURRENT.docs);
+            expect(element.querySelectorAll('#user-success-docs')[0].textContent).toBe('' + MockUserData.CURRENT.successDocs);
         });
     }));
 
