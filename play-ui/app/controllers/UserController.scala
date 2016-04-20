@@ -23,6 +23,8 @@ import scala.language.postfixOps
 import db.models.DBConversion
 import db.models.daos.DBUserDao
 import db.models.daos.ConversionDao
+import scala.concurrent.duration._
+import scala.concurrent.Await
 
 class UserController @Inject() (
   val messagesApi: MessagesApi,
@@ -39,14 +41,23 @@ class UserController @Inject() (
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
-  def dbUsetToJson(dbUser: DBUser, docs: Int): JsValue = {
-    return JsObject(Seq(
-      "id" -> JsNumber(dbUser.id),
-      "name" -> JsString(dbUser.name),
-      "email" -> JsString(dbUser.email),
-      "role" -> JsString(dbUser.role),
-      "registrationTime" -> JsNumber(dbUser.registrationTime),
-      "docs" -> JsNumber(docs)))
+  def dbUserToJson(dbUser: DBUser): Future[JsValue] = {
+    conversionDao.getSuccessCount(dbUser.id).flatMap {
+      successCount =>
+        conversionDao.getAllCount(dbUser.id).flatMap {
+          allCount =>
+            Future.successful {
+              JsObject(Seq(
+                "id" -> JsNumber(dbUser.id),
+                "name" -> JsString(dbUser.name),
+                "email" -> JsString(dbUser.email),
+                "role" -> JsString(dbUser.role),
+                "registrationTime" -> JsNumber(dbUser.registrationTime),
+                "successDocs" -> JsNumber(successCount),
+                "allDocs" -> JsNumber(allCount)))
+            }
+        }
+    }
   }
 
   def getCurrentUser = SecuredAction.async { implicit request =>
@@ -59,7 +70,7 @@ class UserController @Inject() (
           // get docs count
           request.identity.role = Some(user.role)
           request.identity.dbId = Some(user.id)
-          conversionDao.getSuccessCount(user.id).flatMap { count => Future.successful { Ok(dbUsetToJson(user, count)) } }
+          dbUserToJson(user).flatMap { json => Future.successful { Ok(json) } }
         } else {
           // insert new DBUser
           var role: String = "GUEST";
@@ -73,11 +84,9 @@ class UserController @Inject() (
           // Add new dbUser
           var dbUser = new DBUser(0, name, email, role, Calendar.getInstance().getTimeInMillis())
           dbUserDao.addUser(dbUser).flatMap { id =>
-            Future.successful {
-              dbUser.id = id
-              request.identity.dbId = Some(id)
-              Ok(dbUsetToJson(dbUser, 0))
-            }
+            dbUser.id = id
+            request.identity.dbId = Some(id)
+            dbUserToJson(user).flatMap { json => Future.successful { Ok(json) } }
           }
         }
 
@@ -90,11 +99,17 @@ class UserController @Inject() (
     if ("ADMIN".equals(request.identity.role.get)) {
       dbUserDao.getUsers.flatMap {
         users =>
-          Future.successful {
-            val json = for (u <- users) yield (dbUsetToJson(u, 0))
-            val arr: JsValue = new JsArray(json)
-            Ok(arr)
+          var usersJson: Array[JsValue] = new Array[JsValue](users.size)
+          var usersSearch = for (i <- 0 until users.size) yield {
+            dbUserToJson(users(i)).flatMap {
+              json => Future.successful { usersJson(i) = json }
+            }
           }
+          for (i <- 0 until users.size) {
+            Await.result(usersSearch(i), 10 millis)
+          }
+
+          Future.successful { Ok(new JsArray(usersJson)) }
       }
     } else {
       Future.successful { BadRequest("Permission denied") }
@@ -104,12 +119,10 @@ class UserController @Inject() (
   def getUserById(id: Long) = SecuredAction.async { implicit request =>
     if ("ADMIN".equals(request.identity.role.get)) {
       dbUserDao.getUserById(id).flatMap { user =>
-        Future.successful {
-          if (user != null) {
-            Ok(dbUsetToJson(user, 0))
-          } else {
-            Ok("")
-          }
+        if (user != null) {
+          dbUserToJson(user).flatMap { json => Future.successful { Ok(json) } }
+        } else {
+          Future.successful { Ok("") }
         }
       }
     } else {
