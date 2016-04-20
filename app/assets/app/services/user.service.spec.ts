@@ -15,11 +15,11 @@ import { MockBackend, MockConnection } from 'angular2/http/testing';
 import 'rxjs/Rx';
 
 export class MockUserData {
-    static CURRENT: User = { id: 4, name: "current", email: "current@email.com", role: "GUEST", registrationTime: 2000, docs: 5 }
+    static CURRENT: User = { id: 4, name: "current", email: "current@email.com", role: "GUEST", registrationTime: 2000, successDocs: 5, allDocs: 10 }
     static USERS: User[] = [
-        { id: 1, name: "guest", email: "guest@email.com", role: "GUEST", registrationTime: 2000, docs: 2 },
-        { id: 2, name: "user", email: "user@email.com", role: "USER", registrationTime: 2000, docs: 3 },
-        { id: 3, name: "admin", email: "admin@email.com", role: "ADMIN", registrationTime: 2000, docs: 4 }];
+        { id: 1, name: "guest", email: "guest@email.com", role: "GUEST", registrationTime: 2000, successDocs: 2, allDocs: 3 },
+        { id: 2, name: "user", email: "user@email.com", role: "USER", registrationTime: 2000, successDocs: 3, allDocs: 3 },
+        { id: 3, name: "admin", email: "admin@email.com", role: "ADMIN", registrationTime: 2000, successDocs: 4, allDocs: 5 }];
 }
 
 export class MockUserService extends UserService {
