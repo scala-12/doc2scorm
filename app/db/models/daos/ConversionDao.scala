@@ -8,6 +8,8 @@ trait ConversionDao {
 
   def getSuccessCount(userId: Long): Future[Int]
   
+  def getAllCount(userId: Long): Future[Int]
+  
   def addConversion(conversion: DBConversion): Future[Long]
 
 }

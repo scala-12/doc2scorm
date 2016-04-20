@@ -4,5 +4,6 @@
     email: string;
     role: string;
     registrationTime: number;
-    docs: number;
+    successDocs: number;
+    allDocs: number;
 }

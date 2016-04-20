@@ -32,6 +32,11 @@ class ConversionDaoImpl @Inject() (dbConfigProvider: DatabaseConfigProvider) ext
     val q = Tables.conversions.filter(c => c.userId === userId && c.success).countDistinct
     getConf().db.run(q.result).flatMap { count => Future.successful(count) }
   }
+  
+  def getAllCount(userId: Long): Future[Int] = {
+    val q = Tables.conversions.filter(c => c.userId === userId).countDistinct
+    getConf().db.run(q.result).flatMap { count => Future.successful(count) }
+  }
 
   def addConversion(conversion: DBConversion): Future[Long] = {
     val insert = (Tables.conversions returning Tables.conversions.map(_.id)) += conversion
