@@ -71,9 +71,11 @@ class DBConversionDaoTest extends PlaySpec {
         map { newId => dbSimpleUser.id = newId }, Duration.Inf)
       Await result (dbUserDao addUser (dbEmptyUser)
         map { newId => dbEmptyUser.id = newId }, Duration.Inf)
+
+      Await.result(dbUserDao.getUsers.map { count => count.length mustBe 4 }, Duration.Inf)
     }
 
-    "add conversions (success man)" in {
+    "add conversions" in {
       var last: DBConversion = null
       dbSuccessConversion.foreach { con =>
         con.userId = dbSuccessUser.id
@@ -87,10 +89,8 @@ class DBConversionDaoTest extends PlaySpec {
         map { conversions => saved = conversions.last }, Duration.Inf)
 
       last.equals(saved) mustBe true
-    }
 
-    "add conversions (failure man)" in {
-      var last: DBConversion = null
+      last = null
       dbFailureConversion.foreach { con =>
         con.userId = dbFailureUser.id
         last = con
@@ -98,14 +98,12 @@ class DBConversionDaoTest extends PlaySpec {
           map { newId => last.id = newId }, Duration.Inf)
       }
 
-      var saved: DBConversion = null
+      saved = null
       Await.result(dbConfig.db.run(Tables.conversions.result).map { conversions => saved = conversions.last }, Duration.Inf)
 
       last equals (saved) mustBe true
-    }
 
-    "add conversions (simple man)" in {
-      var last: DBConversion = null
+      last = null
       dbSimpleConversion foreach { con =>
         con.userId = dbSimpleUser.id
         last = con
@@ -113,50 +111,42 @@ class DBConversionDaoTest extends PlaySpec {
           map { newId => last.id = newId }, Duration.Inf)
       }
 
-      var saved: DBConversion = null
+      saved = null
       Await result (dbConfig.db.run(Tables.conversions.result)
         map { conversions => saved = conversions.last }, Duration.Inf)
 
       last equals (saved) mustBe true
     }
 
-    "count of all conversions for user (success man)" in {
+    "count of all conversions for user" in {
       var allCount = 0
       Await result (dbConvDao allCount (dbSuccessUser.id)
         map { count => allCount = count }, Duration.Inf)
       allCount mustBe 4
-    }
 
-    "count of all conversions for user (failure man)" in {
-      var allCount = 0
+      allCount = 0
       Await result (dbConvDao allCount (dbFailureUser.id)
         map { count => allCount = count }, Duration.Inf)
       allCount mustBe 4
-    }
 
-    "count of all conversions for user (simple man)" in {
-      var allCount = 0
+      allCount = 0
       Await result (dbConvDao allCount (dbSimpleUser.id)
         map { count => allCount = count }, Duration.Inf)
       allCount mustBe 4
     }
 
-    "count of success conversions for user (success man)" in {
+    "count of success conversions for user" in {
       var successCount = 0
       Await result (dbConvDao successCount (dbSuccessUser.id)
         map { count => successCount = count }, Duration.Inf)
       successCount mustBe 4
-    }
 
-    "count of success conversions for user (failure man)" in {
-      var successCount = 0
+      successCount = 0
       Await result (dbConvDao successCount (dbFailureUser.id)
         map { count => successCount = count }, Duration.Inf)
       successCount mustBe 0
-    }
 
-    "count of success conversions for user (simple man)" in {
-      var successCount = 0
+      successCount = 0
       Await result (dbConvDao successCount (dbSimpleUser.id)
         map { count => successCount = count }, Duration.Inf)
       successCount mustBe 2
@@ -170,41 +160,35 @@ class DBConversionDaoTest extends PlaySpec {
       usersMap.size mustBe 3
     }
 
-    "user conversions from map (success man)" in {
+    "user conversions from map" in {
       var usersMap: Map[Long, Map[Boolean, Int]] = null
       Await result (dbConvDao allUsersConversions ()
         map { usersAndCounts => usersMap = usersAndCounts }, Duration.Inf)
 
-      val conversions = usersMap.get(dbSuccessUser.id).get
+      var conversions = usersMap.get(dbSuccessUser.id).get
 
-      ((conversions.get(true).get == 4) &&
-        (conversions.get(false).get == 0)) mustBe true
-    }
+      (conversions.get(true).get == 4) mustBe true
+      (conversions.get(false).get == 0) mustBe true
 
-    "user conversions from map (failure man)" in {
-      var usersMap: Map[Long, Map[Boolean, Int]] = null
+      usersMap = null
       Await result (dbConvDao allUsersConversions ()
         map { usersAndCounts => usersMap = usersAndCounts }, Duration.Inf)
 
-      val conversions = usersMap.get(dbFailureUser.id).get
+      conversions = usersMap.get(dbFailureUser.id).get
 
-      (conversions.get(true).get == 0) &&
-        (conversions.get(false).get == 4) mustBe true
-    }
+      (conversions.get(true).get == 0) mustBe true
+      (conversions.get(false).get == 4) mustBe true
 
-    "user conversions from map (simple man)" in {
-      var usersMap: Map[Long, Map[Boolean, Int]] = null
+      usersMap = null
       Await result (dbConvDao allUsersConversions ()
         map { usersAndCounts => usersMap = usersAndCounts }, Duration.Inf)
 
-      val conversions = usersMap.get(dbSimpleUser.id).get
+      conversions = usersMap.get(dbSimpleUser.id).get
 
-      (conversions.get(true).get == 2) &&
-        (conversions.get(false).get == 2) mustBe true
-    }
+      (conversions.get(true).get == 2) mustBe true
+      (conversions.get(false).get == 2) mustBe true
 
-    "user conversions from map (empty man)" in {
-      var usersMap: Map[Long, Map[Boolean, Int]] = null
+      usersMap = null
       Await result (dbConvDao allUsersConversions ()
         map { usersAndCounts => usersMap = usersAndCounts }, Duration.Inf)
 
