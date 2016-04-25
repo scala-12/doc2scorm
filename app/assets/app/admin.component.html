@@ -13,11 +13,11 @@
 			</thead>
 			<tbody>
 				<tr *ngFor="#user of users">
-					<td>{{ user.id }}</td>
+					<td><span class="user-id">{{ user.id }}</span></td>
 					<td class="as-link" (click)="edit(user)">{{ user.name }}</td>
 					<td>{{ user.email }}</td>
 					<td>{{ formatDate(user.registrationTime) }}</td>
-					<td>{{ user.successDocs }} / {{ user.allDocs }}</td>
+					<td><span class="success-document-count">{{ user.successDocs }}</span> / <span class="all-document-count">{{ user.allDocs }}</span></td>
 					<td>{{ permission(user) }}</td>
 				</tr>
 			</tbody>

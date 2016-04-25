@@ -62,7 +62,6 @@ describe('AdminComponent', () => {
         MockUserData.CURRENT.role = "USER";
         return this.listComponentFixture.debugElement.componentInstance.ngOnInit().then(() => {
             this.listComponentFixture.detectChanges();
-            this.listComponentFixture.detectChanges();
             const element = this.listComponentFixture.nativeElement;
             expect(element.querySelectorAll('tr').length).toBe(0);
         });
@@ -72,9 +71,20 @@ describe('AdminComponent', () => {
         MockUserData.CURRENT.role = "ADMIN";
         return this.listComponentFixture.debugElement.componentInstance.ngOnInit().then(() => {
             this.listComponentFixture.detectChanges();
-            this.listComponentFixture.detectChanges();
             const element = this.listComponentFixture.nativeElement;
             expect(element.querySelectorAll('tr').length).toBe(3);
+        });
+    }));
+
+    it('count of documents', injectAsync([], () => {
+        MockUserData.CURRENT.role = "ADMIN";
+        return this.listComponentFixture.debugElement.componentInstance.ngOnInit().then(() => {
+            this.listComponentFixture.detectChanges();
+            const element = this.listComponentFixture.nativeElement;
+            for (var i = 0; i < MockUserData.USERS.length; i++) {
+                expect(element.querySelectorAll('.success-document-count')[i].textContent).toBe("" + MockUserData.USERS[i].successDocs);
+                expect(element.querySelectorAll('.all-document-count')[i].textContent).toBe("" + MockUserData.USERS[i].allDocs);
+            }
         });
     }));
 
