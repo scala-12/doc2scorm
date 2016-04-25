@@ -42,22 +42,44 @@ class UserController @Inject() (
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   def dbUserToJson(dbUser: DBUser): Future[JsValue] = {
-    conversionDao.getSuccessCount(dbUser.id).flatMap {
+    conversionDao successCount (dbUser.id) flatMap {
       successCount =>
-        conversionDao.getAllCount(dbUser.id).flatMap {
+        conversionDao allCount (dbUser.id) flatMap {
           allCount =>
-            Future.successful {
-              JsObject(Seq(
-                "id" -> JsNumber(dbUser.id),
-                "name" -> JsString(dbUser.name),
-                "email" -> JsString(dbUser.email),
-                "role" -> JsString(dbUser.role),
-                "registrationTime" -> JsNumber(dbUser.registrationTime),
-                "successDocs" -> JsNumber(successCount),
-                "allDocs" -> JsNumber(allCount)))
+            Future successful {
+              dbUserToJson(dbUser, successCount, allCount);
             }
         }
     }
+  }
+
+  def dbAllUsersToJson(users: Seq[DBUser]): Future[Seq[JsValue]] = {
+    conversionDao allUsersConversions () flatMap {
+      usersAndCount =>
+        Future successful {
+          for (u <- users) yield {
+            var failure = 0
+            var success = 0
+            if (usersAndCount.contains(u.id)) {
+              failure = usersAndCount.get(u.id).get.get(false).get
+              success = usersAndCount.get(u.id).get.get(true).get
+            }
+
+            dbUserToJson(u, success, success + failure)
+          }
+        }
+    }
+  }
+
+  private def dbUserToJson(dbUser: DBUser, successCount: Int, allCount: Int): JsValue = {
+    JsObject(Seq(
+      "id" -> JsNumber(dbUser.id),
+      "name" -> JsString(dbUser.name),
+      "email" -> JsString(dbUser.email),
+      "role" -> JsString(dbUser.role),
+      "registrationTime" -> JsNumber(dbUser.registrationTime),
+      "successDocs" -> JsNumber(successCount),
+      "allDocs" -> JsNumber(allCount)))
   }
 
   def getCurrentUser = SecuredAction.async { implicit request =>
@@ -99,20 +121,15 @@ class UserController @Inject() (
     if ("ADMIN".equals(request.identity.role.get)) {
       dbUserDao.getUsers.flatMap {
         users =>
-          var usersJson: Array[JsValue] = new Array[JsValue](users.size)
-          var usersSearch = for (i <- 0 until users.size) yield {
-            dbUserToJson(users(i)).flatMap {
-              json => Future.successful { usersJson(i) = json }
+          dbAllUsersToJson(users) flatMap { usersJson =>
+            Future successful {
+              Ok(
+                new JsArray(usersJson))
             }
           }
-          for (i <- 0 until users.size) {
-            Await.result(usersSearch(i), 10 millis)
-          }
-
-          Future.successful { Ok(new JsArray(usersJson)) }
       }
     } else {
-      Future.successful { BadRequest("Permission denied") }
+      Future successful { BadRequest("Permission denied") }
     }
   }
 

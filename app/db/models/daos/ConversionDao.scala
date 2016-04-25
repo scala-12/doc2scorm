@@ -6,10 +6,12 @@ import db.models.DBConversion
 
 trait ConversionDao {
 
-  def getSuccessCount(userId: Long): Future[Int]
-  
-  def getAllCount(userId: Long): Future[Int]
-  
+  def successCount(userId: Long): Future[Int]
+
+  def allCount(userId: Long): Future[Int]
+
+  def allUsersConversions(): Future[Map[Long, Map[Boolean, Int]]]
+
   def addConversion(conversion: DBConversion): Future[Long]
 
 }
