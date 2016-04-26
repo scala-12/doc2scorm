@@ -1,8 +1,5 @@
 /.settings/
 /bin/
-/lib/*
-!/lib/fmath-2.0.jar
-!/lib/imsglobal-1.0.jar
 /logs/
 /target/
 /project/project/

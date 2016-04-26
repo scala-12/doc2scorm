@@ -12,6 +12,8 @@ resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
+resolvers += Resolver.mavenLocal
+
 libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette" % "3.0.4",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
@@ -127,4 +129,9 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
 	"org.webjars.npm" % "jasmine-core" % "2.4.1"
+)
+
+// Course generator core
+libraryDependencies ++= Seq(
+  	"com.ipoint" % "ilogos-course-generator-core" % "0.0.1-SNAPSHOT"
 )
