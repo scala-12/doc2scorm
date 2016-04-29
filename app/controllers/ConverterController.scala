@@ -71,7 +71,6 @@ class ConverterController @Inject() (
               val doc = new File(lastDoc)
               val fileName = doc.getName
               val headerLevel = header
-              val templateDir = configuration.getString("default.template.dir").get
               val courseName = course
               val tempDir = doc.getAbsolutePath() + "_dir";
               val docType = ".docx"
@@ -79,7 +78,7 @@ class ConverterController @Inject() (
               var success: Boolean = false
               var zipFile: String = ""
               try {
-                zipFile = parser.parse(new FileInputStream(doc), headerLevel, templateDir, courseName, tempDir, docType)
+                zipFile = parser.parse(new FileInputStream(doc), headerLevel, courseName, tempDir, docType)
                 success = true
               } finally {
                 conversionDao.addConversion(new DBConversion(0, request.identity.dbId.get, fileName, success, Calendar.getInstance().getTimeInMillis()))
