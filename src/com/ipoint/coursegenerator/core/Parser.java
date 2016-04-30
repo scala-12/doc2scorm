@@ -1,7 +1,7 @@
 package com.ipoint.coursegenerator.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -117,14 +117,14 @@ public class Parser {
 				itemResource, imagesNames);
 	}
 
-	private void addPageToCourse(CourseTreeNode node, String templateDir,
-			String coursePath, String pagePath, String pageName) {
+	private void addPageToCourse(CourseTreeNode node, String coursePath,
+			String pagePath, String pageName) {
 		Document html = createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0)
 				.appendChild(node.getPage().toHtml(html));
 
-		boolean pageAdded = FileWork.saveHTMLDocument(html, templateDir,
-				coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
+		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath,
+				pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
 			FileWork.saveImages(node.getPage().getImages(), coursePath
 					+ pagePath + ImageOptionItem.IMAGE_DIR_PATH);
@@ -132,8 +132,8 @@ public class Parser {
 	}
 
 	private void recursiveSaveCourse(List<CourseTreeNode> items,
-			ManifestType manifest, String templateDir, String coursePath,
-			String path, String level, XmlObject parentItem) {
+			ManifestType manifest, String coursePath, String path,
+			String level, XmlObject parentItem) {
 		int numberOnLevel = 0;
 		String part = (level == null) ? FileWork.HTML_PREFIX
 				: (FileWork.HTML_PREFIX + level + "-");
@@ -149,8 +149,7 @@ public class Parser {
 			ItemType manifestItem = addOrganizationElementToManifest(
 					parentItem, item);
 			if (item.getPage() != null) {
-				this.addPageToCourse(item, templateDir, coursePath, path,
-						pageTitle);
+				this.addPageToCourse(item, coursePath, path, pageTitle);
 				this.addImagesToManifest(manifest, path, pageTitle, item
 						.getPage().getImages(), manifestItem.getIdentifierref());
 			}
@@ -159,7 +158,6 @@ public class Parser {
 				this.recursiveSaveCourse(
 						item.getNodes(),
 						manifest,
-						templateDir,
 						coursePath,
 						path + pageTitle + File.separator,
 						(level == null) ? String.valueOf(numberOnLevel)
@@ -169,9 +167,9 @@ public class Parser {
 		}
 	}
 
+	// TODO: add variable for external templates
 	public String parse(InputStream stream, String headerLevel,
-			String templateDir, String courseName, String path, String fileType)
-			throws IOException {
+			String courseName, String path, String fileType) throws IOException {
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
@@ -184,39 +182,26 @@ public class Parser {
 		this.createImsManifestFile(courseName);
 
 		if (!courseModel.getNodes().isEmpty()) {
-			this.recursiveSaveCourse(courseModel.getNodes(), manifest
-					.getManifest(), templateDir, path.concat(File.separator),
-					"", null, manifest.getManifest().getOrganizations());
+			this.recursiveSaveCourse(courseModel.getNodes(),
+					manifest.getManifest(), path.concat(File.separator), "",
+					null, manifest.getManifest().getOrganizations());
 		}
 
-		String res = tuneManifest(manifest);
-		File f = new File(path, "imsmanifest.xml");
-		try {
-			f.createNewFile();
+		String manifestContent = tuneManifest(manifest);
+		File manifestFile = new File(path, "imsmanifest.xml");
 
-			FileWriter fr = new FileWriter(f);
-			fr.write(res);
-			fr.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		FileWork.saveTextFile(
+				new ByteArrayInputStream(manifestContent.getBytes()),
+				manifestFile);
+
 		File jsDir = new File(path + File.separator + "js");
 		File cssDir = new File(path + File.separator + "css");
-		if (!jsDir.exists()) {
-			jsDir.mkdirs();
-		}
-		if (!cssDir.exists()) {
-			cssDir.mkdirs();
-		}
-		FileUtils.copyFileToDirectory(new File(templateDir + File.separator
-				+ "parser.js"), jsDir);
-		FileUtils.copyFileToDirectory(new File(templateDir + File.separator
-				+ "APIWrapper.js"), jsDir);
-		FileUtils.copyFileToDirectory(new File(templateDir + File.separator
-				+ "SCOFunctions.js"), jsDir);
-		FileUtils.copyFileToDirectory(new File(templateDir + File.separator
-				+ "kurs.css"), cssDir);
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "kurs.css");
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "test.css");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "APIWrapper.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "SCOFunctions.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "parser.js");
+
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
 				directory.getPath());
@@ -234,7 +219,8 @@ public class Parser {
 		String sdate = "_"
 				+ new Integer(date.get(GregorianCalendar.YEAR)).toString()
 				+ "-"
-				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString() + "-"
+				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString()
+				+ "-"
 				+ new Integer(date.get(GregorianCalendar.DATE)).toString();
 		zipCourseFileName = zipCourseFileName + sdate + ".zip";
 		return zipCourseFileName;

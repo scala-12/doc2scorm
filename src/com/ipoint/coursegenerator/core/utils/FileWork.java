@@ -1,12 +1,16 @@
 package com.ipoint.coursegenerator.core.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,32 +39,86 @@ public class FileWork {
 	public final static String IMAGE_WMF = "image/x-wmf";
 	public final static String IMAGE_PNG = "image/png";
 	public final static String FILETYPE_DOCX = ".docx";
+	public final static Charset STANDART_ENCODING = StandardCharsets.UTF_8;
 
-	/**
-	 * Method for saving file in directory
-	 * 
-	 * @param byteFile
-	 *            Byte file for adding
-	 * @param path
-	 *            Full path to creating file. Directory must be exist
-	 * @return If added then true
-	 */
-	public static boolean saveFile(byte[] byteFile, String path) {
-		File file = new File(path);
-		try {
-			file.getParentFile().mkdirs();
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(byteFile);
-			fos.close();
+	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
+		if (null == is) {
+			return false;
+		} else {
+			if (!outFile.getParentFile().exists()) {
+				outFile.getParentFile().mkdirs();
+			}
+
+			FileOutputStream fileOS = null;
+
+			try {
+				outFile.createNewFile();
+				fileOS = new FileOutputStream(outFile);
+
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+				if (isText) {
+					Writer outStreamWriter = new OutputStreamWriter(fileOS,
+							STANDART_ENCODING);
+					while ((bytesRead = is.read(buffer)) != -1) {
+						outStreamWriter.write(new String(buffer), 0, bytesRead);
+					}
+
+					outStreamWriter.flush();
+					outStreamWriter.close();
+				} else {
+					while ((bytesRead = is.read(buffer)) != -1) {
+						fileOS.write(buffer, 0, bytesRead);
+					}
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			} finally {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				try {
+					fileOS.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 
 			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
 		}
+	}
 
-		return false;
+	public static boolean saveRawFile(InputStream is, File outFile) {
+		return saveFile(is, outFile, false);
+	}
+
+	public static boolean saveTextFile(InputStream is, File outFile) {
+		return saveFile(is, outFile, true);
+	}
+
+	public static boolean copyTextFileFromResourcesToDir(File destDir,
+			String textFileName) {
+		return copyFileFromResourcesToDir(destDir, textFileName, true);
+	}
+
+	public static boolean copyRawFileFromResourcesToDir(File destDir,
+			String rawFileName) {
+		return copyFileFromResourcesToDir(destDir, rawFileName, false);
+	}
+
+	private static boolean copyFileFromResourcesToDir(File destDir,
+			String fileName, boolean isText) {
+		InputStream is = FileWork.class.getClassLoader().getResourceAsStream(
+				fileName);
+
+		return saveFile(is, new File(destDir, fileName), isText);
 	}
 
 	/**
@@ -78,8 +136,8 @@ public class FileWork {
 	 *            Name of adding html-page
 	 * @return
 	 */
-	public static boolean saveHTMLDocument(Document html, String templateDir,
-			String coursePath, String pathInCourseToPage, String pageName) {
+	public static boolean saveHTMLDocument(Document html, String coursePath,
+			String pathInCourseToPage, String pageName) {
 		try {
 			StringWriter buffer = new StringWriter();
 			Transformer transformer = TransformerFactory.newInstance()
@@ -93,7 +151,8 @@ public class FileWork {
 						new StreamResult(buffer));
 			}
 			Configuration cfg = new Configuration();
-			cfg.setDirectoryForTemplateLoading(new File(templateDir));
+			cfg.setClassLoaderForTemplateLoading(
+					FileWork.class.getClassLoader(), "");
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 			String upToLevel = new String();
@@ -116,12 +175,12 @@ public class FileWork {
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
 			body.put("upToLevel", upToLevel);
-			Writer out = new OutputStreamWriter(new FileOutputStream(
-					fullPathToHtml + pageName), Charset.forName("UTF-8")
-					.newEncoder());
-			temp.process(body, out);
-			out.flush();
-			out.close();
+			Writer outStreamWriter = new OutputStreamWriter(
+					new FileOutputStream(fullPathToHtml + pageName),
+					STANDART_ENCODING);
+			temp.process(body, outStreamWriter);
+			outStreamWriter.flush();
+			outStreamWriter.close();
 
 			return true;
 		} catch (TransformerException e) {
@@ -167,7 +226,10 @@ public class FileWork {
 			}
 		}
 
-		return saveFile(byteImage, scrToImage);
+		// TODO: remove this statement. It's used because we have problems with
+		// wmf/emf
+		return (byteImage == null) ? false : saveRawFile(
+				new ByteArrayInputStream(byteImage), new File(scrToImage));
 	}
 
 	/**
@@ -180,7 +242,7 @@ public class FileWork {
 	public static boolean saveImages(List<ImageInfo> images, String path) {
 		boolean successful = true;
 		for (ImageInfo image : images) {
-			successful = successful && saveImage(image, path);
+			successful = saveImage(image, path) && successful;
 		}
 		return successful;
 	}
