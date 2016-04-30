@@ -27,8 +27,11 @@ public class GuardianCharacters {
 	public static void fillCharactersData() {
 		htmlSVGDocument = null;
 		try {
-			htmlSVGDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(GuardianCharacters.class.getClassLoader().getResourceAsStream("opensymbol.svg"));
+			htmlSVGDocument = DocumentBuilderFactory
+					.newInstance()
+					.newDocumentBuilder()
+					.parse(GuardianCharacters.class.getClassLoader()
+							.getResourceAsStream("opensymbol.svg"));
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
