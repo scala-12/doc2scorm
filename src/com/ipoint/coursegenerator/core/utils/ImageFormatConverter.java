@@ -18,6 +18,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.arnx.wmf2svg.gdi.svg.SvgGdi;
+import net.arnx.wmf2svg.gdi.svg.SvgGdiException;
+import net.arnx.wmf2svg.gdi.wmf.WmfParseException;
+import net.arnx.wmf2svg.gdi.wmf.WmfParser;
+
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -37,11 +42,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import net.arnx.wmf2svg.gdi.svg.SvgGdi;
-import net.arnx.wmf2svg.gdi.svg.SvgGdiException;
-import net.arnx.wmf2svg.gdi.wmf.WmfParseException;
-import net.arnx.wmf2svg.gdi.wmf.WmfParser;
 
 public class ImageFormatConverter {
 
