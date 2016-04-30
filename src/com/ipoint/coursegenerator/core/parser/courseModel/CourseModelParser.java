@@ -347,7 +347,12 @@ public class CourseModelParser extends AbstractParser {
 									mathInfo);
 
 					if (paragraphBlock instanceof ListBlock) {
-						i += ((ListBlock) paragraphBlock).getSize() - 1;
+						// minus 1 because after this iteration "i" will be
+						// incremented
+						int iShift = ((ListBlock) paragraphBlock).getSize() - 1;
+						if (iShift > 0) {
+							i += iShift;
+						}
 					}
 
 					if (paragraphBlock != null) {
