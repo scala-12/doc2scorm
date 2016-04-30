@@ -78,15 +78,19 @@ public class FileWork {
 	 *            Name of adding html-page
 	 * @return
 	 */
-	public static boolean saveHTMLDocument(Document html, String templateDir, String coursePath,
-			String pathInCourseToPage, String pageName) {
+	public static boolean saveHTMLDocument(Document html, String templateDir,
+			String coursePath, String pathInCourseToPage, String pageName) {
 		try {
 			StringWriter buffer = new StringWriter();
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			NodeList bodyChilds = html.getElementsByTagName("body").item(0).getChildNodes();
+			Transformer transformer = TransformerFactory.newInstance()
+					.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+			NodeList bodyChilds = html.getElementsByTagName("body").item(0)
+					.getChildNodes();
 			for (int i = 0; i < bodyChilds.getLength(); i++) {
-				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
+				transformer.transform(new DOMSource(bodyChilds.item(i)),
+						new StreamResult(buffer));
 			}
 			Configuration cfg = new Configuration();
 			cfg.setDirectoryForTemplateLoading(new File(templateDir));
@@ -95,8 +99,8 @@ public class FileWork {
 			String upToLevel = new String();
 			String fullPathToHtml = coursePath;
 			if (!pathInCourseToPage.isEmpty()) {
-				for (String dirLevel : pathInCourseToPage
-						.split((File.separator.equals("\\")) ? "\\\\" : File.separator)) {
+				for (String dirLevel : pathInCourseToPage.split((File.separator
+						.equals("\\")) ? "\\\\" : File.separator)) {
 					fullPathToHtml = fullPathToHtml + dirLevel + File.separator;
 					File f = new File(fullPathToHtml);
 					if (!f.exists()) {
@@ -112,7 +116,9 @@ public class FileWork {
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
 			body.put("upToLevel", upToLevel);
-			Writer out = new OutputStreamWriter(new FileOutputStream(fullPathToHtml + pageName),Charset.forName("UTF-8").newEncoder());
+			Writer out = new OutputStreamWriter(new FileOutputStream(
+					fullPathToHtml + pageName), Charset.forName("UTF-8")
+					.newEncoder());
 			temp.process(body, out);
 			out.flush();
 			out.close();
@@ -139,7 +145,8 @@ public class FileWork {
 	 * @return If added then true
 	 */
 	public static boolean saveImage(ImageInfo image, String path) {
-		String scrToImage = path.concat(image.getImageName()).replace(File.separatorChar, '/');
+		String scrToImage = path.concat(image.getImageName()).replace(
+				File.separatorChar, '/');
 		byte[] byteImage = null;
 
 		if (image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
@@ -148,11 +155,15 @@ public class FileWork {
 				|| image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
 			byteImage = image.getPictureData().getData();
 		} else {
-			if (!image.getPictureData().getPackagePart().getContentType().equals("image/x-emf")
-					|| image.getPictureData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWMFtoPNG(image.getPictureData().getData());
+			if (!image.getPictureData().getPackagePart().getContentType()
+					.equals("image/x-emf")
+					|| image.getPictureData().getPackagePart().getContentType()
+							.equals("image/emf")) {
+				byteImage = ImageFormatConverter.transcodeWMFtoPNG(image
+						.getPictureData().getData());
 			} else {
-				byteImage = ImageFormatConverter.transcodeEMFtoPNG(image.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeEMFtoPNG(image
+						.getPictureData().getData());
 			}
 		}
 
