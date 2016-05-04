@@ -196,11 +196,16 @@ public class Parser {
 
 		File jsDir = new File(path + File.separator + "js");
 		File cssDir = new File(path + File.separator + "css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "kurs.css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "test.css");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "APIWrapper.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "SCOFunctions.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "parser.js");
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html",
+				"kurs.css");
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html",
+				"test.css");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
+				"APIWrapper.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
+				"SCOFunctions.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
+				"parser.js");
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
