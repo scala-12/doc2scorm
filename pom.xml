@@ -11,9 +11,15 @@
 		<freehep-graphicsio.version>2.4</freehep-graphicsio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.resourceDirectory>${project.basedir}/src/resources</project.resourceDirectory>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.resourceDirectory}</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -25,8 +31,9 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<repositories>
-		<!--local repositories-->
+		<!--local repositories -->
 		<repository>
 			<id>project.local</id>
 			<name>project</name>
@@ -75,7 +82,7 @@
 			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
-			<!--used for fMath-->
+			<!--used for fMath -->
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>

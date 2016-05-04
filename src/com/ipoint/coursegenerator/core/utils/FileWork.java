@@ -115,10 +115,14 @@ public class FileWork {
 
 	private static boolean copyFileFromResourcesToDir(File destDir,
 			String fromDir, String fileName, boolean isText) {
-		InputStream is = FileWork.class.getClassLoader().getResourceAsStream(
-				fromDir + "/" + fileName);
+		return saveFile(getFileFromResources(fromDir, fileName), new File(
+				destDir, fileName), isText);
+	}
 
-		return saveFile(is, new File(destDir, fileName), isText);
+	public static InputStream getFileFromResources(String fromDir,
+			String fileName) {
+		return FileWork.class.getClassLoader().getResourceAsStream(
+				fromDir + "/" + fileName);
 	}
 
 	/**
