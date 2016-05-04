@@ -168,8 +168,8 @@ public class Parser {
 	}
 
 	// TODO: add variable for external templates
-	public String parse(InputStream stream, String headerLevel,
-			String courseName, String path, String fileType) throws IOException {
+	public String parse(InputStream stream, int headerLevel, String courseName,
+			String path) throws IOException {
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
@@ -177,7 +177,7 @@ public class Parser {
 		directory.mkdirs();
 
 		CourseModel courseModel = new CourseModelParser().parse(stream,
-				courseName, Integer.valueOf(headerLevel));
+				courseName, headerLevel);
 
 		this.createImsManifestFile(courseName);
 
@@ -220,7 +220,7 @@ public class Parser {
 		Calendar date = GregorianCalendar.getInstance();
 		zipCourseFileName = zipCourseFileName.replace(' ', '_').replaceAll(
 				"[\\W&&[^-]]", "");
-		;
+
 		String sdate = "_"
 				+ new Integer(date.get(GregorianCalendar.YEAR)).toString()
 				+ "-"
