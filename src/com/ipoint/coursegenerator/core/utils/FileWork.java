@@ -104,19 +104,19 @@ public class FileWork {
 	}
 
 	public static boolean copyTextFileFromResourcesToDir(File destDir,
-			String textFileName) {
-		return copyFileFromResourcesToDir(destDir, textFileName, true);
+			String fromDir, String textFileName) {
+		return copyFileFromResourcesToDir(destDir, fromDir, textFileName, true);
 	}
 
 	public static boolean copyRawFileFromResourcesToDir(File destDir,
-			String rawFileName) {
-		return copyFileFromResourcesToDir(destDir, rawFileName, false);
+			String fromDir, String rawFileName) {
+		return copyFileFromResourcesToDir(destDir, fromDir, rawFileName, false);
 	}
 
 	private static boolean copyFileFromResourcesToDir(File destDir,
-			String fileName, boolean isText) {
+			String fromDir, String fileName, boolean isText) {
 		InputStream is = FileWork.class.getClassLoader().getResourceAsStream(
-				fileName);
+				fromDir + "/" + fileName);
 
 		return saveFile(is, new File(destDir, fileName), isText);
 	}
@@ -152,7 +152,7 @@ public class FileWork {
 			}
 			Configuration cfg = new Configuration();
 			cfg.setClassLoaderForTemplateLoading(
-					FileWork.class.getClassLoader(), "");
+					FileWork.class.getClassLoader(), "templates/html");
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 			String upToLevel = new String();
