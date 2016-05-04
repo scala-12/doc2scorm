@@ -57,10 +57,10 @@ export class DashboardComponent implements OnInit {
         this.conversionStatus = "running";
 
         var name: String;
-        if (this.disableInput) {
-            name = this.filename.substring(this.filename.lastIndexOf('/') + 1, this.filename.lastIndexOf('.'));
+        if ((this.courseName.replace(/^\s+|\s+$/g, '').length === 0) || this.disableInput) {
+            name = this.filename.substring(this.filename.lastIndexOf('/') + 1, this.filename.lastIndexOf('.')).replace(/^\s+|\s+$/g, '');
         } else {
-            name = this.courseName
+            name = this.courseName.replace(/^\s+|\s+$/g, '')
         }
         var header = 0
         for (var i = 0; i < this.headers.length; i++) {
