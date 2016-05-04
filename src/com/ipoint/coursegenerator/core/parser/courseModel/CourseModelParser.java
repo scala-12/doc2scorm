@@ -41,9 +41,9 @@ import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.par
  */
 public class CourseModelParser extends AbstractParser {
 
-	private final static String MATH_START = "<math>";
+	private static final String MATH_START = "<math>";
 
-	private final static String MATH_END = MATH_START.replace("<", "</");
+	private static final String MATH_END = MATH_START.replace("<", "</");
 
 	private ArrayList<Integer> levelMap;
 
@@ -282,11 +282,10 @@ public class CourseModelParser extends AbstractParser {
 	 * @return {@link CourseModel} of course
 	 */
 	public CourseModel parse(InputStream stream, String courseName,
-			Integer maxHeaderLevel) {
+			int maxHeaderLevel) {
 
-		CourseModel courseModel = new CourseModel(courseName);
-		int maxHead = (maxHeaderLevel == null) ? 1 : ((maxHeaderLevel < 1) ? 1
-				: maxHeaderLevel);
+		CourseModel courseModel = null;
+		int maxHead = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
 
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -306,6 +305,11 @@ public class CourseModelParser extends AbstractParser {
 			}
 
 			XWPFDocument document = new XWPFDocument(streamCopy2);
+
+			courseModel = new CourseModel(
+					((courseName == null) || courseName.isEmpty()) ? courseName = "course"
+							+ stream.hashCode()
+							: courseName);
 
 			this.levelMap = new ArrayList<Integer>();
 			CoursePage page = new CoursePage();
