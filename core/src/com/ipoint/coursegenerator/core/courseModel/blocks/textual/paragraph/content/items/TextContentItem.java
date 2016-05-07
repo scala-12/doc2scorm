@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
 
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
@@ -7,8 +7,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * Item for {@link TextBlock}. This item includes text and him properties.
@@ -16,7 +16,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class TextOptionItem extends AbstractContentItem<String> {
+public class TextContentItem extends AbstractContentItem<String> {
 
 	// properties of text
 	private boolean bold;
@@ -32,7 +32,7 @@ public class TextOptionItem extends AbstractContentItem<String> {
 	 * @param run
 	 *            Run of text
 	 */
-	public TextOptionItem(XWPFRun run) {
+	public TextContentItem(XWPFRun run) {
 		super(run.toString());
 
 		boolean isHyperlink = (run instanceof XWPFHyperlinkRun);

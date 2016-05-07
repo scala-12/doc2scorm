@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
 
 /**
  * Item that includes picture data
@@ -12,7 +12,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
+public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 
 	private Integer position;
 
@@ -54,7 +54,7 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	 *            Multiplier of size
 	 * 
 	 */
-	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap, float multiplierSize) {
+	public ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap, float multiplierSize) {
 		this(imageData, style, isWrap, new Float(multiplierSize));
 	}
 
@@ -68,11 +68,11 @@ public class ImageOptionItem extends AbstractContentItem<XWPFPictureData> {
 	 *            If it is true then picture in text else behind or front
 	 * 
 	 */
-	public ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap) {
+	public ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap) {
 		this(imageData, style, isWrap, null);
 	}
 
-	private ImageOptionItem(XWPFPictureData imageData, String style, boolean isWrap, Float multiplierSize) {
+	private ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap, Float multiplierSize) {
 		super(imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {

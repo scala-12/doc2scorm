@@ -7,17 +7,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tableCell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}
@@ -116,8 +116,8 @@ public class CoursePage implements Convertable {
 
 		for (ParagraphItem parItem : paragraph.getItems()) {
 			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
-				if (item instanceof ImageOptionItem) {
-					ImageOptionItem imageItem = (ImageOptionItem) item;
+				if (item instanceof ImageContentItem) {
+					ImageContentItem imageItem = (ImageContentItem) item;
 					ImageInfo image = new ImageInfo(imageItem.getImageFullName(), imageItem.getValue());
 					images.add(image);
 				}
@@ -131,7 +131,7 @@ public class CoursePage implements Convertable {
 		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
 
 		for (AbstractParagraphBlock<?> block : blocks) {
-			if (block instanceof AbstractTextualParagraphBlock) {
+			if (block instanceof AbstractTextualBlock) {
 				if (block instanceof ParagraphBlock) {
 					images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
 				} else if (block instanceof ListBlock) {

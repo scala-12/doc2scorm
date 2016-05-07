@@ -1,14 +1,15 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.list;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * List block which may includes several {@link TextBlock} or
@@ -17,7 +18,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ListBlock extends AbstractTextualParagraphBlock<ListItem> {
+public class ListBlock extends AbstractTextualBlock<ListItem> {
 
 	public static final int SIMPLE_MARKER = 0;
 	public static final int UPPER_LETTER_MARKER = 1;
@@ -50,8 +51,10 @@ public class ListBlock extends AbstractTextualParagraphBlock<ListItem> {
 	 * @return if successful then true
 	 */
 	public boolean setMarkerType(int type) {
-		if ((type == DECIMAL_MARKER) || (type == LOWER_LETTER_MARKER) || (type == LOWER_ROMAN_MARKER)
-				|| (type == UPPER_LETTER_MARKER) || (type == UPPER_ROMAN_MARKER) || (type == SIMPLE_MARKER)) {
+		if ((type == DECIMAL_MARKER) || (type == LOWER_LETTER_MARKER)
+				|| (type == LOWER_ROMAN_MARKER)
+				|| (type == UPPER_LETTER_MARKER)
+				|| (type == UPPER_ROMAN_MARKER) || (type == SIMPLE_MARKER)) {
 			this.type = type;
 
 			return true;
@@ -118,12 +121,20 @@ public class ListBlock extends AbstractTextualParagraphBlock<ListItem> {
 					// insert into listItem a other list. If don't do it then
 					// another list inserted into new list item - It is looks
 					// not correct.
-					listItem.appendChild(this.getItems().get(++i).toHtml(creatorTags).getFirstChild());
+					listItem.appendChild(this.getItems().get(++i)
+							.toHtml(creatorTags).getFirstChild());
 				}
 			}
 		}
 
 		return list;
+	}
+
+	@Override
+	public String getText() {
+		return String.join("\n",
+				this.getItems().stream().map(li -> li.getValue().getText())
+						.collect(Collectors.toList()));
 	}
 
 }
