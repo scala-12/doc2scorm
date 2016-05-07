@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.tableCell;
+package com.ipoint.coursegenerator.core.courseModel.blocks.tabular.cell;
 
 import java.util.List;
 
@@ -6,10 +6,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or
@@ -32,8 +32,8 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 
 	public CellItem(List<AbstractParagraphBlock<?>> blocks) {
 		super(blocks);
-		this.setRowSpan(0);
-		this.setColSpan(0);
+		this.setRowSpan(1);
+		this.setColSpan(1);
 	}
 
 	public CellItem() {
@@ -49,7 +49,7 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 	 */
 	public boolean setRowSpan(Integer rowSpan) {
 		if (rowSpan != null) {
-			if (rowSpan >= 0) {
+			if (rowSpan > 0) {
 				this.rowSpan = rowSpan;
 				return true;
 			}
@@ -67,7 +67,7 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 	 */
 	public boolean setColSpan(Integer colSpan) {
 		if (colSpan != null) {
-			if (colSpan >= 0) {
+			if (colSpan > 0) {
 				this.colSpan = colSpan;
 				return true;
 			}
@@ -120,10 +120,10 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 		Element tCell = creatorTags.createElement("td");
 
 		if ((this.getColSpan() != null) && (this.getRowSpan() != null)) {
-			if (this.getColSpan() != 0) {
+			if (this.getColSpan() != 1) {
 				tCell.setAttribute("colspan", this.getColSpan().toString());
 			}
-			if (this.getRowSpan() != 0) {
+			if (this.getRowSpan() != 1) {
 				tCell.setAttribute("rowspan", this.getRowSpan().toString());
 			}
 			if (this.getValue() != null) {

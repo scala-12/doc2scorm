@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.tabular;
+package com.ipoint.coursegenerator.core.courseModel.blocks.tabular;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 
 /**
  * Table block which includes rows

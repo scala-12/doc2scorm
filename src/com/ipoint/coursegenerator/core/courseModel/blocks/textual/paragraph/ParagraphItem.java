@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * This item is other block: {@link TextBlock} or {@link HyperlinkBlock}

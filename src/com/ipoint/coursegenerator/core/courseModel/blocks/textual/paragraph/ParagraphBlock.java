@@ -1,5 +1,6 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -7,9 +8,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
 
 /**
  * This block is an analogue of text paragraph. These includes several
@@ -18,7 +20,8 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractTextualParagraphBlock<ParagraphItem> {
+public class ParagraphBlock extends
+		AbstractTextualBlock<ParagraphItem> {
 
 	public static final int LEFT_ALIGN = 0;
 
@@ -73,7 +76,6 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock<ParagraphItem>
 		Element par = creatorTags.createElement("p");
 		for (ParagraphItem item : this.getItems()) {
 			par.appendChild(item.toHtml(creatorTags));
-				
 		}
 
 		if (this.getAlignment() != null) {
@@ -96,4 +98,20 @@ public class ParagraphBlock extends AbstractTextualParagraphBlock<ParagraphItem>
 		return par;
 	}
 
+	@Override
+	public String getText() {
+		StringBuilder text = new StringBuilder();
+		ArrayList<TextContentItem> items = new ArrayList<>();
+		for (ParagraphItem parItem : this.getItems()) {
+			parItem.getValue().getItems().stream()
+					.filter(item -> item instanceof TextContentItem)
+					.forEach(item -> items.add((TextContentItem) item));
+		}
+
+		for (TextContentItem item : items) {
+			text.append(item.getValue());
+		}
+
+		return text.toString();
+	}
 }

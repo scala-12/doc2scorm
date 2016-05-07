@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.list;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.AbstractTextualParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
 
 /**
  * Item includes {@link ParagraphBlock} or {@link ListBlock}
@@ -14,9 +14,9 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class ListItem extends AbstractItem<AbstractTextualParagraphBlock<?>> {
+public class ListItem extends AbstractItem<AbstractTextualBlock<?>> {
 
-	public ListItem(AbstractTextualParagraphBlock<?> paragraph) {
+	public ListItem(AbstractTextualBlock<?> paragraph) {
 		super(paragraph);
 	}
 

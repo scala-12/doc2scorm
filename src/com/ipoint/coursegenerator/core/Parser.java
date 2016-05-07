@@ -24,8 +24,8 @@ import org.w3c.dom.Document;
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
-import com.ipoint.coursegenerator.core.parser.courseModel.CourseModelParser;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
@@ -127,7 +127,7 @@ public class Parser {
 				pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
 			FileWork.saveImages(node.getPage().getImages(), coursePath
-					+ pagePath + ImageOptionItem.IMAGE_DIR_PATH);
+					+ pagePath + ImageContentItem.IMAGE_DIR_PATH);
 		}
 	}
 
@@ -176,8 +176,8 @@ public class Parser {
 		}
 		directory.mkdirs();
 
-		CourseModel courseModel = new CourseModelParser().parse(stream,
-				courseName, headerLevel);
+		CourseModel courseModel = new CourseParser().parse(stream, courseName,
+				headerLevel);
 
 		this.createImsManifestFile(courseName);
 

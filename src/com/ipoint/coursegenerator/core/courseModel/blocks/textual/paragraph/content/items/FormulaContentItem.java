@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions;
+package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
 
 /**
  * Item which includes Math formula
@@ -12,11 +12,11 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class FormulaOptionItem extends AbstractContentItem<Node> {
+public class FormulaContentItem extends AbstractContentItem<Node> {
 
 	private boolean paragraphFlag;
 
-	public FormulaOptionItem(Node math, boolean paragraphFlag) {
+	public FormulaContentItem(Node math, boolean paragraphFlag) {
 		super(math);
 		this.setParagraphFlag(paragraphFlag);
 	}
