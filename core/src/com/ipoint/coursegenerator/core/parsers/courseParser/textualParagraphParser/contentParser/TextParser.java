@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,13 +7,13 @@ import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.TextBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.FormulaOptionItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.ImageOptionItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.contentOptions.TextOptionItem;
-import com.ipoint.coursegenerator.core.parser.AbstractParser;
-import com.ipoint.coursegenerator.core.parser.MathInfo;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.FormulaContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.parsers.AbstractParser;
+import com.ipoint.coursegenerator.core.parsers.MathInfo;
 
 import schemasMicrosoftComVml.CTImageData;
 import schemasMicrosoftComVml.CTShape;
@@ -36,7 +36,7 @@ public class TextParser extends AbstractParser {
 	 * @return Text block with formula
 	 */
 	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
-		return new TextBlock(new FormulaOptionItem(mathInfo.read(), paragraphFlag));
+		return new TextBlock(new FormulaContentItem(mathInfo.read(), paragraphFlag));
 	}
 
 	private static final int EMU_TO_PX_COEF = 9525;
@@ -130,11 +130,11 @@ public class TextParser extends AbstractParser {
 						}
 
 						if (pictureData != null) {
-							blockItems.add(new ImageOptionItem(pictureData, picStyle, isWrap, scale));
+							blockItems.add(new ImageContentItem(pictureData, picStyle, isWrap, scale));
 						}
 					} else {
 						// Text
-						blockItems.add(new TextOptionItem(run));
+						blockItems.add(new TextContentItem(run));
 					}
 				}
 			}

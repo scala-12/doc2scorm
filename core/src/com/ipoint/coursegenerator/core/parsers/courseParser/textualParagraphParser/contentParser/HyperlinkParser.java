@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser;
 
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
 
 /**
  * Parsing to {@link HyperlinkBlock}

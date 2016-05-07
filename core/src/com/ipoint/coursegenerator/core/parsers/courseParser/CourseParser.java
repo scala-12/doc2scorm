@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.parser.courseModel;
+package com.ipoint.coursegenerator.core.parsers.courseParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,13 +25,12 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CoursePage;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.paragraphs.textual.paragraph.HeaderBlock;
-import com.ipoint.coursegenerator.core.parser.AbstractParser;
-import com.ipoint.coursegenerator.core.parser.MathInfo;
-import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.AbstractParagraphParser;
-import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.paragraph.HeaderParser;
+import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.parsers.AbstractParser;
+import com.ipoint.coursegenerator.core.parsers.MathInfo;
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 
 /**
  * Class for parsing to {@link CourseModel}
@@ -39,7 +38,7 @@ import com.ipoint.coursegenerator.core.parser.courseModel.paragraphs.textual.par
  * @author Kalashnikov Vladislav
  *
  */
-public class CourseModelParser extends AbstractParser {
+public class CourseParser extends AbstractParser {
 
 	private static final String MATH_START = "<math>";
 
@@ -122,38 +121,6 @@ public class CourseModelParser extends AbstractParser {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Search header level
-	 * 
-	 * @param headId
-	 *            ID of header
-	 * @return
-	 */
-	private static Integer getNumberOfHeader(String headId) {
-		Integer resultVariable = null;
-		if ((headId.equals("Heading1")) || (headId.equals("1"))) {
-			resultVariable = 1;
-		} else if ((headId.equals("Heading2")) || (headId.equals("2"))) {
-			resultVariable = 2;
-		} else if ((headId.equals("Heading3")) || (headId.equals("3"))) {
-			resultVariable = 3;
-		} else if ((headId.equals("Heading4")) || (headId.equals("4"))) {
-			resultVariable = 4;
-		} else if ((headId.equals("Heading5")) || (headId.equals("5"))) {
-			resultVariable = 5;
-		} else if ((headId.equals("Heading6")) || (headId.equals("6"))) {
-			resultVariable = 6;
-		} else if ((headId.equals("Heading7")) || (headId.equals("7"))) {
-			resultVariable = 7;
-		} else if ((headId.equals("Heading8")) || (headId.equals("8"))) {
-			resultVariable = 8;
-		} else if ((headId.equals("Heading9")) || (headId.equals("9"))) {
-			resultVariable = 9;
-		}
-
-		return resultVariable;
 	}
 
 	/**
@@ -268,6 +235,16 @@ public class CourseModelParser extends AbstractParser {
 		return treeNode;
 	}
 
+	public static MathInfo getAllFormulsAsMathML(InputStream docAsStream) {
+		MathInfo mathInfo = null;
+		List<Node> mathMLNodes = getMathMLFromDocStream(docAsStream);
+		if (mathMLNodes != null) {
+			mathInfo = new MathInfo(mathMLNodes);
+		}
+
+		return mathInfo;
+	}
+
 	/**
 	 * Parsing to {@link CourseModel} from {@link XWPFDocument}
 	 * 
@@ -295,16 +272,11 @@ public class CourseModelParser extends AbstractParser {
 				baos.write(buf, 0, n);
 			byte[] content = baos.toByteArray();
 
-			InputStream streamCopy1 = new ByteArrayInputStream(content);
-			InputStream streamCopy2 = new ByteArrayInputStream(content);
+			MathInfo mathInfo = getAllFormulsAsMathML(new ByteArrayInputStream(
+					content));
 
-			MathInfo mathInfo = null;
-			List<Node> mathMLNodes = getMathMLFromDocStream(streamCopy1);
-			if (mathMLNodes != null) {
-				mathInfo = new MathInfo(mathMLNodes);
-			}
-
-			XWPFDocument document = new XWPFDocument(streamCopy2);
+			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(
+					content));
 
 			courseModel = new CourseModel(
 					((courseName == null) || courseName.isEmpty()) ? courseName = "course"
@@ -324,8 +296,7 @@ public class CourseModelParser extends AbstractParser {
 						// search header
 						if ((paragraph.getStyleID() != null)
 								&& !isEmptyRuns(paragraph.getRuns())) {
-							headLevel = getNumberOfHeader(paragraph
-									.getStyleID());
+							headLevel = HeaderParser.getHeaderLevel(paragraph);
 							if (headLevel != null) {// This it is header
 								if (headLevel <= maxHead) {
 									if (!page.getBlocks().isEmpty()) {
@@ -346,9 +317,7 @@ public class CourseModelParser extends AbstractParser {
 
 				if (headLevel == null) {
 					AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
-							.parse(document.getBodyElements().subList(i,
-									document.getBodyElements().size()),
-									mathInfo);
+							.parse(bodyElement, mathInfo);
 
 					if (paragraphBlock instanceof ListBlock) {
 						// minus 1 because after this iteration "i" will be
@@ -365,7 +334,7 @@ public class CourseModelParser extends AbstractParser {
 				} else if (headLevel > maxHead) {
 					HeaderBlock paragraphBlock = HeaderParser.parse(
 							(XWPFParagraph) document.getBodyElements().get(i),
-							headLevel - maxHead);
+							maxHead);
 
 					if (paragraphBlock != null) {
 						page.addBlock(paragraphBlock);
