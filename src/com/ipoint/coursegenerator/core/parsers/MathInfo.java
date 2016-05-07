@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.parser;
+package com.ipoint.coursegenerator.core.parsers;
 
 import java.util.List;
 
