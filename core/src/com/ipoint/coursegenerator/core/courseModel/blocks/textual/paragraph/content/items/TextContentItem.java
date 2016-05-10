@@ -18,6 +18,15 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.cont
  */
 public class TextContentItem extends AbstractContentItem<String> {
 
+	private static final String SPAN_TAG_NAME = "span";
+	private static final String BOLD_TAG_NAME = "b";
+	private static final String ITALIC_TAG_NAME = "i";
+	private static final String SUPERSCRIPT_TAG_NAME = "sup";
+	private static final String SUBSCRIPT_TAG_NAME = "sub";
+	private static final String UNDERLINE_TAG_NAME = "u";
+	private static final String FONT_TAG_NAME = "font";
+	private static final String COLOR_TAG_NAME = "color";
+
 	// properties of text
 	private boolean bold;
 	private boolean italic;
@@ -41,7 +50,8 @@ public class TextContentItem extends AbstractContentItem<String> {
 		this.setItalic(run.isItalic());
 		this.setSuperscript(run.getSubscript() == VerticalAlign.SUPERSCRIPT);
 		this.setSubscript(run.getSubscript() == VerticalAlign.SUBSCRIPT);
-		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE) && !isHyperlink);
+		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE)
+				&& !isHyperlink);
 
 		// TODO: what is it?
 		// if ((styleNumber < 1) || (styleNumber > 9)) {
@@ -133,46 +143,81 @@ public class TextContentItem extends AbstractContentItem<String> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element span = creatorTags.createElement("span");
+		Element headTag = creatorTags.createElement(SPAN_TAG_NAME);
+		Element text = null;
 
 		if (this.isBold()) {
-			Element bold = creatorTags.createElement("b");
-			span.appendChild(bold);
-			span = bold;
+			Element tag = creatorTags.createElement(BOLD_TAG_NAME);
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		}
 
 		if (this.isItalic()) {
-			Element italic = creatorTags.createElement("i");
-			span.appendChild(italic);
-			span = italic;
+			Element tag = creatorTags.createElement(ITALIC_TAG_NAME);
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		}
 
-		if (this.isSubscript()) {
-			Element superscript = creatorTags.createElement("sup");
-			span.appendChild(superscript);
-			span = superscript;
+		if (this.isSuperscript()) {
+			Element tag = creatorTags.createElement(SUPERSCRIPT_TAG_NAME);
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		} else if (this.isSubscript()) {
-			Element subscript = creatorTags.createElement("sub");
-			span.appendChild(subscript);
-			span = subscript;
+			Element tag = creatorTags.createElement(SUBSCRIPT_TAG_NAME);
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		}
 
 		if (this.isUnderline()) {
-			Element underline = creatorTags.createElement("u");
-			span.appendChild(underline);
-			span = underline;
+			Element tag = creatorTags.createElement(UNDERLINE_TAG_NAME);
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		}
 
 		if (this.getColor() != null) {
-			Element font = creatorTags.createElement("font");
-			font.setAttribute("color", this.getColor());
-			span.appendChild(font);
-			span = font;
+			Element tag = creatorTags.createElement(FONT_TAG_NAME);
+			tag.setAttribute(COLOR_TAG_NAME, this.getColor());
+			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+				headTag = tag;
+				text = tag;
+			} else {
+				headTag.appendChild(tag);
+				text = tag;
+			}
 		}
 
-		span.setTextContent(this.getValue());
+		if (text == null) {
+			headTag.setTextContent(this.getValue());
+		} else {
+			text.setTextContent(this.getValue());
+		}
 
-		return span;
+		return headTag;
 	}
 
 }
