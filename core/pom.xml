@@ -12,6 +12,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<project.resourceDirectory>${project.basedir}/src/resources</project.resourceDirectory>
+		<test.sourceDirectory>${project.basedir}/src/test/java</test.sourceDirectory>
+		<test.resourceDirectory>${project.basedir}/src/test/resources</test.resourceDirectory>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -20,6 +22,14 @@
 				<directory>${project.resourceDirectory}</directory>
 			</resource>
 		</resources>
+
+		<testSourceDirectory>${test.sourceDirectory}</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>${test.resourceDirectory}</directory>
+			</testResource>
+		</testResources>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
