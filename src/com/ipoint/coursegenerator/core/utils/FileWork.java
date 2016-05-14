@@ -49,26 +49,21 @@ public class FileWork {
 				outFile.getParentFile().mkdirs();
 			}
 
-			FileOutputStream fileOS = null;
-
 			try {
 				outFile.createNewFile();
-				fileOS = new FileOutputStream(outFile);
-
-				byte[] buffer = new byte[1024];
-				int bytesRead;
-				if (isText) {
-					Writer outStreamWriter = new OutputStreamWriter(fileOS,
-							STANDART_ENCODING);
-					while ((bytesRead = is.read(buffer)) != -1) {
-						outStreamWriter.write(new String(buffer), 0, bytesRead);
-					}
-
-					outStreamWriter.flush();
-					outStreamWriter.close();
-				} else {
-					while ((bytesRead = is.read(buffer)) != -1) {
-						fileOS.write(buffer, 0, bytesRead);
+				try (FileOutputStream fileOS = new FileOutputStream(outFile)) {
+					byte[] buffer = new byte[1024];
+					int bytesRead;
+					if (isText) {
+						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDART_ENCODING)) {
+							while ((bytesRead = is.read(buffer)) != -1) {
+								outStreamWriter.write(new String(buffer, 0, bytesRead));
+							}
+						}
+					} else {
+						while ((bytesRead = is.read(buffer)) != -1) {
+							fileOS.write(buffer, 0, bytesRead);
+						}
 					}
 				}
 			} catch (FileNotFoundException e) {
@@ -80,12 +75,6 @@ public class FileWork {
 			} finally {
 				try {
 					is.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				try {
-					fileOS.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -103,31 +92,25 @@ public class FileWork {
 		return saveFile(is, outFile, true);
 	}
 
-	public static boolean copyTextFileFromResourcesToDir(File destDir,
-			String fromDir, String textFileName) {
+	public static boolean copyTextFileFromResourcesToDir(File destDir, String fromDir, String textFileName) {
 		return copyFileFromResourcesToDir(destDir, fromDir, textFileName, true);
 	}
 
-	public static boolean copyRawFileFromResourcesToDir(File destDir,
-			String fromDir, String rawFileName) {
+	public static boolean copyRawFileFromResourcesToDir(File destDir, String fromDir, String rawFileName) {
 		return copyFileFromResourcesToDir(destDir, fromDir, rawFileName, false);
 	}
 
-	private static boolean copyFileFromResourcesToDir(File destDir,
-			String fromDir, String fileName, boolean isText) {
-		return saveFile(getFileFromResources(fromDir, fileName), new File(
-				destDir, fileName), isText);
+	private static boolean copyFileFromResourcesToDir(File destDir, String fromDir, String fileName, boolean isText) {
+		return saveFile(getFileFromResources(fromDir, fileName), new File(destDir, fileName), isText);
 	}
 
-	public static InputStream getFileFromResources(String fromDir,
-			String fileName) {
-		return FileWork.class.getClassLoader().getResourceAsStream(
-				fromDir + "/" + fileName);
+	public static InputStream getFileFromResources(String fromDir, String fileName) {
+		return FileWork.class.getClassLoader().getResourceAsStream(fromDir + "/" + fileName);
 	}
 
 	/**
 	 * Save html-page in directory
-	 * 
+	 *
 	 * @param html
 	 *            Saving html-page
 	 * @param templateDir
@@ -140,30 +123,25 @@ public class FileWork {
 	 *            Name of adding html-page
 	 * @return
 	 */
-	public static boolean saveHTMLDocument(Document html, String coursePath,
-			String pathInCourseToPage, String pageName) {
+	public static boolean saveHTMLDocument(Document html, String coursePath, String pathInCourseToPage,
+			String pageName) {
 		try {
 			StringWriter buffer = new StringWriter();
-			Transformer transformer = TransformerFactory.newInstance()
-					.newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-					"yes");
-			NodeList bodyChilds = html.getElementsByTagName("body").item(0)
-					.getChildNodes();
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			NodeList bodyChilds = html.getElementsByTagName("body").item(0).getChildNodes();
 			for (int i = 0; i < bodyChilds.getLength(); i++) {
-				transformer.transform(new DOMSource(bodyChilds.item(i)),
-						new StreamResult(buffer));
+				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
 			}
 			Configuration cfg = new Configuration();
-			cfg.setClassLoaderForTemplateLoading(
-					FileWork.class.getClassLoader(), "templates/html");
+			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), "templates/html");
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 			String upToLevel = new String();
 			String fullPathToHtml = coursePath;
 			if (!pathInCourseToPage.isEmpty()) {
-				for (String dirLevel : pathInCourseToPage.split((File.separator
-						.equals("\\")) ? "\\\\" : File.separator)) {
+				for (String dirLevel : pathInCourseToPage
+						.split((File.separator.equals("\\")) ? "\\\\" : File.separator)) {
 					fullPathToHtml = fullPathToHtml + dirLevel + File.separator;
 					File f = new File(fullPathToHtml);
 					if (!f.exists()) {
@@ -179,8 +157,7 @@ public class FileWork {
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
 			body.put("upToLevel", upToLevel);
-			Writer outStreamWriter = new OutputStreamWriter(
-					new FileOutputStream(fullPathToHtml + pageName),
+			Writer outStreamWriter = new OutputStreamWriter(new FileOutputStream(fullPathToHtml + pageName),
 					STANDART_ENCODING);
 			temp.process(body, outStreamWriter);
 			outStreamWriter.flush();
@@ -200,7 +177,7 @@ public class FileWork {
 
 	/**
 	 * Save image in directory
-	 * 
+	 *
 	 * @param images
 	 *            Image for adding
 	 * @param path
@@ -208,8 +185,7 @@ public class FileWork {
 	 * @return If added then true
 	 */
 	public static boolean saveImage(ImageInfo image, String path) {
-		String scrToImage = path.concat(image.getImageName()).replace(
-				File.separatorChar, '/');
+		String scrToImage = path.concat(image.getImageName()).replace(File.separatorChar, '/');
 		byte[] byteImage = null;
 
 		if (image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
@@ -218,27 +194,22 @@ public class FileWork {
 				|| image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
 			byteImage = image.getPictureData().getData();
 		} else {
-			if (!image.getPictureData().getPackagePart().getContentType()
-					.equals("image/x-emf")
-					|| image.getPictureData().getPackagePart().getContentType()
-							.equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWMFtoPNG(image
-						.getPictureData().getData());
+			if (!image.getPictureData().getPackagePart().getContentType().equals("image/x-emf")
+					|| image.getPictureData().getPackagePart().getContentType().equals("image/emf")) {
+				byteImage = ImageFormatConverter.transcodeWMFtoPNG(image.getPictureData().getData());
 			} else {
-				byteImage = ImageFormatConverter.transcodeEMFtoPNG(image
-						.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeEMFtoPNG(image.getPictureData().getData());
 			}
 		}
 
 		// TODO: remove this statement. It's used because we have problems with
 		// wmf/emf
-		return (byteImage == null) ? false : saveRawFile(
-				new ByteArrayInputStream(byteImage), new File(scrToImage));
+		return (byteImage == null) ? false : saveRawFile(new ByteArrayInputStream(byteImage), new File(scrToImage));
 	}
 
 	/**
 	 * Save image in directory
-	 * 
+	 *
 	 * @param images
 	 * @param path
 	 * @return
