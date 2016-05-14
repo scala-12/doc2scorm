@@ -98,19 +98,13 @@ libraryDependencies ++= Seq(
 libraryDependencies += evolutions
 
 // Testing
-libraryDependencies ++= Seq(
-	"org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test"
-)
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test"
 
 //javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
-libraryDependencies ++= Seq(
-	"org.webjars.npm" % "jasmine-core" % "2.4.1"
-)
+libraryDependencies += "org.webjars.npm" % "jasmine-core" % "2.4.1"
 
 resolvers += Resolver.mavenLocal
 
 // Course generator core
-libraryDependencies ++= Seq(
-  	"com.ipoint" % "ilogos-course-generator-core" % "0.0.1-SNAPSHOT"
-)
+libraryDependencies += "com.ipoint" % "ilogos-course-generator-core" % "0.0.1-SNAPSHOT"
