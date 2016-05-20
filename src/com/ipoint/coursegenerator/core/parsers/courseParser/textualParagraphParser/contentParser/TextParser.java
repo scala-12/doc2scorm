@@ -140,12 +140,7 @@ public class TextParser extends AbstractParser {
 			}
 		}
 
-		TextBlock result = null;
-		if (!blockItems.isEmpty()) {
-			result = new TextBlock(blockItems);
-		}
-
-		return result;
+		return (blockItems.isEmpty()) ? null : new TextBlock(blockItems);
 	}
 
 }
