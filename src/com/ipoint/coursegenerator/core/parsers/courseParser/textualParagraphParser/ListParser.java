@@ -52,10 +52,12 @@ public class ListParser extends AbstractParser {
 	 * @return true if this paragraph is item of list
 	 */
 	public static boolean isListElement(XWPFParagraph par) {
-		if ((par.getStyleID() != null) && (par.getNumID() != null)) {
-			return true;
-		} else {
+		if ((par.getStyleID() == null)
+				|| (par.getNumID() == null)
+				|| (par.getNumFmt() == null)) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 
@@ -74,18 +76,18 @@ public class ListParser extends AbstractParser {
 			boolean isAtomList = true;
 			int number = 0;
 			int level = 0;
-			String marker = null;
+			String marker = head.getNumFmt();
 			number = head.getNumID().intValue();
 			level = head.getNumIlvl().intValue();
-			marker = head.getNumFmt();
+			
 			for (int i = elements.indexOf(head); (i < elements.size())
 					&& isAtomList; i++) {
 				if (elements.get(i) instanceof XWPFParagraph) {
 					XWPFParagraph par = (XWPFParagraph) elements.get(i);
 					isAtomList = isListElement(par)
 							&& (number == par.getNumID().intValue())
-							&& (level == par.getNumIlvl().intValue() && (marker
-									.equals(par.getNumFmt())));
+							&& (level == par.getNumIlvl().intValue()
+							&& (marker.equals(par.getNumFmt())));
 					if (isAtomList) {
 						listElems.add(par);
 					}
