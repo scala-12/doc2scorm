@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
@@ -88,26 +91,28 @@ public class TextParser extends AbstractParser {
 									+ "px;";
 						} else if (!run.getCTR().getPictList().isEmpty()) {
 							// TODO: and Why do it? Maybe, for other pictures?
-							CTShape shape = (CTShape) run.getCTR().getPictList().get(0).selectPath(
-									"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape")[0];
-							picStyle = shape.selectAttribute("", "style").getDomNode().getNodeValue();
+							XmlObject[] shapes = run.getCTR().getPictList().get(0)
+									.selectPath("declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape");
+							if (shapes.length != 0) {
+								//TODO: else is label block
+								CTShape shape = (CTShape) shapes[0];
+								picStyle = shape.selectAttribute("", "style").getDomNode().getNodeValue();
 
-							CTImageData imageData = (CTImageData) shape.selectPath(
-									"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:imagedata")[0];
-							String rId = imageData
-									.selectAttribute(
-											"http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id")
-									.getDomNode().getNodeValue();
-							pictureData = run.getDocument().getPictureDataByID(rId);
+								CTImageData imageData = (CTImageData) shape.selectPath(
+										"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:imagedata")[0];
+								String rId = imageData.selectAttribute(
+										"http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id")
+										.getDomNode().getNodeValue();
+								pictureData = run.getDocument().getPictureDataByID(rId);
 
-							if (run.getCTR().getPictList().get(0)
-									.selectPath("declare namespace w10='urn:schemas-microsoft-com:office:word' "
-											+ ".//w10:wrap") == null) {
-								isWrap = false;
-							} else {
-								isWrap = true;
+								if (run.getCTR().getPictList().get(0)
+										.selectPath("declare namespace w10='urn:schemas-microsoft-com:office:word' "
+												+ ".//w10:wrap") == null) {
+									isWrap = false;
+								} else {
+									isWrap = true;
+								}
 							}
-
 						} else if (run.getCTR().sizeOfObjectArray() > 0) {
 							// Object as image
 							scale = (float) 1.3; // because object is small
