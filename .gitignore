@@ -9,6 +9,7 @@
 /.classpath
 /.project
 /conf/local.conf
+/.idea
 
 target/
 *.log
