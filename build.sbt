@@ -6,6 +6,8 @@ version := "1.0-BETA"
 
 scalaVersion := "2.11.7"
 
+val akkaVersion = "2.4.6"
+
 resolvers := ("Atlassian Releases" at "https://maven.atlassian.com/public/") +: resolvers.value
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
@@ -51,7 +53,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(FormatXml, false)
   .setPreference(DoubleIndentClassDeclaration, false)
   .setPreference(PreserveDanglingCloseParenthesis, true)
-  
+
 // angular2
 incOptions := incOptions.value.withNameHashing(true)
 updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
@@ -66,7 +68,7 @@ libraryDependencies ++= Seq(
   "org.webjars.npm" % "reflect-metadata" % "0.1.2",
   "org.webjars.npm" % "zone.js" % "0.6.4",
   "org.webjars.npm" % "typescript" % "1.8.7",
-  
+
   "org.webjars.npm" % "bootstrap" % "3.3.6",
 
   //tslint dependency
@@ -89,10 +91,10 @@ routesGenerator := InjectedRoutesGenerator
 
 // Typesafe Slick
 libraryDependencies ++= Seq(
-	"com.typesafe.play" %% "play-slick" % "1.1.1",
-	"com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
-	"org.slf4j" % "slf4j-nop" % "1.6.4",
-	"mysql" % "mysql-connector-java" % "5.1.16"
+  "com.typesafe.play" %% "play-slick" % "1.1.1",
+  "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
+  "org.slf4j" % "slf4j-nop" % "1.6.4",
+  "mysql" % "mysql-connector-java" % "5.1.16"
 )
 
 libraryDependencies += evolutions
@@ -108,3 +110,9 @@ resolvers += Resolver.mavenLocal
 
 // Course generator core
 libraryDependencies += "com.ipoint" % "ilogos-course-generator-core" % "0.0.1-SNAPSHOT"
+
+// akka libararies
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-actor" % akkaVersion
+  , "com.typesafe.akka" %% "akka-cluster" % akkaVersion
+)
