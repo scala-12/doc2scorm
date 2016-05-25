@@ -27,6 +27,7 @@ import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.ImageFormatConverter;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -42,6 +43,10 @@ public class Parser {
 	private ManifestDocument manifest;
 
 	public Parser() {
+	}
+
+	public Parser(String pathToOffice) {
+		ImageFormatConverter.setPathToOffice(pathToOffice);
 	}
 
 	public void createImsManifestFile(String courseName) {
