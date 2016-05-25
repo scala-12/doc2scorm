@@ -206,6 +206,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 			return "jpg";
 		default:
 			if (this.value.getPackagePart().getContentType().equals("image/x-emf")
+					|| this.value.getPackagePart().getContentType().equals("image/x-wmf")
 					|| this.value.getPackagePart().getContentType().equals("image/emf")) {
 				return "png";
 			} else {
