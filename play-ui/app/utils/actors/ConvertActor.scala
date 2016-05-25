@@ -19,7 +19,7 @@ class ConvertActor extends Actor with ActorLogging {
 
   def getConfig(name: String) = rootConf.getString(name)
 
-  val parser: Parser = new Parser()
+  val parser: Parser = new Parser(rootConf.getString("libreoffice.program.path"))
 
   val localDocsDir = Directory(rootConf.getString("tmp.doc.dir.local"))
   val actorsDir = Directory(rootConf.getString("tmp.course.dir.actors"))
