@@ -196,9 +196,9 @@ public class FileWork {
 		} else {
 			if (!image.getPictureData().getPackagePart().getContentType().equals("image/x-emf")
 					|| image.getPictureData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWMFtoPNG(image.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getPictureData().getData());
 			} else {
-				byteImage = ImageFormatConverter.transcodeEMFtoPNG(image.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getPictureData().getData());
 			}
 		}
 

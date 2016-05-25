@@ -7,7 +7,6 @@
 	<name>iLogos Course Generator Core</name>
 	<properties>
 		<poi.version>3.11</poi.version>
-		<batik.version>1.8</batik.version>
 		<freehep-graphicsio.version>2.4</freehep-graphicsio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -62,6 +61,17 @@
 			<version>2.0</version>
 		</dependency>
 		<dependency>
+			<!--With correction (vlad) -->
+			<groupId>local</groupId>
+			<artifactId>batik-codec</artifactId>
+			<version>1.8.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>${poi.version}</version>
@@ -80,16 +90,6 @@
 			<groupId>net.arnx</groupId>
 			<artifactId>wmf2svg</artifactId>
 			<version>0.9.8</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-transcoder</artifactId>
-			<version>${batik.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>batik-codec</artifactId>
-			<version>${batik.version}</version>
 		</dependency>
 		<dependency>
 			<!--used for fMath -->
