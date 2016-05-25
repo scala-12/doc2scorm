@@ -54,8 +54,7 @@ public class Parser {
 		metadataProcessor.createMetadata(manifest.getManifest());
 
 		// Add Organization (default and root) to Manifest
-		OrganizationProcessor.createOrganization(manifest.getManifest(),
-				courseName);
+		OrganizationProcessor.createOrganization(manifest.getManifest(), courseName);
 
 		// Add Resources to Manifest
 		ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
@@ -64,16 +63,13 @@ public class Parser {
 
 	private String tuneManifest(ManifestDocument manifestDocument) {
 		String manifest = manifestDocument.xmlText();
-		return manifest.replace("ims:", "").replace(PREFIX, PREFIX_NEW)
-				.replace("datafromlms", "dataFromLMS")
-				.replace("adl:", "adlcp:").replace("rootv1p2", "v1p3")
-				.replace(":adl=", ":adlcp=");
+		return manifest.replace("ims:", "").replace(PREFIX, PREFIX_NEW).replace("datafromlms", "dataFromLMS")
+				.replace("adl:", "adlcp:").replace("rootv1p2", "v1p3").replace(":adl=", ":adlcp=");
 	}
 
 	private static Document createNewHTMLDocument() {
 		try {
-			Document html = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder().newDocument();
+			Document html = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			html.appendChild(html.createElement("html"));
 			html.getFirstChild().appendChild(html.createElement("head"));
 			html.getFirstChild().appendChild(html.createElement("body"));
@@ -84,148 +80,115 @@ public class Parser {
 		return null;
 	}
 
-	private ItemType addOrganizationElementToManifest(XmlObject parentItem,
-			CourseTreeNode node) {
+	private ItemType addOrganizationElementToManifest(XmlObject parentItem, CourseTreeNode node) {
 		String id = java.util.UUID.randomUUID().toString();
 		String itemId = "ITEM_".concat(id);
 		String resourseId = (node.getPage() == null) ? null : "RES_".concat(id);
 
 		ItemType manifestItem = null;
 		if (parentItem instanceof ItemType) {
-			manifestItem = OrganizationProcessor.createItem(
-					(ItemType) parentItem, node.getTitle(), resourseId, itemId);
+			manifestItem = OrganizationProcessor.createItem((ItemType) parentItem, node.getTitle(), resourseId, itemId);
 		} else if (parentItem instanceof OrganizationsType) {
-			manifestItem = OrganizationProcessor.createItem(
-					(OrganizationsType) parentItem, node.getTitle(),
-					resourseId, itemId);
+			manifestItem = OrganizationProcessor.createItem((OrganizationsType) parentItem, node.getTitle(), resourseId,
+					itemId);
 		}
 
 		return manifestItem;
 	}
 
-	private void addImagesToManifest(ManifestType manifest, String path,
-			String pageName, List<ImageInfo> images, String resourseId) {
-		ResourceType itemResource = ResourcesProcessor.createResource(manifest,
-				path + pageName + FileWork.HTML_SUFFIX, resourseId);
+	private void addImagesToManifest(ManifestType manifest, String path, String pageName, List<ImageInfo> images,
+			String resourseId) {
+		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName + FileWork.HTML_SUFFIX,
+				resourseId);
 
 		ArrayList<String> imagesNames = new ArrayList<String>();
 		for (ImageInfo image : images) {
 			imagesNames.add(image.getImageName());
 		}
 
-		ResourcesProcessor.addFilesToResource(path + "img" + File.separator,
-				itemResource, imagesNames);
+		ResourcesProcessor.addFilesToResource(path + "img" + File.separator, itemResource, imagesNames);
 	}
 
-	private void addPageToCourse(CourseTreeNode node, String coursePath,
-			String pagePath, String pageName) {
+	private void addPageToCourse(CourseTreeNode node, String coursePath, String pagePath, String pageName) {
 		Document html = createNewHTMLDocument();
-		html.getElementsByTagName("body").item(0)
-				.appendChild(node.getPage().toHtml(html));
+		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
-		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath,
-				pagePath, pageName + FileWork.HTML_SUFFIX);
+		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(), coursePath
-					+ pagePath + ImageContentItem.IMAGE_DIR_PATH);
+			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath + ImageContentItem.IMAGE_DIR_PATH);
 		}
 	}
 
-	private void recursiveSaveCourse(List<CourseTreeNode> items,
-			ManifestType manifest, String coursePath, String path,
+	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, String coursePath, String path,
 			String level, XmlObject parentItem) {
 		int numberOnLevel = 0;
-		String part = (level == null) ? FileWork.HTML_PREFIX
-				: (FileWork.HTML_PREFIX + level + "-");
+		String part = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level + "-");
 		for (CourseTreeNode item : items) {
 			// title of page
 			// page name with level number
 			String pageTitle = part + String.valueOf(++numberOnLevel) + "_";
-			pageTitle = pageTitle.concat(TransliterationTool
-					.convertRU2ENString(item.getTitle()));
+			pageTitle = pageTitle.concat(TransliterationTool.convertRU2ENString(item.getTitle()));
 			pageTitle = pageTitle.replaceAll(" ", "_");
 			pageTitle = pageTitle.replaceAll("[\\W&&[^-]]", "");
 
-			ItemType manifestItem = addOrganizationElementToManifest(
-					parentItem, item);
+			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item);
 			if (item.getPage() != null) {
 				this.addPageToCourse(item, coursePath, path, pageTitle);
-				this.addImagesToManifest(manifest, path, pageTitle, item
-						.getPage().getImages(), manifestItem.getIdentifierref());
+				this.addImagesToManifest(manifest, path, pageTitle, item.getPage().getImages(),
+						manifestItem.getIdentifierref());
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(
-						item.getNodes(),
-						manifest,
-						coursePath,
-						path + pageTitle + File.separator,
-						(level == null) ? String.valueOf(numberOnLevel)
-								: (level + "-" + String.valueOf(numberOnLevel)),
+				this.recursiveSaveCourse(item.getNodes(), manifest, coursePath, path + pageTitle + File.separator,
+						(level == null) ? String.valueOf(numberOnLevel) : (level + "-" + String.valueOf(numberOnLevel)),
 						manifestItem);
 			}
 		}
 	}
 
 	// TODO: add variable for external templates
-	public String parse(InputStream stream, int headerLevel, String courseName,
-			String path) throws IOException {
+	public String parse(InputStream stream, int headerLevel, String courseName, String path) throws IOException {
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
 		}
 		directory.mkdirs();
 
-		CourseModel courseModel = new CourseParser().parse(stream, courseName,
-				headerLevel);
+		CourseModel courseModel = new CourseParser().parse(stream, courseName, headerLevel);
 
 		this.createImsManifestFile(courseName);
 
 		if (!courseModel.getNodes().isEmpty()) {
-			this.recursiveSaveCourse(courseModel.getNodes(),
-					manifest.getManifest(), path.concat(File.separator), "",
+			this.recursiveSaveCourse(courseModel.getNodes(), manifest.getManifest(), path.concat(File.separator), "",
 					null, manifest.getManifest().getOrganizations());
 		}
 
 		String manifestContent = tuneManifest(manifest);
 		File manifestFile = new File(path, "imsmanifest.xml");
 
-		FileWork.saveTextFile(
-				new ByteArrayInputStream(manifestContent.getBytes()),
-				manifestFile);
+		FileWork.saveTextFile(new ByteArrayInputStream(manifestContent.getBytes()), manifestFile);
 
 		File jsDir = new File(path + File.separator + "js");
 		File cssDir = new File(path + File.separator + "css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html",
-				"kurs.css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html",
-				"test.css");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
-				"APIWrapper.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
-				"SCOFunctions.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js",
-				"parser.js");
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html", "kurs.css");
+		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html", "test.css");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "APIWrapper.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "SCOFunctions.js");
+		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "parser.js");
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
-		Zipper zip = new Zipper(path + File.separator + zipCourseFileName,
-				directory.getPath());
+		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
 		zip.addToZip(new String[] { zipCourseFileName });
 		return zipCourseFileName;
 	}
 
 	private String getCourseZipFilename(String courseName) {
-		String zipCourseFileName = TransliterationTool
-				.convertRU2ENString(courseName);
+		String zipCourseFileName = TransliterationTool.convertRU2ENString(courseName);
 		Calendar date = GregorianCalendar.getInstance();
-		zipCourseFileName = zipCourseFileName.replace(' ', '_').replaceAll(
-				"[\\W&&[^-]]", "");
+		zipCourseFileName = zipCourseFileName.replace(' ', '_').replaceAll("[\\W&&[^-]]", "");
 
-		String sdate = "_"
-				+ new Integer(date.get(GregorianCalendar.YEAR)).toString()
-				+ "-"
-				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString()
-				+ "-"
+		String sdate = "_" + new Integer(date.get(GregorianCalendar.YEAR)).toString() + "-"
+				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString() + "-"
 				+ new Integer(date.get(GregorianCalendar.DATE)).toString();
 		zipCourseFileName = zipCourseFileName + sdate + ".zip";
 		return zipCourseFileName;
