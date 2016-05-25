@@ -46,7 +46,8 @@ class ConverterController @Inject()(
   private val sentDir = Directory(configuration.getString("tmp.course.dir.sent").get)
 
   private val remoteDocsDir = Directory(configuration.getString("tmp.doc.dir.remote").get)
-  private val uncorvertedDocs = Directory(configuration.getString("tmp.doc.dir.unconverted").get)
+  private val uploadDocs = Directory(configuration.getString("tmp.doc.dir.upload").get)
+  private val unconvertedDocs = Directory(configuration.getString("tmp.doc.dir.unconverted").get)
 
   implicit val rds = (
     (__ \ 'course).read[String] and
@@ -54,11 +55,11 @@ class ConverterController @Inject()(
 
   def upload = Action.async(parse.multipartFormData) { implicit request =>
     request.body.file("doc").map { doc =>
-      if (!uncorvertedDocs.exists) {
-        uncorvertedDocs.createDirectory()
+      if (!uploadDocs.exists) {
+        uploadDocs.createDirectory()
       }
       val uuid = java.util.UUID.randomUUID().toString
-      val target = File(uncorvertedDocs / uuid)
+      val target = File(uploadDocs / uuid)
       doc.ref.moveTo(target.jfile)
       Future.successful(Ok("File uploaded").withSession(
         "lastDoc" -> target.path))
@@ -72,7 +73,14 @@ class ConverterController @Inject()(
       request.body.validate[(String, String)].map {
         case (courseName, header) =>
           request.session.get("lastDoc").map { lastDoc => {
-            val docFile = File(lastDoc)
+            val uploadDocFile = File(lastDoc)
+            var docFile = File(unconvertedDocs / uploadDocFile.name)
+            if (!unconvertedDocs.exists) {
+              unconvertedDocs.createDirectory()
+            }
+            if (!uploadDocFile.jfile.renameTo(docFile.jfile)) {
+              docFile = uploadDocFile
+            }
 
             implicit val timeout = Timeout(2.minutes)
             val courseResultFuture = pattern.ask(
@@ -110,12 +118,12 @@ class ConverterController @Inject()(
 
                 //TODO: what do if error (haven't answer)?
                 //TODO: add hostname field to answer and DB
-                conversionDao addConversion (new DBConversion(
+                conversionDao addConversion new DBConversion(
                   0,
                   request.identity.dbId.get,
-                  courseResult.fileName.getOrElse(docFile.name),
-                  courseResult.successful,
-                  Calendar.getInstance().getTimeInMillis()))
+                  courseResult.fileName getOrElse docFile.name,
+                  courseResult successful,
+                  Calendar.getInstance() getTimeInMillis())
                 Ok.sendFile(
                   localCourse.jfile,
                   inline = true).withHeaders(CACHE_CONTROL -> "max-age=3600", CONTENT_DISPOSITION -> "attachment; filename=".concat(localCourse.name), CONTENT_TYPE -> "application/x-download")
