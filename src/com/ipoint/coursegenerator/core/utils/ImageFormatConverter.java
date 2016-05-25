@@ -18,11 +18,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.arnx.wmf2svg.gdi.svg.SvgGdi;
-import net.arnx.wmf2svg.gdi.svg.SvgGdiException;
-import net.arnx.wmf2svg.gdi.wmf.WmfParseException;
-import net.arnx.wmf2svg.gdi.wmf.WmfParser;
-
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -43,28 +38,28 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.arnx.wmf2svg.gdi.svg.SvgGdi;
+import net.arnx.wmf2svg.gdi.svg.SvgGdiException;
+import net.arnx.wmf2svg.gdi.wmf.WmfParseException;
+import net.arnx.wmf2svg.gdi.wmf.WmfParser;
+
 public class ImageFormatConverter {
 
-	private final static Logger log = Logger
-			.getLogger(ImageFormatConverter.class.getName());
+	private final static Logger log = Logger.getLogger(ImageFormatConverter.class.getName());
 
-	private final static DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory
-			.newInstance();
+	private final static DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
 
-	private final static TransformerFactory transformerFactory = TransformerFactory
-			.newInstance();
+	private final static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	public static byte[] transcodeWMFtoPNG(byte[] data) {
 		return transcodeWMFtoPNG(data, null, null);
 	}
 
 	public static byte[] transcodeWMFtoPNG(byte[] data, int width, int height) {
-		return transcodeWMFtoPNG(data, Integer.valueOf(width),
-				Integer.valueOf(height));
+		return transcodeWMFtoPNG(data, Integer.valueOf(width), Integer.valueOf(height));
 	}
 
-	private static byte[] transcodeWMFtoPNG(byte[] data, Integer width,
-			Integer height) {
+	private static byte[] transcodeWMFtoPNG(byte[] data, Integer width, Integer height) {
 		WmfParser parser = new WmfParser();
 		try {
 			final SvgGdi gdi = new SvgGdi(false);
@@ -74,15 +69,13 @@ public class ImageFormatConverter {
 			Transformer transformer = transformerFactory.newTransformer();
 			ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
 			StreamResult convertedSvgSR = new StreamResult(svgBOS);
-			transformer.transform(new DOMSource(gdi.getDocument()),
-					convertedSvgSR);
+			transformer.transform(new DOMSource(gdi.getDocument()), convertedSvgSR);
 			svgBOS.close();
-			ByteArrayInputStream svgBIS = new ByteArrayInputStream(
-					svgBOS.toByteArray());
+			ByteArrayInputStream svgBIS = new ByteArrayInputStream(svgBOS.toByteArray());
 
 			String docParser = XMLResourceDescriptor.getXMLParserClassName();
-			Document svg = new SAXSVGDocumentFactory(docParser).createDocument(
-					SVGDOMImplementation.SVG_NAMESPACE_URI, svgBIS);
+			Document svg = new SAXSVGDocumentFactory(docParser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
+					svgBIS);
 
 			return transcodeSVGtoPNG(svg, width, height);
 		} catch (IOException e) {
@@ -96,14 +89,12 @@ public class ImageFormatConverter {
 		return null;
 	}
 
-	private static byte[] transcodeSVGtoPNG(Document svg, Integer width,
-			Integer height) {
+	private static byte[] transcodeSVGtoPNG(Document svg, Integer width, Integer height) {
 		Document opensymbol = GuardianCharacters.getCharactersData();
 		if (opensymbol == null) {
 			log.warning("File \"opensymbol.svg\" is not initialized");
 		} else {
-			Node opensymbolDefs = svg.importNode(opensymbol
-					.getElementsByTagName("defs").item(0), true);
+			Node opensymbolDefs = svg.importNode(opensymbol.getElementsByTagName("defs").item(0), true);
 			if (svg.getElementsByTagName("defs").getLength() != 0) {
 				Node svgDefs = svg.createElement("defs");
 				while (svgDefs.hasChildNodes()) {
@@ -113,8 +104,8 @@ public class ImageFormatConverter {
 			}
 			svg.getDocumentElement().appendChild(opensymbolDefs);
 
-			((Element) svg.getElementsByTagName("g").item(0)).setAttribute(
-					"style", "font-family:OpenSymbol; fill:black;");
+			((Element) svg.getElementsByTagName("g").item(0)).setAttribute("style",
+					"font-family:OpenSymbol; fill:black;");
 		}
 
 		try {
@@ -125,15 +116,12 @@ public class ImageFormatConverter {
 					Node textNode = textNodes.item(i);
 					nodeText = textNode.getTextContent();
 					if (nodeText != null) {
-						nodeText = nodeText.replaceAll(new String(new byte[] {
-								(byte) 0xC2, (byte) 0xB3 },
-								StandardCharsets.UTF_8), "\u2265");
-						nodeText = nodeText.replaceAll(new String(new byte[] {
-								(byte) 0xC2, (byte) 0xB6 },
-								StandardCharsets.UTF_8), "\u2202");
-						nodeText = nodeText.replaceAll(new String(new byte[] {
-								(byte) 0xC3, (byte) 0xB2 },
-								StandardCharsets.UTF_8), "\u222b");
+						nodeText = nodeText.replaceAll(
+								new String(new byte[] { (byte) 0xC2, (byte) 0xB3 }, StandardCharsets.UTF_8), "\u2265");
+						nodeText = nodeText.replaceAll(
+								new String(new byte[] { (byte) 0xC2, (byte) 0xB6 }, StandardCharsets.UTF_8), "\u2202");
+						nodeText = nodeText.replaceAll(
+								new String(new byte[] { (byte) 0xC3, (byte) 0xB2 }, StandardCharsets.UTF_8), "\u222b");
 
 						textNode.setTextContent(nodeText);
 					}
@@ -147,8 +135,7 @@ public class ImageFormatConverter {
 			TranscoderOutput trcoderOutput = new TranscoderOutput(pngBOS);
 			PNGTranscoder transcoder = new PNGTranscoder();
 
-			if (((width != null) && (width > 0))
-					|| ((height != null) && (height > 0))) {
+			if (((width != null) && (width > 0)) || ((height != null) && (height > 0))) {
 				Map<TranscodingHints.Key, Object> hints = new HashMap<TranscodingHints.Key, Object>();
 				if ((width != null) && (width > 0)) {
 					hints.put(PNGTranscoder.KEY_WIDTH, Float.valueOf(width));
@@ -156,8 +143,7 @@ public class ImageFormatConverter {
 				if ((height != null) && (height > 0)) {
 					hints.put(PNGTranscoder.KEY_HEIGHT, Float.valueOf(height));
 				}
-				hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(
-						false));
+				hints.put(PNGTranscoder.KEY_XML_PARSER_VALIDATING, new Boolean(false));
 				transcoder.setTranscodingHints(hints);
 			}
 			transcoder.transcode(trcoderInput, trcoderOutput);
@@ -210,11 +196,10 @@ public class ImageFormatConverter {
 				e.printStackTrace();
 			}
 
-			ByteArrayInputStream svgBytes = new ByteArrayInputStream(
-					svgBOS.toByteArray());
+			ByteArrayInputStream svgBytes = new ByteArrayInputStream(svgBOS.toByteArray());
 			String parser = XMLResourceDescriptor.getXMLParserClassName();
-			Document svg = new SAXSVGDocumentFactory(parser).createDocument(
-					SVGDOMImplementation.SVG_NAMESPACE_URI, svgBytes);
+			Document svg = new SAXSVGDocumentFactory(parser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
+					svgBytes);
 			svgBytes.close();
 			repairSVGTextPosition(svg, getEmfNodeWithAllTextNodes(emfBytes));
 
@@ -254,53 +239,37 @@ public class ImageFormatConverter {
 					int attStart;
 					if ((attStart = emfTagStr.indexOf("bounds")) != -1) {
 						attStart += emfTagStr.substring(attStart).indexOf("[") + 1;
-						emfTagVal = emfTagStr.substring(attStart, emfTagStr
-								.substring(attStart).indexOf("]") + attStart);
+						emfTagVal = emfTagStr.substring(attStart,
+								emfTagStr.substring(attStart).indexOf("]") + attStart);
 						int sepPos;
-						while (((sepPos = (emfTagVal.indexOf(","))) != -1)
-								|| (!emfTagVal.isEmpty())) {
+						while (((sepPos = (emfTagVal.indexOf(","))) != -1) || (!emfTagVal.isEmpty())) {
 							int eqPos = emfTagVal.indexOf("=");
 							if (sepPos == -1) {
 								sepPos = emfTagVal.length();
 							}
-							emfAsStr.append("bounds-")
-									.append(emfTagVal.substring(0, eqPos))
-									.append("=\"")
-									.append(emfTagVal.substring(eqPos + 1,
-											sepPos)).append("\" ");
-							emfTagVal = emfTagVal
-									.substring((sepPos == emfTagVal.length()) ? sepPos
-											: sepPos + 1);
+							emfAsStr.append("bounds-").append(emfTagVal.substring(0, eqPos)).append("=\"")
+									.append(emfTagVal.substring(eqPos + 1, sepPos)).append("\" ");
+							emfTagVal = emfTagVal.substring((sepPos == emfTagVal.length()) ? sepPos : sepPos + 1);
 						}
 					}
 					if ((attStart = emfTagStr.indexOf("string")) != -1) {
 						attStart += "string: ".length();
-						emfAsStr.append("string=\"")
-								.append(emfTag.toString().substring(
-										attStart,
-										emfTagStr.substring(attStart).indexOf(
-												"\n")
-												+ attStart)).append("\" ");
+						emfAsStr.append("string=\"").append(emfTag.toString().substring(attStart,
+								emfTagStr.substring(attStart).indexOf("\n") + attStart)).append("\" ");
 					}
 					if ((attStart = emfTagStr.indexOf("pos")) != -1) {
 						attStart += emfTagStr.substring(attStart).indexOf("[") + 1;
-						emfTagVal = emfTagStr.substring(attStart, emfTagStr
-								.substring(attStart).indexOf("]") + attStart);
+						emfTagVal = emfTagStr.substring(attStart,
+								emfTagStr.substring(attStart).indexOf("]") + attStart);
 						int sepPos;
-						while (((sepPos = (emfTagVal.indexOf(","))) != -1)
-								|| (!emfTagVal.isEmpty())) {
+						while (((sepPos = (emfTagVal.indexOf(","))) != -1) || (!emfTagVal.isEmpty())) {
 							int eqPos = emfTagVal.indexOf("=");
 							if (sepPos == -1) {
 								sepPos = emfTagVal.length();
 							}
-							emfAsStr.append("pos-")
-									.append(emfTagVal.substring(0, eqPos))
-									.append("=\"")
-									.append(emfTagVal.substring(eqPos + 1,
-											sepPos)).append("\" ");
-							emfTagVal = emfTagVal
-									.substring((sepPos == emfTagVal.length()) ? sepPos
-											: sepPos + 1);
+							emfAsStr.append("pos-").append(emfTagVal.substring(0, eqPos)).append("=\"")
+									.append(emfTagVal.substring(eqPos + 1, sepPos)).append("\" ");
+							emfTagVal = emfTagVal.substring((sepPos == emfTagVal.length()) ? sepPos : sepPos + 1);
 						}
 					}
 					emfAsStr.append("/>");
@@ -308,12 +277,10 @@ public class ImageFormatConverter {
 			}
 
 			emfAsStr.append("</emfPart>");
-			emfPartBIS = new ByteArrayInputStream(emfAsStr.toString()
-					.getBytes());
+			emfPartBIS = new ByteArrayInputStream(emfAsStr.toString().getBytes());
 			DocumentBuilder builder = docBuildFactory.newDocumentBuilder();
 
-			return builder.parse(emfPartBIS).getElementsByTagName("emfPart")
-					.item(0);
+			return builder.parse(emfPartBIS).getElementsByTagName("emfPart").item(0);
 		} catch (IOException | SAXException e) {
 			// EMF can't be converted in document
 			e.printStackTrace();
@@ -346,9 +313,8 @@ public class ImageFormatConverter {
 					Node emfNode = emfDocPart.getFirstChild();
 					boolean isEqual = false;
 					while (!isEqual && (emfNode != null)) {
-						if (svgNode.getTextContent().equals(
-								emfNode.getAttributes().getNamedItem("string")
-										.getNodeValue())) {
+						if (svgNode.getTextContent()
+								.equals(emfNode.getAttributes().getNamedItem("string").getNodeValue())) {
 							isEqual = true;
 						} else {
 							emfNode = emfNode.getNextSibling();
@@ -356,40 +322,30 @@ public class ImageFormatConverter {
 					}
 
 					if (isEqual) {
-						if (((svgNode.getAttributes().getNamedItem("x") != null) && svgNode
-								.getAttributes().getNamedItem("x")
-								.getNodeValue().equals("0"))
+						if (((svgNode.getAttributes().getNamedItem("x") != null)
+								&& svgNode.getAttributes().getNamedItem("x").getNodeValue().equals("0"))
 								|| (svgNode.getAttributes().getNamedItem("x") == null)) {
 							float posX = 0;
-							if (emfNode.getAttributes()
-									.getNamedItem("bounds-x") != null) {
-								posX = Float.parseFloat((emfNode
-										.getAttributes().getNamedItem(
-												"bounds-x").getNodeValue()));
+							if (emfNode.getAttributes().getNamedItem("bounds-x") != null) {
+								posX = Float
+										.parseFloat((emfNode.getAttributes().getNamedItem("bounds-x").getNodeValue()));
 							}
 							if (emfNode.getAttributes().getNamedItem("pos-x") != null) {
-								posX -= Float.parseFloat(emfNode
-										.getAttributes().getNamedItem("pos-x")
-										.getNodeValue());
+								posX -= Float.parseFloat(emfNode.getAttributes().getNamedItem("pos-x").getNodeValue());
 							}
 
-							svgNode.getAttributes().getNamedItem("x")
-									.setNodeValue(String.valueOf(posX));
+							svgNode.getAttributes().getNamedItem("x").setNodeValue(String.valueOf(posX));
 						}
-						if (((svgNode.getAttributes().getNamedItem("y") != null) && svgNode
-								.getAttributes().getNamedItem("y")
-								.getNodeValue().equals("0"))
+						if (((svgNode.getAttributes().getNamedItem("y") != null)
+								&& svgNode.getAttributes().getNamedItem("y").getNodeValue().equals("0"))
 								|| (svgNode.getAttributes().getNamedItem("y") == null)) {
 							float posY = 0;
-							if (emfNode.getAttributes()
-									.getNamedItem("bounds-y") != null) {
-								posY = Float.parseFloat((emfNode
-										.getAttributes().getNamedItem(
-												"bounds-y").getNodeValue()));
+							if (emfNode.getAttributes().getNamedItem("bounds-y") != null) {
+								posY = Float
+										.parseFloat((emfNode.getAttributes().getNamedItem("bounds-y").getNodeValue()));
 							}
 
-							svgNode.getAttributes().getNamedItem("y")
-									.setNodeValue(String.valueOf(posY));
+							svgNode.getAttributes().getNamedItem("y").setNodeValue(String.valueOf(posY));
 						}
 
 						// if repaired then don't use this node in future
@@ -401,18 +357,15 @@ public class ImageFormatConverter {
 	}
 
 	public static byte[] transcodeEMFtoPNG(byte[] data, int width, int height) {
-		return transcodeEMFtoPNG(data, Integer.valueOf(width),
-				Integer.valueOf(height));
+		return transcodeEMFtoPNG(data, Integer.valueOf(width), Integer.valueOf(height));
 	}
 
 	public static byte[] transcodeEMFtoPNG(byte[] data) {
 		return transcodeEMFtoPNG(data, null, null);
 	}
 
-	private static byte[] transcodeEMFtoPNG(byte[] data, Integer width,
-			Integer height) {
-		byte[] pngData = transcodeSVGtoPNG(transcodeEMFtoSVG(data), width,
-				height);
+	private static byte[] transcodeEMFtoPNG(byte[] data, Integer width, Integer height) {
+		byte[] pngData = transcodeSVGtoPNG(transcodeEMFtoSVG(data), width, height);
 
 		return pngData;
 	}
