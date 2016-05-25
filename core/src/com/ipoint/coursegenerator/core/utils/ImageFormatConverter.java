@@ -1,12 +1,20 @@
 package com.ipoint.coursegenerator.core.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,63 +53,35 @@ import net.arnx.wmf2svg.gdi.wmf.WmfParser;
 
 public class ImageFormatConverter {
 
-	private final static Logger log = Logger.getLogger(ImageFormatConverter.class.getName());
+	private final static String SOFFICE_CONVERSION_KEYS = "--invisible --convert-to svg --outdir";
 
-	private final static DocumentBuilderFactory docBuildFactory = DocumentBuilderFactory.newInstance();
+	private final static String SOFFICE_PROGRAM = "soffice";
 
-	private final static TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	private final static long EMF_CONVERSION_TIMEOUT = 15L;
 
-	public static byte[] transcodeWMFtoPNG(byte[] data) {
-		return transcodeWMFtoPNG(data, null, null);
-	}
+	private final static Logger LOG = Logger.getLogger(ImageFormatConverter.class.getName());
 
-	public static byte[] transcodeWMFtoPNG(byte[] data, int width, int height) {
-		return transcodeWMFtoPNG(data, Integer.valueOf(width), Integer.valueOf(height));
-	}
+	private final static DocumentBuilderFactory DOC_BUILD_FACTORY = DocumentBuilderFactory.newInstance();
 
-	private static byte[] transcodeWMFtoPNG(byte[] data, Integer width, Integer height) {
-		WmfParser parser = new WmfParser();
-		try {
-			final SvgGdi gdi = new SvgGdi(false);
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			parser.parse(in, gdi);
+	private final static TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
-			Transformer transformer = transformerFactory.newTransformer();
-			ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
-			StreamResult convertedSvgSR = new StreamResult(svgBOS);
-			transformer.transform(new DOMSource(gdi.getDocument()), convertedSvgSR);
-			svgBOS.close();
-			ByteArrayInputStream svgBIS = new ByteArrayInputStream(svgBOS.toByteArray());
+	private static File pathToOffice = null;
 
-			String docParser = XMLResourceDescriptor.getXMLParserClassName();
-			Document svg = new SAXSVGDocumentFactory(docParser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
-					svgBIS);
-
-			return transcodeSVGtoPNG(svg, width, height);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SvgGdiException | WmfParseException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private static byte[] transcodeSVGtoPNG(Document svg, Integer width, Integer height) {
+	private static byte[] transcodeSvgToPng(Document svg, Integer width, Integer height) {
 		Document opensymbol = GuardianCharacters.getCharactersData();
+
 		if (opensymbol == null) {
-			log.warning("File \"opensymbol.svg\" is not initialized");
+			LOG.warning("File \"opensymbol.svg\" is not initialized");
 		} else {
+			// TODO: what is it?
 			Node opensymbolDefs = svg.importNode(opensymbol.getElementsByTagName("defs").item(0), true);
-			if (svg.getElementsByTagName("defs").getLength() != 0) {
-				Node svgDefs = svg.createElement("defs");
-				while (svgDefs.hasChildNodes()) {
-					opensymbolDefs.appendChild(svgDefs.getFirstChild());
-				}
-				svg.removeChild(svgDefs);
-			}
+			// if (svg.getElementsByTagName("defs").getLength() != 0) {
+			// Node svgDefs = svg.createElement("defs");
+			// while (svgDefs.hasChildNodes()) {
+			// opensymbolDefs.appendChild(svgDefs.getFirstChild());
+			// }
+			// svg.removeChild(svgDefs);
+			// }
 			svg.getDocumentElement().appendChild(opensymbolDefs);
 
 			((Element) svg.getElementsByTagName("g").item(0)).setAttribute("style",
@@ -152,68 +132,10 @@ public class ImageFormatConverter {
 
 			return pngBOS.toByteArray();
 		} catch (TranscoderException e) {
-			log.warning("SVG can't be converted to PNG");
+			LOG.warning("SVG can't be converted to PNG");
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	private static Document transcodeEMFtoSVG(byte[] emfBytes) {
-		ByteArrayInputStream emfBIS = new ByteArrayInputStream(emfBytes);
-		EMFInputStream emfIS = new EMFInputStream(emfBIS);
-
-		try {
-			EMFRenderer emfRenderer = null;
-
-			emfRenderer = new EMFRenderer(emfIS);
-			EMFPanel emfPanel = new EMFPanel();
-			emfPanel.setRenderer(emfRenderer);
-
-			Properties props = new Properties();
-			props.put(SVGGraphics2D.EMBED_FONTS, Boolean.toString(false));
-			props.put(SVGGraphics2D.CLIP, Boolean.toString(false));
-			props.put(SVGGraphics2D.COMPRESS, Boolean.toString(false));
-			props.put(SVGGraphics2D.TEXT_AS_SHAPES, Boolean.toString(false));
-			props.put(SVGGraphics2D.STYLABLE, Boolean.toString(false));
-
-			ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
-
-			// prepare Graphics2D
-			SVGGraphics2D graphics2D = new SVGGraphics2D(svgBOS, emfPanel);
-			graphics2D.setProperties(props);
-			graphics2D.setDeviceIndependent(true);
-			graphics2D.startExport();
-			emfPanel.paint(graphics2D);
-			graphics2D.endExport();
-
-			try {
-				svgBOS.flush();
-				svgBOS.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			ByteArrayInputStream svgBytes = new ByteArrayInputStream(svgBOS.toByteArray());
-			String parser = XMLResourceDescriptor.getXMLParserClassName();
-			Document svg = new SAXSVGDocumentFactory(parser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
-					svgBytes);
-			svgBytes.close();
-			repairSVGTextPosition(svg, getEmfNodeWithAllTextNodes(emfBytes));
-
-			return svg;
-		} catch (IOException e1) {
-			log.warning("Input data can't be rendered to EMF");
-			e1.printStackTrace();
-		} finally {
-			try {
-				emfIS.close();
-				emfBIS.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 		}
 
 		return null;
@@ -278,7 +200,7 @@ public class ImageFormatConverter {
 
 			emfAsStr.append("</emfPart>");
 			emfPartBIS = new ByteArrayInputStream(emfAsStr.toString().getBytes());
-			DocumentBuilder builder = docBuildFactory.newDocumentBuilder();
+			DocumentBuilder builder = DOC_BUILD_FACTORY.newDocumentBuilder();
 
 			return builder.parse(emfPartBIS).getElementsByTagName("emfPart").item(0);
 		} catch (IOException | SAXException e) {
@@ -302,7 +224,7 @@ public class ImageFormatConverter {
 		return null;
 	}
 
-	private static void repairSVGTextPosition(Document svg, Node emfDocPart) {
+	private static void repairSvgTextPosition(Document svg, Node emfDocPart) {
 		if ((svg != null) && (emfDocPart != null)) {
 			NodeList svgTextNodes = svg.getElementsByTagName("text");
 
@@ -356,18 +278,180 @@ public class ImageFormatConverter {
 		}
 	}
 
-	public static byte[] transcodeEMFtoPNG(byte[] data, int width, int height) {
-		return transcodeEMFtoPNG(data, Integer.valueOf(width), Integer.valueOf(height));
+	public static byte[] transcodeWmfToPng(byte[] data) {
+		return transcodeWmfToPng(data, null, null);
 	}
 
-	public static byte[] transcodeEMFtoPNG(byte[] data) {
-		return transcodeEMFtoPNG(data, null, null);
+	public static byte[] transcodeWmfToPng(byte[] data, int width, int height) {
+		return transcodeWmfToPng(data, Integer.valueOf(width), Integer.valueOf(height));
 	}
 
-	private static byte[] transcodeEMFtoPNG(byte[] data, Integer width, Integer height) {
-		byte[] pngData = transcodeSVGtoPNG(transcodeEMFtoSVG(data), width, height);
+	private static byte[] transcodeWmfToPng(byte[] data, Integer width, Integer height) {
+		Document svgData = null;
+		if (hasOfficeConverter()) {
+			svgData = transcodeImgToSvg(data, "wmf");
+		} else {
+			WmfParser parser = new WmfParser();
+			try {
+				final SvgGdi gdi = new SvgGdi(false);
+				ByteArrayInputStream in = new ByteArrayInputStream(data);
+				parser.parse(in, gdi);
 
-		return pngData;
+				Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+				ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
+				StreamResult convertedSvgSR = new StreamResult(svgBOS);
+				transformer.transform(new DOMSource(gdi.getDocument()), convertedSvgSR);
+				svgBOS.close();
+				ByteArrayInputStream svgBIS = new ByteArrayInputStream(svgBOS.toByteArray());
+
+				String docParser = XMLResourceDescriptor.getXMLParserClassName();
+				svgData = new SAXSVGDocumentFactory(docParser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
+						svgBIS);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (SvgGdiException | WmfParseException e) {
+				e.printStackTrace();
+			} catch (TransformerException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return transcodeSvgToPng(svgData, width, height);
+	}
+
+	public static byte[] transcodeEmfToPng(byte[] data) {
+		return transcodeEmfToPng(data, null, null);
+	}
+
+	public static byte[] transcodeEmfToPng(byte[] data, int width, int height) {
+		return transcodeEmfToPng(data, Integer.valueOf(width), Integer.valueOf(height));
+	}
+
+	private static byte[] transcodeEmfToPng(byte[] data, Integer width, Integer height) {
+		Document svgData = null;
+		if (hasOfficeConverter()) {
+			svgData = transcodeImgToSvg(data, "emf");
+		} else {
+			ByteArrayInputStream emfBIS = new ByteArrayInputStream(data);
+			EMFInputStream emfIS = new EMFInputStream(emfBIS);
+
+			try {
+				EMFRenderer emfRenderer = null;
+
+				emfRenderer = new EMFRenderer(emfIS);
+				EMFPanel emfPanel = new EMFPanel();
+				emfPanel.setRenderer(emfRenderer);
+
+				Properties props = new Properties();
+				props.put(SVGGraphics2D.EMBED_FONTS, Boolean.toString(false));
+				props.put(SVGGraphics2D.CLIP, Boolean.toString(false));
+				props.put(SVGGraphics2D.COMPRESS, Boolean.toString(false));
+				props.put(SVGGraphics2D.TEXT_AS_SHAPES, Boolean.toString(false));
+				props.put(SVGGraphics2D.STYLABLE, Boolean.toString(false));
+
+				ByteArrayOutputStream svgBOS = new ByteArrayOutputStream();
+
+				// prepare Graphics2D
+				SVGGraphics2D graphics2D = new SVGGraphics2D(svgBOS, emfPanel);
+				graphics2D.setProperties(props);
+				graphics2D.setDeviceIndependent(true);
+				graphics2D.startExport();
+				emfPanel.paint(graphics2D);
+				graphics2D.endExport();
+
+				try {
+					svgBOS.flush();
+					svgBOS.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				ByteArrayInputStream svgBytes = new ByteArrayInputStream(svgBOS.toByteArray());
+				String parser = XMLResourceDescriptor.getXMLParserClassName();
+				svgData = new SAXSVGDocumentFactory(parser).createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI,
+						svgBytes);
+				svgBytes.close();
+				repairSvgTextPosition(svgData, getEmfNodeWithAllTextNodes(data));
+			} catch (IOException e1) {
+				LOG.warning("Input data can't be rendered to EMF");
+				e1.printStackTrace();
+			} finally {
+				try {
+					emfIS.close();
+					emfBIS.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		return transcodeSvgToPng(svgData, width, height);
+	}
+
+	private static Document transcodeImgToSvg(byte[] data, String extension) {
+		if (hasOfficeConverter()) {
+			File svgFile = null;
+			File imgFile = null;
+			try {
+				String fileName = UUID.randomUUID().toString();
+				imgFile = File.createTempFile("img", fileName + "." + extension);
+				svgFile = new File(imgFile.getParentFile(),
+						imgFile.getName().substring(0, imgFile.getName().length() - extension.length() - 1) + ".svg");
+				svgFile.createNewFile();
+
+				try {
+					FileOutputStream imgOS = new FileOutputStream(imgFile);
+					BufferedOutputStream imgBufOS = new BufferedOutputStream(imgOS);
+					imgBufOS.write(data);
+					imgBufOS.close();
+					imgOS.close();
+
+					String cmd = '"' + getPathToOffice().getAbsolutePath() + File.separatorChar + SOFFICE_PROGRAM
+							+ "\" " + SOFFICE_CONVERSION_KEYS + " \"" + svgFile.getParentFile().getAbsolutePath()
+							+ "\" \"" + imgFile.getAbsolutePath() + '"';
+					Process proc = Runtime.getRuntime().exec(cmd.toString());
+
+					if (proc.waitFor(EMF_CONVERSION_TIMEOUT, TimeUnit.SECONDS)) {
+						FileInputStream svgIS = new FileInputStream(svgFile);
+						BufferedInputStream svgBufIS = new BufferedInputStream(svgIS);
+						String parser = XMLResourceDescriptor.getXMLParserClassName();
+						Document svg = new SAXSVGDocumentFactory(parser)
+								.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, svgIS);
+						svgBufIS.close();
+						svgIS.close();
+
+						return svg;
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} finally {
+					imgFile.delete();
+					svgFile.delete();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		return null;
+
+	}
+
+	public static File getPathToOffice() {
+		return pathToOffice;
+	}
+
+	public static void setPathToOffice(String path) {
+		pathToOffice = new File(path);
+	}
+
+	public static boolean hasOfficeConverter() {
+		return (getPathToOffice() != null) && getPathToOffice().exists()
+				&& new File(getPathToOffice(), SOFFICE_PROGRAM).exists();
 	}
 
 }
