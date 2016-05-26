@@ -451,8 +451,8 @@ public class ImageFormatConverter {
 
 	public static boolean hasOfficeConverter() {
 		return (getPathToOffice() != null) && getPathToOffice().exists()
-				&& (new File(getPathToOffice(), SOFFICE_PROGRAM).exists() || new File
-				(getPathToOffice(), SOFFICE_PROGRAM + ".exe").exists());
+				&& (new File(getPathToOffice(), SOFFICE_PROGRAM).exists()
+						|| new File(getPathToOffice(), SOFFICE_PROGRAM + ".exe").exists());
 	}
 
 }
