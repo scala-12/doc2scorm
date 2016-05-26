@@ -67,9 +67,9 @@
 			<version>1.8.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
+			<groupId>local</groupId>
 			<artifactId>batik-transcoder</artifactId>
-			<version>1.8</version>
+			<version>1.8.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
