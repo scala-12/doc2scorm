@@ -8,6 +8,7 @@ import akka.cluster.{Cluster, Member}
 import akka.pattern
 import akka.routing.{ActorRefRoutee, Router, SmallestMailboxRoutingLogic}
 import akka.util.Timeout
+import com.ipoint.coursegenerator.core.utils.ImageFormatConverter
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.mutable
@@ -16,7 +17,8 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object HostConvertSupervisor extends Actor with ActorLogging {
-  val clusterConf = ConfigFactory.load().getObject("cluster").toConfig
+  val rootConf = ConfigFactory.load()
+  val clusterConf = rootConf.getObject("cluster").toConfig
 
   val hostAddress: String = s"${clusterConf.getString("akka.remote.netty.tcp.hostname")}:" +
     (if (clusterConf.getInt("akka.remote.netty.tcp.port") == 0)
@@ -27,6 +29,10 @@ object HostConvertSupervisor extends Actor with ActorLogging {
   val supervisorName = self.path.name
 
   val cluster = Cluster(context.system)
+
+  if (!rootConf.getIsNull("libreoffice.program.path")) {
+    ImageFormatConverter.setPathToOffice(rootConf.getString("libreoffice.program.path"))
+  }
 
   override def preStart(): Unit = cluster.subscribe(self, InitialStateAsEvents,
     classOf[MemberEvent], classOf[UnreachableMember])
@@ -39,12 +45,14 @@ object HostConvertSupervisor extends Actor with ActorLogging {
     context watch self
     Router(
       SmallestMailboxRoutingLogic(),
-      Vector.fill(if (clusterConf.getBoolean("have-converters")) 1 else 0) {
+      Vector.fill(if (clusterConf.getInt("converter-count") == 0) 0 else 1) {
         ActorRefRoutee(self)
       })
   }
 
-  val workerRouter = if (clusterConf.getBoolean("have-converters")) {
+  val workerRouter = if (clusterConf.getInt("converter-count") == 0) {
+    null
+  } else {
     val routees = Vector.fill(clusterConf.getInt("converter-count")) {
       val converter = context actorOf(Props(classOf[ConvertActor]), NameUtils.createName)
       context watch converter
@@ -52,13 +60,13 @@ object HostConvertSupervisor extends Actor with ActorLogging {
     }
 
     Router(SmallestMailboxRoutingLogic(), routees)
-  } else {
-    null
   }
 
   def receive = {
     case ConversionOnHost(courseDocBytes, maxHeader, courseName) =>
-      workerRouter.route(ConvertActor.Conversion(courseDocBytes, maxHeader, courseName), sender())
+      if (clusterConf.getInt("converter-count") > 0) {
+        workerRouter.route(ConvertActor.Conversion(courseDocBytes, maxHeader, courseName), sender())
+      }
 
     case ConversionInCluster(courseDocBytes, maxHeader, courseName) =>
       self ! DelayConversionInCluster(sender(), courseDocBytes, maxHeader, courseName)
@@ -70,7 +78,7 @@ object HostConvertSupervisor extends Actor with ActorLogging {
         hostRouter.route(ConversionOnHost(courseDocBytes, maxHeader, courseName), waiter)
       }
 
-    case ThisHost => sender() ! (if (clusterConf.getBoolean("have-converters")) Some(self) else None)
+    case ThisHost => sender() ! (if (clusterConf.getInt("converter-count") == 0) None else Some(self))
 
     case MemberUp(member) =>
       log.info(s"[Listener] node is up: $member")
