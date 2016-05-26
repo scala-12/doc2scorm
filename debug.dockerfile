@@ -8,6 +8,14 @@ RUN yum install -y cifs-utils
 RUN curl -O http://downloads.typesafe.com/typesafe-activator/1.3.7/typesafe-activator-${PLAY_VERSION}.zip 
 RUN unzip typesafe-activator-${PLAY_VERSION}.zip -d / && rm typesafe-activator-${PLAY_VERSION}.zip && chmod a+x /activator-dist-${PLAY_VERSION}/
 
+# Installing LibreOffice
+RUN yum install -y tar
+RUN cd /tmp
+RUN wget http://download.documentfoundation.org/libreoffice/stable/5.1.3/rpm/x86_64/LibreOffice_5.1.3_Linux_x86-64_rpm.tar.gz
+RUN tar -xvf LibreOffice_5.1.3_Linux_x86-64_rpm.tar.gz
+RUN yum localinstall -y *.rpm
+ENV SOFFICE /opt/libreoffice5.1/program
+
 RUN mkdir /app
 
 # create project dir for debug
