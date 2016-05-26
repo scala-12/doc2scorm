@@ -26,8 +26,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.dom.svg.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -451,7 +451,8 @@ public class ImageFormatConverter {
 
 	public static boolean hasOfficeConverter() {
 		return (getPathToOffice() != null) && getPathToOffice().exists()
-				&& new File(getPathToOffice(), SOFFICE_PROGRAM).exists();
+				&& (new File(getPathToOffice(), SOFFICE_PROGRAM).exists() || new File
+				(getPathToOffice(), SOFFICE_PROGRAM + ".exe").exists());
 	}
 
 }
