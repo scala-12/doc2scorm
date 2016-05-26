@@ -1,17 +1,18 @@
 package com.ipoint.coursegenerator.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.ipoint.coursegenerator.core.courseModel.CourseModel;
+import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items
+		.ImageContentItem;
+import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
+import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.TransliterationTool;
+import com.ipoint.coursegenerator.core.utils.Zipper;
+import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
@@ -21,20 +22,16 @@ import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Document;
 
-import com.ipoint.coursegenerator.core.courseModel.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items
-		.ImageContentItem;
-import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
-import com.ipoint.coursegenerator.core.utils.FileWork;
-import com.ipoint.coursegenerator.core.utils.ImageFormatConverter;
-import com.ipoint.coursegenerator.core.utils.TransliterationTool;
-import com.ipoint.coursegenerator.core.utils.Zipper;
-import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Parser {
 
@@ -49,7 +46,8 @@ public class Parser {
 			".adlnet.org/xsd/adlnav_v1p3\" " +
 			"identifier=\"MANIFEST-5724A1B2-A6BE-F1BF-9781-706050DA4FC9\" " +
 			"xsi:schemaLocation=\"http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd " +
-			"http://ltsc.ieee.org/xsd/LOM lom.xsd http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3" +
+			"http://ltsc.ieee.org/xsd/LOM lom.xsd http://www.adlnet.org/xsd/adlcp_v1p3 " +
+			"adlcp_v1p3" +
 			".xsd http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd http://www.adlnet" +
 			".org/xsd/adlseq_v1p3 adlseq_v1p3.xsd http://www.adlnet.org/xsd/adlnav_v1p3 " +
 			"adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th " +
@@ -60,11 +58,7 @@ public class Parser {
 	public Parser() {
 	}
 
-	public Parser(String pathToOffice) {
-		ImageFormatConverter.setPathToOffice(pathToOffice);
-	}
-
-	public void createImsManifestFile(String courseName) {
+	private void createImsManifestFile(String courseName) {
 		manifest = ManifestDocument.Factory.newInstance();
 		ManifestProcessor manifestProcessor = new ManifestProcessor();
 		manifestProcessor.createManifest(manifest);
@@ -97,7 +91,7 @@ public class Parser {
 			html.getFirstChild().appendChild(html.createElement("body"));
 			return html;
 		} catch (ParserConfigurationException e) {
-
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -113,7 +107,7 @@ public class Parser {
 					, resourseId, itemId);
 		} else if (parentItem instanceof OrganizationsType) {
 			manifestItem = OrganizationProcessor.createItem((OrganizationsType) parentItem, node
-					.getTitle(), resourseId,
+							.getTitle(), resourseId,
 					itemId);
 		}
 
@@ -124,10 +118,10 @@ public class Parser {
 									 List<ImageInfo> images,
 									 String resourseId) {
 		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName +
-				FileWork.HTML_SUFFIX,
+						FileWork.HTML_SUFFIX,
 				resourseId);
 
-		ArrayList<String> imagesNames = new ArrayList<String>();
+		ArrayList<String> imagesNames = new ArrayList<>();
 		for (ImageInfo image : images) {
 			imagesNames.add(image.getImageName());
 		}
@@ -172,7 +166,7 @@ public class Parser {
 
 			if (!item.getNodes().isEmpty()) {
 				this.recursiveSaveCourse(item.getNodes(), manifest, coursePath, path + pageTitle +
-						File.separator,
+								File.separator,
 						(level == null) ? String.valueOf(numberOnLevel) : (level + "-" + String
 								.valueOf(numberOnLevel)),
 						manifestItem);
@@ -195,7 +189,7 @@ public class Parser {
 
 		if (!courseModel.getNodes().isEmpty()) {
 			this.recursiveSaveCourse(courseModel.getNodes(), manifest.getManifest(), path.concat
-					(File.separator), "",
+							(File.separator), "",
 					null, manifest.getManifest().getOrganizations());
 		}
 
@@ -223,9 +217,9 @@ public class Parser {
 		Calendar date = GregorianCalendar.getInstance();
 		zipCourseFileName = zipCourseFileName.replace(' ', '_').replaceAll("[\\W&&[^-]]", "");
 
-		String sdate = "_" + new Integer(date.get(GregorianCalendar.YEAR)).toString() + "-"
-				+ new Integer(date.get(GregorianCalendar.MONTH) + 1).toString() + "-"
-				+ new Integer(date.get(GregorianCalendar.DATE)).toString();
+		String sdate = "_" + Integer.toString(date.get(GregorianCalendar.YEAR)) + "-"
+				+ Integer.toString(date.get(GregorianCalendar.MONTH) + 1) + "-"
+				+ Integer.toString(date.get(GregorianCalendar.DATE));
 		zipCourseFileName = zipCourseFileName + sdate + ".zip";
 		return zipCourseFileName;
 	}
