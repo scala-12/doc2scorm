@@ -2,7 +2,7 @@ package utils.actors
 
 import java.util.UUID
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, RootActorPath}
+import akka.actor.{Actor, ActorLogging, ActorRef, Address, Props, RootActorPath}
 import akka.cluster.ClusterEvent._
 import akka.cluster.{Cluster, Member}
 import akka.pattern
@@ -11,31 +11,42 @@ import akka.util.Timeout
 import com.ipoint.coursegenerator.core.utils.ImageFormatConverter
 import com.typesafe.config.ConfigFactory
 
+import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object HostConvertSupervisor extends Actor with ActorLogging {
-  val rootConf = ConfigFactory.load()
+  val rootConf = ConfigFactory load()
   val clusterConf = rootConf.getObject("cluster").toConfig
 
-  val hostAddress: String = s"${clusterConf.getString("akka.remote.netty.tcp.hostname")}:" +
+  val protocol = clusterConf getString "protocol"
+  val system = clusterConf getString "system-name"
+  val seedNodes = clusterConf.getStringList("cluster-seed-nodes").toList.map { address =>
+    val addressSplit = address split ':'
+    Address(protocol, system, addressSplit(0), addressSplit(1).toInt)
+  }
+
+  val hostAddress: String = s"${clusterConf getString "akka.remote.netty.tcp.hostname"}:" +
     (if (clusterConf.getInt("akka.remote.netty.tcp.port") == 0)
       UUID.randomUUID().toString
     else
-      clusterConf.getString("akka.remote.netty.tcp.port"))
+      clusterConf getString "akka.remote.netty.tcp.port")
 
   val supervisorName = self.path.name
 
   val cluster = Cluster(context.system)
+  cluster joinSeedNodes seedNodes
 
   if (!rootConf.getIsNull("libreoffice.program.path")) {
-    ImageFormatConverter.setPathToOffice(rootConf.getString("libreoffice.program.path"))
+    ImageFormatConverter.setPathToOffice(rootConf getString "libreoffice.program.path")
   }
 
-  override def preStart(): Unit = cluster.subscribe(self, InitialStateAsEvents,
-    classOf[MemberEvent], classOf[UnreachableMember])
+  override def preStart(): Unit = {
+    cluster subscribe(self, InitialStateAsEvents,
+      classOf[MemberEvent], classOf[UnreachableMember])
+  }
 
   override def postStop(): Unit = cluster.unsubscribe(self)
 
@@ -83,7 +94,11 @@ object HostConvertSupervisor extends Actor with ActorLogging {
     case MemberUp(member) =>
       log.info(s"[Listener] node is up: $member")
 
-      if (hostAddress != s"${member.address.host.get}:${member.address.port.get}") {
+      if (hostAddress != s"${
+        member.address.host.get
+      }:${
+        member.address.port.get
+      }") {
         implicit val timeout = Timeout(15.seconds)
 
         val newHostFuture = pattern.ask(
@@ -91,20 +106,24 @@ object HostConvertSupervisor extends Actor with ActorLogging {
           ThisHost).asInstanceOf[Future[Option[ActorRef]]]
 
         newHostFuture.flatMap(newHost =>
-          Future.successful {
+          Future successful {
             if (newHost.isDefined) {
               hosts.put(member, newHost.get)
               hostRouter = hostRouter.addRoutee(newHost.get)
             }
           }
-        )
+          )
       }
 
-    case UnreachableMember(member) => log.info(s"[Listener] node is unreachable: $member")
+    case UnreachableMember(member) => log info s"[Listener] node is unreachable: $member"
 
     case MemberRemoved(member, prevStatus) =>
-      log.info(s"[Listener] node is removed: $member after $prevStatus")
-      if ((hostAddress != s"${member.address.host.get}:${member.address.port.get}")
+      log info s"[Listener] node is removed: $member after $prevStatus"
+      if ((hostAddress != s"${
+        member.address.host.get
+      }:${
+        member.address.port.get
+      }")
         && hosts.contains(member)) {
         hostRouter = hostRouter.removeRoutee(hosts.remove(member).get)
       }
