@@ -116,3 +116,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion
   , "com.typesafe.akka" %% "akka-cluster" % akkaVersion
 )
+
+// Ignore files of configs
+mappings in Universal := {
+  val origMappings = (mappings in Universal).value
+  origMappings.filterNot { case (_, file) => file.endsWith("local.conf") || file.endsWith("application.test.conf") }
+}
