@@ -23,10 +23,19 @@ object HostConvertSupervisor extends Actor with ActorLogging {
 
   val protocol = clusterConf getString "protocol"
   val system = clusterConf getString "system-name"
-  val seedNodes = clusterConf.getStringList("cluster-seed-nodes").toList.map { address =>
+
+  var seedList = clusterConf.getStringList("cluster-seed-nodes").toList
+  if ((seedList.length == 1) && seedList.head.contains(",")) {
+    //parse from console
+    seedList = seedList.head.split(',').toList
+  }
+
+  val seedNodes = seedList.map { address =>
     val addressSplit = address split ':'
     Address(protocol, system, addressSplit(0), addressSplit(1).toInt)
   }
+
+  log.info(s"Seed nodes: $seedNodes")
 
   val hostAddress: String = s"${clusterConf getString "akka.remote.netty.tcp.hostname"}:" +
     (if (clusterConf.getInt("akka.remote.netty.tcp.port") == 0)
@@ -112,7 +121,7 @@ object HostConvertSupervisor extends Actor with ActorLogging {
               hostRouter = hostRouter.addRoutee(newHost.get)
             }
           }
-          )
+        )
       }
 
     case UnreachableMember(member) => log info s"[Listener] node is unreachable: $member"
