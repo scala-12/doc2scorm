@@ -3,23 +3,25 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import java.util.logging.Logger;
 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFStyle;
+import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.HeaderBlock;
 
 /**
  * Parsing to {@link HeaderBlock}
- * 
- * @author Kalashnikov Vladislav
  *
+ * @author Kalashnikov Vladislav
  */
 public class HeaderParser extends ParagraphParser {
 
-	private final static Logger log = Logger.getLogger(HeaderParser.class
-			.getName());
+	private final static Logger log = Logger.getLogger(HeaderParser.class.getName());
+
+	private static final String HEADING_NAME = "heading";
 
 	/**
 	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}
-	 * 
+	 *
 	 * @param paragraph
 	 *            Paragraph for parsing
 	 * @param level
@@ -31,8 +33,7 @@ public class HeaderParser extends ParagraphParser {
 		if (headerLevel == null) {
 			log.warning("Paragraph has not header marker");
 		} else {
-			return new HeaderBlock(ParagraphParser.parse(par, null).getItems(),
-					getHeaderLevel(par) - maxLevel);
+			return new HeaderBlock(ParagraphParser.parse(par, null).getItems(), getHeaderLevel(par) - maxLevel);
 		}
 
 		return null;
@@ -40,39 +41,38 @@ public class HeaderParser extends ParagraphParser {
 
 	/**
 	 * Search header level
-	 * 
+	 *
 	 * @param headId
 	 *            ID of header
 	 * @return
 	 */
 	public static Integer getHeaderLevel(XWPFParagraph par) {
-		String headId = par.getStyleID();
+		XWPFStyles styles = par.getDocument().getStyles();
+		XWPFStyle basisStyle = styles.getStyle(par.getStyleID());
 
-		Integer resultVariable;
-		if (headId == null) {
-			resultVariable = null;
-		} else if (("Heading1".equals(headId)) || ("1".equals(headId))) {
-			resultVariable = 1;
-		} else if (("Heading2".equals(headId)) || ("2".equals(headId))) {
-			resultVariable = 2;
-		} else if (("Heading3".equals(headId)) || ("3".equals(headId))) {
-			resultVariable = 3;
-		} else if (("Heading4".equals(headId)) || ("4".equals(headId))) {
-			resultVariable = 4;
-		} else if (("Heading5".equals(headId)) || ("5".equals(headId))) {
-			resultVariable = 5;
-		} else if (("Heading6".equals(headId)) || ("6".equals(headId))) {
-			resultVariable = 6;
-		} else if (("Heading7".equals(headId)) || ("7".equals(headId))) {
-			resultVariable = 7;
-		} else if (("Heading8".equals(headId)) || ("8".equals(headId))) {
-			resultVariable = 8;
-		} else if (("Heading9".equals(headId)) || ("9".equals(headId))) {
-			resultVariable = 9;
-		} else {
-			resultVariable = null;
+		Integer headerLvl = null;
+		String headerNum = null;
+		if (basisStyle != null) {
+			String styleName = basisStyle.getName().toLowerCase();
+			while (!("normal".equals(styleName) || styleName.startsWith(HEADING_NAME))) {
+				// if style not based to headers or is not header then check
+				// basis style
+				styleName = styles.getStyle(basisStyle.getBasisStyleID()).getName().toLowerCase();
+			}
+			if (styleName.startsWith(HEADING_NAME)) {
+				// if style relate to headers
+				headerNum = styleName.substring(HEADING_NAME.length()).trim();
+			}
+
+			if (headerNum != null) {
+				try {
+					headerLvl = Integer.parseInt(headerNum);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
-		return resultVariable;
+		return headerLvl;
 	}
 }
