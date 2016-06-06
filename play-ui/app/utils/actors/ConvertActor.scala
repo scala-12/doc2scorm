@@ -6,6 +6,7 @@ import java.util.{Calendar, UUID}
 import akka.actor.{Actor, ActorLogging}
 import com.ipoint.coursegenerator.core.Parser
 import com.typesafe.config.ConfigFactory
+import utils.actors.ConvertActor.convertRU2ENString
 
 import scala.reflect.io.{Directory, File}
 import scala.util.Try
@@ -36,7 +37,7 @@ class ConvertActor extends Actor with ActorLogging {
         localDocsDir createDirectory()
       }
 
-      val tmpCourseName = courseName +
+      val tmpCourseName = convertRU2ENString(courseName) +
         "_" + sdf.format(calendar.getTime) +
         "_" + UUID.randomUUID().toString
 
@@ -93,5 +94,52 @@ class ConvertActor extends Actor with ActorLogging {
 object ConvertActor {
 
   case class Conversion(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
+
+  def convertSingleCharacterRU2EN(c: Char): String = {
+    if (c.isUpper) {
+      convertSingleCharacterRU2EN(c.toLower).toUpperCase
+    } else {
+      c match {
+        case 'а' => "a"
+        case 'б' => "b"
+        case 'в' => "v"
+        case 'г' => "g"
+        case 'д' => "d"
+        case 'е' => "e"
+        case 'ё' => "e"
+        case 'ж' => "zh"
+        case 'з' => "z"
+        case 'и' => "i"
+        case 'й' => "jj"
+        case 'к' => "k"
+        case 'л' => "l"
+        case 'м' => "m"
+        case 'н' => "n"
+        case 'о' => "o"
+        case 'п' => "p"
+        case 'р' => "r"
+        case 'с' => "s"
+        case 'т' => "t"
+        case 'у' => "u"
+        case 'ф' => "f"
+        case 'х' => "h"
+        case 'ц' => "c"
+        case 'ч' => "ch"
+        case 'ш' => "sh"
+        case 'щ' => "shh"
+        case 'ы' => "y"
+        case 'ъ' | 'ь' => ""
+        case 'э' => "eh"
+        case 'ю' => "ju"
+        case 'я' => "ya"
+        case _ => String.valueOf(c)
+      }
+    }
+  }
+
+  def convertRU2ENString(ruString: String): String = {
+    val charArray: Array[Char] = ruString.toCharArray
+    charArray.map(c => convertSingleCharacterRU2EN(c)).mkString
+  }
 
 }
