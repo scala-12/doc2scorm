@@ -18,6 +18,7 @@ public class HeaderParser extends ParagraphParser {
 	private final static Logger log = Logger.getLogger(HeaderParser.class.getName());
 
 	private static final String HEADING_NAME = "heading";
+	private static final String NORMAL_STYLE_NAME = "normal";
 
 	/**
 	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}
@@ -54,7 +55,8 @@ public class HeaderParser extends ParagraphParser {
 		String headerNum = null;
 		if (basisStyle != null) {
 			String styleName = basisStyle.getName().toLowerCase();
-			while (!("normal".equals(styleName) || styleName.startsWith(HEADING_NAME))) {
+			while (!((basisStyle.getBasisStyleID() == null) || NORMAL_STYLE_NAME.equals(styleName)
+					|| styleName.startsWith(HEADING_NAME))) {
 				// if style not based to headers or is not header then check
 				// basis style
 				styleName = styles.getStyle(basisStyle.getBasisStyleID()).getName().toLowerCase();
