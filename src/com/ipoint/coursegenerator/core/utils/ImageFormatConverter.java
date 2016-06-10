@@ -279,17 +279,17 @@ public class ImageFormatConverter {
 	}
 
 	public static byte[] transcodeWmfToPng(byte[] data) {
-		return transcodeWmfToPng(data, null, null);
+		return transcodeWmfToPng(data, null, null, null);
 	}
 
 	public static byte[] transcodeWmfToPng(byte[] data, int width, int height) {
 		return transcodeWmfToPng(data, Integer.valueOf(width), Integer.valueOf(height));
 	}
 
-	private static byte[] transcodeWmfToPng(byte[] data, Integer width, Integer height) {
+	public static byte[] transcodeWmfToPng(byte[] data, Integer width, Integer height, File pathToSOffice) {
 		Document svgData = null;
-		if (hasOfficeConverter()) {
-			svgData = transcodeImgToSvg(data, "wmf");
+		if ((pathToSOffice != null) && pathToSOffice.exists()) {
+			svgData = transcodeImgToSvg(data, "wmf", pathToSOffice);
 		} else {
 			WmfParser parser = new WmfParser();
 			try {
@@ -320,17 +320,17 @@ public class ImageFormatConverter {
 	}
 
 	public static byte[] transcodeEmfToPng(byte[] data) {
-		return transcodeEmfToPng(data, null, null);
+		return transcodeEmfToPng(data, null, null, null);
 	}
 
 	public static byte[] transcodeEmfToPng(byte[] data, int width, int height) {
 		return transcodeEmfToPng(data, Integer.valueOf(width), Integer.valueOf(height));
 	}
 
-	private static byte[] transcodeEmfToPng(byte[] data, Integer width, Integer height) {
+	public static byte[] transcodeEmfToPng(byte[] data, Integer width, Integer height, File pathToSOffice) {
 		Document svgData = null;
-		if (hasOfficeConverter()) {
-			svgData = transcodeImgToSvg(data, "emf");
+		if ((pathToSOffice != null) && pathToSOffice.exists()) {
+			svgData = transcodeImgToSvg(data, "emf", pathToSOffice);
 		} else {
 			ByteArrayInputStream emfBIS = new ByteArrayInputStream(data);
 			EMFInputStream emfIS = new EMFInputStream(emfBIS);
@@ -388,8 +388,8 @@ public class ImageFormatConverter {
 		return transcodeSvgToPng(svgData, width, height);
 	}
 
-	private static Document transcodeImgToSvg(byte[] data, String extension) {
-		if (hasOfficeConverter()) {
+	private static Document transcodeImgToSvg(byte[] data, String extension, File pathToSOffice) {
+		if (pathToSOffice != null) {
 			File svgFile = null;
 			File imgFile = null;
 			try {
@@ -406,9 +406,9 @@ public class ImageFormatConverter {
 					imgBufOS.close();
 					imgOS.close();
 
-					String cmd = '"' + getPathToOffice().getAbsolutePath() + File.separatorChar + SOFFICE_PROGRAM
-							+ "\" " + SOFFICE_CONVERSION_KEYS + " \"" + svgFile.getParentFile().getAbsolutePath()
-							+ "\" \"" + imgFile.getAbsolutePath() + '"';
+					String cmd = '"' + pathToSOffice.getAbsolutePath() + File.separatorChar + SOFFICE_PROGRAM + "\" "
+							+ SOFFICE_CONVERSION_KEYS + " \"" + svgFile.getParentFile().getAbsolutePath() + "\" \""
+							+ imgFile.getAbsolutePath() + '"';
 					Process proc = Runtime.getRuntime().exec(cmd.toString());
 
 					if (proc.waitFor(EMF_CONVERSION_TIMEOUT, TimeUnit.SECONDS)) {
@@ -439,20 +439,6 @@ public class ImageFormatConverter {
 
 		return null;
 
-	}
-
-	public static File getPathToOffice() {
-		return pathToOffice;
-	}
-
-	public static void setPathToOffice(String path) {
-		pathToOffice = new File(path);
-	}
-
-	public static boolean hasOfficeConverter() {
-		return (getPathToOffice() != null) && getPathToOffice().exists()
-				&& (new File(getPathToOffice(), SOFFICE_PROGRAM).exists()
-						|| new File(getPathToOffice(), SOFFICE_PROGRAM + ".exe").exists());
 	}
 
 }

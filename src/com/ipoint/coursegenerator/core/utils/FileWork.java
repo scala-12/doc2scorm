@@ -184,7 +184,7 @@ public class FileWork {
 	 *            Path to directory in which saving image
 	 * @return If added then true
 	 */
-	public static boolean saveImage(ImageInfo image, String path) {
+	public static boolean saveImage(ImageInfo image, String path, File pathToSOffice) {
 		String scrToImage = path.concat(image.getImageName()).replace(File.separatorChar, '/');
 		byte[] byteImage = null;
 
@@ -196,9 +196,11 @@ public class FileWork {
 		} else {
 			if (!image.getPictureData().getPackagePart().getContentType().equals("image/x-emf")
 					|| image.getPictureData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getPictureData().getData(), null, null,
+						pathToSOffice);
 			} else {
-				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getPictureData().getData());
+				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getPictureData().getData(), null, null,
+						pathToSOffice);
 			}
 		}
 
@@ -214,10 +216,10 @@ public class FileWork {
 	 * @param path
 	 * @return
 	 */
-	public static boolean saveImages(List<ImageInfo> images, String path) {
+	public static boolean saveImages(List<ImageInfo> images, String path, File pathToSOffice) {
 		boolean successful = true;
 		for (ImageInfo image : images) {
-			successful = saveImage(image, path) && successful;
+			successful = saveImage(image, path, pathToSOffice) && successful;
 		}
 		return successful;
 	}

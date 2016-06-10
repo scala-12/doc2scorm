@@ -1,29 +1,5 @@
 package com.ipoint.coursegenerator.core;
 
-import com.ipoint.coursegenerator.core.courseModel.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items
-		.ImageContentItem;
-import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
-import com.ipoint.coursegenerator.core.utils.FileWork;
-import com.ipoint.coursegenerator.core.utils.TransliterationTool;
-import com.ipoint.coursegenerator.core.utils.Zipper;
-import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
-import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
-import org.apache.commons.io.FileUtils;
-import org.apache.xmlbeans.XmlObject;
-import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
-import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
-import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
-import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
-import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
-import org.w3c.dom.Document;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,29 +9,62 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.xmlbeans.XmlObject;
+import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
+import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
+import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
+import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
+import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
+import org.w3c.dom.Document;
+
+import com.ipoint.coursegenerator.core.courseModel.CourseModel;
+import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
+import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
+import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.TransliterationTool;
+import com.ipoint.coursegenerator.core.utils.Zipper;
+import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.MetadataProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.OrganizationProcessor;
+import com.ipoint.coursegenerator.core.utils.manifest.ResourcesProcessor;
+
 public class Parser {
 
-	private static final String PREFIX = "<manifest " +
-			"identifier=\"SingleSharableResource_MulitipleFileManifest\" version=\"1.1\" " +
-			"xmlns:ims=\"http://www.imsproject.org/xsd/imscp_rootv1p1p2\"><metadata/>";
-	private static final String PREFIX_NEW = "<manifest xmlns=\"http://www.imsglobal" +
-			".org/xsd/imscp_v1p1\" xmlns:imsmd=\"http://ltsc.ieee.org/xsd/LOM\" " +
-			"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:adlcp=\"http://www" +
-			".adlnet.org/xsd/adlcp_v1p3\" xmlns:imsss=\"http://www.imsglobal.org/xsd/imsss\" " +
-			"xmlns:adlseq=\"http://www.adlnet.org/xsd/adlseq_v1p3\" xmlns:adlnav=\"http://www" +
-			".adlnet.org/xsd/adlnav_v1p3\" " +
-			"identifier=\"MANIFEST-5724A1B2-A6BE-F1BF-9781-706050DA4FC9\" " +
-			"xsi:schemaLocation=\"http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd " +
-			"http://ltsc.ieee.org/xsd/LOM lom.xsd http://www.adlnet.org/xsd/adlcp_v1p3 " +
-			"adlcp_v1p3" +
-			".xsd http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd http://www.adlnet" +
-			".org/xsd/adlseq_v1p3 adlseq_v1p3.xsd http://www.adlnet.org/xsd/adlnav_v1p3 " +
-			"adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th " +
-			"Edition</schemaversion></metadata>";
+	private static final String PREFIX = "<manifest "
+			+ "identifier=\"SingleSharableResource_MulitipleFileManifest\" version=\"1.1\" "
+			+ "xmlns:ims=\"http://www.imsproject.org/xsd/imscp_rootv1p1p2\"><metadata/>";
+	private static final String PREFIX_NEW = "<manifest xmlns=\"http://www.imsglobal"
+			+ ".org/xsd/imscp_v1p1\" xmlns:imsmd=\"http://ltsc.ieee.org/xsd/LOM\" "
+			+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:adlcp=\"http://www"
+			+ ".adlnet.org/xsd/adlcp_v1p3\" xmlns:imsss=\"http://www.imsglobal.org/xsd/imsss\" "
+			+ "xmlns:adlseq=\"http://www.adlnet.org/xsd/adlseq_v1p3\" xmlns:adlnav=\"http://www"
+			+ ".adlnet.org/xsd/adlnav_v1p3\" " + "identifier=\"MANIFEST-5724A1B2-A6BE-F1BF-9781-706050DA4FC9\" "
+			+ "xsi:schemaLocation=\"http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd "
+			+ "http://ltsc.ieee.org/xsd/LOM lom.xsd http://www.adlnet.org/xsd/adlcp_v1p3 " + "adlcp_v1p3"
+			+ ".xsd http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd http://www.adlnet"
+			+ ".org/xsd/adlseq_v1p3 adlseq_v1p3.xsd http://www.adlnet.org/xsd/adlnav_v1p3 "
+			+ "adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th "
+			+ "Edition</schemaversion></metadata>";
 
 	private ManifestDocument manifest;
 
+	private File pathToSOffice = null;
+
+	public Parser(String pathToSOffice) {
+		File path = new File(pathToSOffice);
+		if (path.exists()) {
+			this.pathToSOffice = path;
+		}
+	}
+
 	public Parser() {
+
 	}
 
 	private void createImsManifestFile(String courseName) {
@@ -77,15 +86,13 @@ public class Parser {
 
 	private String tuneManifest(ManifestDocument manifestDocument) {
 		String manifest = manifestDocument.xmlText();
-		return manifest.replace("ims:", "").replace(PREFIX, PREFIX_NEW).replace("datafromlms",
-				"dataFromLMS")
+		return manifest.replace("ims:", "").replace(PREFIX, PREFIX_NEW).replace("datafromlms", "dataFromLMS")
 				.replace("adl:", "adlcp:").replace("rootv1p2", "v1p3").replace(":adl=", ":adlcp=");
 	}
 
 	private static Document createNewHTMLDocument() {
 		try {
-			Document html = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.newDocument();
+			Document html = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			html.appendChild(html.createElement("html"));
 			html.getFirstChild().appendChild(html.createElement("head"));
 			html.getFirstChild().appendChild(html.createElement("body"));
@@ -103,22 +110,18 @@ public class Parser {
 
 		ItemType manifestItem = null;
 		if (parentItem instanceof ItemType) {
-			manifestItem = OrganizationProcessor.createItem((ItemType) parentItem, node.getTitle()
-					, resourseId, itemId);
+			manifestItem = OrganizationProcessor.createItem((ItemType) parentItem, node.getTitle(), resourseId, itemId);
 		} else if (parentItem instanceof OrganizationsType) {
-			manifestItem = OrganizationProcessor.createItem((OrganizationsType) parentItem, node
-							.getTitle(), resourseId,
+			manifestItem = OrganizationProcessor.createItem((OrganizationsType) parentItem, node.getTitle(), resourseId,
 					itemId);
 		}
 
 		return manifestItem;
 	}
 
-	private void addImagesToManifest(ManifestType manifest, String path, String pageName,
-									 List<ImageInfo> images,
-									 String resourseId) {
-		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName +
-						FileWork.HTML_SUFFIX,
+	private void addImagesToManifest(ManifestType manifest, String path, String pageName, List<ImageInfo> images,
+			String resourseId) {
+		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName + FileWork.HTML_SUFFIX,
 				resourseId);
 
 		ArrayList<String> imagesNames = new ArrayList<>();
@@ -126,29 +129,24 @@ public class Parser {
 			imagesNames.add(image.getImageName());
 		}
 
-		ResourcesProcessor.addFilesToResource(path + "img" + File.separator, itemResource,
-				imagesNames);
+		ResourcesProcessor.addFilesToResource(path + "img" + File.separator, itemResource, imagesNames);
 	}
 
-	private void addPageToCourse(CourseTreeNode node, String coursePath, String pagePath, String
-			pageName) {
+	private void addPageToCourse(CourseTreeNode node, String coursePath, String pagePath, String pageName) {
 		Document html = createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
-		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath, pagePath, pageName +
-				FileWork.HTML_SUFFIX);
+		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath +
-					ImageContentItem.IMAGE_DIR_PATH);
+			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath + ImageContentItem.IMAGE_DIR_PATH,
+					pathToSOffice);
 		}
 	}
 
-	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, String
-			coursePath, String path,
-									 String level, XmlObject parentItem) {
+	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, String coursePath, String path,
+			String level, XmlObject parentItem) {
 		int numberOnLevel = 0;
-		String part = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level +
-				"-");
+		String part = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level + "-");
 		for (CourseTreeNode item : items) {
 			// title of page
 			// page name with level number
@@ -165,18 +163,15 @@ public class Parser {
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(item.getNodes(), manifest, coursePath, path + pageTitle +
-								File.separator,
-						(level == null) ? String.valueOf(numberOnLevel) : (level + "-" + String
-								.valueOf(numberOnLevel)),
+				this.recursiveSaveCourse(item.getNodes(), manifest, coursePath, path + pageTitle + File.separator,
+						(level == null) ? String.valueOf(numberOnLevel) : (level + "-" + String.valueOf(numberOnLevel)),
 						manifestItem);
 			}
 		}
 	}
 
 	// TODO: add variable for external templates
-	public String parse(InputStream stream, int headerLevel, String courseName, String path)
-			throws IOException {
+	public String parse(InputStream stream, int headerLevel, String courseName, String path) throws IOException {
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
@@ -188,8 +183,7 @@ public class Parser {
 		this.createImsManifestFile(courseName);
 
 		if (!courseModel.getNodes().isEmpty()) {
-			this.recursiveSaveCourse(courseModel.getNodes(), manifest.getManifest(), path.concat
-							(File.separator), "",
+			this.recursiveSaveCourse(courseModel.getNodes(), manifest.getManifest(), path.concat(File.separator), "",
 					null, manifest.getManifest().getOrganizations());
 		}
 
@@ -208,7 +202,7 @@ public class Parser {
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
-		zip.addToZip(new String[] {zipCourseFileName});
+		zip.addToZip(new String[] { zipCourseFileName });
 		return zipCourseFileName;
 	}
 
