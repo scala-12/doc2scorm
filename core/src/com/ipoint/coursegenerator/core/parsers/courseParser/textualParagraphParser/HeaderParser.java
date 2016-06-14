@@ -1,6 +1,8 @@
 package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser;
 
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
@@ -17,8 +19,7 @@ public class HeaderParser extends ParagraphParser {
 
 	private final static Logger log = Logger.getLogger(HeaderParser.class.getName());
 
-	private static final String HEADING_NAME = "heading";
-	private static final String NORMAL_STYLE_NAME = "normal";
+	private static final Pattern HEADER_PATTERN = Pattern.compile(".*[(heading)(заголовок)][\\s_](\\d+)$");
 
 	/**
 	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}
@@ -52,24 +53,20 @@ public class HeaderParser extends ParagraphParser {
 		XWPFStyle basisStyle = styles.getStyle(par.getStyleID());
 
 		Integer headerLvl = null;
-		String headerNum = null;
 		if (basisStyle != null) {
 			String styleName = basisStyle.getName().toLowerCase();
-			while (!((basisStyle.getBasisStyleID() == null) || NORMAL_STYLE_NAME.equals(styleName)
-					|| styleName.startsWith(HEADING_NAME))) {
+			Matcher headerMatcher;
+			while (!(headerMatcher = HEADER_PATTERN.matcher(styleName)).matches()
+					&& (basisStyle.getBasisStyleID() != null)) {
 				// if style not based to headers or is not header then check
 				// basis style
 				basisStyle = styles.getStyle(basisStyle.getBasisStyleID());
 				styleName = basisStyle.getName().toLowerCase();
 			}
-			if (styleName.startsWith(HEADING_NAME)) {
+			if (headerMatcher.matches()) {
 				// if style relate to headers
-				headerNum = styleName.substring(HEADING_NAME.length()).trim();
-			}
-
-			if (headerNum != null) {
 				try {
-					headerLvl = Integer.parseInt(headerNum);
+					headerLvl = Integer.parseInt(headerMatcher.group(1));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				}
