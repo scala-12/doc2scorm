@@ -50,29 +50,9 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	 *            Style of picture
 	 * @param isWrap
 	 *            If it is true then picture in text else behind or front
-	 * @param multiplierSize
-	 *            Multiplier of size
-	 * 
-	 */
-	public ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap, float multiplierSize) {
-		this(imageData, style, isWrap, new Float(multiplierSize));
-	}
-
-	/**
-	 * 
-	 * @param imageData
-	 *            Image that can't be null
-	 * @param style
-	 *            Style of picture
-	 * @param isWrap
-	 *            If it is true then picture in text else behind or front
 	 * 
 	 */
 	public ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap) {
-		this(imageData, style, isWrap, null);
-	}
-
-	private ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap, Float multiplierSize) {
 		super(imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {
@@ -83,12 +63,8 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 			this.zPosition = FRONT_POSITION;
 		}
 
-		this.height = Float
-				.valueOf(toPxSize(getAttrValue(style, "height")) * ((multiplierSize == null) ? 1 : multiplierSize))
-				.intValue();
-		this.width = Float
-				.valueOf(toPxSize(getAttrValue(style, "width")) * ((multiplierSize == null) ? 1 : multiplierSize))
-				.intValue();
+		this.height = Float.valueOf(toPxSize(getAttrValue(style, "height"))).intValue();
+		this.width = Float.valueOf(toPxSize(getAttrValue(style, "width"))).intValue();
 		this.position = getPositionFromMSWord(getAttrValue(style, "mso-position-horizontal"));
 	}
 
@@ -126,7 +102,8 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	 *            "12pt")
 	 * @return Size in pixels as Integer or null if error
 	 */
-	private static Float toPxSize(String nonPxSize) {
+	public static Float toPxSize(String nonPxSize) {
+		// TODO: Check this converter coefficients
 		if (nonPxSize != null) {
 			if (!nonPxSize.isEmpty()) {
 				Float size = null;
@@ -134,12 +111,12 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 				if (nonPxSize.endsWith("in")) {
 					String sizeIn = nonPxSize.substring(0, nonPxSize.indexOf("in"));
 					if (sizeIn != null) {
-						size = 4 / 3 * 72 * Float.parseFloat(sizeIn);
+						size = 4f / 3 * 72 * Float.parseFloat(sizeIn);
 					}
 				} else if (nonPxSize.endsWith("pt")) {
 					String sizePt = nonPxSize.substring(0, nonPxSize.indexOf("pt"));
 					if (sizePt != null) {
-						size = 4 / 3 * Float.parseFloat(sizePt);
+						size = 4f / 3 * Float.parseFloat(sizePt);
 					}
 				} else if (nonPxSize.endsWith("px")) {
 					String sizePx = nonPxSize.substring(0, nonPxSize.indexOf("px"));
@@ -197,6 +174,8 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	private String getImageType() {
 		switch (this.value.getPictureType()) {
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
 			return "png";
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
 			return "bmp";
@@ -205,13 +184,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
 			return "jpg";
 		default:
-			if (this.value.getPackagePart().getContentType().equals("image/x-emf")
-					|| this.value.getPackagePart().getContentType().equals("image/x-wmf")
-					|| this.value.getPackagePart().getContentType().equals("image/emf")) {
-				return "png";
-			} else {
-				return null;
-			}
+			return "png";
 		}
 	}
 

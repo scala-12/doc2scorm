@@ -3,12 +3,11 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
@@ -64,7 +63,6 @@ public class TextParser extends AbstractParser {
 						XWPFPictureData pictureData = null;
 						String picStyle = null;
 						boolean isWrap = true;
-						float scale = 1;
 
 						if (!run.getEmbeddedPictures().isEmpty()) {
 							// TODO: Why is it? Maybe, it's for EMF?
@@ -80,7 +78,9 @@ public class TextParser extends AbstractParser {
 								}
 							}
 
-							pictureData = run.getEmbeddedPictures().get(0).getPictureData();
+							XWPFPicture pic = run.getEmbeddedPictures().get(0);
+
+							pictureData = pic.getPictureData();
 							picStyle = picStyle + "width:" + String.valueOf(
 									run.getEmbeddedPictures().get(0).getCTPicture().getSpPr().getXfrm().getExt().getCx()
 											/ EMU_TO_PX_COEF)
@@ -94,7 +94,7 @@ public class TextParser extends AbstractParser {
 							XmlObject[] shapes = run.getCTR().getPictList().get(0)
 									.selectPath("declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape");
 							if (shapes.length != 0) {
-								//TODO: else is label block
+								// TODO: else is label block
 								CTShape shape = (CTShape) shapes[0];
 								picStyle = shape.selectAttribute("", "style").getDomNode().getNodeValue();
 
@@ -115,7 +115,6 @@ public class TextParser extends AbstractParser {
 							}
 						} else if (run.getCTR().sizeOfObjectArray() > 0) {
 							// Object as image
-							scale = (float) 1.3; // because object is small
 							for (CTObject picture : run.getCTR().getObjectList()) {
 								CTShape[] shapes = (CTShape[]) picture.selectPath(
 										"declare namespace v='urn:schemas-microsoft-com:vml' " + ".//v:shape");
@@ -135,7 +134,7 @@ public class TextParser extends AbstractParser {
 						}
 
 						if (pictureData != null) {
-							blockItems.add(new ImageContentItem(pictureData, picStyle, isWrap, scale));
+							blockItems.add(new ImageContentItem(pictureData, picStyle, isWrap));
 						}
 					} else {
 						// Text
