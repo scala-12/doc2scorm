@@ -59,7 +59,8 @@ public class HeaderParser extends ParagraphParser {
 					|| styleName.startsWith(HEADING_NAME))) {
 				// if style not based to headers or is not header then check
 				// basis style
-				styleName = styles.getStyle(basisStyle.getBasisStyleID()).getName().toLowerCase();
+				basisStyle = styles.getStyle(basisStyle.getBasisStyleID());
+				styleName = basisStyle.getName().toLowerCase();
 			}
 			if (styleName.startsWith(HEADING_NAME)) {
 				// if style relate to headers
