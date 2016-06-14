@@ -3,7 +3,6 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
@@ -78,9 +77,7 @@ public class TextParser extends AbstractParser {
 								}
 							}
 
-							XWPFPicture pic = run.getEmbeddedPictures().get(0);
-
-							pictureData = pic.getPictureData();
+							pictureData = run.getEmbeddedPictures().get(0).getPictureData();
 							picStyle = picStyle + "width:" + String.valueOf(
 									run.getEmbeddedPictures().get(0).getCTPicture().getSpPr().getXfrm().getExt().getCx()
 											/ EMU_TO_PX_COEF)
