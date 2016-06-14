@@ -52,8 +52,7 @@ public class ListParser extends AbstractParser {
 	 * @return true if this paragraph is item of list
 	 */
 	public static boolean isListElement(XWPFParagraph par) {
-		if ((par.getStyleID() == null)
-				|| (par.getNumID() == null)
+		if ((par.getNumID() == null)
 				|| (par.getNumFmt() == null)) {
 			return false;
 		} else {
