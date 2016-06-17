@@ -48,10 +48,6 @@ object HostConvertSupervisor extends Actor with ActorLogging {
   val cluster = Cluster(context.system)
   cluster joinSeedNodes seedNodes
 
-  if (!rootConf.getIsNull("libreoffice.program.path")) {
-    ImageFormatConverter.setPathToOffice(rootConf getString "libreoffice.program.path")
-  }
-
   override def preStart(): Unit = {
     cluster subscribe(self, InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
