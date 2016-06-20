@@ -194,10 +194,10 @@ public class FileWork {
 			byteImage = pictureInfo.getData().getData();
 			break;
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
-			byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
 			break;
 		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
-			byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
 			break;
 		}
 
