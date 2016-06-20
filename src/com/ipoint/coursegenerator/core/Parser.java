@@ -200,7 +200,7 @@ public class Parser {
 		File cssDir = new File(directory, "css");
 		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/kurs.css"), cssDir);
 		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/test.css"), cssDir);
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/APIWrapper.js"), jsDir);
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), jsDir);
 		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), jsDir);
 		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/parser.js"), jsDir);
 
