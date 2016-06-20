@@ -126,7 +126,7 @@ public class Parser {
 
 		ArrayList<String> imagesNames = new ArrayList<>();
 		for (PictureInfo image : images) {
-			imagesNames.add(image.getImageName());
+			imagesNames.add(image.getName());
 		}
 
 		ResourcesProcessor.addFilesToResource(path + "img" + File.separator, itemResource, imagesNames);
