@@ -186,18 +186,19 @@ public class FileWork {
 	public static boolean saveImage(PictureInfo pictureInfo, File imgsDir, File sofficeFile) {
 		byte[] byteImage = null;
 
-		if (pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+		switch (pictureInfo.getData().getPictureType()) {
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
 			byteImage = pictureInfo.getData().getData();
-		} else {
-			if (!pictureInfo.getData().getPackagePart().getContentType().equals("image/x-emf")
-					|| pictureInfo.getData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
-			} else {
-				byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
-			}
+			break;
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
+			byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			break;
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
+			byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			break;
 		}
 
 		return (byteImage == null) ? false
