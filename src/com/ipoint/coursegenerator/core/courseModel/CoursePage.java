@@ -107,18 +107,18 @@ public class CoursePage implements Convertable {
 		return pageBody;
 	}
 
-	public List<ImageInfo> getImages() {
+	public List<PictureInfo> getImages() {
 		return this.getImagesRecursive(this.getBlocks());
 	}
 
-	private List<ImageInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
-		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
+	private List<PictureInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
+		ArrayList<PictureInfo> images = new ArrayList<PictureInfo>();
 
 		for (ParagraphItem parItem : paragraph.getItems()) {
 			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
 				if (item instanceof ImageContentItem) {
 					ImageContentItem imageItem = (ImageContentItem) item;
-					ImageInfo image = new ImageInfo(imageItem.getImageFullName(), imageItem.getValue());
+					PictureInfo image = new PictureInfo(imageItem.getImageFullName(), imageItem.getValue());
 					images.add(image);
 				}
 			}
@@ -127,8 +127,8 @@ public class CoursePage implements Convertable {
 		return images;
 	}
 
-	private List<ImageInfo> getImagesRecursive(List<AbstractParagraphBlock<?>> blocks) {
-		ArrayList<ImageInfo> images = new ArrayList<ImageInfo>();
+	private List<PictureInfo> getImagesRecursive(List<AbstractParagraphBlock<?>> blocks) {
+		ArrayList<PictureInfo> images = new ArrayList<PictureInfo>();
 
 		for (AbstractParagraphBlock<?> block : blocks) {
 			if (block instanceof AbstractTextualBlock) {
