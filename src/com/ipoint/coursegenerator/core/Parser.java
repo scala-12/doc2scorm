@@ -191,17 +191,18 @@ public class Parser {
 
 		FileWork.saveTextFile(new ByteArrayInputStream(manifestContent.getBytes()), manifestFile);
 
-		File jsDir = new File(path + File.separator + "js");
-		File cssDir = new File(path + File.separator + "css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html", "kurs.css");
-		FileWork.copyTextFileFromResourcesToDir(cssDir, "templates/html", "test.css");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "APIWrapper.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "SCOFunctions.js");
-		FileWork.copyTextFileFromResourcesToDir(jsDir, "templates/js", "parser.js");
+		File jsDir = new File(directory, "js");
+		File cssDir = new File(directory, "css");
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/kurs.css"), cssDir);
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/test.css"), cssDir);
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/APIWrapper.js"), jsDir);
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), jsDir);
+		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/parser.js"), jsDir);
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
 		zip.addToZip(new String[] { zipCourseFileName });
+
 		return zipCourseFileName;
 	}
 

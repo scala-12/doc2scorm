@@ -15,23 +15,14 @@ public class FileWorkTest {
 	@Test
 	public void getFileFromResources() {
 		// TODO: take from prop file
-		assertNotNull(FileWork.getFileFromResources("templates/js",
-				"APIWrapper.js"));
+		assertNotNull(FileWork.getFileFromResources(new File("templates/js/APIWrapper.js")));
 	}
 
 	@Test
 	public void saveFileFromResourcesTest() throws IOException {
-		File file;
-		file = File.createTempFile("check-saving_", "d2s");
-		assertTrue(FileWork.saveRawFile(
-				FileWork.getFileFromResources("templates/js", "APIWrapper.js"),
-				file));
-		assertTrue(FileWork.saveTextFile(
-				FileWork.getFileFromResources("templates/js", "APIWrapper.js"),
-				file));
-		assertTrue(FileWork.saveTextFile(
-				FileWork.getFileFromResources("templates/js", "APIWrapper.js"),
-				file));
+		File file = File.createTempFile("check-saving_", "d2s");
+		assertTrue(FileWork.saveRawFile(FileWork.getFileFromResources(new File("templates/js/APIWrapper.js")), file));
+		assertTrue(FileWork.saveTextFile(FileWork.getFileFromResources(new File("templates/js/APIWrapper.js")), file));
 		file.delete();
 	}
 }
