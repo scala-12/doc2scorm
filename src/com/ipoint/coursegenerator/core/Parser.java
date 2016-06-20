@@ -24,7 +24,6 @@ import org.w3c.dom.Document;
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
@@ -138,7 +137,7 @@ public class Parser {
 
 		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
 		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath + ImageContentItem.IMAGE_DIR_PATH,
+			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath + FileWork.IMAGE_DIR_NAME,
 					pathToSOffice);
 		}
 	}

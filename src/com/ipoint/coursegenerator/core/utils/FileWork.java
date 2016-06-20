@@ -40,6 +40,7 @@ public class FileWork {
 	public final static String IMAGE_PNG = "image/png";
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDART_ENCODING = StandardCharsets.UTF_8;
+	public final static String IMAGE_DIR_NAME = "img";
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
 		if (null == is) {

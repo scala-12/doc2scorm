@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
  * Item that includes picture data
@@ -29,7 +30,6 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	private static final String BEHIND_CLASS = "behind_text";
 	private static final String FRON_CLASS = "before_text";
 
-	public final static String IMAGE_DIR_PATH = "img/";
 	public final static String IMAGE_PREFIX = "img_";
 
 	/**
@@ -221,7 +221,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
-		img.setAttribute("src", IMAGE_DIR_PATH + this.getImageFullName());
+		img.setAttribute("src", FileWork.IMAGE_DIR_NAME + this.getImageFullName());
 
 		if (this.getHeight() != null) {
 			img.setAttribute("height", String.valueOf(this.getHeight()));
