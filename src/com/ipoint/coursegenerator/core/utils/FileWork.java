@@ -106,7 +106,7 @@ public class FileWork {
 	}
 
 	public static InputStream getFileFromResources(File fileFromResource) {
-		String path = fileFromResource.getPath();
+		String path = fileFromResource.getPath().replace(File.separatorChar, '/');
 
 		return FileWork.class.getClassLoader().getResourceAsStream(
 				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
