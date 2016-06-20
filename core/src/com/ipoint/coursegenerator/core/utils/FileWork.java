@@ -25,7 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
+import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -184,7 +184,7 @@ public class FileWork {
 	 *            Path to directory in which saving image
 	 * @return If added then true
 	 */
-	public static boolean saveImage(ImageInfo image, String path, File pathToSOffice) {
+	public static boolean saveImage(PictureInfo image, String path, File pathToSOffice) {
 		String scrToImage = path.concat(image.getImageName()).replace(File.separatorChar, '/');
 		byte[] byteImage = null;
 
@@ -214,9 +214,9 @@ public class FileWork {
 	 * @param path
 	 * @return
 	 */
-	public static boolean saveImages(List<ImageInfo> images, String path, File pathToSOffice) {
+	public static boolean saveImages(List<PictureInfo> images, String path, File pathToSOffice) {
 		boolean successful = true;
-		for (ImageInfo image : images) {
+		for (PictureInfo image : images) {
 			successful = saveImage(image, path, pathToSOffice) && successful;
 		}
 		return successful;

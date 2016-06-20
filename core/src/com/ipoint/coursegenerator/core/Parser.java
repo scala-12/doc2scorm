@@ -23,7 +23,7 @@ import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.courseModel.ImageInfo;
+import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
@@ -119,13 +119,13 @@ public class Parser {
 		return manifestItem;
 	}
 
-	private void addImagesToManifest(ManifestType manifest, String path, String pageName, List<ImageInfo> images,
+	private void addImagesToManifest(ManifestType manifest, String path, String pageName, List<PictureInfo> images,
 			String resourseId) {
 		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName + FileWork.HTML_SUFFIX,
 				resourseId);
 
 		ArrayList<String> imagesNames = new ArrayList<>();
-		for (ImageInfo image : images) {
+		for (PictureInfo image : images) {
 			imagesNames.add(image.getImageName());
 		}
 

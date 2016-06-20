@@ -2,13 +2,13 @@ package com.ipoint.coursegenerator.core.courseModel;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 
-public class ImageInfo {
+public class PictureInfo {
 
 	private String name;
 
 	private XWPFPictureData data;
 
-	public ImageInfo(String imageName, XWPFPictureData pictureData) {
+	public PictureInfo(String imageName, XWPFPictureData pictureData) {
 		this.name = imageName;
 		this.data = pictureData;
 	}
