@@ -93,20 +93,23 @@ public class FileWork {
 		return saveFile(is, outFile, true);
 	}
 
-	public static boolean copyTextFileFromResourcesToDir(File destDir, String fromDir, String textFileName) {
-		return copyFileFromResourcesToDir(destDir, fromDir, textFileName, true);
+	public static boolean copyTextFileFromResourcesToDir(File textFileFromResource, File destDir) {
+		return copyFileFromResourcesToDir(textFileFromResource, destDir, true);
 	}
 
-	public static boolean copyRawFileFromResourcesToDir(File destDir, String fromDir, String rawFileName) {
-		return copyFileFromResourcesToDir(destDir, fromDir, rawFileName, false);
+	public static boolean copyRawFileFromResourcesToDir(File rawFileFromResource, File destDir) {
+		return copyFileFromResourcesToDir(rawFileFromResource, destDir, false);
 	}
 
-	private static boolean copyFileFromResourcesToDir(File destDir, String fromDir, String fileName, boolean isText) {
-		return saveFile(getFileFromResources(fromDir, fileName), new File(destDir, fileName), isText);
+	private static boolean copyFileFromResourcesToDir(File fileFromResource, File destDir, boolean isText) {
+		return saveFile(getFileFromResources(fileFromResource), new File(destDir, fileFromResource.getName()), isText);
 	}
 
-	public static InputStream getFileFromResources(String fromDir, String fileName) {
-		return FileWork.class.getClassLoader().getResourceAsStream(fromDir + "/" + fileName);
+	public static InputStream getFileFromResources(File fileFromResource) {
+		String path = fileFromResource.getPath();
+
+		return FileWork.class.getClassLoader().getResourceAsStream(
+				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
 	}
 
 	/**
