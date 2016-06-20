@@ -37,8 +37,7 @@ public class Zipper {
 		this.zipExists = fileExists(zip);
 	}
 
-	private void addDir(ZipOutputStream out, FileOutputStream dest,
-			File subDir, String root, String[] ignoreList) {
+	private void addDir(ZipOutputStream out, FileOutputStream dest, File subDir, String root, String[] ignoreList) {
 		try {
 			String files[] = subDir.list();
 
@@ -46,9 +45,7 @@ public class Zipper {
 			byte data[] = new byte[BUFFER];
 
 			for (int i = 0; i < files.length; i++) {
-				String currentName = subDir.getPath().replace(
-						File.separatorChar, '/')
-						+ "/" + files[i];
+				String currentName = subDir.getPath().replace(File.separatorChar, '/') + "/" + files[i];
 				boolean isInIgnoreList = false;
 				for (int j = 0; j < ignoreList.length; j++) {
 					if (currentName.endsWith(ignoreList[j])) {
@@ -57,13 +54,11 @@ public class Zipper {
 				}
 				if (!isInIgnoreList) {
 					if (isDir(currentName)) {
-						addDir(out, dest, new File(currentName), root,
-								ignoreList);
+						addDir(out, dest, new File(currentName), root, ignoreList);
 					} else {
 						FileInputStream fi = new FileInputStream(currentName);
 						origin = new BufferedInputStream(fi, BUFFER);
-						ZipEntry entry = new ZipEntry(
-								currentName.substring(root.length() + 1));
+						ZipEntry entry = new ZipEntry(currentName.substring(root.length() + 1));
 						out.putNextEntry(entry);
 						int count;
 						while ((count = origin.read(data, 0, BUFFER)) != -1) {
@@ -83,8 +78,7 @@ public class Zipper {
 	public void addToZip(String[] ignoreList) {
 		try {
 			FileOutputStream dest = new FileOutputStream(zipFileName);
-			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
-					dest));
+			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
 			addDir(out, dest, zipDir, zipDir.getAbsolutePath(), ignoreList);
 			out.close();
 		} catch (Exception e) {
@@ -101,8 +95,7 @@ public class Zipper {
 			while (e.hasMoreElements()) {
 				entry = (ZipEntry) e.nextElement();
 				if (entry.isDirectory()) {
-					System.out.println("    DIRECTORY: " + zipDir + "\\"
-							+ entry.getName());
+					System.out.println("    DIRECTORY: " + zipDir + "\\" + entry.getName());
 					String newDir = zipDir + "\\" + entry.getName();
 					newDir = newDir.replace('/', '\\');
 					newDir = newDir.substring(0, newDir.length() - 1);
