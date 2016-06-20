@@ -75,30 +75,25 @@ public class ResourcesProcessor {
 			manifest.getResources().removeResource(i);
 		}
 	}
-	
+
 	private TagFindingVisitor getHtmlVisitor(File scoFile)
-			throws UnsupportedEncodingException, FileNotFoundException,
-			ParserException {
-		Parser htmlResourceParser = new Parser(new org.htmlparser.lexer.Lexer(
-				new org.htmlparser.lexer.Page(new FileInputStream(scoFile),
-						"UTF-8")));
-		TagFindingVisitor visitor = new TagFindingVisitor(new String[] {
-				"SCRIPT", "SCRIPT SRC" });
+			throws UnsupportedEncodingException, FileNotFoundException, ParserException {
+		Parser htmlResourceParser = new Parser(
+				new org.htmlparser.lexer.Lexer(new org.htmlparser.lexer.Page(new FileInputStream(scoFile), "UTF-8")));
+		TagFindingVisitor visitor = new TagFindingVisitor(new String[] { "SCRIPT", "SCRIPT SRC" });
 		htmlResourceParser.visitAllNodesWith(visitor);
 		return visitor;
 	}
-	
-	public static String getResourceHrefForItem(ManifestType manifest,
-			ItemType item) {
+
+	public static String getResourceHrefForItem(ManifestType manifest, ItemType item) {
 		String href = null;
 		for (int i = 0; i < manifest.getResources().sizeOfResourceArray(); i++) {
-			if (manifest.getResources().getResourceArray()[i].getIdentifier()
-					.equals(item.getIdentifierref())) {
+			if (manifest.getResources().getResourceArray()[i].getIdentifier().equals(item.getIdentifierref())) {
 				href = manifest.getResources().getResourceArray()[i].getHref();
 				break;
 			}
 		}
 		return href;
 	}
-	
+
 }
