@@ -15,6 +15,8 @@ import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.utils.FileWork;
+
 public class ResourcesProcessor {
 
 	public ResourcesProcessor() {
@@ -27,47 +29,45 @@ public class ResourcesProcessor {
 
 	/**
 	 * Create resourse in manifest
-	 * @param manifest Manifest
-	 * @param path Path in course
-	 * @param resourseId Id of resource
+	 * 
+	 * @param manifest
+	 *            Manifest
+	 * @param path
+	 *            Path in course
+	 * @param resourseId
+	 *            Id of resource
 	 * @return Added in manifest resource
 	 */
-	public static ResourceType createResource(ManifestType manifest,
-			String path, String resourseId) {
-		if (manifest.getResources() == null
-				|| manifest.getResources().getResourceArray() == null) {
+	public static ResourceType createScoResource(ManifestType manifest, File relPageDir, String resourseId) {
+		if (manifest.getResources() == null || manifest.getResources().getResourceArray() == null) {
 			manifest.addNewResources();
 		}
 		ResourceType resource = manifest.getResources().addNewResource();
 		resource.setIdentifier(resourseId);
 		resource.setType("webcontent");
-		Node attNode = resource
-				.getDomNode()
-				.getOwnerDocument()
-				.createAttributeNS("http://www.adlnet.org/xsd/adlcp_rootv1p2",
-						"scormType");
+		Node attNode = resource.getDomNode().getOwnerDocument()
+				.createAttributeNS("http://www.adlnet.org/xsd/adlcp_rootv1p2", "scormType");
 		attNode.setNodeValue("sco");
 		resource.getDomNode().getAttributes().setNamedItem(attNode);
-		resource.setHref(path.replace(File.separatorChar, '/'));
-		resource.addNewFile().setHref(path.replace(File.separatorChar, '/'));
-		
+
+		String path = relPageDir.getPath().replace(File.separatorChar, '/') + FileWork.HTML_SUFFIX;
+		resource.setHref(path);
+		resource.addNewFile().setHref(path);
+
 		return resource;
 	}
 
-	public static void addFilesToResource(String htmlPath,
-			ResourceType resource, List<String> pathToResources) {
-		for (String path : pathToResources) {
+	public static void addFilesToResource(File relFileDir, List<String> files, ResourceType resource) {
+		for (String file : files) {
 			FileType fileType = resource.addNewFile();
-			fileType.setHref(htmlPath.concat(path).replace(File.separatorChar, '/'));
+			fileType.setHref(new File(relFileDir, file).getPath().replace(File.separatorChar, '/'));
 		}
 	}
 
-	public static void removeResource(ManifestType manifest,
-			ResourceType resource) {
+	public static void removeResource(ManifestType manifest, ResourceType resource) {
 		int i = manifest.getResources().getResourceArray().length;
 		for (i = 0; i < manifest.getResources().getResourceArray().length; i++) {
-			if (manifest.getResources().getResourceArray(i).getIdentifier()
-					.equals(resource.getIdentifier())) {
+			if (manifest.getResources().getResourceArray(i).getIdentifier().equals(resource.getIdentifier())) {
 				break;
 			}
 		}
