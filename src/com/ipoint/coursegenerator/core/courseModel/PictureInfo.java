@@ -8,16 +8,16 @@ public class PictureInfo {
 
 	private XWPFPictureData data;
 
-	public PictureInfo(String imageName, XWPFPictureData pictureData) {
-		this.name = imageName;
+	public PictureInfo(String pictureName, XWPFPictureData pictureData) {
+		this.name = pictureName;
 		this.data = pictureData;
 	}
 
-	public String getImageName() {
+	public String getName() {
 		return this.name;
 	}
 
-	public XWPFPictureData getPictureData() {
+	public XWPFPictureData getData() {
 		return this.data;
 	}
 

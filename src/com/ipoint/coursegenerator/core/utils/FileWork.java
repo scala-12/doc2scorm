@@ -185,20 +185,20 @@ public class FileWork {
 	 * @return If added then true
 	 */
 	public static boolean saveImage(PictureInfo image, String path, File pathToSOffice) {
-		String scrToImage = path.concat(image.getImageName()).replace(File.separatorChar, '/');
+		String scrToImage = path.concat(image.getName()).replace(File.separatorChar, '/');
 		byte[] byteImage = null;
 
-		if (image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-				|| image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-				|| image.getPictureData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-			byteImage = image.getPictureData().getData();
+		if (image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+			byteImage = image.getData().getData();
 		} else {
-			if (!image.getPictureData().getPackagePart().getContentType().equals("image/x-emf")
-					|| image.getPictureData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getPictureData().getData(), pathToSOffice);
+			if (!image.getData().getPackagePart().getContentType().equals("image/x-emf")
+					|| image.getData().getPackagePart().getContentType().equals("image/emf")) {
+				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getData().getData(), pathToSOffice);
 			} else {
-				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getPictureData().getData(), pathToSOffice);
+				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getData().getData(), pathToSOffice);
 			}
 		}
 
