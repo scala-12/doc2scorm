@@ -113,27 +113,24 @@ public class FileWork {
 	}
 
 	/**
-	 * Save html-page in directory
-	 *
-	 * @param html
-	 *            Saving html-page
-	 * @param templateDir
-	 *            Directory with template of course
-	 * @param coursePath
-	 *            Path to course
-	 * @param pathInCourseToPage
-	 *            Path in course to page
-	 * @param pageName
-	 *            Name of adding html-page
-	 * @return
+	 * Save html page
+	 * 
+	 * @param htmlDoc
+	 *            Html document
+	 * @param courseDir
+	 *            Absolute course directory
+	 * @param relPageDir
+	 *            html file which relative to course directory
+	 * @return true if saved
 	 */
-	public static boolean saveHTMLDocument(Document html, String coursePath, String pathInCourseToPage,
-			String pageName) {
+	public static boolean saveHtmlDocument(Document htmlDoc, File courseDir, File relPageDir) {
 		try {
+			String htmlPath = new File(relPageDir.getPath() + FileWork.HTML_SUFFIX).getPath();
+
 			StringWriter buffer = new StringWriter();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			NodeList bodyChilds = html.getElementsByTagName("body").item(0).getChildNodes();
+			NodeList bodyChilds = htmlDoc.getElementsByTagName("body").item(0).getChildNodes();
 			for (int i = 0; i < bodyChilds.getLength(); i++) {
 				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
 			}
@@ -141,33 +138,29 @@ public class FileWork {
 			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), "templates/html");
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
-			String upToLevel = new String();
-			String fullPathToHtml = coursePath;
-			if (!pathInCourseToPage.isEmpty()) {
-				for (String dirLevel : pathInCourseToPage
-						.split((File.separator.equals("\\")) ? "\\\\" : File.separator)) {
-					fullPathToHtml = fullPathToHtml + dirLevel + File.separator;
-					File f = new File(fullPathToHtml);
-					if (!f.exists()) {
-						f.mkdirs();
-					}
-					upToLevel += "../";
-				}
+			int level = (htmlPath.startsWith(File.separator) ? htmlPath.substring(File.separator.length()) : htmlPath)
+					.split((File.separator.equals("\\") ? "\\\\" : File.separator)).length - 1;
+
+			StringBuilder upToLevel = new StringBuilder();
+			for (int i = 0; i < level; i++) {
+				upToLevel.append("../");
 			}
 
-			fullPathToHtml = fullPathToHtml.replace(File.separatorChar, '/');
+			File absoluteHtmlFile = new File(courseDir, htmlPath);
+			absoluteHtmlFile.getParentFile().mkdirs();
 
 			Template temp = cfg.getTemplate("index.ftl", "UTF-8");
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
-			body.put("upToLevel", upToLevel);
-			Writer outStreamWriter = new OutputStreamWriter(new FileOutputStream(fullPathToHtml + pageName),
-					STANDART_ENCODING);
-			temp.process(body, outStreamWriter);
-			outStreamWriter.flush();
-			outStreamWriter.close();
+			body.put("upToLevel", upToLevel.toString());
 
-			return true;
+			try (FileOutputStream htmlFOS = new FileOutputStream(absoluteHtmlFile);
+					Writer outStreamWriter = new OutputStreamWriter(htmlFOS, STANDART_ENCODING)) {
+				temp.process(body, outStreamWriter);
+				outStreamWriter.flush();
+
+				return true;
+			}
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -181,48 +174,53 @@ public class FileWork {
 
 	/**
 	 * Save image in directory
-	 *
-	 * @param images
-	 *            Image for adding
-	 * @param path
-	 *            Path to directory in which saving image
-	 * @return If added then true
+	 * 
+	 * @param pictureInfo
+	 *            Picture info
+	 * @param imgsDir
+	 *            Absolute directory for saving
+	 * @param sofficeFile
+	 *            File for run LibreOffice
+	 * @return true if have not errors
 	 */
-	public static boolean saveImage(PictureInfo image, String path, File pathToSOffice) {
-		String scrToImage = path.concat(image.getName()).replace(File.separatorChar, '/');
+	public static boolean saveImage(PictureInfo pictureInfo, File imgsDir, File sofficeFile) {
 		byte[] byteImage = null;
 
-		if (image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
-				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
-				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
-				|| image.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
-			byteImage = image.getData().getData();
+		if (pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG
+				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG
+				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP
+				|| pictureInfo.getData().getPictureType() == org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF) {
+			byteImage = pictureInfo.getData().getData();
 		} else {
-			if (!image.getData().getPackagePart().getContentType().equals("image/x-emf")
-					|| image.getData().getPackagePart().getContentType().equals("image/emf")) {
-				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getData().getData(), pathToSOffice);
+			if (!pictureInfo.getData().getPackagePart().getContentType().equals("image/x-emf")
+					|| pictureInfo.getData().getPackagePart().getContentType().equals("image/emf")) {
+				byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
 			} else {
-				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getData().getData(), pathToSOffice);
+				byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
 			}
 		}
 
-		// TODO: remove this statement. It's used because we have problems with
-		// wmf/emf
-		return (byteImage == null) ? false : saveRawFile(new ByteArrayInputStream(byteImage), new File(scrToImage));
+		return (byteImage == null) ? false
+				: saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
 	}
 
 	/**
-	 * Save image in directory
-	 *
-	 * @param images
-	 * @param path
-	 * @return
+	 * Save images in directory
+	 * 
+	 * @param picturesInfo
+	 *            List of picture info
+	 * @param imgsDir
+	 *            Absolute directory for saving
+	 * @param sofficeFile
+	 *            File for run LibreOffice
+	 * @return true if have not errors
 	 */
-	public static boolean saveImages(List<PictureInfo> images, String path, File pathToSOffice) {
+	public static boolean saveImages(List<PictureInfo> picturesInfo, File pageImgsDir, File pathToSOffice) {
 		boolean successful = true;
-		for (PictureInfo image : images) {
-			successful = saveImage(image, path, pathToSOffice) && successful;
+		for (PictureInfo pictureInfo : picturesInfo) {
+			successful = saveImage(pictureInfo, pageImgsDir, pathToSOffice) && successful;
 		}
+
 		return successful;
 	}
 

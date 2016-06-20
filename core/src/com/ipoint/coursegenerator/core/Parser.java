@@ -4,10 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -118,53 +118,58 @@ public class Parser {
 		return manifestItem;
 	}
 
-	private void addImagesToManifest(ManifestType manifest, String path, String pageName, List<PictureInfo> images,
+	private void addImagesToManifest(ManifestType manifest, File relPageDir, List<PictureInfo> images,
 			String resourseId) {
-		ResourceType itemResource = ResourcesProcessor.createResource(manifest, path + pageName + FileWork.HTML_SUFFIX,
-				resourseId);
+		ResourceType itemResource = ResourcesProcessor.createScoResource(manifest, relPageDir, resourseId);
+		List<String> imagesNames = images.stream().map(image -> image.getName()).collect(Collectors.toList());
 
-		ArrayList<String> imagesNames = new ArrayList<>();
-		for (PictureInfo image : images) {
-			imagesNames.add(image.getName());
-		}
-
-		ResourcesProcessor.addFilesToResource(path + "img" + File.separator, itemResource, imagesNames);
+		ResourcesProcessor.addFilesToResource(getRelImgsDir(), imagesNames, itemResource);
 	}
 
-	private void addPageToCourse(CourseTreeNode node, String coursePath, String pagePath, String pageName) {
+	private static File getRelImgsDir() {
+		return new File(FileWork.IMAGE_DIR_NAME);
+	}
+
+	private static File getImgsDir(File courseDir) {
+		return new File(courseDir, FileWork.IMAGE_DIR_NAME);
+	}
+
+	private void addPageToCourse(CourseTreeNode node, File courseDir, File relPageDir) {
 		Document html = createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
-		boolean pageAdded = FileWork.saveHTMLDocument(html, coursePath, pagePath, pageName + FileWork.HTML_SUFFIX);
+		boolean pageAdded = FileWork.saveHtmlDocument(html, courseDir, relPageDir);
 		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(), coursePath + pagePath + FileWork.IMAGE_DIR_NAME,
-					pathToSOffice);
+			FileWork.saveImages(node.getPage().getImages(), getImgsDir(courseDir), pathToSOffice);
 		}
 	}
 
-	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, String coursePath, String path,
+	private void saveCourse(List<CourseTreeNode> items, ManifestType manifest, File courseDir, XmlObject parentItem) {
+		recursiveSaveCourse(items, manifest, courseDir, new File(""), null, parentItem);
+	}
+
+	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, File courseDir, File relDir,
 			String level, XmlObject parentItem) {
-		int numberOnLevel = 0;
-		String part = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level + "-");
-		for (CourseTreeNode item : items) {
-			// title of page
-			// page name with level number
-			String pageTitle = part + String.valueOf(++numberOnLevel) + "_";
-			pageTitle = pageTitle.concat(TransliterationTool.convertRU2ENString(item.getTitle()));
-			pageTitle = pageTitle.replaceAll(" ", "_");
-			pageTitle = pageTitle.replaceAll("[\\W&&[^-]]", "");
+		String levelPrefix = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level + "-");
+		for (int i = 0; i < items.size(); i++) {
+			CourseTreeNode item = items.get(i);
+
+			String numberOnLevel = String.valueOf(i + 1);
+
+			File relPageDir = new File(relDir,
+					(levelPrefix + numberOnLevel + "_" + TransliterationTool.convertRU2ENString(item.getTitle()))
+							.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", ""));
 
 			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item);
 			if (item.getPage() != null) {
-				this.addPageToCourse(item, coursePath, path, pageTitle);
-				this.addImagesToManifest(manifest, path, pageTitle, item.getPage().getImages(),
+				this.addPageToCourse(item, courseDir, relPageDir);
+				this.addImagesToManifest(manifest, relPageDir, item.getPage().getImages(),
 						manifestItem.getIdentifierref());
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(item.getNodes(), manifest, coursePath, path + pageTitle + File.separator,
-						(level == null) ? String.valueOf(numberOnLevel) : (level + "-" + String.valueOf(numberOnLevel)),
-						manifestItem);
+				this.recursiveSaveCourse(item.getNodes(), manifest, courseDir, relPageDir,
+						(level == null) ? numberOnLevel : (level + "-" + numberOnLevel), manifestItem);
 			}
 		}
 	}
@@ -182,8 +187,8 @@ public class Parser {
 		this.createImsManifestFile(courseName);
 
 		if (!courseModel.getNodes().isEmpty()) {
-			this.recursiveSaveCourse(courseModel.getNodes(), manifest.getManifest(), path.concat(File.separator), "",
-					null, manifest.getManifest().getOrganizations());
+			this.saveCourse(courseModel.getNodes(), manifest.getManifest(), directory,
+					manifest.getManifest().getOrganizations());
 		}
 
 		String manifestContent = tuneManifest(manifest);
