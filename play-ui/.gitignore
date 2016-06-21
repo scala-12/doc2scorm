@@ -1,6 +1,7 @@
 /.settings/
 /bin/
 /logs/
+*.log
 /target/
 /project/project/
 /project/target/
