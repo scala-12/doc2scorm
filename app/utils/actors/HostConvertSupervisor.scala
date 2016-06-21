@@ -18,34 +18,34 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object HostConvertSupervisor extends Actor with ActorLogging {
-  val rootConf = ConfigFactory load()
-  val clusterConf = rootConf.getObject("cluster").toConfig
+  private val rootConf = ConfigFactory load()
+  private val akkaClusterConf = rootConf.getObject("ipoint-conf.akka-cluster").toConfig
 
-  val protocol = clusterConf getString "protocol"
-  val system = clusterConf getString "system-name"
+  private val protocol = akkaClusterConf getString "const.protocol"
+  private val system = akkaClusterConf getString "const.system-name"
 
-  var seedList = clusterConf.getStringList("cluster-seed-nodes").toList
+  private var seedList = akkaClusterConf.getStringList("cluster-seed-nodes").toList
   if ((seedList.length == 1) && seedList.head.contains(",")) {
     //parse from console
     seedList = seedList.head.split(',').toList
   }
 
-  val seedNodes = seedList.map { address =>
+  private val seedNodes = seedList.map { address =>
     val addressSplit = address split ':'
     Address(protocol, system, addressSplit(0), addressSplit(1).toInt)
   }
 
   log.info(s"Seed nodes: $seedNodes")
 
-  val hostAddress: String = s"${clusterConf getString "akka.remote.netty.tcp.hostname"}:" +
-    (if (clusterConf.getInt("akka.remote.netty.tcp.port") == 0)
+  val hostAddress: String = s"${akkaClusterConf getString "host"}:" +
+    (if (akkaClusterConf.getInt("port") == 0)
       UUID.randomUUID().toString
     else
-      clusterConf getString "akka.remote.netty.tcp.port")
+      akkaClusterConf getString "port")
 
-  val supervisorName = self.path.name
+  private val supervisorName = self.path.name
 
-  val cluster = Cluster(context.system)
+  private val cluster = Cluster(context.system)
   cluster joinSeedNodes seedNodes
 
   override def preStart(): Unit = {
@@ -61,15 +61,15 @@ object HostConvertSupervisor extends Actor with ActorLogging {
     context watch self
     Router(
       SmallestMailboxRoutingLogic(),
-      Vector.fill(if (clusterConf.getInt("converter-count") == 0) 0 else 1) {
+      Vector.fill(if (akkaClusterConf.getInt("converter-count") == 0) 0 else 1) {
         ActorRefRoutee(self)
       })
   }
 
-  val workerRouter = if (clusterConf.getInt("converter-count") == 0) {
+  private val workerRouter = if (akkaClusterConf.getInt("converter-count") == 0) {
     null
   } else {
-    val routees = Vector.fill(clusterConf.getInt("converter-count")) {
+    val routees = Vector.fill(akkaClusterConf.getInt("converter-count")) {
       val converter = context actorOf(Props(classOf[ConvertActor]), NameUtils.createName)
       context watch converter
       ActorRefRoutee(converter)
@@ -80,7 +80,7 @@ object HostConvertSupervisor extends Actor with ActorLogging {
 
   def receive = {
     case ConversionOnHost(courseDocBytes, maxHeader, courseName) =>
-      if (clusterConf.getInt("converter-count") > 0) {
+      if (akkaClusterConf.getInt("converter-count") > 0) {
         workerRouter.route(ConvertActor.Conversion(courseDocBytes, maxHeader, courseName), sender())
       }
 
@@ -94,7 +94,7 @@ object HostConvertSupervisor extends Actor with ActorLogging {
         hostRouter.route(ConversionOnHost(courseDocBytes, maxHeader, courseName), waiter)
       }
 
-    case ThisHost => sender() ! (if (clusterConf.getInt("converter-count") == 0) None else Some(self))
+    case ThisHost => sender() ! (if (akkaClusterConf.getInt("converter-count") == 0) None else Some(self))
 
     case MemberUp(member) =>
       log.info(s"[Listener] node is up: $member")
