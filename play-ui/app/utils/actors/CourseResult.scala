@@ -6,6 +6,7 @@ package utils.actors
 case class CourseResult(
                          bytes: Option[Array[Byte]],
                          fileName: Option[String],
-                         successful: Boolean) {
+                         successful: Boolean,
+                         converterHost: String) {
 
 }

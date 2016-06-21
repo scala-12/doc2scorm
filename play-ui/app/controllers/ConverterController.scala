@@ -117,13 +117,13 @@ class ConverterController @Inject()(
                 }
 
                 //TODO: what do if error (haven't answer)?
-                //TODO: add hostname field to answer and DB
                 conversionDao addConversion new DBConversion(
                   0,
                   request.identity.dbId.get,
                   courseResult.fileName getOrElse docFile.name,
                   courseResult successful,
-                  Calendar.getInstance() getTimeInMillis())
+                  Calendar.getInstance() getTimeInMillis(),
+                  courseResult converterHost)
                 Ok.sendFile(
                   localCourse.jfile,
                   inline = true).withHeaders(CACHE_CONTROL -> "max-age=3600", CONTENT_DISPOSITION -> "attachment; filename=".concat(localCourse.name), CONTENT_TYPE -> "application/x-download")

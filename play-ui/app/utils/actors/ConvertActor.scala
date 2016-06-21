@@ -22,7 +22,7 @@ class ConvertActor extends Actor with ActorLogging {
 
   override def receive = {
     case ConvertActor.Conversion(courseDocBytes, maxHeader, courseName) =>
-      var result: CourseResult = new CourseResult(None, None, false)
+      var result: CourseResult = CourseResult(None, None, false, converterHost)
 
       if (!localDocsDir.exists) {
         localDocsDir createDirectory()
@@ -60,11 +60,13 @@ class ConvertActor extends Actor with ActorLogging {
         log.info(s"Word doc (${docFile.name}) was converted in ${courseFile.path})")
 
         val courseIS = courseFile bufferedInput()
-        result = new CourseResult(
+        result = CourseResult(
           Some(
             Stream.continually(courseIS read()).
               takeWhile(_ != -1).map(_.toByte).toArray),
-          Some(tmpCourseName), true)
+          Some(tmpCourseName),
+          true,
+          converterHost)
         courseIS close()
 
         if (!sentCoursesDir.exists) {
