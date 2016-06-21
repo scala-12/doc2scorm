@@ -102,8 +102,6 @@ libraryDependencies += evolutions
 // Testing
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.0" % "test"
 
-//javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
-
 libraryDependencies += "org.webjars.npm" % "jasmine-core" % "2.4.1"
 
 resolvers += Resolver.mavenLocal
@@ -120,5 +118,5 @@ libraryDependencies ++= Seq(
 // Ignore files of configs
 mappings in Universal := {
   val origMappings = (mappings in Universal).value
-  origMappings.filterNot { case (_, file) => file.endsWith("local.conf") || file.endsWith("application.test.conf") }
+  origMappings.filterNot { case (_, file) => file.endsWith("local.conf") }
 }
