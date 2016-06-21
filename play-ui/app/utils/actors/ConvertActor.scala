@@ -6,7 +6,7 @@ import java.util.{Calendar, UUID}
 import akka.actor.{Actor, ActorLogging}
 import com.ipoint.coursegenerator.core.Parser
 import com.typesafe.config.ConfigFactory
-import utils.actors.ConvertActor.convertRU2ENString
+import utils.actors.ConvertActor._
 
 import scala.reflect.io.{Directory, File}
 import scala.util.Try
@@ -16,19 +16,6 @@ import scala.util.Try
   * Created by kalas on 13.05.2016.
   */
 class ConvertActor extends Actor with ActorLogging {
-  val rootConf = ConfigFactory.load()
-
-  def getConfig(name: String) = rootConf.getString(name)
-
-  val parser: Parser = if (rootConf.getIsNull("libreoffice.program.soffice")) {
-    new Parser()
-  } else {
-    new Parser((rootConf getString "libreoffice.program.soffice"))
-  } 
-
-  val localDocsDir = Directory(rootConf.getString("tmp.doc.dir.local"))
-  val actorsDir = Directory(rootConf.getString("tmp.course.dir.actors"))
-  val sentCoursesDir = Directory(rootConf.getString("tmp.course.dir.sent"))
 
   val sdf = new SimpleDateFormat("dd-MM-yyyy")
   val calendar = Calendar.getInstance()
@@ -96,6 +83,19 @@ class ConvertActor extends Actor with ActorLogging {
 }
 
 object ConvertActor {
+
+  private val ipointConf = ConfigFactory.load().getObject("ipoint-conf").toConfig
+
+  private val localDocsDir = Directory(ipointConf getString "tmp.doc.dir.local")
+  private val actorsDir = Directory(ipointConf getString "tmp.course.dir.actors")
+  private val sentCoursesDir = Directory(ipointConf getString "tmp.course.dir.sent")
+  private val converterHost = (ipointConf getString "akka-cluster.host") + ':' + (ipointConf getString "akka-cluster.port")
+
+  private val parser: Parser = if (ipointConf.getIsNull("libreoffice.program.soffice")) {
+    new Parser()
+  } else {
+    new Parser(ipointConf getString "libreoffice.program.soffice")
+  }
 
   case class Conversion(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
 

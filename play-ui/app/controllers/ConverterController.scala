@@ -34,20 +34,20 @@ class ConverterController @Inject()(
                                      conversionDao: ConversionDao,
                                      configuration: play.api.Configuration)
   extends Silhouette[User, CookieAuthenticator] {
+  private val ipointConf = configuration.getObject("ipoint-conf").get.toConfig
 
-  val clusterConf = ConfigFactory.load().getObject("cluster").toConfig
-
-  private val system = ActorSystem(clusterConf.getString("system-name"),
-    clusterConf)
+  private val akkaClusterConf = ipointConf.getObject("akka-cluster.const").toConfig
+  private val system = ActorSystem(akkaClusterConf.getString("system-name"),
+    akkaClusterConf)
   private val hostSupervisor = system.actorOf(Props(HostConvertSupervisor),
-    clusterConf.getString("supervisor-name"))
+    akkaClusterConf.getString("supervisor-name"))
 
-  private val coursesDir = Directory(configuration.getString("tmp.course.dir.local").get)
-  private val sentDir = Directory(configuration.getString("tmp.course.dir.sent").get)
+  private val coursesDir = Directory(ipointConf.getString("tmp.course.dir.local"))
+  private val sentDir = Directory(ipointConf.getString("tmp.course.dir.sent"))
 
-  private val remoteDocsDir = Directory(configuration.getString("tmp.doc.dir.remote").get)
-  private val uploadDocs = Directory(configuration.getString("tmp.doc.dir.upload").get)
-  private val unconvertedDocs = Directory(configuration.getString("tmp.doc.dir.unconverted").get)
+  private val remoteDocsDir = Directory(ipointConf.getString("tmp.doc.dir.remote"))
+  private val uploadDocs = Directory(ipointConf.getString("tmp.doc.dir.upload"))
+  private val unconvertedDocs = Directory(ipointConf.getString("tmp.doc.dir.unconverted"))
 
   implicit val rds = (
     (__ \ 'course).read[String] and
