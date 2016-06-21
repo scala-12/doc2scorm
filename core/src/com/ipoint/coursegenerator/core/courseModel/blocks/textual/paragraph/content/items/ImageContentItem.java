@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
 
+import java.io.File;
+
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -221,7 +223,8 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
-		img.setAttribute("src", FileWork.IMAGE_DIR_NAME + this.getImageFullName());
+		img.setAttribute("src",
+				new File(FileWork.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));
 
 		if (this.getHeight() != null) {
 			img.setAttribute("height", String.valueOf(this.getHeight()));
