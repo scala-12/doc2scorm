@@ -17,6 +17,12 @@ import scala.util.Try
   */
 class ConvertActor extends Actor with ActorLogging {
 
+  private val parser: Parser = if (ipointConf.getIsNull("libreoffice.program.soffice")) {
+    new Parser()
+  } else {
+    new Parser(ipointConf getString "libreoffice.program.soffice")
+  }
+  
   val sdf = new SimpleDateFormat("dd-MM-yyyy")
   val calendar = Calendar.getInstance()
 
@@ -92,12 +98,6 @@ object ConvertActor {
   private val actorsDir = Directory(ipointConf getString "tmp.course.dir.actors")
   private val sentCoursesDir = Directory(ipointConf getString "tmp.course.dir.sent")
   private val converterHost = (ipointConf getString "akka-cluster.host") + ':' + (ipointConf getString "akka-cluster.port")
-
-  private val parser: Parser = if (ipointConf.getIsNull("libreoffice.program.soffice")) {
-    new Parser()
-  } else {
-    new Parser(ipointConf getString "libreoffice.program.soffice")
-  }
 
   case class Conversion(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
 
