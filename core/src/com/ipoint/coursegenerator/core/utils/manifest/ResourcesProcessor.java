@@ -32,13 +32,13 @@ public class ResourcesProcessor {
 	 * 
 	 * @param manifest
 	 *            Manifest
-	 * @param path
-	 *            Path in course
+	 * @param htmlFile
+	 *            Html file
 	 * @param resourseId
 	 *            Id of resource
 	 * @return Added in manifest resource
 	 */
-	public static ResourceType createScoResource(ManifestType manifest, File relPageDir, String resourseId) {
+	public static ResourceType createScoResource(ManifestType manifest, File htmlFile, String resourseId) {
 		if (manifest.getResources() == null || manifest.getResources().getResourceArray() == null) {
 			manifest.addNewResources();
 		}
@@ -50,17 +50,16 @@ public class ResourcesProcessor {
 		attNode.setNodeValue("sco");
 		resource.getDomNode().getAttributes().setNamedItem(attNode);
 
-		String path = relPageDir.getPath().replace(File.separatorChar, '/') + FileWork.HTML_SUFFIX;
-		resource.setHref(path);
-		resource.addNewFile().setHref(path);
+		resource.setHref(htmlFile.getName());
+		resource.addNewFile().setHref(htmlFile.getName());
 
 		return resource;
 	}
 
-	public static void addFilesToResource(File relFileDir, List<String> files, ResourceType resource) {
+	public static void addFilesToResource(List<String> files, ResourceType resource) {
 		for (String file : files) {
 			FileType fileType = resource.addNewFile();
-			fileType.setHref(new File(relFileDir, file).getPath().replace(File.separatorChar, '/'));
+			fileType.setHref(new File(FileWork.IMAGE_DIR_NAME, file).getPath().replace(File.separatorChar, '/'));
 		}
 	}
 

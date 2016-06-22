@@ -34,12 +34,10 @@ import freemarker.template.TemplateException;
 
 public class FileWork {
 
-	public final static String HTML_PREFIX = "part_";
-	public final static String HTML_SUFFIX = ".html";
 	public final static String IMAGE_WMF = "image/x-wmf";
 	public final static String IMAGE_PNG = "image/png";
 	public final static String FILETYPE_DOCX = ".docx";
-	public final static Charset STANDART_ENCODING = StandardCharsets.UTF_8;
+	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
@@ -56,7 +54,7 @@ public class FileWork {
 					byte[] buffer = new byte[1024];
 					int bytesRead;
 					if (isText) {
-						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDART_ENCODING)) {
+						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDARD_ENCODING)) {
 							while ((bytesRead = is.read(buffer)) != -1) {
 								outStreamWriter.write(new String(buffer, 0, bytesRead, STANDART_ENCODING));
 							}
@@ -109,16 +107,12 @@ public class FileWork {
 	 * 
 	 * @param htmlDoc
 	 *            Html document
-	 * @param courseDir
-	 *            Absolute course directory
-	 * @param relPageDir
-	 *            html file which relative to course directory
+	 * @param pageFile
+	 *            html file
 	 * @return true if saved
 	 */
-	public static boolean saveHtmlDocument(Document htmlDoc, File courseDir, File relPageDir) {
+	public static boolean saveHtmlDocument(Document htmlDoc, File pageFile) {
 		try {
-			String htmlPath = new File(relPageDir.getPath() + FileWork.HTML_SUFFIX).getPath();
-
 			StringWriter buffer = new StringWriter();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -130,25 +124,13 @@ public class FileWork {
 			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), "templates/html");
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
-			int level = (htmlPath.startsWith(File.separator) ? htmlPath.substring(File.separator.length()) : htmlPath)
-					.split((File.separator.equals("\\") ? "\\\\" : File.separator)).length - 1;
-
-			StringBuilder upToLevel = new StringBuilder();
-			for (int i = 0; i < level; i++) {
-				upToLevel.append("../");
-			}
-
-			File absoluteHtmlFile = new File(courseDir, htmlPath);
-			absoluteHtmlFile.getParentFile().mkdirs();
-
-			Template temp = cfg.getTemplate("index.ftl", "UTF-8");
+			Template tmpl = cfg.getTemplate("index.ftl", STANDARD_ENCODING.name());
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("bodycontent", buffer.toString());
-			body.put("upToLevel", upToLevel.toString());
 
-			try (FileOutputStream htmlFOS = new FileOutputStream(absoluteHtmlFile);
-					Writer outStreamWriter = new OutputStreamWriter(htmlFOS, STANDART_ENCODING)) {
-				temp.process(body, outStreamWriter);
+			try (FileOutputStream htmlFOS = new FileOutputStream(pageFile);
+					Writer outStreamWriter = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
+				tmpl.process(body, outStreamWriter);
 				outStreamWriter.flush();
 
 				return true;
