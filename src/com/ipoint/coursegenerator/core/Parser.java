@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,7 +51,7 @@ public class Parser {
 			+ "adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th "
 			+ "Edition</schemaversion></metadata>";
 
-	private ManifestDocument manifest;
+	private static final String MANIFEST_NAME = "imsmanifest.xml";
 
 	private File pathToSOffice = null;
 
@@ -65,8 +66,8 @@ public class Parser {
 
 	}
 
-	private void createImsManifestFile(String courseName) {
-		manifest = ManifestDocument.Factory.newInstance();
+	private ManifestDocument createImsManifestFile(String courseName) {
+		ManifestDocument manifest = ManifestDocument.Factory.newInstance();
 		ManifestProcessor manifestProcessor = new ManifestProcessor();
 		manifestProcessor.createManifest(manifest);
 
@@ -80,12 +81,14 @@ public class Parser {
 		// Add Resources to Manifest
 		ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
 		resourcesProcessor.createResources(manifest.getManifest());
+
+		return manifest;
 	}
 
 	private String tuneManifest(ManifestDocument manifestDocument) {
-		String manifest = manifestDocument.xmlText();
-		return manifest.replace("ims:", "").replace(PREFIX, PREFIX_NEW).replace("datafromlms", "dataFromLMS")
-				.replace("adl:", "adlcp:").replace("rootv1p2", "v1p3").replace(":adl=", ":adlcp=");
+		return manifestDocument.xmlText().replace("ims:", "").replace(PREFIX, PREFIX_NEW)
+				.replace("datafromlms", "dataFromLMS").replace("adl:", "adlcp:").replace("rootv1p2", "v1p3")
+				.replace(":adl=", ":adlcp=");
 	}
 
 	private static Document createNewHTMLDocument() {
@@ -94,6 +97,7 @@ public class Parser {
 			html.appendChild(html.createElement("html"));
 			html.getFirstChild().appendChild(html.createElement("head"));
 			html.getFirstChild().appendChild(html.createElement("body"));
+
 			return html;
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -102,9 +106,9 @@ public class Parser {
 	}
 
 	private ItemType addOrganizationElementToManifest(XmlObject parentItem, CourseTreeNode node) {
-		String id = java.util.UUID.randomUUID().toString();
-		String itemId = "ITEM_".concat(id);
-		String resourseId = (node.getPage() == null) ? null : "RES_".concat(id);
+		String id = UUID.randomUUID().toString();
+		String itemId = "ITEM_" + id;
+		String resourseId = (node.getPage() == null) ? null : "RES_" + id;
 
 		ItemType manifestItem = null;
 		if (parentItem instanceof ItemType) {
@@ -117,58 +121,45 @@ public class Parser {
 		return manifestItem;
 	}
 
-	private void addImagesToManifest(ManifestType manifest, File relPageDir, List<PictureInfo> images,
-			String resourseId) {
-		ResourceType itemResource = ResourcesProcessor.createScoResource(manifest, relPageDir, resourseId);
+	private void addScoToManifest(ManifestType manifest, ItemType manifestItem, File htmlFile,
+			List<PictureInfo> images) {
+		ResourceType itemResource = ResourcesProcessor.createScoResource(manifest, htmlFile,
+				manifestItem.getIdentifierref());
 		List<String> imagesNames = images.stream().map(image -> image.getName()).collect(Collectors.toList());
 
-		ResourcesProcessor.addFilesToResource(getRelImgsDir(), imagesNames, itemResource);
+		ResourcesProcessor.addFilesToResource(imagesNames, itemResource);
 	}
 
-	private static File getRelImgsDir() {
-		return new File(FileWork.IMAGE_DIR_NAME);
-	}
-
-	private static File getImgsDir(File courseDir) {
-		return new File(courseDir, FileWork.IMAGE_DIR_NAME);
-	}
-
-	private void addPageToCourse(CourseTreeNode node, File courseDir, File relPageDir) {
+	private void addScoToCourse(CourseTreeNode node, File pageFile) {
 		Document html = createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
-		boolean pageAdded = FileWork.saveHtmlDocument(html, courseDir, relPageDir);
-		if (pageAdded) {
-			FileWork.saveImages(node.getPage().getImages(), getImgsDir(courseDir), pathToSOffice);
+		if (FileWork.saveHtmlDocument(html, pageFile)) {
+			FileWork.saveImages(node.getPage().getImages(), new File(pageFile.getParentFile(), FileWork.IMAGE_DIR_NAME),
+					pathToSOffice);
 		}
 	}
 
 	private void saveCourse(List<CourseTreeNode> items, ManifestType manifest, File courseDir, XmlObject parentItem) {
-		recursiveSaveCourse(items, manifest, courseDir, new File(""), null, parentItem);
-	}
-
-	private void recursiveSaveCourse(List<CourseTreeNode> items, ManifestType manifest, File courseDir, File relDir,
-			String level, XmlObject parentItem) {
-		String levelPrefix = (level == null) ? FileWork.HTML_PREFIX : (FileWork.HTML_PREFIX + level + "-");
 		for (int i = 0; i < items.size(); i++) {
 			CourseTreeNode item = items.get(i);
 
-			String numberOnLevel = String.valueOf(i + 1);
-
-			File relPageDir = new File(relDir,
-					(levelPrefix + numberOnLevel + "_" + TransliterationTool.convertRU2ENString(item.getTitle()))
-							.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", ""));
-
 			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item);
 			if (item.getPage() != null) {
-				this.addPageToCourse(item, courseDir, relPageDir);
-				this.addImagesToManifest(manifest, relPageDir, item.getPage().getImages(),
-						manifestItem.getIdentifierref());
+				File htmlFile = new File(courseDir, TransliterationTool.convertRU2ENString(item.getTitle())
+						.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
+				if (htmlFile.exists()) {
+					htmlFile = new File(courseDir,
+							TransliterationTool.convertRU2ENString(item.getTitle() + "_" + UUID.randomUUID().toString())
+									.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
+				}
+
+				this.addScoToCourse(item, htmlFile);
+				this.addScoToManifest(manifest, manifestItem, htmlFile, item.getPage().getImages());
 			}
 
 			if (!item.getNodes().isEmpty()) {
-				this.recursiveSaveCourse(item.getNodes(), manifest, courseDir, relPageDir,
-						(level == null) ? numberOnLevel : (level + "-" + numberOnLevel), manifestItem);
+				this.saveCourse(item.getNodes(), manifest, courseDir, manifestItem);
 			}
 		}
 	}
@@ -183,7 +174,7 @@ public class Parser {
 
 		CourseModel courseModel = new CourseParser().parse(stream, courseName, headerLevel);
 
-		this.createImsManifestFile(courseName);
+		ManifestDocument manifest = this.createImsManifestFile(courseName);
 
 		if (!courseModel.getNodes().isEmpty()) {
 			this.saveCourse(courseModel.getNodes(), manifest.getManifest(), directory,
