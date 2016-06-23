@@ -130,12 +130,12 @@ public class Parser {
 		ResourcesProcessor.addFilesToResource(imagesNames, itemResource);
 	}
 
-	private void addScoToCourse(CourseTreeNode node, File pageFile) {
+	private void addScoToCourse(CourseTreeNode node, File htmlFile) {
 		Document html = createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
-		if (FileWork.saveHtmlDocument(html, pageFile)) {
-			FileWork.saveImages(node.getPage().getImages(), new File(pageFile.getParentFile(), FileWork.IMAGE_DIR_NAME),
+		if (FileWork.saveHtmlDocument(html, htmlFile, node.getTitle())) {
+			FileWork.saveImages(node.getPage().getImages(), new File(htmlFile.getParentFile(), FileWork.IMAGE_DIR_NAME),
 					pathToSOffice);
 		}
 	}
