@@ -55,10 +55,10 @@ public class FileWork {
 					int bytesRead;
 					if (isText) {
 						char[] buffer = new char[1024];
-						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
+						try (OutputStreamWriter writerOS = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
 								InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
 							while ((bytesRead = readerIS.read(buffer)) != -1) {
-								outStreamWriter.write(new String(buffer, 0, bytesRead));
+								writerOS.write(buffer, 0, bytesRead);
 							}
 						}
 					} else {
@@ -110,11 +110,11 @@ public class FileWork {
 	 * 
 	 * @param htmlDoc
 	 *            Html document
-	 * @param pageFile
+	 * @param htmlFile
 	 *            html file
 	 * @return true if saved
 	 */
-	public static boolean saveHtmlDocument(Document htmlDoc, File pageFile) {
+	public static boolean saveHtmlDocument(Document htmlDoc, File htmlFile, String pageTitle) {
 		try {
 			StringWriter buffer = new StringWriter();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -129,12 +129,13 @@ public class FileWork {
 
 			Template tmpl = cfg.getTemplate("index.ftl", STANDARD_ENCODING.name());
 			Map<String, String> body = new HashMap<String, String>();
-			body.put("bodycontent", buffer.toString());
+			body.put("page_title", pageTitle);
+			body.put("body_content", buffer.toString());
 
-			try (FileOutputStream htmlFOS = new FileOutputStream(pageFile);
-					Writer outStreamWriter = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
-				tmpl.process(body, outStreamWriter);
-				outStreamWriter.flush();
+			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
+					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
+				tmpl.process(body, writerOS);
+				writerOS.flush();
 
 				return true;
 			}
