@@ -56,7 +56,7 @@ public class FileWork {
 					if (isText) {
 						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDARD_ENCODING)) {
 							while ((bytesRead = is.read(buffer)) != -1) {
-								outStreamWriter.write(new String(buffer, 0, bytesRead, STANDART_ENCODING));
+								outStreamWriter.write(new String(buffer, 0, bytesRead, STANDARD_ENCODING));
 							}
 						}
 					} else {
@@ -88,7 +88,7 @@ public class FileWork {
 	}
 
 	public static boolean saveTextFile(String content, File outFile) {
-		return saveFile(new ByteArrayInputStream(content.getBytes(STANDART_ENCODING)), outFile, true);
+		return saveFile(new ByteArrayInputStream(content.getBytes(STANDARD_ENCODING)), outFile, true);
 	}
 
 	public static boolean copyFileFromResourcesToDir(File fileFromResource, File destDir) {
