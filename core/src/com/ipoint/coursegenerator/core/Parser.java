@@ -166,6 +166,8 @@ public class Parser {
 
 	// TODO: add variable for external templates
 	public String parse(InputStream stream, int headerLevel, String courseName, String path) throws IOException {
+		courseName = courseName.trim().replaceAll("\\s\\s+", " ");
+		
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
