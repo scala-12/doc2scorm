@@ -6,9 +6,9 @@ import com.google.inject.ImplementedBy
 
 trait DBUserDao {
 
-  def getUserById(id: Long): Future[DBUser]
+  def getUserById(id: Long): Future[Option[DBUser]]
 
-  def getUserByEmail(email: String): Future[DBUser]
+  def getUserByEmail(email: String): Future[Option[DBUser]]
 
   def getUsers: Future[Seq[DBUser]]
 
