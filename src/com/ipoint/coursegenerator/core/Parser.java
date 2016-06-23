@@ -182,7 +182,7 @@ public class Parser {
 		}
 
 		String manifestContent = tuneManifest(manifest);
-		FileWork.saveTextFile(manifestContent, new File(directory, "imsmanifest.xml"));
+		FileWork.saveTextFile(manifestContent, new File(directory, MANIFEST_NAME));
 
 		File jsDir = new File(directory, "js");
 		File cssDir = new File(directory, "css");
