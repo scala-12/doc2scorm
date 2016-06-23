@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -51,15 +52,17 @@ public class FileWork {
 			try {
 				outFile.createNewFile();
 				try (FileOutputStream fileOS = new FileOutputStream(outFile)) {
-					byte[] buffer = new byte[1024];
 					int bytesRead;
 					if (isText) {
-						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDARD_ENCODING)) {
-							while ((bytesRead = is.read(buffer)) != -1) {
-								outStreamWriter.write(new String(buffer, 0, bytesRead, STANDARD_ENCODING));
+						char[] buffer = new char[1024];
+						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS);
+								InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
+							while ((bytesRead = readerIS.read(buffer)) != -1) {
+								outStreamWriter.write(new String(buffer, 0, bytesRead));
 							}
 						}
 					} else {
+						byte[] buffer = new byte[1024];
 						while ((bytesRead = is.read(buffer)) != -1) {
 							fileOS.write(buffer, 0, bytesRead);
 						}
