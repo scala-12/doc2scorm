@@ -27,29 +27,29 @@ class DBUserDaoImpl @Inject() (dbConfigProvider: DatabaseConfigProvider) extends
   def setConf(conf: DatabaseConfig[JdbcProfile]) {
     dbConfig = conf
   }
-  
-  def getUserById(id: Long): Future[DBUser] = {
+
+  def getUserById(id: Long): Future[Option[DBUser]] = {
     val q = Tables.users.filter(_.id === id)
     getConf().db.run(q.result).flatMap { users =>
       {
-        var dbUser: DBUser = null
         if (users.length > 0) {
-          dbUser = users.last
+          Future.successful(Some(users.last))
+        } else {
+          Future.successful(None)
         }
-        Future.successful(dbUser)
       }
     }
   }
 
-  def getUserByEmail(email: String): Future[DBUser] = {
+  def getUserByEmail(email: String): Future[Option[DBUser]] = {
     val q = Tables.users.filter(_.email === email)
     getConf().db.run(q.result).flatMap { users =>
       {
-        var dbUser: DBUser = null
         if (users.length > 0) {
-          dbUser = users.last
+          Future.successful(Some(users.last))
+        } else {
+          Future.successful(None)
         }
-        Future.successful(dbUser)
       }
     }
   }
