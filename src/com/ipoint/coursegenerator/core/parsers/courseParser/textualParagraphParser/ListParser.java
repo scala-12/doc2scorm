@@ -34,10 +34,8 @@ public class ListParser extends AbstractParser {
 
 		List<XWPFParagraph> list = getAtomListParagraphs(par);
 		if ((list != null) && !list.isEmpty()) {
-			block = new ListBlock(list
-					.stream()
-					.map(item -> new ListItem(ParagraphParser.parse(item,
-							mathInfo))).collect(Collectors.toList()));
+			block = new ListBlock(list.stream().map(item -> new ListItem(ParagraphParser.parse(item, mathInfo)))
+					.collect(Collectors.toList()));
 			block.setMarkerType(getMarkerTypeFromString(par.getNumFmt()));
 		}
 
@@ -52,8 +50,7 @@ public class ListParser extends AbstractParser {
 	 * @return true if this paragraph is item of list
 	 */
 	public static boolean isListElement(XWPFParagraph par) {
-		if ((par.getNumID() == null)
-				|| (par.getNumFmt() == null)) {
+		if ((par.getRuns().isEmpty()) || (par.getNumID() == null) || (par.getNumFmt() == null)) {
 			return false;
 		} else {
 			return true;
@@ -70,7 +67,7 @@ public class ListParser extends AbstractParser {
 	public static List<XWPFParagraph> getAtomListParagraphs(XWPFParagraph head) {
 		if (isListElement(head)) {
 			ArrayList<XWPFParagraph> listElems = new ArrayList<XWPFParagraph>();
-			List<IBodyElement> elements = head.getDocument().getBodyElements();
+			List<IBodyElement> elements = head.getBody().getBodyElements();
 
 			boolean isAtomList = true;
 			int number = 0;
@@ -78,15 +75,12 @@ public class ListParser extends AbstractParser {
 			String marker = head.getNumFmt();
 			number = head.getNumID().intValue();
 			level = head.getNumIlvl().intValue();
-			
-			for (int i = elements.indexOf(head); (i < elements.size())
-					&& isAtomList; i++) {
+
+			for (int i = elements.indexOf(head); (i < elements.size()) && isAtomList; i++) {
 				if (elements.get(i) instanceof XWPFParagraph) {
 					XWPFParagraph par = (XWPFParagraph) elements.get(i);
-					isAtomList = isListElement(par)
-							&& (number == par.getNumID().intValue())
-							&& (level == par.getNumIlvl().intValue()
-							&& (marker.equals(par.getNumFmt())));
+					isAtomList = isListElement(par) && (number == par.getNumID().intValue())
+							&& (level == par.getNumIlvl().intValue() && (marker.equals(par.getNumFmt())));
 					if (isAtomList) {
 						listElems.add(par);
 					}
