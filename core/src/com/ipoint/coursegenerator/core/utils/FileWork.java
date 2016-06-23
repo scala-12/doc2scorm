@@ -55,7 +55,7 @@ public class FileWork {
 					int bytesRead;
 					if (isText) {
 						char[] buffer = new char[1024];
-						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS);
+						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
 								InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
 							while ((bytesRead = readerIS.read(buffer)) != -1) {
 								outStreamWriter.write(new String(buffer, 0, bytesRead));
