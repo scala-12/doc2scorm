@@ -19,7 +19,7 @@ public class HeaderParser extends ParagraphParser {
 
 	private final static Logger log = Logger.getLogger(HeaderParser.class.getName());
 
-	private static final Pattern HEADER_PATTERN = Pattern.compile(".*[(heading)(заголовок)][\\s_](\\d+)$");
+	private static final Pattern HEADER_PATTERN = Pattern.compile(".*(heading|заголовок)[\\s_](\\d+)$");
 
 	/**
 	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}
@@ -63,10 +63,11 @@ public class HeaderParser extends ParagraphParser {
 				basisStyle = styles.getStyle(basisStyle.getBasisStyleID());
 				styleName = basisStyle.getName().toLowerCase();
 			}
+
 			if (headerMatcher.matches()) {
 				// if style relate to headers
 				try {
-					headerLvl = Integer.parseInt(headerMatcher.group(1));
+					headerLvl = Integer.parseInt(headerMatcher.group(headerMatcher.groupCount()));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				}
