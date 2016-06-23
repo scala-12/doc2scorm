@@ -58,7 +58,7 @@ public class FileWork {
 					if (isText) {
 						try (OutputStreamWriter outStreamWriter = new OutputStreamWriter(fileOS, STANDART_ENCODING)) {
 							while ((bytesRead = is.read(buffer)) != -1) {
-								outStreamWriter.write(new String(buffer, 0, bytesRead));
+								outStreamWriter.write(new String(buffer, 0, bytesRead, STANDART_ENCODING));
 							}
 						}
 					} else {
@@ -89,20 +89,12 @@ public class FileWork {
 		return saveFile(is, outFile, false);
 	}
 
-	public static boolean saveTextFile(InputStream is, File outFile) {
-		return saveFile(is, outFile, true);
+	public static boolean saveTextFile(String content, File outFile) {
+		return saveFile(new ByteArrayInputStream(content.getBytes(STANDART_ENCODING)), outFile, true);
 	}
 
-	public static boolean copyTextFileFromResourcesToDir(File textFileFromResource, File destDir) {
-		return copyFileFromResourcesToDir(textFileFromResource, destDir, true);
-	}
-
-	public static boolean copyRawFileFromResourcesToDir(File rawFileFromResource, File destDir) {
-		return copyFileFromResourcesToDir(rawFileFromResource, destDir, false);
-	}
-
-	private static boolean copyFileFromResourcesToDir(File fileFromResource, File destDir, boolean isText) {
-		return saveFile(getFileFromResources(fileFromResource), new File(destDir, fileFromResource.getName()), isText);
+	public static boolean copyFileFromResourcesToDir(File fileFromResource, File destDir) {
+		return saveFile(getFileFromResources(fileFromResource), new File(destDir, fileFromResource.getName()), false);
 	}
 
 	public static InputStream getFileFromResources(File fileFromResource) {
