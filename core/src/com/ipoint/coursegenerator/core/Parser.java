@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -192,17 +191,15 @@ public class Parser {
 		}
 
 		String manifestContent = tuneManifest(manifest);
-		File manifestFile = new File(path, "imsmanifest.xml");
-
-		FileWork.saveTextFile(new ByteArrayInputStream(manifestContent.getBytes()), manifestFile);
+		FileWork.saveTextFile(manifestContent, new File(directory, "imsmanifest.xml"));
 
 		File jsDir = new File(directory, "js");
 		File cssDir = new File(directory, "css");
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/kurs.css"), cssDir);
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/html/test.css"), cssDir);
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), jsDir);
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), jsDir);
-		FileWork.copyRawFileFromResourcesToDir(new File("templates/js/parser.js"), jsDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/html/kurs.css"), cssDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/html/test.css"), cssDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), jsDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), jsDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/parser.js"), jsDir);
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
