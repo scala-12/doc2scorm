@@ -5,10 +5,8 @@ p {
 	line-height: 30px;
 }
 table {
-	margin-left: 115px;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 30px;
+	padding: 0 0 0 30px;
+	margin: 0 0 30px 0;
 }
 td {
 	border-bottom-width: 1px;
@@ -46,4 +44,42 @@ select{
 }
 .question {
 	font-style: italic;
+}
+div.quest_info {
+	width: auto;
+	height: auto;
+	padding: 0 25px;
+}
+div.quest_info_item {
+	text-align:center;
+	width:100%;
+}
+div.quest_info_item > * {
+	text-align: justify;
+	width: 90%;
+	margin: auto;	
+}
+div.quest_info_item > div {
+	border: 2px inset;
+	padding: 2px 0;
+}
+div.quest_comment {
+	margin-top:15px;
+	width:100%;
+}
+#end_test_msg {
+	border: thin solid #660033;
+	background-color: #99ccff;
+}
+#end_test_msg h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: x-large;
+	color: #333399;
+	text-align: center;
+}
+#error_count {
+	color:#FF0000;
+}
+#test_results {
+	width: 100%;
 }
