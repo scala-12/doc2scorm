@@ -26,6 +26,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
 
 import freemarker.template.Configuration;
@@ -131,6 +132,7 @@ public class FileWork {
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("page_title", pageTitle);
 			body.put("body_content", buffer.toString());
+			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
 
 			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
 					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
