@@ -55,6 +55,9 @@ public class Parser {
 
 	private File pathToSOffice = null;
 
+	/** From iLogos */
+	public static final String COURSE_SYSTEM_DIR = "system_files";
+
 	public Parser(String pathToSOffice) {
 		File path = new File(pathToSOffice);
 		if (path.exists()) {
@@ -167,7 +170,7 @@ public class Parser {
 	// TODO: add variable for external templates
 	public String parse(InputStream stream, int headerLevel, String courseName, String path) throws IOException {
 		courseName = courseName.trim().replaceAll("\\s\\s+", " ");
-		
+
 		File directory = new File(path);
 		if (directory.exists()) {
 			FileUtils.deleteDirectory(directory);
@@ -186,13 +189,12 @@ public class Parser {
 		String manifestContent = tuneManifest(manifest);
 		FileWork.saveTextFile(manifestContent, new File(directory, MANIFEST_NAME));
 
-		File jsDir = new File(directory, "js");
-		File cssDir = new File(directory, "css");
-		FileWork.copyFileFromResourcesToDir(new File("templates/html/kurs.css"), cssDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/html/test.css"), cssDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), jsDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), jsDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/parser.js"), jsDir);
+		File sytemDir = new File(directory, COURSE_SYSTEM_DIR);
+		FileWork.copyFileFromResourcesToDir(new File("templates/html/kurs.css"), sytemDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/html/test.css"), sytemDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), sytemDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), sytemDir);
+		FileWork.copyFileFromResourcesToDir(new File("templates/js/parser.js"), sytemDir);
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
