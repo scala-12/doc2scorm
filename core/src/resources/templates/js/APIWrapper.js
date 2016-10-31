@@ -517,51 +517,27 @@ function translateDataModelElement(name)
 
    switch ( arrayOfComponents[1] )
    {
+   case "comments":
+   case "comments_from_lms":
+   case "student_data":
+   case "student_preference":
+   case "suspend_data":
+   case "launch_data":
+   case "sco_answers_source_json":
+      {
+         updatedName = getNewValue(name);
+         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
+         DataModelElementReturnVal = api.GetValue(updatedName);
+      }
    case "core":
       { 
          DataModelElementReturnVal = convertCore(name,arrayOfComponents);
          return DataModelElementReturnVal;  
-      }
-   case "comments":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
-      }
-   case "comments_from_lms":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
-      }
+      }   
    case "objectives":
       {
          DataModelElementReturnVal = convertObjectives(name,arrayOfComponents);
          return DataModelElementReturnVal;      
-      }
-   case "student_data":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
-      }
-   case "student_preference":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
-      }
-   case "suspend_data":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
-      }
-   case "launch_data":
-      {
-         updatedName = getNewValue(name);
-         _InternalErrorCode = API_CALL_PASSED_TO_LMS;
-         DataModelElementReturnVal = api.GetValue(updatedName);
       }
    case "interactions":
       {
