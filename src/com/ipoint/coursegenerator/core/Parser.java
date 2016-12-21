@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 import org.apache.commons.io.FileUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
@@ -190,11 +191,10 @@ public class Parser {
 		FileWork.saveTextFile(manifestContent, new File(directory, MANIFEST_NAME));
 
 		File sytemDir = new File(directory, COURSE_SYSTEM_DIR);
-		FileWork.copyFileFromResourcesToDir(new File("templates/html/kurs.css"), sytemDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/html/test.css"), sytemDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/APIWrapper.js"), sytemDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/SCOFunctions.js"), sytemDir);
-		FileWork.copyFileFromResourcesToDir(new File("templates/js/parser.js"), sytemDir);
+
+		for (File template : TemplateFiles.SYSTEM_FILES) {
+			FileWork.copyFileFromResourcesToDir(template, sytemDir);
+		}
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
