@@ -50,48 +50,46 @@ public class FileWork {
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
-		if (null == is) {
-			return false;
-		} else {
-			if (!outFile.getParentFile().exists()) {
-				outFile.getParentFile().mkdirs();
-			}
-
-			try {
-				outFile.createNewFile();
-				try (FileOutputStream fileOS = new FileOutputStream(outFile)) {
-					int bytesRead;
-					if (isText) {
-						char[] buffer = new char[1024];
-						try (OutputStreamWriter writerOS = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
+		if (null != is) {
+			if (outFile.getParentFile().exists() || outFile.getParentFile().mkdirs()) {
+				try {
+					outFile.createNewFile();
+					try (FileOutputStream fileOS = new FileOutputStream(outFile)) {
+						int bytesRead;
+						if (isText) {
+							char[] buffer = new char[1024];
+							try (OutputStreamWriter writerOS = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
 								InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
-							while ((bytesRead = readerIS.read(buffer)) != -1) {
-								writerOS.write(buffer, 0, bytesRead);
+								while ((bytesRead = readerIS.read(buffer)) != -1) {
+									writerOS.write(buffer, 0, bytesRead);
+								}
+							}
+						} else {
+							byte[] buffer = new byte[1024];
+							while ((bytesRead = is.read(buffer)) != -1) {
+								fileOS.write(buffer, 0, bytesRead);
 							}
 						}
-					} else {
-						byte[] buffer = new byte[1024];
-						while ((bytesRead = is.read(buffer)) != -1) {
-							fileOS.write(buffer, 0, bytesRead);
-						}
 					}
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return false;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return false;
-			} finally {
-				try {
-					is.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					return false;
 				} catch (IOException e) {
 					e.printStackTrace();
+					return false;
+				} finally {
+					try {
+						is.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
 
-			return true;
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static boolean saveRawFile(InputStream is, File outFile) {
@@ -136,7 +134,7 @@ public class FileWork {
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 			Template tmpl = cfg.getTemplate(TemplateFiles.SCO4THEORY.getName(), STANDARD_ENCODING.name());
-			Map<String, String> body = new HashMap<String, String>();
+			Map<String, String> body = new HashMap<>();
 			body.put("page_title", pageTitle);
 			body.put("body_content", buffer.toString());
 			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
@@ -188,8 +186,7 @@ public class FileWork {
 			break;
 		}
 
-		return (byteImage == null) ? false
-				: saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
+		return (byteImage != null) && saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
 	}
 
 	/**
@@ -197,9 +194,9 @@ public class FileWork {
 	 * 
 	 * @param picturesInfo
 	 *            List of picture info
-	 * @param imgsDir
+	 * @param pageImgsDir
 	 *            Absolute directory for saving
-	 * @param sofficeFile
+	 * @param pathToSOffice
 	 *            File for run LibreOffice
 	 * @return true if have not errors
 	 */
