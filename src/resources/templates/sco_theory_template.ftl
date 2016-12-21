@@ -3,9 +3,9 @@
 <head>
   <title>${page_title}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link type="text/css" href="${system_dir}/kurs.css" rel="stylesheet">
-  <script type="text/javascript" src="${system_dir}/APIWrapper.js">-</script>
-  <script type="text/javascript" src="${system_dir}/SCOFunctions.js">-</script>
+  <link type="text/css" href="${system_dir}/${course_css}" rel="stylesheet">
+  <script type="text/javascript" src="${system_dir}/${api_wrapper_js}">-</script>
+  <script type="text/javascript" src="${system_dir}/${sco_functions_js}">-</script>
   <script type="text/javascript"
       src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
