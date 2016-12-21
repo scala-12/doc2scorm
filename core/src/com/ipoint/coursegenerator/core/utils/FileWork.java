@@ -145,6 +145,9 @@ public class FileWork {
 			body.put("page_title", pageTitle);
 			body.put("body_content", buffer.toString());
 			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+			body.put("course_css", TemplateFiles.CSS4THEORY.getName());
+			body.put("api_wrapper_js", TemplateFiles.JS_API_WRAPPER.getName());
+			body.put("sco_functions_js", TemplateFiles.JS_SCO_FUNCTION.getName());
 
 			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
 					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
