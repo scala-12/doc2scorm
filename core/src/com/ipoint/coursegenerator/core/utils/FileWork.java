@@ -41,12 +41,19 @@ public class FileWork {
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
-	static class TemplateFiles {
+	public static class TemplateFiles {
 		private static final String templateDir = "templates";
 		public final static File SCO4THEORY = new File(templateDir, "sco_theory_template.ftl");
 		public final static File SCO4TEST = new File(templateDir, "sco_test_template.ftl");
 		public final static File CSS4THEORY = new File(templateDir, "theory.css");
 		public final static File CSS4TEST = new File(templateDir, "test.css");
+		public final static File JS_API_WRAPPER = new File("templates/js/APIWrapper.js");
+		public final static File JS_SCO_FUNCTION = new File("templates/js/SCOFunctions.js");
+		public final static File JS_PARSER = new File("templates/js/parser.js");
+
+		public final static File[] SYSTEM_FILES = new File[] {
+				CSS4THEORY, CSS4TEST, JS_API_WRAPPER, JS_SCO_FUNCTION, JS_PARSER
+		};
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
