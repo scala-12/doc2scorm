@@ -1,0 +1,85 @@
+p {
+	text-align: justify;
+	width: 70%;
+	margin-left: 115px;
+	line-height: 30px;
+}
+table {
+	padding: 0 0 0 30px;
+	margin: 0 0 30px 0;
+}
+td {
+	border-bottom-width: 1px;
+	border-bottom-color: #660000;
+	border-bottom-style: solid;
+	padding: 10px;
+}
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: medium;
+}
+.button {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFF;
+	background-color: #600;
+}
+input {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #660000;
+}
+select{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #660000;	
+}.seltext {
+	color: #FF0000;
+	font-weight: bold;
+}
+.task {
+	font-weight: bold;
+}
+.question {
+	font-style: italic;
+}
+div.quest_info {
+	width: auto;
+	height: auto;
+	padding: 0 25px;
+}
+div.quest_info_item {
+	text-align:center;
+	width:100%;
+}
+div.quest_info_item > * {
+	text-align: justify;
+	width: 90%;
+	margin: auto;	
+}
+div.quest_info_item > div {
+	border: 2px inset;
+	padding: 2px 0;
+}
+div.quest_comment {
+	margin-top:15px;
+	width:100%;
+}
+#end_test_msg {
+	border: thin solid #660033;
+	background-color: #99ccff;
+}
+#end_test_msg h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: x-large;
+	color: #333399;
+	text-align: center;
+}
+#error_count {
+	color:#FF0000;
+}
+#test_results {
+	width: 100%;
+}

@@ -41,6 +41,13 @@ public class FileWork {
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
+	static class TemplateFiles {
+		private static final String templateDir = "templates";
+		public final static File SCO4THEORY = new File(templateDir, "sco_theory_template.ftl");
+		public final static File SCO4TEST = new File(templateDir, "sco_test_template.ftl");
+		public final static File CSS4THEORY = new File(templateDir, "theory.css");
+		public final static File CSS4TEST = new File(templateDir, "test.css");
+	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
 		if (null == is) {
@@ -125,10 +132,10 @@ public class FileWork {
 				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
 			}
 			Configuration cfg = new Configuration();
-			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), "templates/html");
+			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), TemplateFiles.SCO4THEORY.getParent());
 			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
-			Template tmpl = cfg.getTemplate("index.ftl", STANDARD_ENCODING.name());
+			Template tmpl = cfg.getTemplate(TemplateFiles.SCO4THEORY.getName(), STANDARD_ENCODING.name());
 			Map<String, String> body = new HashMap<String, String>();
 			body.put("page_title", pageTitle);
 			body.put("body_content", buffer.toString());
