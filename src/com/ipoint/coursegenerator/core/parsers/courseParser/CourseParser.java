@@ -60,64 +60,62 @@ public class CourseParser extends AbstractParser {
 				.getMathMLFromDocStream(stream,
 						StandardCharsets.ISO_8859_1.displayName());
 
-		if (mathML != null) {
-			ArrayList<Node> mathMLList = new ArrayList<Node>();
-			mathML = mathML.replace("\n", "");
-			int pos = mathML.indexOf("<", 0);
-			while (pos != -1) {
-				int oldLenght = mathML.length();
-				mathML = mathML.substring(0, pos).trim()
-						+ mathML.substring(pos);
-				pos = mathML.indexOf("<", pos - (oldLenght - mathML.length())
-						+ 1);
-			}
+		ArrayList<Node> mathMLList = new ArrayList<>();
+		mathML = mathML.replace("\n", "");
+		int pos = mathML.indexOf("<", 0);
+		while (pos != -1) {
+			int oldLenght = mathML.length();
+			mathML = mathML.substring(0, pos).trim()
+					+ mathML.substring(pos);
+			pos = mathML.indexOf("<", pos - (oldLenght - mathML.length())
+					+ 1);
+		}
 
-			pos = mathML.lastIndexOf(">");
-			while (pos != -1) {
-				int oldLenght = mathML.length();
-				mathML = mathML.substring(0, pos).trim()
-						+ mathML.substring(pos);
-				pos = mathML.lastIndexOf(">",
-						pos - (oldLenght - mathML.length()) - 1);
-			}
+		pos = mathML.lastIndexOf(">");
+		while (pos != -1) {
+			int oldLenght = mathML.length();
+			mathML = mathML.substring(0, pos).trim()
+					+ mathML.substring(pos);
+			pos = mathML.lastIndexOf(">",
+					pos - (oldLenght - mathML.length()) - 1);
+		}
 
-			if (!mathML.equalsIgnoreCase(MATH_START + MATH_END)) {
-				mathML = replaceSpecialSymbols(mathML);
+		if (!mathML.equalsIgnoreCase(MATH_START + MATH_END)) {
+			mathML = replaceSpecialSymbols(mathML);
 
-				String[] mathParts = mathML
-						.split("<mspace linebreak='newline'/>");
-				String prefix = new String();
-				String suffix = "</math>";
-				int count = mathParts.length - 1;
-				for (int i = 0; i < mathParts.length; ++i) {
-					if (i == count) {
-						suffix = new String();
-					}
-
-					try {
-						Node mathMLNode = DocumentBuilderFactory
-								.newInstance()
-								.newDocumentBuilder()
-								.parse(new InputSource(new StringReader(prefix
-										+ mathParts[i] + suffix)))
-								.getDocumentElement();
-
-						normalizeNodes(mathMLNode.getChildNodes());
-						mathMLList.add(mathMLNode);
-					} catch (SAXException | IOException
-							| ParserConfigurationException e) {
-						System.err.println("Error : Cannot converting "
-								+ mathParts[i] + " in MathML element!");
-						e.printStackTrace();
-					}
-
-					if (i == 0) {
-						prefix = "<math>";
-					}
+			String[] mathParts = mathML
+					.split("<mspace linebreak='newline'/>");
+			String prefix = "";
+			String suffix = "</math>";
+			int count = mathParts.length - 1;
+			for (int i = 0; i < mathParts.length; ++i) {
+				if (i == count) {
+					suffix = "";
 				}
 
-				return mathMLList;
+				try {
+					Node mathMLNode = DocumentBuilderFactory
+							.newInstance()
+							.newDocumentBuilder()
+							.parse(new InputSource(new StringReader(prefix
+									+ mathParts[i] + suffix)))
+							.getDocumentElement();
+
+					normalizeNodes(mathMLNode.getChildNodes());
+					mathMLList.add(mathMLNode);
+				} catch (SAXException | IOException
+						| ParserConfigurationException e) {
+					System.err.println("Error : Cannot converting "
+							+ mathParts[i] + " in MathML element!");
+					e.printStackTrace();
+				}
+
+				if (i == 0) {
+					prefix = "<math>";
+				}
 			}
+
+			return mathMLList;
 		}
 
 		return null;
@@ -182,8 +180,6 @@ public class CourseParser extends AbstractParser {
 	 *            Model of course
 	 * @param levelTitle
 	 *            Title of course part
-	 * @param levelMap
-	 *            Map of course parts
 	 * @param headerLevel
 	 *            Current level of header
 	 * @return node of course model
@@ -198,7 +194,7 @@ public class CourseParser extends AbstractParser {
 			// have new level
 			if (this.levelMap.size() > headerLevel) {
 				// up level
-				ArrayList<Integer> newMap = new ArrayList<Integer>();
+				ArrayList<Integer> newMap = new ArrayList<>();
 				newMap.addAll(this.levelMap.subList(0, headerLevel - 1));
 				newMap.add(this.levelMap.get(headerLevel - 1) + 1);
 				this.levelMap = newMap; // remove extra
@@ -248,8 +244,8 @@ public class CourseParser extends AbstractParser {
 	/**
 	 * Parsing to {@link CourseModel} from {@link XWPFDocument}
 	 * 
-	 * @param document
-	 *            Course as document MS Word
+	 * @param stream
+	 *            Document MS Word as stream
 	 * @param courseName
 	 *            Course name
 	 * @param maxHeaderLevel
@@ -267,7 +263,7 @@ public class CourseParser extends AbstractParser {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			byte[] buf = new byte[1024];
-			int n = 0;
+			int n;
 			while ((n = stream.read(buf)) >= 0)
 				baos.write(buf, 0, n);
 			byte[] content = baos.toByteArray();
@@ -278,12 +274,12 @@ public class CourseParser extends AbstractParser {
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(
 					content));
 
-			courseModel = new CourseModel(
-					((courseName == null) || courseName.isEmpty()) ? courseName = "course"
-							+ stream.hashCode()
-							: courseName);
+			if ((courseName == null) || courseName.isEmpty()) {
+				courseName = "course" + stream.hashCode();
+			}
+			courseModel = new CourseModel(courseName);
 
-			this.levelMap = new ArrayList<Integer>();
+			this.levelMap = new ArrayList<>();
 			CoursePage page = new CoursePage();
 			for (int i = 0; i < document.getBodyElements().size(); i++) {
 				IBodyElement bodyElement = document.getBodyElements().get(i);
