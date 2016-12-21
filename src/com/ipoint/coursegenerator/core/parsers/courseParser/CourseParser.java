@@ -44,7 +44,7 @@ public class CourseParser extends AbstractParser {
 
 	private static final String MATH_END = MATH_START.replace("<", "</");
 
-	private ArrayList<Integer> levelMap;
+	private ArrayList<Integer> pathToHeader;
 
 	/**
 	 * Returns all formulas in MathML notation from OMML formuls of
@@ -186,23 +186,23 @@ public class CourseParser extends AbstractParser {
 	 */
 	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel,
 			String levelTitle, int headerLevel) {
-		if (this.levelMap.size() == headerLevel) {
+		if (this.pathToHeader.size() == headerLevel) {
 			// current level is now,
-			this.levelMap.set(this.levelMap.size() - 1,
-					this.levelMap.get(this.levelMap.size() - 1) + 1);
+			this.pathToHeader.set(this.pathToHeader.size() - 1,
+					this.pathToHeader.get(this.pathToHeader.size() - 1) + 1);
 		} else {
 			// have new level
-			if (this.levelMap.size() > headerLevel) {
+			if (this.pathToHeader.size() > headerLevel) {
 				// up level
 				ArrayList<Integer> newMap = new ArrayList<>();
-				newMap.addAll(this.levelMap.subList(0, headerLevel - 1));
-				newMap.add(this.levelMap.get(headerLevel - 1) + 1);
-				this.levelMap = newMap; // remove extra
+				newMap.addAll(this.pathToHeader.subList(0, headerLevel - 1));
+				newMap.add(this.pathToHeader.get(headerLevel - 1) + 1);
+				this.pathToHeader = newMap; // remove extra
 				// levels
 			} else {
 				// down level
-				while (this.levelMap.size() < headerLevel) {
-					this.levelMap.add(0); // create new
+				while (this.pathToHeader.size() < headerLevel) {
+					this.pathToHeader.add(0); // create new
 											// levels
 				}
 			}
@@ -210,7 +210,7 @@ public class CourseParser extends AbstractParser {
 
 		// search node of level in document tree
 		CourseTreeNode treeNode = null;
-		for (Integer lvl : this.levelMap) {
+		for (Integer lvl : this.pathToHeader) {
 			if (treeNode == null) {
 				// start node
 				if (courseModel.getNode(lvl) == null) {
@@ -279,7 +279,7 @@ public class CourseParser extends AbstractParser {
 			}
 			courseModel = new CourseModel(courseName);
 
-			this.levelMap = new ArrayList<>();
+			this.pathToHeader = new ArrayList<>();
 			CoursePage page = new CoursePage();
 			for (int i = 0; i < document.getBodyElements().size(); i++) {
 				IBodyElement bodyElement = document.getBodyElements().get(i);
