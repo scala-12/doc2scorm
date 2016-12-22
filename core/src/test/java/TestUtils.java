@@ -122,7 +122,7 @@ public class TestUtils {
 	public static List<XWPFParagraph> getHeaderParagraphs() {
 		if (HEADERS == null) {
 			HEADERS = getOnlyTextParagraphs().stream()
-					.filter(par -> HeaderParser.getHeaderLevel(par) != null)
+					.filter(par -> HeaderParser.HeaderInfo.isHeader(par))
 					.collect(Collectors.toList());
 		}
 
