@@ -162,8 +162,8 @@ public class Parser {
 				this.addScoToManifest(manifest, manifestItem, htmlFile, item.getPage().getImages());
 			}
 
-			if (!item.getNodes().isEmpty()) {
-				this.saveCourse(item.getNodes(), manifest, courseDir, manifestItem);
+			if (!item.getChilds().isEmpty()) {
+				this.saveCourse(item.getChilds(), manifest, courseDir, manifestItem);
 			}
 		}
 	}
@@ -182,8 +182,8 @@ public class Parser {
 
 		ManifestDocument manifest = this.createImsManifestFile(courseName);
 
-		if (!courseModel.getNodes().isEmpty()) {
-			this.saveCourse(courseModel.getNodes(), manifest.getManifest(), directory,
+		if (!courseModel.getChilds().isEmpty()) {
+			this.saveCourse(courseModel.getChilds(), manifest.getManifest(), directory,
 					manifest.getManifest().getOrganizations());
 		}
 

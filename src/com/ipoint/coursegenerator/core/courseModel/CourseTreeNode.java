@@ -3,11 +3,11 @@ package com.ipoint.coursegenerator.core.courseModel;
 /**
  * Node of tree. These may includes one page.
  * 
- * @see CourseTree
+ * @see AbstractThreeNode
  * @author Kalashnikov Vladislav
  *
  */
-public class CourseTreeNode extends CourseTree {
+public class CourseTreeNode extends AbstractThreeNode {
 
 	private CoursePage page;
 

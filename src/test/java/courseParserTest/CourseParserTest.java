@@ -52,15 +52,15 @@ public class CourseParserTest {
 		if (!courseName.isEmpty()) {
 			assertEquals(courseModel.getTitle(), courseName);
 		}
-		assertFalse(courseModel.getNodes().isEmpty());
+		assertFalse(courseModel.getChilds().isEmpty());
 	}
 
 	@Test
 	@Ignore
 	public void hasExtraLevels() {
 		boolean hasChilds = false;
-		for (CourseTreeNode node : this.courseModel.getNodes()) {
-			hasChilds = hasChilds || !node.getNodes().isEmpty();
+		for (CourseTreeNode node : this.courseModel.getChilds()) {
+			hasChilds = hasChilds || !node.getChilds().isEmpty();
 		}
 	}
 }
