@@ -210,18 +210,18 @@ public class CourseParser extends AbstractParser {
 		for (Integer lvl : this.pathToHeader) {
 			if (treeNode == null) {
 				// start node
-				if (courseModel.getNode(lvl) == null) {
+				if (courseModel.getChild(lvl) == null) {
 					// new node
-					courseModel.addNode(new CourseTreeNode(headerInfo.getTitle()));
+					courseModel.addChild(new CourseTreeNode(headerInfo.getTitle()));
 				}
-				treeNode = courseModel.getNode(lvl);
+				treeNode = courseModel.getChild(lvl);
 			} else {
 				// other nodes
-				if (treeNode.getNode(lvl) == null) {
+				if (treeNode.getChild(lvl) == null) {
 					// new node
-					treeNode.addNode(new CourseTreeNode(headerInfo.getTitle()));
+					treeNode.addChild(new CourseTreeNode(headerInfo.getTitle()));
 				}
-				treeNode = treeNode.getNodes().get(lvl);
+				treeNode = treeNode.getChilds().get(lvl);
 			}
 		}
 
@@ -271,9 +271,6 @@ public class CourseParser extends AbstractParser {
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(
 					content));
 
-			if ((courseName == null) || courseName.isEmpty()) {
-				courseName = "course" + stream.hashCode();
-			}
 			courseModel = new CourseModel(courseName);
 
 			this.pathToHeader = new ArrayList<>();

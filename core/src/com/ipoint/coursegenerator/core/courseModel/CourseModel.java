@@ -2,12 +2,12 @@ package com.ipoint.coursegenerator.core.courseModel;
 
 
 /**
- * Model of course document with {@link CourseTree}.
+ * Model of course document with {@link AbstractThreeNode}.
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class CourseModel extends CourseTree {
+public class CourseModel extends AbstractThreeNode {
 
 	/**
 	 * id of div with content of page
@@ -17,29 +17,16 @@ public class CourseModel extends CourseTree {
 
 	public CourseModel(String courseName) {
 		super();
-		this.title = courseName;
+		this.setTitle(courseName);
 	}
 
 	public String getTitle() {
 		return this.title;
 	}
 
-	/**
-	 * Change course title
-	 * 
-	 * @param title
-	 *            New title of course. If it is null then return false
-	 * @return If successful then true
-	 */
-	public boolean setTitle(String title) {
-		if (title != null) {
-			if (!title.isEmpty()) {
-				this.title = title;
-				return true;
-			}
-		}
-
-		return false;
+	public void setTitle(String title) {
+		this.title = ((title == null) || title.isEmpty()) ? "course_" + String.valueOf(this.hashCode())
+				: title;
 	}
 
 }
