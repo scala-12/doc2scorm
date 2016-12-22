@@ -1,6 +1,7 @@
 package test.java.courseParserTest.paragraphsTest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser
+		.HeaderInfo;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -90,11 +93,11 @@ public class ParagraphParserTest {
 	public void parseHeaderParagraphs() {
 		for (XWPFParagraph par : TestUtils.getOnlyTextParagraphs()) {
 			if (TestUtils.getHeaderParagraphs().contains(par)) {
+				assertTrue(HeaderInfo.isHeader(par));
 				HeaderBlock block = HeaderParser.parse(par, 0);
-				assertNotNull(block);
 				assertEquals(par.getText(), block.getText());
 			} else {
-				assertNull(HeaderParser.parse(par, 0));
+				assertFalse(HeaderParser.HeaderInfo.isHeader(par));
 			}
 		}
 	}

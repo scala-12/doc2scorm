@@ -12,11 +12,12 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser
+		.HeaderInfo;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -178,30 +179,26 @@ public class CourseParser extends AbstractParser {
 	 * 
 	 * @param courseModel
 	 *            Model of course
-	 * @param levelTitle
-	 *            Title of course part
-	 * @param headerLevel
-	 *            Current level of header
 	 * @return node of course model
 	 */
 	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel,
-			String levelTitle, int headerLevel) {
-		if (this.pathToHeader.size() == headerLevel) {
+			HeaderInfo headerInfo) {
+		if (this.pathToHeader.size() == headerInfo.getLevel()) {
 			// current level is now,
 			this.pathToHeader.set(this.pathToHeader.size() - 1,
 					this.pathToHeader.get(this.pathToHeader.size() - 1) + 1);
 		} else {
 			// have new level
-			if (this.pathToHeader.size() > headerLevel) {
+			if (this.pathToHeader.size() > headerInfo.getLevel()) {
 				// up level
 				ArrayList<Integer> newMap = new ArrayList<>();
-				newMap.addAll(this.pathToHeader.subList(0, headerLevel - 1));
-				newMap.add(this.pathToHeader.get(headerLevel - 1) + 1);
+				newMap.addAll(this.pathToHeader.subList(0, headerInfo.getLevel() - 1));
+				newMap.add(this.pathToHeader.get(headerInfo.getLevel() - 1) + 1);
 				this.pathToHeader = newMap; // remove extra
 				// levels
 			} else {
 				// down level
-				while (this.pathToHeader.size() < headerLevel) {
+				while (this.pathToHeader.size() < headerInfo.getLevel()) {
 					this.pathToHeader.add(0); // create new
 											// levels
 				}
@@ -215,14 +212,14 @@ public class CourseParser extends AbstractParser {
 				// start node
 				if (courseModel.getNode(lvl) == null) {
 					// new node
-					courseModel.addNode(new CourseTreeNode(levelTitle));
+					courseModel.addNode(new CourseTreeNode(headerInfo.getTitle()));
 				}
 				treeNode = courseModel.getNode(lvl);
 			} else {
 				// other nodes
 				if (treeNode.getNode(lvl) == null) {
 					// new node
-					treeNode.addNode(new CourseTreeNode(levelTitle));
+					treeNode.addNode(new CourseTreeNode(headerInfo.getTitle()));
 				}
 				treeNode = treeNode.getNodes().get(lvl);
 			}
@@ -243,7 +240,7 @@ public class CourseParser extends AbstractParser {
 
 	/**
 	 * Parsing to {@link CourseModel} from {@link XWPFDocument}
-	 * 
+	 *
 	 * @param stream
 	 *            Document MS Word as stream
 	 * @param courseName
@@ -283,35 +280,28 @@ public class CourseParser extends AbstractParser {
 			CoursePage page = new CoursePage();
 			for (int i = 0; i < document.getBodyElements().size(); i++) {
 				IBodyElement bodyElement = document.getBodyElements().get(i);
-				Integer headLevel = null;
+				HeaderInfo headerInfo = null;
 				if (bodyElement.getElementType().equals(
 						BodyElementType.PARAGRAPH)) {
 					XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 
-					if (!paragraph.getRuns().isEmpty()) {
-						// search header
-						if ((paragraph.getStyleID() != null)
-								&& !isEmptyRuns(paragraph.getRuns())) {
-							headLevel = HeaderParser.getHeaderLevel(paragraph);
-							if (headLevel != null) {// This it is header
-								if (headLevel <= maxHead) {
-									if (!page.getBlocks().isEmpty()) {
-										// new page because prev node have old
-										// page
-										page = new CoursePage();
-									}
-
-									// set page to node
-									this.getOrCreateCourseNode(courseModel,
-											paragraph.getText(), headLevel)
-											.setPage(page);
-								}
+					if (HeaderInfo.isHeader(paragraph)) {
+						headerInfo = new HeaderParser.HeaderInfo(paragraph);
+						if (headerInfo.getLevel() <= maxHead) {
+							if (!page.getBlocks().isEmpty()) {
+								// new page because prev node have old
+								// page
+								page = new CoursePage();
 							}
+
+							// set page to node
+							this.getOrCreateCourseNode(courseModel, headerInfo)
+									.setPage(page);
 						}
 					}
 				}
 
-				if (headLevel == null) {
+				if (headerInfo == null) {
 					AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
 							.parse(bodyElement, mathInfo);
 
@@ -327,7 +317,7 @@ public class CourseParser extends AbstractParser {
 					if (paragraphBlock != null) {
 						page.addBlock(paragraphBlock);
 					}
-				} else if (headLevel > maxHead) {
+				} else if (headerInfo.getLevel() > maxHead) {
 					HeaderBlock paragraphBlock = HeaderParser.parse(
 							(XWPFParagraph) document.getBodyElements().get(i),
 							maxHead);
@@ -344,15 +334,6 @@ public class CourseParser extends AbstractParser {
 		}
 
 		return courseModel;
-	}
-
-	private boolean isEmptyRuns(List<XWPFRun> runs) {
-		boolean isEmptyRuns = true;
-		for (int i = 0; (i < runs.size()) && isEmptyRuns; ++i) {
-			isEmptyRuns = runs.get(i).toString().trim().isEmpty();
-		}
-
-		return isEmptyRuns;
 	}
 
 }
