@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.ipoint.coursegenerator.core.courseModel.AbstractThreeNode;
+import com.ipoint.coursegenerator.core.courseModel.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser
 		.HeaderInfo;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
@@ -227,7 +227,7 @@ public class CourseParser extends AbstractParser {
 
 			int lastHeaderNum = trueHeaders.size() - 1;
 			int lastDocElemNum = document.getBodyElements().size() - 1;
-			AbstractThreeNode currentNode = null;
+			AbstractTreeNode currentNode = null;
 			int currentDepth = HeaderInfo.TOP_LEVEL;
 			int realDepth = currentDepth;
 
