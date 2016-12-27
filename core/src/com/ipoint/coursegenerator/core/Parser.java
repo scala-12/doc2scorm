@@ -3,10 +3,7 @@ package com.ipoint.coursegenerator.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -126,7 +123,7 @@ public class Parser {
 	}
 
 	private void addScoToManifest(ManifestType manifest, ItemType manifestItem, File htmlFile,
-			List<PictureInfo> images) {
+			Set<PictureInfo> images) {
 		ResourceType itemResource = ResourcesProcessor.createScoResource(manifest, htmlFile,
 				manifestItem.getIdentifierref());
 		List<String> imagesNames = images.stream().map(image -> image.getName()).collect(Collectors.toList());
