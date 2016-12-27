@@ -178,7 +178,7 @@ public class Parser {
 		}
 		directory.mkdirs();
 
-		CourseModel courseModel = new CourseParser().parse(stream, courseName, headerLevel);
+		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
 
 		ManifestDocument manifest = this.createImsManifestFile(courseName);
 

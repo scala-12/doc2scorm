@@ -5,33 +5,49 @@ import java.util.List;
 
 /**
  * Tree as list of nodes that may includes several {@link CourseTreeNode}
- * 
- * 
+ *
+ *
  * @author Kalashnikov Vladislav
  *
  */
 public abstract class AbstractThreeNode {
 
 	private ArrayList<CourseTreeNode> childs;
+	protected AbstractThreeNode parent;
 
 	public AbstractThreeNode() {
 		this.childs = new ArrayList<>();
+		this.parent = null;
 	}
 
-	/**
-	 * Method for adding node in tree on this level
-	 * 
-	 * @param node
-	 *            Node for adding. If it is null then return false
-	 * @return If successful then true
-	 */
-	public boolean addChild(CourseTreeNode node) {
-		if (node == null) {
-			return false;
-		} else {
-			this.childs.add(node);
+	public AbstractThreeNode createChild(String title) {
+		CourseTreeNode child = new CourseTreeNode(title);
+		this.childs.add(child);
+		child.parent = this;
+
+		return child;
+	}
+
+	public AbstractThreeNode createAfter(String title) {
+		CourseTreeNode child = new CourseTreeNode(title);
+		this.parent.childs.add(child);
+		child.parent = this.parent;
+
+		return child;
+	}
+
+	public boolean removeChild(CourseTreeNode node) {
+		if (this.childs.remove(node)) {
+			node.parent = null;
+
 			return true;
 		}
+
+		return false;
+	}
+
+	public AbstractThreeNode getParent() {
+		return this.parent;
 	}
 
 	public CourseTreeNode getChild(int index) {
@@ -40,7 +56,7 @@ public abstract class AbstractThreeNode {
 	}
 
 	public List<CourseTreeNode> getChilds() {
-		return this.childs;
+		return new ArrayList<>(this.childs);
 	}
 
 }
