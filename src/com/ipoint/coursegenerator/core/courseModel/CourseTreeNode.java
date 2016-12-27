@@ -53,29 +53,26 @@ public class CourseTreeNode extends AbstractThreeNode {
 	 * @return If successful then false
 	 */
 	public boolean setTitle(String title) {
-		if (title != null) {
-			if (!title.isEmpty()) {
-				this.title = title;
-				return true;
-			}
+		if ((title != null) && !title.isEmpty()) {
+			this.title = title;
+
+			return true;
 		}
 
 		return false;
 	}
 
 	public void setPage(CoursePage page) {
-		if (page != null) {
-			if ((page.getParent() != this) || (page.getParent() == null)) {
-				// because class CoursePage have call of this method
-				// method that below need for set link between page and node
-				page.setParent(this);
-			}
+		if ((page != null) && ((page.getParent() != this) || (page.getParent() == null))) {
+			// because class CoursePage have call of this method
+			// method that below need for set link between page and node
+			page.setParent(this);
 		}
-		if (this.page != page) {
-			if ((this.page != null) && (page != null)) {
-				this.page.setParent(null);
-			}
+
+		if ((this.page != page) && (this.page != null) && (page != null)) {
+			this.page.setParent(null);
 		}
+
 		this.page = page;
 	}
 

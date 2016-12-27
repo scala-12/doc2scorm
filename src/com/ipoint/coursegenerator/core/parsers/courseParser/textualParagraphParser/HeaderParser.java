@@ -26,7 +26,7 @@ public class HeaderParser extends ParagraphParser {
 		private String title;
 		private boolean theoryType;
 
-		private static final int TOP_LEVEL = 1;
+		public static final int TOP_LEVEL = 1;
 
 		private static boolean isEmptyRuns(List<XWPFRun> runs) {
 			boolean isEmptyRuns = true;
