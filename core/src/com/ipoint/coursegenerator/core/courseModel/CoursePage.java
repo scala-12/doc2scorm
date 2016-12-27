@@ -34,9 +34,13 @@ public class CoursePage implements Convertable {
 
 	private CourseTreeNode parentNode;
 
-	public CoursePage() {
+	private CoursePage(CourseTreeNode parentNode) {
 		this.blocks = new ArrayList<>();
-		this.parentNode = null;
+		this.setParent(parentNode);
+	}
+
+	public static CoursePage createEmptyPage() {
+		return new CoursePage(null);
 	}
 
 	public AbstractBlock<?> getBlock(int index) {
@@ -61,6 +65,10 @@ public class CoursePage implements Convertable {
 			this.blocks.add(block);
 			return true;
 		}
+	}
+
+	public boolean addBlocks(List<AbstractParagraphBlock<?>> blocks) {
+		return this.blocks.addAll(blocks);
 	}
 
 	/**

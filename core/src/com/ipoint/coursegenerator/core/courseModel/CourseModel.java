@@ -15,9 +15,13 @@ public class CourseModel extends AbstractThreeNode {
 
 	private String title;
 
-	public CourseModel(String courseName) {
+	private CourseModel(String courseName) {
 		super();
 		this.setTitle(courseName);
+	}
+
+	public static CourseModel createEmptyCourseModel(String courseName) {
+		return new CourseModel(courseName);
 	}
 
 	public String getTitle() {

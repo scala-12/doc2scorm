@@ -35,7 +35,7 @@ import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPars
 
 /**
  * Class for parsing to {@link CourseModel}
- * 
+ *
  * @author Kalashnikov Vladislav
  *
  */
@@ -50,7 +50,7 @@ public class CourseParser extends AbstractParser {
 	/**
 	 * Returns all formulas in MathML notation from OMML formuls of
 	 * docx-document
-	 * 
+	 *
 	 * @param stream
 	 *            Docx document stream
 	 * @return formulas in MathML notation
@@ -124,7 +124,7 @@ public class CourseParser extends AbstractParser {
 
 	/**
 	 * Replace escaped characters
-	 * 
+	 *
 	 * @param nodes
 	 *            Nodes with replaced escaped characters
 	 */
@@ -146,7 +146,7 @@ public class CourseParser extends AbstractParser {
 
 	/**
 	 * Escaping characters: &, ', "
-	 * 
+	 *
 	 * @param str
 	 *            String for Escaping string
 	 * @return Escaped string
@@ -176,13 +176,13 @@ public class CourseParser extends AbstractParser {
 	/**
 	 * Returns node of course model with using level map. If model don't
 	 * includes node then he will be created.
-	 * 
+	 *
 	 * @param courseModel
 	 *            Model of course
 	 * @return node of course model
 	 */
 	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel,
-			HeaderInfo headerInfo) {
+												 HeaderInfo headerInfo) {
 		if (this.pathToHeader.size() == headerInfo.getLevel()) {
 			// current level is now,
 			this.pathToHeader.set(this.pathToHeader.size() - 1,
@@ -200,7 +200,7 @@ public class CourseParser extends AbstractParser {
 				// down level
 				while (this.pathToHeader.size() < headerInfo.getLevel()) {
 					this.pathToHeader.add(0); // create new
-											// levels
+					// levels
 				}
 			}
 		}
@@ -252,7 +252,7 @@ public class CourseParser extends AbstractParser {
 	 * @return {@link CourseModel} of course
 	 */
 	public CourseModel parse(InputStream stream, String courseName,
-			int maxHeaderLevel) {
+							 int maxHeaderLevel) {
 
 		CourseModel courseModel = null;
 		int maxHead = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
@@ -271,10 +271,10 @@ public class CourseParser extends AbstractParser {
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(
 					content));
 
-			courseModel = new CourseModel(courseName);
+			courseModel = CourseModel.createEmptyCourseModel(courseName);
 
 			this.pathToHeader = new ArrayList<>();
-			CoursePage page = new CoursePage();
+			CoursePage page = CoursePage.createEmptyPage();
 			for (int i = 0; i < document.getBodyElements().size(); i++) {
 				IBodyElement bodyElement = document.getBodyElements().get(i);
 				HeaderInfo headerInfo = null;
@@ -288,7 +288,7 @@ public class CourseParser extends AbstractParser {
 							if (!page.getBlocks().isEmpty()) {
 								// new page because prev node have old
 								// page
-								page = new CoursePage();
+								page = CoursePage.createEmptyPage();
 							}
 
 							// set page to node
