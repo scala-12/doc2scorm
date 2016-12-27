@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.ipoint.coursegenerator.core.courseModel.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.CoursePage;
+import com.ipoint.coursegenerator.core.courseModel.TheoryContent;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
@@ -294,7 +294,7 @@ public class CourseParser extends AbstractParser {
 					}
 
 					if (!contentBlocks.isEmpty()) {
-						CoursePage page = CoursePage.createEmptyPage((CourseTreeNode) currentNode);
+						TheoryContent page = TheoryContent.createEmptyPage((CourseTreeNode) currentNode);
 						page.addBlocks(contentBlocks);
 					}
 				}
