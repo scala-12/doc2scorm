@@ -8,14 +8,15 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.ipoint.coursegenerator.core.courseModel.AbstractThreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser
 		.HeaderInfo;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
-import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Node;
@@ -28,7 +29,6 @@ import com.ipoint.coursegenerator.core.courseModel.CoursePage;
 import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.HeaderBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
@@ -44,8 +44,6 @@ public class CourseParser extends AbstractParser {
 	private static final String MATH_START = "<math>";
 
 	private static final String MATH_END = MATH_START.replace("<", "</");
-
-	private ArrayList<Integer> pathToHeader;
 
 	/**
 	 * Returns all formulas in MathML notation from OMML formuls of
@@ -173,61 +171,6 @@ public class CourseParser extends AbstractParser {
 		return str;
 	}
 
-	/**
-	 * Returns node of course model with using level map. If model don't
-	 * includes node then he will be created.
-	 *
-	 * @param courseModel
-	 *            Model of course
-	 * @return node of course model
-	 */
-	private CourseTreeNode getOrCreateCourseNode(CourseModel courseModel,
-												 HeaderInfo headerInfo) {
-		if (this.pathToHeader.size() == headerInfo.getLevel()) {
-			// current level is now,
-			this.pathToHeader.set(this.pathToHeader.size() - 1,
-					this.pathToHeader.get(this.pathToHeader.size() - 1) + 1);
-		} else {
-			// have new level
-			if (this.pathToHeader.size() > headerInfo.getLevel()) {
-				// up level
-				ArrayList<Integer> newMap = new ArrayList<>();
-				newMap.addAll(this.pathToHeader.subList(0, headerInfo.getLevel() - 1));
-				newMap.add(this.pathToHeader.get(headerInfo.getLevel() - 1) + 1);
-				this.pathToHeader = newMap; // remove extra
-				// levels
-			} else {
-				// down level
-				while (this.pathToHeader.size() < headerInfo.getLevel()) {
-					this.pathToHeader.add(0); // create new
-					// levels
-				}
-			}
-		}
-
-		// search node of level in document tree
-		CourseTreeNode treeNode = null;
-		for (Integer lvl : this.pathToHeader) {
-			if (treeNode == null) {
-				// start node
-				if (courseModel.getChild(lvl) == null) {
-					// new node
-					courseModel.addChild(new CourseTreeNode(headerInfo.getTitle()));
-				}
-				treeNode = courseModel.getChild(lvl);
-			} else {
-				// other nodes
-				if (treeNode.getChild(lvl) == null) {
-					// new node
-					treeNode.addChild(new CourseTreeNode(headerInfo.getTitle()));
-				}
-				treeNode = treeNode.getChilds().get(lvl);
-			}
-		}
-
-		return treeNode;
-	}
-
 	public static MathInfo getAllFormulsAsMathML(InputStream docAsStream) {
 		MathInfo mathInfo = null;
 		List<Node> mathMLNodes = getMathMLFromDocStream(docAsStream);
@@ -251,13 +194,14 @@ public class CourseParser extends AbstractParser {
 	 *            first level
 	 * @return {@link CourseModel} of course
 	 */
-	public CourseModel parse(InputStream stream, String courseName,
-							 int maxHeaderLevel) {
+	public static CourseModel parse(InputStream stream, String courseName,
+									int maxHeaderLevel) {
 
 		CourseModel courseModel = null;
-		int maxHead = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
+		int maxHeader = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
 
 		try {
+			//We need in 2 independent Input streams for MathML and XWPFDocument
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			byte[] buf = new byte[1024];
 			int n;
@@ -273,54 +217,85 @@ public class CourseParser extends AbstractParser {
 
 			courseModel = CourseModel.createEmptyCourseModel(courseName);
 
-			this.pathToHeader = new ArrayList<>();
-			CoursePage page = CoursePage.createEmptyPage();
-			for (int i = 0; i < document.getBodyElements().size(); i++) {
-				IBodyElement bodyElement = document.getBodyElements().get(i);
-				HeaderInfo headerInfo = null;
-				if (bodyElement.getElementType().equals(
-						BodyElementType.PARAGRAPH)) {
-					XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
+			List<XWPFParagraph> trueHeaders = document.getBodyElements().stream()
+					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH)
+							&& HeaderParser.HeaderInfo.isHeader((XWPFParagraph) elem)
+							&& (new HeaderInfo((XWPFParagraph) elem).getLevel() <= maxHeader)
+					)
+					.map(elem -> (XWPFParagraph) elem)
+					.collect(Collectors.toList());
 
-					if (HeaderInfo.isHeader(paragraph)) {
-						headerInfo = new HeaderParser.HeaderInfo(paragraph);
-						if (headerInfo.getLevel() <= maxHead) {
-							if (!page.getBlocks().isEmpty()) {
-								// new page because prev node have old
-								// page
-								page = CoursePage.createEmptyPage();
-							}
+			int lastHeaderNum = trueHeaders.size() - 1;
+			int lastDocElemNum = document.getBodyElements().size() - 1;
+			AbstractThreeNode currentNode = null;
+			int currentDepth = HeaderInfo.TOP_LEVEL;
+			int realDepth = currentDepth;
 
-							// set page to node
-							this.getOrCreateCourseNode(courseModel, headerInfo)
-									.setPage(page);
-						}
+			for (int headerNum = 0; headerNum < trueHeaders.size(); headerNum++) {
+				XWPFParagraph header = trueHeaders.get(headerNum);
+				HeaderInfo headerInfo = new HeaderInfo(header);
+
+				if ((currentNode == null) || (headerInfo.getLevel() == HeaderInfo.TOP_LEVEL)) {
+					currentNode = courseModel.createChild(headerInfo.getTitle());
+					currentDepth = HeaderInfo.TOP_LEVEL;
+					realDepth = currentDepth;
+				} else {
+					if (headerInfo.getLevel() < currentDepth) {
+						currentNode = currentNode.getParent().createAfter(headerInfo.getTitle());
+						currentDepth--;
+					} else if (headerInfo.getLevel() > realDepth) {
+						currentNode = currentNode.createChild(headerInfo.getTitle());
+						currentDepth++;
+					} else {
+						currentNode = currentNode.createAfter(headerInfo.getTitle());
 					}
+
+					realDepth = headerInfo.getLevel();
 				}
 
-				if (headerInfo == null) {
-					AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
-							.parse(bodyElement, mathInfo);
+				int absParNum = document.getBodyElements().indexOf(header);
+				ArrayList<XWPFParagraph> contentPars = new ArrayList<>();
+				if ((absParNum != lastDocElemNum)) {
+					contentPars.addAll(document.getBodyElements()
+							.subList(
+									absParNum + 1,
+									(headerNum == lastHeaderNum) ? document.getBodyElements().size()
+											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1)))
+							.stream()
+							.filter(elem -> elem instanceof XWPFParagraph)
+							.map(elem -> (XWPFParagraph) elem)
+							.collect(Collectors.toList()));
+				}
 
-					if (paragraphBlock instanceof ListBlock) {
-						// minus 1 because after this iteration "i" will be
-						// incremented
-						int iShift = ((ListBlock) paragraphBlock).getSize() - 1;
-						if (iShift > 0) {
-							i += iShift;
+				if (!contentPars.isEmpty()) {
+					ArrayList<AbstractParagraphBlock<?>> contentBlocks = new ArrayList<>();
+					if (headerInfo.isTheoryNotTestHeader()) {
+						for (int contentElemNum = 0; contentElemNum < contentPars.size(); contentElemNum++) {
+							XWPFParagraph subPar = contentPars.get(contentElemNum);
+							AbstractParagraphBlock<?> contentBlock = AbstractParagraphParser
+									.parse(subPar, mathInfo);
+							if (HeaderParser.HeaderInfo.isHeader(subPar)) {
+								contentBlock = HeaderParser.parse(subPar, maxHeader);
+							} else {
+								if (contentBlock instanceof ListBlock) {
+									// minus 1 because after this iteration "elNum" will be
+									// incremented
+									int shift = ((ListBlock) contentBlock).getSize() - 1;
+									if (shift > 0) {
+										contentElemNum += shift;
+									}
+								}
+							}
+
+							contentBlocks.add(contentBlock);
 						}
+					} else {
+						//TODO: code for test-blocks
 					}
 
-					if (paragraphBlock != null) {
-						page.addBlock(paragraphBlock);
-					}
-				} else if (headerInfo.getLevel() > maxHead) {
-					HeaderBlock paragraphBlock = HeaderParser.parse(
-							(XWPFParagraph) document.getBodyElements().get(i),
-							maxHead);
-
-					if (paragraphBlock != null) {
-						page.addBlock(paragraphBlock);
+					if (!contentBlocks.isEmpty()) {
+						CoursePage page = CoursePage.createEmptyPage((CourseTreeNode) currentNode);
+						page.addBlocks(contentBlocks);
 					}
 				}
 			}

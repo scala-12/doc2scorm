@@ -21,7 +21,7 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.cont
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}
- * 
+ *
  * @see CourseModel
  * @author Kalashnikov Vladislav
  *
@@ -39,8 +39,8 @@ public class CoursePage implements Convertable {
 		this.setParent(parentNode);
 	}
 
-	public static CoursePage createEmptyPage() {
-		return new CoursePage(null);
+	public static CoursePage createEmptyPage(CourseTreeNode parentNode) {
+		return new CoursePage(parentNode);
 	}
 
 	public AbstractBlock<?> getBlock(int index) {
@@ -53,7 +53,7 @@ public class CoursePage implements Convertable {
 
 	/**
 	 * Method for add block on page
-	 * 
+	 *
 	 * @param block
 	 *            Block for adding. If it is null then return false
 	 * @return If successful then true
@@ -73,7 +73,7 @@ public class CoursePage implements Convertable {
 
 	/**
 	 * Set parent of page
-	 * 
+	 *
 	 * @param node
 	 *            Is parent of page. If there is null then return false
 	 * @return If successful then true
