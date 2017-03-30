@@ -1,14 +1,21 @@
 package com.ipoint.coursegenerator.core.utils;
 
-import com.ipoint.coursegenerator.core.Parser;
-import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
-
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -16,12 +23,17 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import com.ipoint.coursegenerator.core.Parser;
+import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public class FileWork {
 
@@ -41,9 +53,8 @@ public class FileWork {
 		public final static File JS_SCO_FUNCTION = new File("templates/js/SCOFunctions.js");
 		public final static File JS_PARSER = new File("templates/js/parser.js");
 
-		public final static File[] SYSTEM_FILES = new File[]{
-				CSS4THEORY, CSS4TEST, JS_API_WRAPPER, JS_SCO_FUNCTION, JS_PARSER
-		};
+		public final static File[] SYSTEM_FILES = new File[] { CSS4THEORY, CSS4TEST, JS_API_WRAPPER, JS_SCO_FUNCTION,
+				JS_PARSER };
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
@@ -56,7 +67,7 @@ public class FileWork {
 						if (isText) {
 							char[] buffer = new char[1024];
 							try (OutputStreamWriter writerOS = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
-								InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
+									InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
 								while ((bytesRead = readerIS.read(buffer)) != -1) {
 									writerOS.write(buffer, 0, bytesRead);
 								}
@@ -109,12 +120,14 @@ public class FileWork {
 	}
 
 	/**
-	* Save html page
-	*
-	* @param htmlDoc  Html document
-	* @param htmlFile html file
-	* @return true if saved
-	*/
+	 * Save html page
+	 *
+	 * @param htmlDoc
+	 *            Html document
+	 * @param htmlFile
+	 *            html file
+	 * @return true if saved
+	 */
 	public static boolean saveHtmlDocument(Document htmlDoc, File htmlFile, String pageTitle) {
 		try {
 			StringWriter buffer = new StringWriter();
@@ -138,7 +151,7 @@ public class FileWork {
 			body.put("sco_functions_js", TemplateFiles.JS_SCO_FUNCTION.getName());
 
 			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
-				Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
+					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
 				tmpl.process(body, writerOS);
 				writerOS.flush();
 
@@ -156,42 +169,49 @@ public class FileWork {
 	}
 
 	/**
-	* Save image in directory
-	*
-	* @param pictureInfo Picture info
-	* @param imgsDir	Absolute directory for saving
-	* @param sofficeFile File for run LibreOffice
-	* @return true if have not errors
-	*/
+	 * Save image in directory
+	 *
+	 * @param pictureInfo
+	 *            Picture info
+	 * @param imgsDir
+	 *            Absolute directory for saving
+	 * @param sofficeFile
+	 *            File for run LibreOffice
+	 * @return true if have not errors
+	 */
 	public static boolean saveImage(PictureInfo pictureInfo, File imgsDir, File sofficeFile) {
 		byte[] byteImage = null;
 
 		switch (pictureInfo.getData().getPictureType()) {
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF:
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
-				byteImage = pictureInfo.getData().getData();
-				break;
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
-				byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
-				break;
-			case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
-				byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
-				break;
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF:
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
+			byteImage = pictureInfo.getData().getData();
+			break;
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
+			byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			break;
+		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
+			byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
+			break;
 		}
 
-		return (byteImage != null) && saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
+		return (byteImage != null)
+				&& saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
 	}
 
 	/**
-	* Save images in directory
-	*
-	* @param picturesInfo  List of picture info
-	* @param pageImgsDir   Absolute directory for saving
-	* @param pathToSOffice File for run LibreOffice
-	* @return true if have not errors
-	*/
+	 * Save images in directory
+	 *
+	 * @param picturesInfo
+	 *            List of picture info
+	 * @param pageImgsDir
+	 *            Absolute directory for saving
+	 * @param pathToSOffice
+	 *            File for run LibreOffice
+	 * @return true if have not errors
+	 */
 	public static boolean saveImages(Set<PictureInfo> picturesInfo, File pageImgsDir, File pathToSOffice) {
 		boolean successful = true;
 		for (PictureInfo pictureInfo : picturesInfo) {
@@ -199,6 +219,17 @@ public class FileWork {
 		}
 
 		return successful;
+	}
+
+	public static byte[] convertStream2ByteArray(InputStream stream) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int n;
+		while ((n = stream.read(buf)) >= 0) {
+			baos.write(buf, 0, n);
+		}
+
+		return baos.toByteArray();
 	}
 
 }

@@ -39,7 +39,7 @@ public class HeaderParser extends ParagraphParser {
 			return isEmptyRuns;
 		}
 
-		public HeaderInfo(XWPFParagraph par) {
+		private HeaderInfo(XWPFParagraph par) {
 			if (hasStyle(par)) {
 				this.title = par.getText();
 				this.theoryType = true;
@@ -76,6 +76,10 @@ public class HeaderParser extends ParagraphParser {
 			} else {
 				// TODO: exception "is not header"
 			}
+		}
+
+		public static HeaderInfo getHeaderInfo(XWPFParagraph par) {
+			return new HeaderInfo(par);
 		}
 
 		private static Matcher getHeaderMatcher(Pattern pattern, XWPFStyle style) {
@@ -117,7 +121,7 @@ public class HeaderParser extends ParagraphParser {
 			return this.title;
 		}
 
-		public boolean isTheoryNotTestHeader() {
+		public boolean isTheoryNoneTestHeader() {
 			return theoryType;
 		}
 	}

@@ -1,7 +1,6 @@
 package com.ipoint.coursegenerator.core.parsers.courseParser;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -31,6 +30,7 @@ import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**
  * Class for parsing to {@link CourseModel}
@@ -187,23 +187,17 @@ public class CourseParser extends AbstractParser {
 		try {
 			// We need in 2 independent Input streams for MathML and
 			// XWPFDocument
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buf = new byte[1024];
-			int n;
-			while ((n = stream.read(buf)) >= 0)
-				baos.write(buf, 0, n);
-			byte[] content = baos.toByteArray();
-
+			byte[] content = FileWork.convertStream2ByteArray(stream);
 			MathInfo mathInfo = getAllFormulsAsMathML(new ByteArrayInputStream(content));
-
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(content));
+			content = null;
 
 			courseModel = CourseModel.createEmptyCourseModel(courseName);
 
 			List<XWPFParagraph> trueHeaders = document.getBodyElements().stream()
 					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH)
 							&& HeaderParser.HeaderInfo.isHeader((XWPFParagraph) elem)
-							&& (new HeaderInfo((XWPFParagraph) elem).getLevel() <= maxHeader))
+							&& (HeaderInfo.getHeaderInfo((XWPFParagraph) elem).getLevel() <= maxHeader))
 					.map(elem -> (XWPFParagraph) elem).collect(Collectors.toList());
 
 			int lastHeaderNum = trueHeaders.size() - 1;
@@ -214,7 +208,7 @@ public class CourseParser extends AbstractParser {
 
 			for (int headerNum = 0; headerNum < trueHeaders.size(); headerNum++) {
 				XWPFParagraph header = trueHeaders.get(headerNum);
-				HeaderInfo headerInfo = new HeaderInfo(header);
+				HeaderInfo headerInfo = HeaderInfo.getHeaderInfo(header);
 
 				if ((currentNode == null) || (headerInfo.getLevel() == HeaderInfo.TOP_LEVEL)) {
 					currentNode = courseModel.createChild(headerInfo.getTitle());
@@ -234,11 +228,11 @@ public class CourseParser extends AbstractParser {
 					realDepth = headerInfo.getLevel();
 				}
 
-				int absParNum = document.getBodyElements().indexOf(header);
+				int absNum = document.getBodyElements().indexOf(header);
 				ArrayList<XWPFParagraph> contentPars = new ArrayList<>();
-				if ((absParNum != lastDocElemNum)) {
+				if ((absNum != lastDocElemNum)) {
 					contentPars.addAll(document.getBodyElements()
-							.subList(absParNum + 1,
+							.subList(absNum + 1,
 									(headerNum == lastHeaderNum) ? document.getBodyElements().size()
 											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1)))
 							.stream().filter(elem -> elem instanceof XWPFParagraph).map(elem -> (XWPFParagraph) elem)
@@ -247,21 +241,20 @@ public class CourseParser extends AbstractParser {
 
 				if (!contentPars.isEmpty()) {
 					ArrayList<AbstractParagraphBlock<?>> contentBlocks = new ArrayList<>();
-					if (headerInfo.isTheoryNotTestHeader()) {
+					if (headerInfo.isTheoryNoneTestHeader()) {
 						for (int contentElemNum = 0; contentElemNum < contentPars.size(); contentElemNum++) {
 							XWPFParagraph subPar = contentPars.get(contentElemNum);
 							AbstractParagraphBlock<?> contentBlock = AbstractParagraphParser.parse(subPar, mathInfo);
+
 							if (HeaderParser.HeaderInfo.isHeader(subPar)) {
 								contentBlock = HeaderParser.parse(subPar, maxHeader);
-							} else {
-								if (contentBlock instanceof ListBlock) {
-									// minus 1 because after this iteration
-									// "elNum" will be
-									// incremented
-									int shift = ((ListBlock) contentBlock).getSize() - 1;
-									if (shift > 0) {
-										contentElemNum += shift;
-									}
+							} else if (contentBlock instanceof ListBlock) {
+								// minus 1 because after this iteration
+								// "elNum" will be
+								// incremented
+								int shift = ((ListBlock) contentBlock).getSize() - 1;
+								if (shift > 0) {
+									contentElemNum += shift;
 								}
 							}
 
