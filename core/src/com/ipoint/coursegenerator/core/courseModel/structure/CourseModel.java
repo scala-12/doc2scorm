@@ -16,7 +16,7 @@ public class CourseModel extends AbstractTreeNode {
 
 	private CourseModel(String courseName) {
 		super();
-		this.setTitle(courseName);
+		this.setTitle((isCorrectName(courseName)) ? "course_" + String.valueOf(this.hashCode()) : courseName);
 	}
 
 	public static CourseModel createEmptyCourseModel(String courseName) {
@@ -28,8 +28,13 @@ public class CourseModel extends AbstractTreeNode {
 	}
 
 	public void setTitle(String title) {
-		this.title = ((title == null) || title.isEmpty()) ? "course_" + String.valueOf(this.hashCode())
-				: title;
+		if (isCorrectName(title)) {
+			this.title = title;
+		}
+	}
+
+	private static boolean isCorrectName(String name) {
+		return !((name == null) || name.isEmpty());
 	}
 
 }
