@@ -1,15 +1,15 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or
@@ -112,7 +112,7 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 		return true;
 	}
 
-		/**
+	/**
 	 * @return html element td
 	 */
 	@Override

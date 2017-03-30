@@ -15,8 +15,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import test.java.TestUtils;
 
-import com.ipoint.coursegenerator.core.courseModel.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
+import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 
 @RunWith(Parameterized.class)

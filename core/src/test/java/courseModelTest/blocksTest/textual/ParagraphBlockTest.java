@@ -18,16 +18,16 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.FormulaContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
+
 import test.java.TestUtils;
 import test.java.courseModelTest.blocksTest.AbstractBlockTest;
 import test.java.courseParserTest.paragraphsTest.ParagraphParserTest;
-
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
-import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
 
 @RunWith(Parameterized.class)
 public class ParagraphBlockTest extends AbstractBlockTest {
@@ -41,33 +41,23 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	@SuppressWarnings("rawtypes")
 	@Parameters
 	public static Collection data() {
-		return Arrays.asList(new Object[][] {
-				{ TestUtils.getTestTextParagraphs() },
-				{ TestUtils.getTestHyperlinks() },
+		return Arrays.asList(new Object[][] { { TestUtils.getTestTextParagraphs() }, { TestUtils.getTestHyperlinks() },
 				{ TestUtils.getOnlyTextParagraphs() } });
 	}
 
 	@Override
 	public void toHtml() {
 		for (XWPFParagraph par : this.pars) {
-			ParagraphBlock block = ParagraphParser.parse(par,
-					TestUtils.getMathMLFormulas());
+			ParagraphBlock block = ParagraphParser.parse(par, TestUtils.getMathMLFormulas());
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			String blockText = block.getText();
-			Set<Set<String>> htmlStyles = getHtmlStyles((Element) htmlBlock
-					.getFirstChild());
+			Set<Set<String>> htmlStyles = getHtmlStyles((Element) htmlBlock.getFirstChild());
 
 			assertEquals(htmlBlock.getNodeName().toLowerCase(), "p");
-			if (0 == block
-					.getItems()
-					.stream()
-					.map(pItem -> pItem
-							.getValue()
-							.getItems()
-							.stream()
-							.filter(cItem -> cItem instanceof FormulaContentItem)
-							.findFirst().isPresent())
+			if (0 == block.getItems().stream()
+					.map(pItem -> pItem.getValue().getItems().stream()
+							.filter(cItem -> cItem instanceof FormulaContentItem).findFirst().isPresent())
 					.filter(hasFormula -> hasFormula).count()) {
 				assertEquals(htmlBlock.getTextContent(), blockText);
 				// from doc
@@ -78,43 +68,30 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 			String[] content = blockText.split(":");
 			if ((content.length == 2) && (content[0].indexOf(' ') == -1)) {
 				if (TestUtils.SIMPLE_TEXT_PAR.equals(content[0])) {
-					assertEquals(htmlBlock.getFirstChild().getNodeName()
-							.toLowerCase(), "span");
-					assertEquals(htmlBlock.getFirstChild().getFirstChild()
-							.getNodeName().toLowerCase(), "span");
+					assertEquals(htmlBlock.getFirstChild().getNodeName().toLowerCase(), "span");
+					assertEquals(htmlBlock.getFirstChild().getFirstChild().getNodeName().toLowerCase(), "span");
 				} else if (TestUtils.STYLED_TEXT_PAR.equals(content[0])) {
 					for (ParagraphItem pItem : block.getItems()) {
-						assertTrue(htmlStyles
-								.containsAll(pItem
-										.getValue()
-										.getItems()
-										.stream()
-										.filter(item -> item instanceof TextContentItem)
-										.map(item -> ParagraphParserTest
-												.getItemStyles((TextContentItem) item))
-										.filter(item -> item != null)
-										.collect(Collectors.toSet())));
+						assertTrue(htmlStyles.containsAll(
+								pItem.getValue().getItems().stream().filter(item -> item instanceof TextContentItem)
+										.map(item -> ParagraphParserTest.getItemStyles((TextContentItem) item))
+										.filter(item -> item != null).collect(Collectors.toSet())));
 					}
 				}
 			}
 
-			boolean isHyperlinkTest = TestUtils.getTestHyperlinks().contains(
-					par);
-			assertTrue(getHtmlLinks(htmlBlock, isHyperlinkTest).equals(
-					getBlockLinks(block, isHyperlinkTest)));
+			boolean isHyperlinkTest = TestUtils.getTestHyperlinks().contains(par);
+			assertTrue(getHtmlLinks(htmlBlock, isHyperlinkTest).equals(getBlockLinks(block, isHyperlinkTest)));
 		}
 	}
 
-	private static List<String> getHtmlLinks(Element htmlBlock,
-			boolean textIsLink) {
+	private static List<String> getHtmlLinks(Element htmlBlock, boolean textIsLink) {
 		ArrayList<String> links = new ArrayList<>();
-		for (Element node = (Element) htmlBlock.getFirstChild(); node != null; node = (Element) node
-				.getNextSibling()) {
+		for (Element node = (Element) htmlBlock.getFirstChild(); node != null; node = (Element) node.getNextSibling()) {
 			if (node.getNodeName().toLowerCase().equals("a")) {
 				assertEquals(node.getAttribute("target"), "_blank");
 				if (textIsLink) {
-					assertEquals(node.getAttribute("href"),
-							node.getTextContent());
+					assertEquals(node.getAttribute("href"), node.getTextContent());
 				}
 				links.add(node.getAttribute("href"));
 			}
@@ -123,8 +100,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 		return links;
 	}
 
-	private static List<String> getBlockLinks(ParagraphBlock block,
-			boolean textIsLink) {
+	private static List<String> getBlockLinks(ParagraphBlock block, boolean textIsLink) {
 		ArrayList<String> links = new ArrayList<>();
 		for (ParagraphItem pItem : block.getItems()) {
 			if (pItem.getValue() instanceof HyperlinkBlock) {
@@ -149,9 +125,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 			if (!"span".equalsIgnoreCase(node.getNodeName())) {
 				styles.add(getNodeStyle(node));
 			}
-			while (node.hasChildNodes()
-					&& !"#text".equalsIgnoreCase(node.getFirstChild()
-							.getNodeName())) {
+			while (node.hasChildNodes() && !"#text".equalsIgnoreCase(node.getFirstChild().getNodeName())) {
 				node = (Element) node.getFirstChild();
 				String style = getNodeStyle(node);
 				if (style != null) {
@@ -168,8 +142,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 
 	private static String getNodeStyle(Element node) {
 		if (node.getNodeName() != null) {
-			if ("b".equalsIgnoreCase(node.getNodeName())
-					|| "strong".equalsIgnoreCase(node.getNodeName()))
+			if ("b".equalsIgnoreCase(node.getNodeName()) || "strong".equalsIgnoreCase(node.getNodeName()))
 				return TestUtils.BOLD_TEXT;
 			if ("i".equalsIgnoreCase(node.getNodeName()))
 				return TestUtils.ITALIC_TEXT;
@@ -179,8 +152,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 				return TestUtils.SUBSCRIPT_TEXT;
 			if ("u".equalsIgnoreCase(node.getNodeName()))
 				return TestUtils.UNDERLINE_TEXT;
-			if ("font".equalsIgnoreCase(node.getNodeName())
-					&& (node.getAttribute("color") != null))
+			if ("font".equalsIgnoreCase(node.getNodeName()) && (node.getAttribute("color") != null))
 				return TestUtils.COLORED_TEXT;
 		}
 

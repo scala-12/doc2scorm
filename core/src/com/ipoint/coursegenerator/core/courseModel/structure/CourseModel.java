@@ -1,5 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel;
-
+package com.ipoint.coursegenerator.core.courseModel.structure;
 
 /**
  * Model of course document with {@link AbstractTreeNode}.

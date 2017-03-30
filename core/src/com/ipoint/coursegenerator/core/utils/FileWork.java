@@ -1,7 +1,8 @@
 package com.ipoint.coursegenerator.core.utils;
 
 import com.ipoint.coursegenerator.core.Parser;
-import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 

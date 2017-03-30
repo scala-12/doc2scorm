@@ -9,11 +9,11 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
+
 import test.java.TestUtils;
 import test.java.courseModelTest.blocksTest.AbstractBlockTest;
-
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
 public class ListBlockTest extends AbstractBlockTest {
 
@@ -21,8 +21,7 @@ public class ListBlockTest extends AbstractBlockTest {
 	public void toHtml() {
 		List<XWPFParagraph> lastList = null;
 		for (List<XWPFParagraph> list : TestUtils.getTestListsParagraphs()) {
-			ListBlock block = ListParser.parse(list.get(0),
-					TestUtils.getMathMLFormulas());
+			ListBlock block = ListParser.parse(list.get(0), TestUtils.getMathMLFormulas());
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			if (lastList != null) {
@@ -47,8 +46,7 @@ public class ListBlockTest extends AbstractBlockTest {
 				}
 			}
 
-			for (Node node = htmlBlock.getFirstChild(); node != null; node = node
-					.getNextSibling()) {
+			for (Node node = htmlBlock.getFirstChild(); node != null; node = node.getNextSibling()) {
 				assertEquals(node.getNodeName().toLowerCase(), "li");
 			}
 

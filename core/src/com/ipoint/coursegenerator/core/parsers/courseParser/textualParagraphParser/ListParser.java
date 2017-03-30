@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 

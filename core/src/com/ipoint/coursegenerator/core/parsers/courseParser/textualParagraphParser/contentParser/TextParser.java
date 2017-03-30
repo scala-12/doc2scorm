@@ -8,11 +8,11 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.ImageContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.FormulaContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 

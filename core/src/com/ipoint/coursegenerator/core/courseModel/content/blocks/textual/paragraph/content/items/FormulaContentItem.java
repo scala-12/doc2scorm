@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
 
 /**
  * Item which includes Math formula

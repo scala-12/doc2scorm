@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel;
+package com.ipoint.coursegenerator.core.courseModel.structure;
 
 /**
  * Node of tree. These may includes one page.

@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
 
 /**
  * Item includes {@link ParagraphBlock} or {@link ListBlock}

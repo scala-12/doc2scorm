@@ -9,7 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.HeaderBlock;
 
 /**
  * Parsing to {@link HeaderBlock}
@@ -19,8 +19,10 @@ import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.Head
 public class HeaderParser extends ParagraphParser {
 
 	public static class HeaderInfo {
-		private static final Pattern SCO_THEORY_HEADER_PATTERN = Pattern.compile(".*(?:heading|заголовок)[\\s_](\\d+)$");
-		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
+		private static final Pattern SCO_THEORY_HEADER_PATTERN = Pattern
+				.compile(".*(?:heading|заголовок)[\\s_](\\d+)$");
+		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern
+				.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
 
 		private int level;
 		private String title;
@@ -65,7 +67,6 @@ public class HeaderParser extends ParagraphParser {
 						}
 					}
 
-
 					if ((headerLvl == null) || (headerLvl < TOP_LEVEL)) {
 						this.level = TOP_LEVEL;
 					} else {
@@ -73,7 +74,7 @@ public class HeaderParser extends ParagraphParser {
 					}
 				}
 			} else {
-				//TODO: exception "is not header"
+				// TODO: exception "is not header"
 			}
 		}
 
