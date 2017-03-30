@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 
 /**
  * This block is analogue paragraph in life. Text block which may include

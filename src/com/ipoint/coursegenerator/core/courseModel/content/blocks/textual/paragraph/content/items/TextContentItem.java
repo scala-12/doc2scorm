@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items;
 
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
@@ -7,8 +7,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
 
 /**
  * Item for {@link TextBlock}. This item includes text and him properties.
@@ -50,8 +50,7 @@ public class TextContentItem extends AbstractContentItem<String> {
 		this.setItalic(run.isItalic());
 		this.setSuperscript(run.getSubscript() == VerticalAlign.SUPERSCRIPT);
 		this.setSubscript(run.getSubscript() == VerticalAlign.SUBSCRIPT);
-		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE)
-				&& !isHyperlink);
+		this.setUnderline((run.getUnderline() != UnderlinePatterns.NONE) && !isHyperlink);
 
 		// TODO: what is it?
 		// if ((styleNumber < 1) || (styleNumber > 9)) {

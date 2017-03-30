@@ -3,7 +3,6 @@ package test.java.courseParserTest.paragraphsTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -12,24 +11,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser
-		.HeaderInfo;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Test;
 
-import test.java.TestUtils;
-
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.HeaderBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
+
+import test.java.TestUtils;
 
 public class ParagraphParserTest {
 
@@ -38,15 +36,11 @@ public class ParagraphParserTest {
 		for (XWPFParagraph par : TestUtils.getTestTextParagraphs()) {
 			String[] content = par.getText().split(":");
 
-			if ((par.getText().indexOf(":") == par.getText().lastIndexOf(":"))
-					&& (content.length == 2)) {
-				Set<Set<String>> stylesFromDoc = par.getRuns().stream()
-						.map(run -> TestUtils.getRunStyles(run))
-						.filter(style -> style != null)
-						.collect(Collectors.toSet());
+			if ((par.getText().indexOf(":") == par.getText().lastIndexOf(":")) && (content.length == 2)) {
+				Set<Set<String>> stylesFromDoc = par.getRuns().stream().map(run -> TestUtils.getRunStyles(run))
+						.filter(style -> style != null).collect(Collectors.toSet());
 
-				ParagraphBlock block = ParagraphParser.parse(par,
-						TestUtils.getMathMLFormulas());
+				ParagraphBlock block = ParagraphParser.parse(par, TestUtils.getMathMLFormulas());
 
 				assertEquals(block.getText(), content[0] + ":" + content[1]);
 
@@ -54,17 +48,13 @@ public class ParagraphParserTest {
 				if (TestUtils.SIMPLE_TEXT_PAR.equals(content[0])) {
 					assertTrue(stylesFromDoc.isEmpty());
 				} else if (TestUtils.STYLED_TEXT_PAR.equals(content[0])) {
-					Set<Set<String>> stylesFromText = Arrays
-							.asList(content[1].split(";"))
-							.stream()
-							.map(style -> new HashSet<String>(Arrays
-									.asList(style.split(","))))
+					Set<Set<String>> stylesFromText = Arrays.asList(content[1].split(";")).stream()
+							.map(style -> new HashSet<String>(Arrays.asList(style.split(","))))
 							.collect(Collectors.toSet());
 					assertTrue(stylesFromDoc.containsAll(stylesFromText));
 
 					block.getFirstItem().getValue().getItems().stream()
-							.map(item -> getItemStyles((TextContentItem) item))
-							.collect(Collectors.toList())
+							.map(item -> getItemStyles((TextContentItem) item)).collect(Collectors.toList())
 							.containsAll(stylesFromText);
 				}
 			}
@@ -105,8 +95,7 @@ public class ParagraphParserTest {
 	@Test
 	public void parseTextParagraphs() {
 		for (XWPFParagraph par : TestUtils.getOnlyTextParagraphs()) {
-			ParagraphBlock block = ParagraphParser.parse(par,
-					TestUtils.getMathMLFormulas());
+			ParagraphBlock block = ParagraphParser.parse(par, TestUtils.getMathMLFormulas());
 			assertNotNull(block);
 			assertEquals(par.getText(), block.getText());
 		}
@@ -116,29 +105,21 @@ public class ParagraphParserTest {
 	public void parseAllParagraphsAndTables() {
 		for (int i = 0; i < TestUtils.getTestDoc().getBodyElements().size(); i++) {
 			IBodyElement elem = TestUtils.getTestDoc().getBodyElements().get(i);
-			if ((elem.getElementType().equals(BodyElementType.PARAGRAPH) && !((XWPFParagraph) elem)
-					.getText().isEmpty())
+			if ((elem.getElementType().equals(BodyElementType.PARAGRAPH) && !((XWPFParagraph) elem).getText().isEmpty())
 					|| elem.getElementType().equals(BodyElementType.TABLE)) {
-				AbstractParagraphBlock<?> block = AbstractParagraphParser
-						.parse(elem, TestUtils.getMathMLFormulas());
+				AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(elem, TestUtils.getMathMLFormulas());
 
 				assertNotNull(block);
 
 				if (block instanceof ParagraphBlock) {
-					assertEquals(((XWPFParagraph) elem).getText(),
-							((ParagraphBlock) block).getText());
+					assertEquals(((XWPFParagraph) elem).getText(), ((ParagraphBlock) block).getText());
 				} else if (block instanceof ListBlock) {
 					// TODO: Change API - use one method for paragraphs
 					// conversion in CourseParser (now is two similar)
 					int iShift = ((ListBlock) block).getSize();
 					if (iShift > 0) {
-						parseListParagraph(TestUtils
-								.getTestDoc()
-								.getBodyElements()
-								.subList(i, i + iShift)
-								.stream()
-								.filter(bodyElem -> bodyElem instanceof XWPFParagraph)
-								.map(par -> (XWPFParagraph) par)
+						parseListParagraph(TestUtils.getTestDoc().getBodyElements().subList(i, i + iShift).stream()
+								.filter(bodyElem -> bodyElem instanceof XWPFParagraph).map(par -> (XWPFParagraph) par)
 								.collect(Collectors.toList()));
 						i += iShift - 1;
 					}
@@ -155,8 +136,7 @@ public class ParagraphParserTest {
 	}
 
 	private static void parseListParagraph(List<XWPFParagraph> list) {
-		ListBlock block = ListParser.parse(list.get(0),
-				TestUtils.getMathMLFormulas());
+		ListBlock block = ListParser.parse(list.get(0), TestUtils.getMathMLFormulas());
 		assertEquals(block.getItems().size(), list.size());
 
 		for (int i = 0; i < list.size(); i++) {
@@ -165,9 +145,7 @@ public class ParagraphParserTest {
 			assertEquals(String.valueOf(i + 1), itemValue.split(";")[0]);
 		}
 
-		assertEquals(
-				block.getText(),
-				String.join("\n", list.stream().map(item -> item.getText())
-						.collect(Collectors.toList())));
+		assertEquals(block.getText(),
+				String.join("\n", list.stream().map(item -> item.getText()).collect(Collectors.toList())));
 	}
 }

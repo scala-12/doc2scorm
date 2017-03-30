@@ -3,13 +3,16 @@ package com.ipoint.coursegenerator.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 import org.apache.commons.io.FileUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
@@ -19,11 +22,12 @@ import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
 import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Document;
 
-import com.ipoint.coursegenerator.core.courseModel.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.CourseTreeNode;
-import com.ipoint.coursegenerator.core.courseModel.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
+import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;

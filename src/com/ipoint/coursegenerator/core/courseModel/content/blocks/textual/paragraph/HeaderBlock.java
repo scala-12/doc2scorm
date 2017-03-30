@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
 
 /**
  * This block is an analogue of paragraph header.
@@ -72,11 +72,9 @@ public class HeaderBlock extends ParagraphBlock {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element header = creatorTags.createElement("h".concat(String
-				.valueOf(this.getLevel() + LEVEL_OFFSET)));
+		Element header = creatorTags.createElement("h".concat(String.valueOf(this.getLevel() + LEVEL_OFFSET)));
 
-		for (AbstractContentItem<?> item : this.getItems().get(0).getValue()
-				.getItems()) {
+		for (AbstractContentItem<?> item : this.getItems().get(0).getValue().getItems()) {
 			if (item instanceof TextContentItem) {
 				Node text = item.toHtml(creatorTags).getFirstChild();
 				while (text.hasChildNodes()) {

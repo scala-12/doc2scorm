@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.courseModel.blocks.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
-import com.ipoint.coursegenerator.core.courseModel.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 
 /**
  * This block is an analogue of table cell. There may includes only one

@@ -10,9 +10,7 @@ public class TransliterationToolsTest {
 
 	@Test
 	public void convertRU2ENStringTest() {
-		assertEquals(
-				TransliterationTool.convertRU2ENString("Конвертер курсов"),
-				"Konverter kursov");
+		assertEquals(TransliterationTool.convertRU2ENString("Конвертер курсов"), "Konverter kursov");
 	}
 
 	@Test
