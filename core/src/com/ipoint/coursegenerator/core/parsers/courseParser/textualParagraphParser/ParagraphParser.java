@@ -65,7 +65,7 @@ public class ParagraphParser extends AbstractParser {
 				}
 			} else {
 				for (last = i; (last < runs.size()) && !(runs.get(last) instanceof XWPFHyperlinkRun); last++) {
-					// search latest non-hyperlink run
+					// action: search latest non-hyperlink run
 				}
 			}
 
