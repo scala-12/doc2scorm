@@ -1,5 +1,8 @@
 package com.ipoint.coursegenerator.core.courseModel.structure;
 
+import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
+import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+
 /**
  * Node of tree. These may includes one page.
  *
@@ -8,7 +11,7 @@ package com.ipoint.coursegenerator.core.courseModel.structure;
  */
 public class CourseTreeNode extends AbstractTreeNode {
 
-    private AbstractCourseTreeNodeContent page;
+    private AbstractPage page;
 
     private String title;
 
@@ -18,7 +21,7 @@ public class CourseTreeNode extends AbstractTreeNode {
      * @param page  Page of node
      * @param title Title of node. These can't be null.
      */
-    public CourseTreeNode(TheoryContent page, String title) {
+    public CourseTreeNode(TheoryPage page, String title) {
         super();
         if (!this.setTitle(title)) {
             // TODO:exception
@@ -27,13 +30,13 @@ public class CourseTreeNode extends AbstractTreeNode {
     }
 
     /**
-     * @see CourseTreeNode#CourseTreeNode(TheoryContent, String)
+     * @see CourseTreeNode#CourseTreeNode(TheoryPage, String)
      */
     public CourseTreeNode(String title) {
         this(null, title);
     }
 
-    public AbstractCourseTreeNodeContent getPage() {
+    public AbstractPage getPage() {
         return this.page;
     }
 
@@ -58,9 +61,9 @@ public class CourseTreeNode extends AbstractTreeNode {
         return false;
     }
 
-    public void setPage(AbstractCourseTreeNodeContent page) {
+    public void setPage(AbstractPage page) {
         if ((page != null) && ((page.getParent() != this) || (page.getParent() == null))) {
-            // because class TheoryContent have call of this method
+            // because class TheoryPage have call of this method
             // method that below need for set link between page and node
             page.setParent(this);
         }
