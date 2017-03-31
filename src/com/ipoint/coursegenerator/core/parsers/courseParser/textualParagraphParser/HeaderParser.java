@@ -23,6 +23,7 @@ public class HeaderParser extends ParagraphParser {
 				.compile(".*(?:heading|заголовок)[\\s_](\\d+)$");
 		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern
 				.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
+		private static final Pattern TEST_QUESTION_HEADER_PATTERN = Pattern.compile(".*(?:quest(?:ion)?|вопрос)");
 
 		private int level;
 		private String title;
@@ -108,6 +109,16 @@ public class HeaderParser extends ParagraphParser {
 
 				return getHeaderMatcher(SCO_THEORY_HEADER_PATTERN, style).matches()
 						|| getHeaderMatcher(SCO_TEST_HEADER_PATTERN, style).matches();
+			}
+
+			return false;
+		}
+
+		public static boolean isQuestion(XWPFParagraph par) {
+			if (hasStyle(par)) {
+				XWPFStyle style = par.getDocument().getStyles().getStyle(par.getStyleID());
+
+				return getHeaderMatcher(TEST_QUESTION_HEADER_PATTERN, style).matches();
 			}
 
 			return false;

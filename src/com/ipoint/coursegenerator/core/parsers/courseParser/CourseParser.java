@@ -7,7 +7,6 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -278,9 +277,7 @@ public class CourseParser extends AbstractParser {
 						for (int introElemNum = 0; introElemNum < chapterPars.size(); introElemNum++) {
 							XWPFParagraph chapterPar = chapterPars.get(introElemNum);
 
-							if (new Random().nextBoolean()) {// TODO: when
-																// question
-																// block started
+							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
 								// TODO: add questBlock!null to chapterBlocks
 								// TODO: questBlock = new AbstractBlock<>();
 							} else if (questBlock == null) {
