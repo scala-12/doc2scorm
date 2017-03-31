@@ -246,10 +246,9 @@ public class CourseParser extends AbstractParser {
 
 				if (!chapterPars.isEmpty()) {
 					AbstractPage<?> page = null;
+					ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
-						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
-
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
 							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
 							AbstractParagraphBlock<?> chapterBlock = AbstractParagraphParser.parse(chapterPar,
@@ -272,10 +271,8 @@ public class CourseParser extends AbstractParser {
 
 						if (!chapterBlocks.isEmpty()) {
 							page = TheoryPage.createEmptyPage();
-							page.setBlocks(chapterBlocks);
 						}
 					} else {
-						ArrayList<AbstractBlock<AbstractItem<?>>> questionsBlocks = new ArrayList<>();
 						AbstractBlock<AbstractItem<?>> questBlock = null;
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
 						for (int introElemNum = 0; introElemNum < chapterPars.size(); introElemNum++) {
@@ -284,6 +281,7 @@ public class CourseParser extends AbstractParser {
 							if (new Random().nextBoolean()) {// TODO: when
 																// question
 																// block started
+								// TODO: add questBlock!null to chapterBlocks
 								// TODO: questBlock = new AbstractBlock<>();
 							} else if (questBlock == null) {
 								AbstractParagraphBlock<?> introBlock = AbstractParagraphParser.parse(chapterPar,
@@ -301,21 +299,21 @@ public class CourseParser extends AbstractParser {
 								}
 								introBlocks.add(introBlock);
 							} else {
-
+								// TODO: add answerBlock to questBlock
 							}
 						}
 
-						if (!questionsBlocks.isEmpty()) {
+						if (!chapterBlocks.isEmpty()) {
 							page = TestingPage.createEmptyPage();
 							if (!introBlocks.isEmpty()) {
 								((TestingPage) page).setIntroBlocks(introBlocks);
 							}
-							page.setBlocks(questionsBlocks);
 						}
 					}
 
 					if (page != null) {
 						page.setParent((CourseTreeNode) currentNode);
+						page.setBlocks(chapterBlocks);
 					}
 				}
 			}
