@@ -11,12 +11,14 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
  * @author Kalashnikov Vladislav
  *
  */
-public class TheoryPage extends AbstractPage {
+public class TheoryPage extends AbstractPage<AbstractParagraphBlock<?>> {
 
-	protected TheoryPage(CourseTreeNode parentNode) {
+	private TheoryPage(CourseTreeNode parentNode) {
 		super(parentNode);
 	}
 
-	public final static String CONTENT_DIV_ID = "content_div";
+	public static TheoryPage createEmptyPage() {
+		return new TheoryPage(null);
+	}
 
 }

@@ -31,58 +31,44 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
  * @author Kalashnikov Vladislav
  *
  */
-public class AbstractPage implements Convertable {
+public abstract class AbstractPage<T extends AbstractBlock<?>> implements Convertable {
 
-	public final static String CONTENT_DIV_ID = "content_div";
-
-	private ArrayList<AbstractParagraphBlock<?>> blocks;
+	private final ArrayList<T> blocks;
 
 	private CourseTreeNode parentNode;
+
+	public final static String CONTENT_DIV_ID = "page_content";
 
 	protected AbstractPage(CourseTreeNode parentNode) {
 		this.blocks = new ArrayList<>();
 		this.setParent(parentNode);
 	}
 
-	public static AbstractPage createEmptyPage() {
-		return new AbstractPage(null);
+	public List<T> getBlocks() {
+		return new ArrayList<>(this.blocks);
 	}
 
-	public AbstractBlock<?> getBlock(int index) {
-		return ((this.blocks.size() <= index) || this.blocks.isEmpty()) ? null : this.blocks.get(index);
-	}
-
-	public List<AbstractParagraphBlock<?>> getBlocks() {
-		return this.blocks;
-	}
-
-	/**
-	 * Method for add block on page
-	 * 
-	 * @param block
-	 *            Block for adding. If it is null then return false
-	 * @return If successful then true
-	 */
-	public boolean addBlock(AbstractParagraphBlock<?> block) {
-		if (block == null) {
-			return false;
-		} else {
-			this.blocks.add(block);
-			return true;
+	/** @return true if replaced */
+	public boolean setBlocks(List<T> blocks) {
+		ArrayList<T> newBlocks = new ArrayList<>();
+		for (T block : blocks) {
+			if (block != null) {
+				newBlocks.add(block);
+			}
 		}
+
+		if (!newBlocks.isEmpty()) {
+			clearBlocks();
+			this.blocks.addAll(newBlocks);
+		}
+
+		return !newBlocks.isEmpty();
 	}
 
-	public boolean addBlocks(List<AbstractParagraphBlock<?>> blocks) {
-		return this.blocks.addAll(blocks);
+	public void clearBlocks() {
+		this.blocks.clear();
 	}
 
-	/**
-	 * Set parent of page
-	 * 
-	 * @param node
-	 *            Is parent of page. If there is null then return false
-	 * @return If successful then true
-	 */
 	public void setParent(CourseTreeNode node) {
 		if (node != this.parentNode) {
 			// because class CourseTreeNode have call of this method
@@ -99,29 +85,8 @@ public class AbstractPage implements Convertable {
 		return this.parentNode;
 	}
 
-	/**
-	 * @return html-element div
-	 */
-	@Override
-	public Element toHtml(Document creatorTags) {
-		Element pageBody = creatorTags.createElement("div");
-		pageBody.setAttribute("id", CONTENT_DIV_ID);
-
-		if (this.parentNode != null) {
-			Element pageHeader = creatorTags.createElement("h1");
-			pageHeader.setTextContent(this.parentNode.getTitle());
-			pageBody.appendChild(pageHeader);
-		}
-
-		for (AbstractParagraphBlock<?> par : this.getBlocks()) {
-			pageBody.appendChild(par.toHtml(creatorTags));
-		}
-
-		return pageBody;
-	}
-
 	public Set<PictureInfo> getImages() {
-		return this.getImagesRecursive(this.getBlocks());
+		return this.getImagesRecursive(new ArrayList<AbstractBlock<?>>(this.getBlocks()));
 	}
 
 	private List<PictureInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
@@ -140,36 +105,64 @@ public class AbstractPage implements Convertable {
 		return images;
 	}
 
-	private Set<PictureInfo> getImagesRecursive(List<AbstractParagraphBlock<?>> blocks) {
+	private Set<PictureInfo> getImagesRecursive(List<AbstractBlock<?>> blocks) {
 		HashSet<PictureInfo> images = new HashSet<>();
 
-		for (AbstractParagraphBlock<?> block : blocks) {
-			if (block instanceof AbstractTextualBlock) {
-				if (block instanceof ParagraphBlock) {
-					images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
-				} else if (block instanceof ListBlock) {
-					for (ListItem listItem : ((ListBlock) block).getItems()) {
-						if (listItem.getValue() instanceof ParagraphBlock) {
-							images.addAll(this.getImagesOfParagraph((ParagraphBlock) listItem.getValue()));
-						} else if (listItem.getValue() instanceof ListBlock) {
-							ArrayList<AbstractParagraphBlock<?>> listBlock = new ArrayList<>();
-							listBlock.add((ListBlock) listItem.getValue());
-							images.addAll(this.getImagesRecursive(listBlock));
-						}
+		for (AbstractBlock<?> block : blocks) {
+			images.addAll(getImagesRecursive(block));
+		}
+
+		return images;
+	}
+
+	private Set<PictureInfo> getImagesRecursive(AbstractBlock<?> block) {
+		HashSet<PictureInfo> images = new HashSet<>();
+
+		if (block instanceof AbstractTextualBlock) {
+			if (block instanceof ParagraphBlock) {
+				images.addAll(this.getImagesOfParagraph((ParagraphBlock) block));
+			} else if (block instanceof ListBlock) {
+				for (ListItem listItem : ((ListBlock) block).getItems()) {
+					if (listItem.getValue() instanceof ParagraphBlock) {
+						images.addAll(this.getImagesOfParagraph((ParagraphBlock) listItem.getValue()));
+					} else if (listItem.getValue() instanceof ListBlock) {
+						images.addAll(this.getImagesRecursive(listItem.getValue()));
 					}
 				}
-			} else if (block instanceof TableBlock) {
-				for (TableItem row : ((TableBlock) block).getItems()) {
-					for (CellBlock cell : row.getValue()) {
-						if (cell.getFirstItem().getValue() != null) {
-							images.addAll(this.getImagesRecursive(cell.getFirstItem().getValue()));
-						}
+			}
+		} else if (block instanceof TableBlock) {
+			for (TableItem row : ((TableBlock) block).getItems()) {
+				for (CellBlock cell : row.getValue()) {
+					if (cell.getFirstItem().getValue() != null) {
+						images.addAll(this
+								.getImagesRecursive(new ArrayList<AbstractBlock<?>>(cell.getFirstItem().getValue())));
 					}
 				}
 			}
 		}
 
 		return images;
+	}
+
+	/**
+	 * @return html-element div
+	 */
+	@Override
+	public Element toHtml(Document creatorTags) {
+		Element pageBody = creatorTags.createElement("div");
+		pageBody.setAttribute("id", CONTENT_DIV_ID);
+
+		if (this.getParent() != null) {
+			Element pageHeader = creatorTags.createElement("h1");
+			pageHeader.setTextContent(this.getParent().getTitle());
+			pageBody.appendChild(pageHeader);
+		}
+
+		for (T par : this.getBlocks()) {
+			pageBody.appendChild(par.toHtml(creatorTags));
+		}
+
+		return pageBody;
 	}
 
 }
