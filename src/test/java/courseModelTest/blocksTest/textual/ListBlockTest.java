@@ -9,7 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
 import test.java.TestUtils;

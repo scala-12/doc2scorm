@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular;
 
 import java.util.List;
 

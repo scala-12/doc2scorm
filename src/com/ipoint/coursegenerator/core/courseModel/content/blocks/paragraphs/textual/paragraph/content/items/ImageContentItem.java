@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 
 /**

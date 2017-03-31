@@ -26,7 +26,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;

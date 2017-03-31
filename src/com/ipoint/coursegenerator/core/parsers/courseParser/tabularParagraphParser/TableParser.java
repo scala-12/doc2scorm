@@ -9,11 +9,11 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell.CellItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;

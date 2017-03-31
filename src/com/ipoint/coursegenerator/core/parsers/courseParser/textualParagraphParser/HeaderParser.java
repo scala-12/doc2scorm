@@ -9,7 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.HeaderBlock;
 
 /**
  * Parsing to {@link HeaderBlock}

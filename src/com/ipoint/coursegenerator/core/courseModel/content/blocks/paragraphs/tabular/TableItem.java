@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
 
 /**
  * This item includes {@link CellBlock}).

@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.ImageContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.FormulaContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 
 /**
  * Item that may be {@link TextContentItem}, {@link FormulaContentItem} or

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
