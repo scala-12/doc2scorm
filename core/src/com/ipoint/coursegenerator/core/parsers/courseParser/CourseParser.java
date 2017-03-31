@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +22,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
+import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
+import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
@@ -229,9 +234,9 @@ public class CourseParser extends AbstractParser {
 				}
 
 				int absNum = document.getBodyElements().indexOf(header);
-				ArrayList<XWPFParagraph> contentPars = new ArrayList<>();
+				ArrayList<XWPFParagraph> chapterPars = new ArrayList<>();
 				if ((absNum != lastDocElemNum)) {
-					contentPars.addAll(document.getBodyElements()
+					chapterPars.addAll(document.getBodyElements()
 							.subList(absNum + 1,
 									(headerNum == lastHeaderNum) ? document.getBodyElements().size()
 											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1)))
@@ -239,35 +244,78 @@ public class CourseParser extends AbstractParser {
 							.collect(Collectors.toList()));
 				}
 
-				if (!contentPars.isEmpty()) {
-					ArrayList<AbstractParagraphBlock<?>> contentBlocks = new ArrayList<>();
-					if (headerInfo.isTheoryNoneTestHeader()) {
-						for (int contentElemNum = 0; contentElemNum < contentPars.size(); contentElemNum++) {
-							XWPFParagraph subPar = contentPars.get(contentElemNum);
-							AbstractParagraphBlock<?> contentBlock = AbstractParagraphParser.parse(subPar, mathInfo);
+				if (!chapterPars.isEmpty()) {
+					AbstractPage<?> page = null;
 
-							if (HeaderParser.HeaderInfo.isHeader(subPar)) {
-								contentBlock = HeaderParser.parse(subPar, maxHeader);
-							} else if (contentBlock instanceof ListBlock) {
+					if (headerInfo.isTheoryNoneTestHeader()) {
+						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
+
+						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
+							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
+							AbstractParagraphBlock<?> chapterBlock = AbstractParagraphParser.parse(chapterPar,
+									mathInfo);
+
+							if (HeaderParser.HeaderInfo.isHeader(chapterPar)) {
+								chapterBlock = HeaderParser.parse(chapterPar, maxHeader);
+							} else if (chapterBlock instanceof ListBlock) {
 								// minus 1 because after this iteration
 								// "elNum" will be
 								// incremented
-								int shift = ((ListBlock) contentBlock).getSize() - 1;
+								int shift = ((ListBlock) chapterBlock).getSize() - 1;
 								if (shift > 0) {
-									contentElemNum += shift;
+									chapterElemNum += shift;
 								}
 							}
 
-							contentBlocks.add(contentBlock);
+							chapterBlocks.add(chapterBlock);
+						}
+
+						if (!chapterBlocks.isEmpty()) {
+							page = TheoryPage.createEmptyPage();
+							page.setBlocks(chapterBlocks);
 						}
 					} else {
-						// TODO: code for test-blocks
+						ArrayList<AbstractBlock<AbstractItem<?>>> questionsBlocks = new ArrayList<>();
+						AbstractBlock<AbstractItem<?>> questBlock = null;
+						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
+						for (int introElemNum = 0; introElemNum < chapterPars.size(); introElemNum++) {
+							XWPFParagraph chapterPar = chapterPars.get(introElemNum);
+
+							if (new Random().nextBoolean()) {// TODO: when
+																// question
+																// block started
+								// TODO: questBlock = new AbstractBlock<>();
+							} else if (questBlock == null) {
+								AbstractParagraphBlock<?> introBlock = AbstractParagraphParser.parse(chapterPar,
+										mathInfo);
+								if (HeaderParser.HeaderInfo.isHeader(chapterPar)) {
+									introBlock = HeaderParser.parse(chapterPar, maxHeader);
+								} else if (introBlock instanceof ListBlock) {
+									// minus 1 because after this iteration
+									// "elNum" will be
+									// incremented
+									int shift = ((ListBlock) introBlock).getSize() - 1;
+									if (shift > 0) {
+										introElemNum += shift;
+									}
+								}
+								introBlocks.add(introBlock);
+							} else {
+
+							}
+						}
+
+						if (!questionsBlocks.isEmpty()) {
+							page = TestingPage.createEmptyPage();
+							if (!introBlocks.isEmpty()) {
+								((TestingPage) page).setIntroBlocks(introBlocks);
+							}
+							page.setBlocks(questionsBlocks);
+						}
 					}
 
-					if (!contentBlocks.isEmpty()) {
-						AbstractPage page = AbstractPage.createEmptyPage();
+					if (page != null) {
 						page.setParent((CourseTreeNode) currentNode);
-						page.addBlocks(contentBlocks);
 					}
 				}
 			}
