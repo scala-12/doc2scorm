@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.HeaderBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 
 import test.java.TestUtils;

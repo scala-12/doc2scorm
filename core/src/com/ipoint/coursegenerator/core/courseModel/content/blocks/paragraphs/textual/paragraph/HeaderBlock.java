@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 
 /**
  * This block is an analogue of paragraph header.

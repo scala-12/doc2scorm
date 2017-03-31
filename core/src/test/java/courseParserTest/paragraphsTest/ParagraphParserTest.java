@@ -17,10 +17,10 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Test;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.HeaderBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;

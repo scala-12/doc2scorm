@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 
 /**
  * List block which may includes several {@link TextBlock} or

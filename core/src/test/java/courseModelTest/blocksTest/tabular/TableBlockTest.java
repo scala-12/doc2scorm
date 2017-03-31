@@ -10,10 +10,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell.CellItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
 import test.java.TestUtils;

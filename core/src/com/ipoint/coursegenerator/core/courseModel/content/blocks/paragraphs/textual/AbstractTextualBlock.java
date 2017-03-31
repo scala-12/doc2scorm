@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.textual;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual;
 
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 
 /**
  * Abstract paragraph block. These may be {@link ParagraphBlock} or

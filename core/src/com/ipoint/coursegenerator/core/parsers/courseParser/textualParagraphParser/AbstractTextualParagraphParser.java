@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 
 /**
  * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or

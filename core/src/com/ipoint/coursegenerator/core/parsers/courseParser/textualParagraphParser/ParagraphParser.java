@@ -9,9 +9,9 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser.HyperlinkParser;
