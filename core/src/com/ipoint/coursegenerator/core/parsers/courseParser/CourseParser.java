@@ -249,23 +249,10 @@ public class CourseParser extends AbstractParser {
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
-							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
-							AbstractParagraphBlock<?> chapterBlock = AbstractParagraphParser.parse(chapterPar,
-									mathInfo);
-
-							if (HeaderParser.HeaderInfo.isHeader(chapterPar)) {
-								chapterBlock = HeaderParser.parse(chapterPar, maxHeader);
-							} else if (chapterBlock instanceof ListBlock) {
-								// minus 1 because after this iteration
-								// "elNum" will be
-								// incremented
-								int shift = ((ListBlock) chapterBlock).getSize() - 1;
-								if (shift > 0) {
-									chapterElemNum += shift;
-								}
-							}
-
-							chapterBlocks.add(chapterBlock);
+							Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
+									maxHeader);
+							chapterElemNum += (int) blockAndShift[1];
+							chapterBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
 						}
 
 						if (!chapterBlocks.isEmpty()) {
@@ -274,27 +261,17 @@ public class CourseParser extends AbstractParser {
 					} else {
 						AbstractBlock<AbstractItem<?>> questBlock = null;
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
-						for (int introElemNum = 0; introElemNum < chapterPars.size(); introElemNum++) {
-							XWPFParagraph chapterPar = chapterPars.get(introElemNum);
+						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
+							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
 
 							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
 								// TODO: add questBlock!null to chapterBlocks
 								// TODO: questBlock = new AbstractBlock<>();
 							} else if (questBlock == null) {
-								AbstractParagraphBlock<?> introBlock = AbstractParagraphParser.parse(chapterPar,
-										mathInfo);
-								if (HeaderParser.HeaderInfo.isHeader(chapterPar)) {
-									introBlock = HeaderParser.parse(chapterPar, maxHeader);
-								} else if (introBlock instanceof ListBlock) {
-									// minus 1 because after this iteration
-									// "elNum" will be
-									// incremented
-									int shift = ((ListBlock) introBlock).getSize() - 1;
-									if (shift > 0) {
-										introElemNum += shift;
-									}
-								}
-								introBlocks.add(introBlock);
+								Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
+										maxHeader);
+								chapterElemNum += (int) blockAndShift[1];
+								introBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
 							} else {
 								// TODO: add answerBlock to questBlock
 							}
@@ -320,6 +297,22 @@ public class CourseParser extends AbstractParser {
 		}
 
 		return courseModel;
+	}
+
+	private static Object[] getBlockAndShift(XWPFParagraph par, MathInfo mathInfo, int maxHeader) {
+		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(par, mathInfo);
+		int shift = 0;
+
+		if (HeaderParser.HeaderInfo.isHeader(par)) {
+			block = HeaderParser.parse(par, maxHeader);
+		} else if (block instanceof ListBlock) {
+			// minus 1 because after this iteration
+			// "elNum" will be
+			// incremented
+			shift = ((ListBlock) block).getSize() - 1;
+		}
+
+		return new Object[] { block, (shift > 0) ? shift : 0 };
 	}
 
 }
