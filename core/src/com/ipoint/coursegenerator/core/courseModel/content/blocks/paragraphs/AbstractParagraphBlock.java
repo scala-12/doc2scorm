@@ -1,7 +1,9 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs;
 
 import java.util.List;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
 

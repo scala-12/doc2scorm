@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.te
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 

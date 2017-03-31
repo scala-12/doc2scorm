@@ -9,7 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;

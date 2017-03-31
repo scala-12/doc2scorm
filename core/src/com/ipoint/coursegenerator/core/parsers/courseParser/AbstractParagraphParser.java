@@ -5,7 +5,7 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;

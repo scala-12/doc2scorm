@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
