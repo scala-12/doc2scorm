@@ -84,7 +84,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		}
 		ArrayList<Element> sortedAnswers = new ArrayList<>(this.correctOrder.length);
 
-		for (int i = 0; answersBlock.getFirstChild() != null; i++) {
+		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			Element span = (Element) answersBlock.getFirstChild();
 			Element labelSpan = (Element) span.getFirstChild();
 			Element answerSpan = (Element) span.getLastChild();
@@ -108,11 +108,11 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 			answer.setAttribute("id", MATCH_ANSWER_ID_PREFIX + this.correctOrder[i]);
 
-			while (labelSpan.getFirstChild() != null) {
+			while (labelSpan.hasChildNodes()) {
 				label.appendChild(labelSpan.getFirstChild());
 			}
 
-			while (answerSpan.getFirstChild() != null) {
+			while (answerSpan.hasChildNodes()) {
 				answer.appendChild(answerSpan.getFirstChild());
 			}
 
