@@ -24,9 +24,19 @@ import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn.FillInBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
@@ -34,7 +44,7 @@ import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
-import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * Class for parsing to {@link CourseModel}
@@ -191,7 +201,7 @@ public class CourseParser extends AbstractParser {
 		try {
 			// We need in 2 independent Input streams for MathML and
 			// XWPFDocument
-			byte[] content = FileWork.convertStream2ByteArray(stream);
+			byte[] content = Tools.convertStream2ByteArray(stream);
 			MathInfo mathInfo = getAllFormulsAsMathML(new ByteArrayInputStream(content));
 			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(content));
 			content = null;
@@ -245,7 +255,7 @@ public class CourseParser extends AbstractParser {
 
 				if (!chapterPars.isEmpty()) {
 					AbstractPage<?> page = null;
-					ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
+					ArrayList<AbstractBlock<?>> chapterBlocks = new ArrayList<>();
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
@@ -259,21 +269,60 @@ public class CourseParser extends AbstractParser {
 							page = TheoryPage.createEmptyPage();
 						}
 					} else {
-						AbstractBlock<AbstractItem<?>> questBlock = null;
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
+						String task = null;
+						ArrayList<AbstractParagraphBlock<?>> answerBlocks = null;
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
 							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
 
 							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
-								// TODO: add questBlock!null to chapterBlocks
-								// TODO: questBlock = new AbstractBlock<>();
-							} else if (questBlock == null) {
+								if ((answerBlocks != null)) {
+									AbstractQuestionBlock<?> questBlock = null;
+									if (answerBlocks.isEmpty()) {
+										questBlock = new FillInBlock(task);
+									} else if (answerBlocks.get(0) instanceof TableBlock) {
+										TableBlock block = (TableBlock) answerBlocks.get(0);
+										if (block.getFirstItem().getValue().size() == 1) {
+											ArrayList<SequenceItem> items = new ArrayList<>();
+											for (TableItem row : block.getItems()) {
+												items.add(new SequenceItem(
+														row.getValue().get(0).getFirstItem().getValue()));
+											}
+											questBlock = new SequenceBlock(items, task);
+										} else if (block.getFirstItem().getValue().size() == 2) {
+											ArrayList<MatchItem> items = new ArrayList<>();
+											for (TableItem row : block.getItems()) {
+												ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
+												pair.set(0, row.getValue().get(0).getFirstItem().getValue());
+												pair.set(0, row.getValue().get(1).getFirstItem().getValue());
+												items.add(new MatchItem(pair));
+											}
+											questBlock = new MatchBlock(items, task);
+										}
+									} else if (answerBlocks.get(0) instanceof ListBlock) {
+										ArrayList<ChoiceItem> items = new ArrayList<>();
+										for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
+											// TODO: correctness
+											items.add(new ChoiceItem(item.getValue(), false));
+										}
+										questBlock = new ChoiceBlock(items, task);
+									}
+
+									if (questBlock != null) {
+										chapterBlocks.add(questBlock);
+									}
+								}
+								answerBlocks = new ArrayList<>();
+								task = chapterPar.getText();
+							} else {
 								Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
 										maxHeader);
 								chapterElemNum += (int) blockAndShift[1];
-								introBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
-							} else {
-								// TODO: add answerBlock to questBlock
+								if (answerBlocks == null) {
+									introBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
+								} else {
+									answerBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
+								}
 							}
 						}
 
