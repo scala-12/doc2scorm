@@ -1,14 +1,12 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * Item which includes Math formula
@@ -58,9 +56,8 @@ public class FormulaContentItem extends AbstractContentItem<Node> {
 	@Override
 	public String getText() {
 		try {
-			return this.toHtml(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument())
-					.getTextContent();
-		} catch (DOMException | ParserConfigurationException e) {
+			return this.toHtml(Tools.createEmptyDocument()).getTextContent();
+		} catch (DOMException e) {
 			return " ";
 		}
 	}
