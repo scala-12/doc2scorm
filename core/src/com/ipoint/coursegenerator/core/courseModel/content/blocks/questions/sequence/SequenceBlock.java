@@ -64,7 +64,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		}
 		ArrayList<Element> sortedAnswers = new ArrayList<>(this.correctOrder.length);
 
-		for (int i = 0; answersBlock.getFirstChild() != null; i++) {
+		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			Element item = (Element) answersBlock.getFirstChild();
 
 			int number;

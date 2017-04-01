@@ -83,7 +83,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		}
 		ArrayList<Node[]> sortedAnswers = new ArrayList<>(this.correctOrder.length);
 
-		for (int i = 0; answersBlock.getFirstChild() != null; i++) {
+		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			Element span = (Element) answersBlock.getFirstChild();
 
 			Element answer = (Element) span.getElementsByTagName("input").item(0);
