@@ -280,32 +280,35 @@ public class CourseParser extends AbstractParser {
 									AbstractQuestionBlock<?> questBlock = null;
 									if (answerBlocks.isEmpty()) {
 										questBlock = new FillInBlock(task);
-									} else if (answerBlocks.get(0) instanceof TableBlock) {
-										TableBlock block = (TableBlock) answerBlocks.get(0);
-										if (block.getFirstItem().getValue().size() == 1) {
-											ArrayList<SequenceItem> items = new ArrayList<>();
-											for (TableItem row : block.getItems()) {
-												items.add(new SequenceItem(
-														row.getValue().get(0).getFirstItem().getValue()));
+									} else {
+										AbstractParagraphBlock<?> answerBlock = answerBlocks.get(0);
+										if (answerBlock instanceof TableBlock) {
+											TableBlock block = (TableBlock) answerBlock;
+											if (block.getFirstItem().getValue().size() == 1) {
+												ArrayList<SequenceItem> items = new ArrayList<>();
+												for (TableItem row : block.getItems()) {
+													items.add(new SequenceItem(
+															row.getValue().get(0).getFirstItem().getValue()));
+												}
+												questBlock = new SequenceBlock(items, task);
+											} else if (block.getFirstItem().getValue().size() == 2) {
+												ArrayList<MatchItem> items = new ArrayList<>();
+												for (TableItem row : block.getItems()) {
+													ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
+													pair.set(0, row.getValue().get(0).getFirstItem().getValue());
+													pair.set(0, row.getValue().get(1).getFirstItem().getValue());
+													items.add(new MatchItem(pair));
+												}
+												questBlock = new MatchBlock(items, task);
 											}
-											questBlock = new SequenceBlock(items, task);
-										} else if (block.getFirstItem().getValue().size() == 2) {
-											ArrayList<MatchItem> items = new ArrayList<>();
-											for (TableItem row : block.getItems()) {
-												ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
-												pair.set(0, row.getValue().get(0).getFirstItem().getValue());
-												pair.set(0, row.getValue().get(1).getFirstItem().getValue());
-												items.add(new MatchItem(pair));
+										} else if (answerBlock instanceof ListBlock) {
+											ArrayList<ChoiceItem> items = new ArrayList<>();
+											for (ListItem item : ((ListBlock) answerBlock).getItems()) {
+												// TODO: correctness
+												items.add(new ChoiceItem(item.getValue(), false));
 											}
-											questBlock = new MatchBlock(items, task);
+											questBlock = new ChoiceBlock(items, task);
 										}
-									} else if (answerBlocks.get(0) instanceof ListBlock) {
-										ArrayList<ChoiceItem> items = new ArrayList<>();
-										for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
-											// TODO: correctness
-											items.add(new ChoiceItem(item.getValue(), false));
-										}
-										questBlock = new ChoiceBlock(items, task);
 									}
 
 									if (questBlock != null) {
