@@ -40,7 +40,7 @@ public class ChoiceItem extends AbstractQuestionItem<AbstractParagraphBlock<?>> 
 		input.setAttribute("name", NAME);
 
 		Element label = creatorTags.createElement("label");
-		label.appendChild(this.getValue().toHtml(creatorTags));
+		label.appendChild(this.getValue().toHtmlWithoutStyles(creatorTags));
 
 		String id = UUID.randomUUID().toString();
 		label.setAttribute("for", id);
