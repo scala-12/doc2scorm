@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,6 +11,7 @@ import org.w3c.dom.Node;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * This block is an analogue of text paragraph. These includes several
@@ -49,11 +47,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	@Override
 	public String[] getCorrect() {
 		if (super.getCorrect() == null) {
-			try {
-				toHtml(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			}
+			this.toHtml(Tools.createEmptyDocument());
 		}
 
 		return this.correctOrder;

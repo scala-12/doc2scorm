@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
@@ -32,11 +30,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 	@Override
 	public String[] getCorrect() {
 		if (super.getCorrect() == null) {
-			try {
-				toHtml(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			}
+			this.toHtml(Tools.createEmptyDocument());
 		}
 
 		return this.correctOrder;
