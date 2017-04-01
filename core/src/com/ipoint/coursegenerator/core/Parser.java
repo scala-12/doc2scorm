@@ -10,9 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
@@ -28,6 +25,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
+import com.ipoint.coursegenerator.core.utils.Tools;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -96,20 +94,6 @@ public class Parser {
 				.replace(":adl=", ":adlcp=");
 	}
 
-	private static Document createNewHTMLDocument() {
-		try {
-			Document html = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			html.appendChild(html.createElement("html"));
-			html.getFirstChild().appendChild(html.createElement("head"));
-			html.getFirstChild().appendChild(html.createElement("body"));
-
-			return html;
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	private ItemType addOrganizationElementToManifest(XmlObject parentItem, CourseTreeNode node) {
 		String id = UUID.randomUUID().toString();
 		String itemId = "ITEM_" + id;
@@ -136,7 +120,7 @@ public class Parser {
 	}
 
 	private void addScoToCourse(CourseTreeNode node, File htmlFile) {
-		Document html = createNewHTMLDocument();
+		Document html = Tools.createNewHTMLDocument();
 		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
 
 		if (FileWork.saveHtmlDocument(html, htmlFile, node.getTitle())) {
