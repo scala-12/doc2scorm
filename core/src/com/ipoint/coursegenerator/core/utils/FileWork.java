@@ -1,7 +1,6 @@
 package com.ipoint.coursegenerator.core.utils;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -219,17 +218,6 @@ public class FileWork {
 		}
 
 		return successful;
-	}
-
-	public static byte[] convertStream2ByteArray(InputStream stream) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		int n;
-		while ((n = stream.read(buf)) >= 0) {
-			baos.write(buf, 0, n);
-		}
-
-		return baos.toByteArray();
 	}
 
 }
