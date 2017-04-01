@@ -5,8 +5,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
@@ -18,7 +18,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  * @author Kalashnikov Vladislav
  *
  */
-public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
+public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<?>>> {
 
 	/**
 	 * Count of cells which combined in row
@@ -117,6 +117,15 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return toHtml(creatorTags, true);
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element tCell = creatorTags.createElement("td");
 
 		if ((this.getColSpan() != null) && (this.getRowSpan() != null)) {
@@ -128,13 +137,22 @@ public class CellItem extends AbstractItem<List<AbstractParagraphBlock<?>>> {
 			}
 			if (this.getValue() != null) {
 				for (AbstractParagraphBlock<?> par : this.getValue()) {
-					Element tPar = par.toHtml(creatorTags);
-					tCell.appendChild(tPar);
+					tCell.appendChild((styled) ? par.toHtml(creatorTags) : par.toHtmlWithoutStyles(creatorTags));
 				}
 			}
 		}
 
 		return tCell;
+	}
+
+	@Override
+	public String getText() {
+		StringBuilder text = new StringBuilder();
+		for (AbstractParagraphBlock<?> block : this.getValue()) {
+			text.append(block.getText());
+		}
+
+		return text.toString();
 	}
 
 }

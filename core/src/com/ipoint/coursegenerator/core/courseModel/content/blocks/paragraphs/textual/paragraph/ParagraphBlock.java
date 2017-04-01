@@ -9,13 +9,9 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 
 /**
- * This block is an analogue of text paragraph. These includes several
- * {@link TextBlock}, {@link HyperlinkBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -72,9 +68,19 @@ public class ParagraphBlock extends AbstractTextualBlock<ParagraphItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return toHtml(creatorTags, true);
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element par = creatorTags.createElement("p");
+
 		for (ParagraphItem item : this.getItems()) {
-			par.appendChild(item.toHtml(creatorTags));
+			par.appendChild((styled) ? item.toHtml(creatorTags) : item.toHtmlWithoutStyles(creatorTags));
 		}
 
 		if (this.getAlignment() != null) {

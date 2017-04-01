@@ -1,5 +1,9 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +48,21 @@ public class FormulaContentItem extends AbstractContentItem<Node> {
 		}
 
 		return mathML;
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return toHtml(creatorTags);
+	}
+
+	@Override
+	public String getText() {
+		try {
+			return this.toHtml(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument())
+					.getTextContent();
+		} catch (DOMException | ParserConfigurationException e) {
+			return " ";
+		}
 	}
 
 }

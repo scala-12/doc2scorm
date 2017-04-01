@@ -257,4 +257,14 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 		return img;
 	}
 
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return toHtml(creatorTags);
+	}
+
+	@Override
+	public String getText() {
+		return " ";
+	}
+
 }

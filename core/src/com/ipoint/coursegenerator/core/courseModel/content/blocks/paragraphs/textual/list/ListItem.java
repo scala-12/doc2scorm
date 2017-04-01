@@ -4,7 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  * @author Kalashnikov Vladislav
  *
  */
-public class ListItem extends AbstractItem<AbstractTextualBlock<?>> {
+public class ListItem extends AbstractParagraphItem<AbstractTextualBlock<?>> {
 
 	public ListItem(AbstractTextualBlock<?> paragraph) {
 		super(paragraph);
@@ -25,8 +25,18 @@ public class ListItem extends AbstractItem<AbstractTextualBlock<?>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, true);
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element listItem = creatorTags.createElement("li");
-		Node itemValue = this.getValue().toHtml(creatorTags);
+		Node itemValue = (styled) ? this.getValue().toHtml(creatorTags)
+				: this.getValue().toHtmlWithoutStyles(creatorTags);
 		if (this.getValue() instanceof ParagraphBlock) {
 			// because in this situation tag p equal tag li
 			while (itemValue.hasChildNodes()) {
@@ -37,6 +47,11 @@ public class ListItem extends AbstractItem<AbstractTextualBlock<?>> {
 		}
 
 		return listItem;
+	}
+
+	@Override
+	public String getText() {
+		return this.getValue().getText();
 	}
 
 }

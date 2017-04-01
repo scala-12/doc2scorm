@@ -145,6 +145,7 @@ public class TextContentItem extends AbstractContentItem<String> {
 		return this.toHtml(creatorTags, true);
 	}
 
+	@Override
 	public Element toHtmlWithoutStyles(Document creatorTags) {
 		return this.toHtml(creatorTags, false);
 	}
@@ -227,6 +228,11 @@ public class TextContentItem extends AbstractContentItem<String> {
 		}
 
 		return headTag;
+	}
+
+	@Override
+	public String getText() {
+		return this.getValue();
 	}
 
 }

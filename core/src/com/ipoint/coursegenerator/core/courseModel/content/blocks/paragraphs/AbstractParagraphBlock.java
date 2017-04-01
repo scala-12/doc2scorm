@@ -16,7 +16,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  * @param <T>
  *            Type of item that included in block
  */
-public abstract class AbstractParagraphBlock<T extends AbstractItem<?>> extends AbstractBlock<T> {
+public abstract class AbstractParagraphBlock<T extends AbstractItem<?>> extends AbstractBlock<T>
+		implements ConvertableWithText {
 
 	protected AbstractParagraphBlock(List<T> items) {
 		super(items);
