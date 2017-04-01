@@ -138,32 +138,65 @@ public class TextContentItem extends AbstractContentItem<String> {
 	}
 
 	/**
-	 * @return html-element span
+	 * @return span
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, true);
+	}
+
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element headTag = creatorTags.createElement(SPAN_TAG_NAME);
 		Element text = null;
 
-		if (this.isBold()) {
-			Element tag = creatorTags.createElement(BOLD_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
-			} else {
-				headTag.appendChild(tag);
-				text = tag;
+		if (styled) {
+			if (this.isBold()) {
+				Element tag = creatorTags.createElement(BOLD_TAG_NAME);
+				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+					headTag = tag;
+					text = tag;
+				} else {
+					headTag.appendChild(tag);
+					text = tag;
+				}
 			}
-		}
 
-		if (this.isItalic()) {
-			Element tag = creatorTags.createElement(ITALIC_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
-			} else {
-				headTag.appendChild(tag);
-				text = tag;
+			if (this.isItalic()) {
+				Element tag = creatorTags.createElement(ITALIC_TAG_NAME);
+				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+					headTag = tag;
+					text = tag;
+				} else {
+					headTag.appendChild(tag);
+					text = tag;
+				}
+			}
+
+			if (this.isUnderline()) {
+				Element tag = creatorTags.createElement(UNDERLINE_TAG_NAME);
+				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+					headTag = tag;
+					text = tag;
+				} else {
+					headTag.appendChild(tag);
+					text = tag;
+				}
+			}
+
+			if (this.getColor() != null) {
+				Element tag = creatorTags.createElement(FONT_TAG_NAME);
+				tag.setAttribute(COLOR_TAG_NAME, this.getColor());
+				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
+					headTag = tag;
+					text = tag;
+				} else {
+					headTag.appendChild(tag);
+					text = tag;
+				}
 			}
 		}
 
@@ -178,29 +211,6 @@ public class TextContentItem extends AbstractContentItem<String> {
 			}
 		} else if (this.isSubscript()) {
 			Element tag = creatorTags.createElement(SUBSCRIPT_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
-			} else {
-				headTag.appendChild(tag);
-				text = tag;
-			}
-		}
-
-		if (this.isUnderline()) {
-			Element tag = creatorTags.createElement(UNDERLINE_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
-			} else {
-				headTag.appendChild(tag);
-				text = tag;
-			}
-		}
-
-		if (this.getColor() != null) {
-			Element tag = creatorTags.createElement(FONT_TAG_NAME);
-			tag.setAttribute(COLOR_TAG_NAME, this.getColor());
 			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
 				headTag = tag;
 				text = tag;
