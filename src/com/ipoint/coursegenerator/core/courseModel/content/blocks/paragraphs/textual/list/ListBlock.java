@@ -89,6 +89,15 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, true);
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element list = null;
 		if (this.getMarkerType() == SIMPLE_MARKER) {
 			list = creatorTags.createElement("ul");
@@ -111,7 +120,8 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 		}
 
 		for (int i = 0; i < this.getItems().size(); ++i) {
-			Element listItem = this.getItems().get(i).toHtml(creatorTags);
+			Element listItem = (styled) ? this.getItems().get(i).toHtml(creatorTags)
+					: this.getItems().get(i).toHtmlWithoutStyles(creatorTags);
 			list.appendChild(listItem);
 			if ((i + 1) < this.getItems().size()) {
 				if (this.getItems().get(i + 1).getValue() instanceof ListBlock) {
@@ -119,7 +129,9 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 					// insert into listItem a other list. If don't do it then
 					// another list inserted into new list item - It is looks
 					// not correct.
-					listItem.appendChild(this.getItems().get(++i).toHtml(creatorTags).getFirstChild());
+					ListItem item = this.getItems().get(++i);
+					listItem.appendChild((styled) ? item.toHtml(creatorTags).getFirstChild()
+							: item.toHtmlWithoutStyles(creatorTags).getFirstChild());
 				}
 			}
 		}
@@ -129,8 +141,7 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 
 	@Override
 	public String getText() {
-		return String.join("\n",
-				this.getItems().stream().map(li -> li.getValue().getText()).collect(Collectors.toList()));
+		return String.join("\n", this.getItems().stream().map(li -> li.getText()).collect(Collectors.toList()));
 	}
 
 }

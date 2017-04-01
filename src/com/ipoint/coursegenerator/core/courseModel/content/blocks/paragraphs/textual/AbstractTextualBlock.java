@@ -23,6 +23,4 @@ public abstract class AbstractTextualBlock<T extends AbstractItem<?>> extends Ab
 		super(items);
 	}
 
-	abstract public String getText();
-
 }

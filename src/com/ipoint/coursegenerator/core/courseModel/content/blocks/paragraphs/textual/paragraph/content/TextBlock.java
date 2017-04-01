@@ -6,7 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
 
 /**
  * This block is analogue paragraph in life. Text block which may include
@@ -15,7 +15,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
  * @author Kalashnikov Vladislav
  *
  */
-public class TextBlock extends AbstractBlock<AbstractContentItem<?>> {
+public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
 
 	public TextBlock(List<AbstractContentItem<?>> runs) {
 		super(runs);
@@ -37,12 +37,31 @@ public class TextBlock extends AbstractBlock<AbstractContentItem<?>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
+		return this.toHtml(creatorTags, true);
+	}
+
+	@Override
+	public Element toHtmlWithoutStyles(Document creatorTags) {
+		return this.toHtml(creatorTags, false);
+	}
+
+	private Element toHtml(Document creatorTags, boolean styled) {
 		Element paragraph = creatorTags.createElement("span");
 		for (AbstractContentItem<?> run : this.getItems()) {
-			paragraph.appendChild(run.toHtml(creatorTags));
+			paragraph.appendChild((styled) ? run.toHtmlWithoutStyles(creatorTags) : run.toHtml(creatorTags));
 		}
 
 		return paragraph;
+	}
+
+	@Override
+	public String getText() {
+		StringBuilder text = new StringBuilder();
+		for (AbstractContentItem<?> item : this.getItems()) {
+			text.append(item.getText());
+		}
+
+		return text.toString();
 	}
 
 }
