@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 
@@ -14,7 +15,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
  * @author Kalashnikov Vladislav
  *
  */
-public class TestingPage extends AbstractPage {
+public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 
 	private final ArrayList<AbstractParagraphBlock<?>> introBlocks;
 
