@@ -24,7 +24,6 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileWork;
-import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 import com.ipoint.coursegenerator.core.utils.Tools;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
@@ -177,9 +176,8 @@ public class Parser {
 
 		File sytemDir = new File(directory, COURSE_SYSTEM_DIR);
 
-		for (File template : TemplateFiles.SYSTEM_FILES) {
-			FileWork.copyFileFromResourcesToDir(template, sytemDir);
-		}
+		FileWork.copyFileFromResourceDirToDir(FileWork.TemplateFiles.CSS_DIR, sytemDir);
+		FileWork.copyFileFromResourceDirToDir(FileWork.TemplateFiles.JS_DIR, sytemDir);
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());

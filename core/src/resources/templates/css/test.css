@@ -1,0 +1,120 @@
+p {
+	text-align: justify;
+	width: 70%;
+	margin-left: 115px;
+	line-height: 30px;
+}
+table {
+	padding: 0 0 0 30px;
+	margin: 0 0 30px 0;
+}
+td {
+	border-bottom-width: 1px;
+	border-bottom-color: #660000;
+	border-bottom-style: solid;
+	padding: 10px;
+}
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: medium;
+}
+.button {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFF;
+	background-color: #600;
+}
+input {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #660000;
+}
+select{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #660000;	
+}.seltext {
+	color: #FF0000;
+	font-weight: bold;
+}
+.task {
+	font-weight: bold;
+}
+.question {
+	font-style: italic;
+}
+div.quest_info {
+	width: auto;
+	height: auto;
+	padding: 0 25px;
+}
+div.quest_info_item {
+	text-align:center;
+	width:100%;
+}
+div.quest_info_item > * {
+	text-align: justify;
+	width: 90%;
+	margin: auto;	
+}
+div.quest_info_item > div {
+	border: 2px inset;
+	padding: 2px 0;
+}
+div.quest_comment {
+	margin-top:15px;
+	width:100%;
+}
+#end_test_msg {
+	border: thin solid #660033;
+	background-color: #99ccff;
+}
+#end_test_msg h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: x-large;
+	color: #333399;
+	text-align: center;
+}
+#error_count {
+	color:#FF0000;
+}
+#test_results {
+	width: 100%;
+}
+form #answers_block #choice_answers_fieldset label.choice_answer:last-of-type {
+	margin-bottom: 0;
+}
+#sequence_answers_block,
+#match_answers_block,
+li.match_label4answer {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	max-width: 860px;
+	display: block;
+}
+#sequence_answers_block li,
+#match_answers_block li,
+li.match_label4answer,
+form #answers_block #choice_answers_fieldset label.choice_answer {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	min-width: 120px;
+}
+li.match_label4answer {
+	border-top: 1px solid gray;
+}
+li.match_label4answer:first-of-type {
+	border-top: 0;
+}
+html>body #sequence_answers_block li,
+html>body #match_answers_block li {
+	line-height: 1.2em;
+}
+.ui-state-highlight {
+	height: 1.5em;
+	line-height: 1.2em;
+}
