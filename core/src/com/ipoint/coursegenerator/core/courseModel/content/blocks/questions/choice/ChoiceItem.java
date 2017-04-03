@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
 
 /**
@@ -13,7 +13,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.Abst
  * @author Kalashnikov Vladislav
  *
  */
-public class ChoiceItem extends AbstractQuestionItem<TextBlock> {
+public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 
 	private boolean isCorrect;
 
@@ -21,7 +21,7 @@ public class ChoiceItem extends AbstractQuestionItem<TextBlock> {
 
 	public static final String CLASS = "choice_answer";
 
-	public ChoiceItem(TextBlock content, boolean isCorrect) {
+	public ChoiceItem(ParagraphBlock content, boolean isCorrect) {
 		super(content);
 		this.isCorrect = isCorrect;
 	}
