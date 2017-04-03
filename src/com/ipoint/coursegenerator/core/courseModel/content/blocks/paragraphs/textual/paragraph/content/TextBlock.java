@@ -48,7 +48,7 @@ public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
 	private Element toHtml(Document creatorTags, boolean styled) {
 		Element paragraph = creatorTags.createElement("span");
 		for (AbstractContentItem<?> run : this.getItems()) {
-			paragraph.appendChild((styled) ? run.toHtmlWithoutStyles(creatorTags) : run.toHtml(creatorTags));
+			paragraph.appendChild((styled) ? run.toHtml(creatorTags) : run.toHtmlWithoutStyles(creatorTags));
 		}
 
 		return paragraph;
