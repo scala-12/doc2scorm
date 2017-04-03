@@ -28,6 +28,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -308,8 +309,9 @@ public class CourseParser extends AbstractParser {
 										} else if (answerBlock instanceof ListBlock) {
 											ArrayList<ChoiceItem> items = new ArrayList<>();
 											for (ListItem item : ((ListBlock) answerBlock).getItems()) {
-												// TODO: correctness
-												items.add(new ChoiceItem(item.getValue(), false));
+												TextBlock block = (TextBlock) item.getValue();
+
+												items.add(new ChoiceItem(block, block.getFirstItem().isUnderline()));
 											}
 											questBlock = new ChoiceBlock(items, task);
 										}
