@@ -19,7 +19,7 @@ public class FormulaContentItem extends AbstractContentItem<Node> {
 	private boolean paragraphFlag;
 
 	public FormulaContentItem(Node math, boolean paragraphFlag) {
-		super(math);
+		super(null, math);
 		this.setParagraphFlag(paragraphFlag);
 	}
 
@@ -31,11 +31,8 @@ public class FormulaContentItem extends AbstractContentItem<Node> {
 		this.paragraphFlag = flag;
 	}
 
-	/**
-	 * Returns html-object math
-	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	protected Node getValueAsHtml(Document creatorTags) {
 		Element mathML = (Element) creatorTags.importNode(this.getValue(), true);
 
 		mathML.removeAttribute("display");
@@ -46,11 +43,6 @@ public class FormulaContentItem extends AbstractContentItem<Node> {
 		}
 
 		return mathML;
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return toHtml(creatorTags);
 	}
 
 	@Override

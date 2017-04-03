@@ -131,7 +131,7 @@ public class TextParser extends AbstractParser {
 						}
 
 						if (pictureData != null) {
-							blockItems.add(new ImageContentItem(pictureData, picStyle, isWrap));
+							blockItems.add(new ImageContentItem(run, pictureData, picStyle, isWrap));
 						}
 					} else {
 						// Text
