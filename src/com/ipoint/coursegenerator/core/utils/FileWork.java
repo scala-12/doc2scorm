@@ -1,3 +1,4 @@
+
 package com.ipoint.coursegenerator.core.utils;
 
 import java.io.ByteArrayInputStream;
@@ -12,9 +13,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -28,6 +32,7 @@ import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -43,17 +48,19 @@ public class FileWork {
 	public final static String IMAGE_DIR_NAME = "img";
 
 	public static class TemplateFiles {
-		private static final String templateDir = "templates";
-		public final static File SCO4THEORY = new File(templateDir, "sco_theory_template.ftl");
-		public final static File SCO4TEST = new File(templateDir, "sco_test_template.ftl");
-		public final static File CSS4THEORY = new File(templateDir, "theory.css");
-		public final static File CSS4TEST = new File(templateDir, "test.css");
-		public final static File JS_API_WRAPPER = new File("templates/js/APIWrapper.js");
-		public final static File JS_SCO_FUNCTION = new File("templates/js/SCOFunctions.js");
-		public final static File JS_PARSER = new File("templates/js/parser.js");
+		private static final String TEMPLATE_DIR = "templates";
+		public static final File JS_DIR = new File(TEMPLATE_DIR, "js");
+		public static final File CSS_DIR = new File(TEMPLATE_DIR, "css");
 
-		public final static File[] SYSTEM_FILES = new File[] { CSS4THEORY, CSS4TEST, JS_API_WRAPPER, JS_SCO_FUNCTION,
-				JS_PARSER };
+		public final static File SCO4THEORY = new File(TEMPLATE_DIR, "sco_theory_template.ftl");
+		public final static File SCO4TEST = new File(TEMPLATE_DIR, "sco_test_template.ftl");
+
+		public final static File CSS4THEORY = new File(CSS_DIR, "theory.css");
+		public final static File CSS4TEST = new File(CSS_DIR, "test.css");
+		public final static File CSS4ALL = new File(CSS_DIR, "style.css");
+
+		public static final String JQUERY_VERSION = "3.1.1";
+		public static final String JQUERY_UI_VERSION = "1.12.1";
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
@@ -111,6 +118,34 @@ public class FileWork {
 		return saveFile(getFileFromResources(fileFromResource), new File(destDir, fileFromResource.getName()), false);
 	}
 
+	public static void copyFileFromResourceDirToDir(File resourceDir, File destDir) {
+		String jarPath = FileWork.class.getResource("/" + resourceDir).getFile();
+		if (jarPath.startsWith("file:")) {
+			jarPath = jarPath.substring("file:/".length());
+		}
+		if (jarPath.contains("!")) {
+			jarPath = jarPath.substring(0, jarPath.indexOf('!'));
+		}
+
+		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
+
+		try (JarFile jar = new JarFile(new File(jarPath));) {
+			final Enumeration<JarEntry> entries = jar.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				if (!entry.isDirectory()) {
+					String fileName = entry.getName().replace(File.separatorChar, '/');
+					if ((fileName.length() > resDirPath.length()) && fileName.startsWith(resDirPath + '/')) {
+						saveFile(getFileFromResources(new File(resourceDir, fileName)), new File(destDir, fileName),
+								false);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static InputStream getFileFromResources(File fileFromResource) {
 		String path = fileFromResource.getPath().replace(File.separatorChar, '/');
 
@@ -142,12 +177,15 @@ public class FileWork {
 
 			Template tmpl = cfg.getTemplate(TemplateFiles.SCO4THEORY.getName(), STANDARD_ENCODING.name());
 			Map<String, String> body = new HashMap<>();
+
 			body.put("page_title", pageTitle);
-			body.put("body_content", buffer.toString());
 			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-			body.put("course_css", TemplateFiles.CSS4THEORY.getName());
-			body.put("api_wrapper_js", TemplateFiles.JS_API_WRAPPER.getName());
-			body.put("sco_functions_js", TemplateFiles.JS_SCO_FUNCTION.getName());
+			body.put("theory_css", TemplateFiles.CSS4THEORY.getName());
+			body.put("all_css", TemplateFiles.CSS4ALL.getName());
+			body.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
+			body.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
+
+			body.put("body_content", buffer.toString());
 
 			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
 					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
