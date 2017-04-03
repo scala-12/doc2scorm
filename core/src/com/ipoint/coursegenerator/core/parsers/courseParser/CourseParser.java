@@ -23,7 +23,6 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
@@ -255,9 +254,10 @@ public class CourseParser extends AbstractParser {
 
 				if (!chapterPars.isEmpty()) {
 					AbstractPage<?> page = null;
-					ArrayList<AbstractBlock<?>> chapterBlocks = new ArrayList<>();
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
+						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
+
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
 							Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
 									maxHeader);
@@ -266,9 +266,13 @@ public class CourseParser extends AbstractParser {
 						}
 
 						if (!chapterBlocks.isEmpty()) {
-							page = TheoryPage.createEmptyPage();
+							TheoryPage theoryPage = TheoryPage.createEmptyPage();
+							theoryPage.setBlocks(chapterBlocks);
+							page = theoryPage;
 						}
 					} else {
+						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
+
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
 						String task = null;
 						ArrayList<AbstractParagraphBlock<?>> answerBlocks = null;
@@ -312,7 +316,7 @@ public class CourseParser extends AbstractParser {
 									}
 
 									if (questBlock != null) {
-										chapterBlocks.add(questBlock);
+										questionsBlocks.add(questBlock);
 									}
 								}
 								answerBlocks = new ArrayList<>();
@@ -329,17 +333,18 @@ public class CourseParser extends AbstractParser {
 							}
 						}
 
-						if (!chapterBlocks.isEmpty()) {
-							page = TestingPage.createEmptyPage();
+						if (!questionsBlocks.isEmpty()) {
+							TestingPage testPage = TestingPage.createEmptyPage();
 							if (!introBlocks.isEmpty()) {
-								((TestingPage) page).setIntroBlocks(introBlocks);
+								testPage.setIntroBlocks(introBlocks);
 							}
+							testPage.setBlocks(questionsBlocks);
+							page = testPage;
 						}
 					}
 
 					if (page != null) {
 						page.setParent((CourseTreeNode) currentNode);
-						page.setBlocks(chapterBlocks);
 					}
 				}
 			}
