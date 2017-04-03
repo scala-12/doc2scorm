@@ -32,7 +32,6 @@ import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
-import com.ipoint.coursegenerator.core.utils.FileWork.TemplateFiles;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
