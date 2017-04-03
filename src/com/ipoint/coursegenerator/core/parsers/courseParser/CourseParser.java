@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -309,9 +311,23 @@ public class CourseParser extends AbstractParser {
 										} else if (answerBlock instanceof ListBlock) {
 											ArrayList<ChoiceItem> items = new ArrayList<>();
 											for (ListItem item : ((ListBlock) answerBlock).getItems()) {
-												TextBlock block = (TextBlock) item.getValue();
+												ParagraphBlock block = (ParagraphBlock) item.getValue();
 
-												items.add(new ChoiceItem(block, block.getFirstItem().isUnderline()));
+												List<List<AbstractContentItem<?>>> parItems = block.getItems().stream()
+														.filter(parItem -> parItem.getValue().getFirstItem() != null)
+														.map(parItem -> parItem.getValue().getItems())
+														.collect(Collectors.toList());
+
+												boolean isFalse = true;
+												for (Iterator<List<AbstractContentItem<?>>> listIter = parItems
+														.iterator(); listIter.hasNext();) {
+													for (Iterator<AbstractContentItem<?>> iter = listIter.next()
+															.iterator(); isFalse && iter.hasNext();) {
+														isFalse = iter.next().isUnderline();
+													}
+												}
+
+												items.add(new ChoiceItem(block, !isFalse));
 											}
 											questBlock = new ChoiceBlock(items, task);
 										}
