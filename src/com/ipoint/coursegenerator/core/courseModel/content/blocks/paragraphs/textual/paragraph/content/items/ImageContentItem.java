@@ -3,8 +3,10 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.te
 import java.io.File;
 
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.utils.FileWork;
@@ -54,8 +56,8 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	 *            If it is true then picture in text else behind or front
 	 * 
 	 */
-	public ImageContentItem(XWPFPictureData imageData, String style, boolean isWrap) {
-		super(imageData);
+	public ImageContentItem(XWPFRun run, XWPFPictureData imageData, String style, boolean isWrap) {
+		super(run, imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {
 			this.zPosition = INTO_POSITION;
@@ -221,7 +223,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	 * @return html element img
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	protected Node getValueAsHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
 		img.setAttribute("src",
 				new File(FileWork.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));
@@ -255,11 +257,6 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 		}
 
 		return img;
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return toHtml(creatorTags);
 	}
 
 	@Override
