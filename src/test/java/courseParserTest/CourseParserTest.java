@@ -13,11 +13,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import test.java.TestUtils;
-
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
+
+import test.java.TestUtils;
 
 @RunWith(Parameterized.class)
 public class CourseParserTest {
@@ -34,15 +34,14 @@ public class CourseParserTest {
 	@SuppressWarnings("rawtypes")
 	@Parameters
 	public static Collection data() {
-		return Arrays.asList(new Object[][] { { "First Level", FIRST_LEVEL },
-				{ "Three level", THREE_LEVEL }, { "", FALURE_LEVEL } });
+		return Arrays.asList(new Object[][] { { "First Level", FIRST_LEVEL }, { "Three level", THREE_LEVEL },
+				{ "", FALURE_LEVEL } });
 	}
 
 	public CourseParserTest(String courseName, int headerLevel) {
 		this.courseName = courseName;
 		// this.headerLevel = headerLevel;
-		this.courseModel = new CourseParser().parse(TestUtils.getTestDocFile(),
-				courseName, headerLevel);
+		this.courseModel = CourseParser.parse(TestUtils.getTestDocFile(), courseName, headerLevel);
 	}
 
 	@Test
