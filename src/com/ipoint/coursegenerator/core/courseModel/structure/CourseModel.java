@@ -16,7 +16,7 @@ public class CourseModel extends AbstractTreeNode {
 
 	private CourseModel(String courseName) {
 		super();
-		this.setTitle((isCorrectName(courseName)) ? "course_" + String.valueOf(this.hashCode()) : courseName);
+		this.setTitle((isCorrectName(courseName)) ? courseName : "course_" + String.valueOf(this.hashCode()));
 	}
 
 	public static CourseModel createEmptyCourseModel(String courseName) {
