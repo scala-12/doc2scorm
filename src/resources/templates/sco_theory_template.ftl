@@ -3,7 +3,6 @@
 <head>
 	<title>${page_title}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link type="text/css" href="${system_dir}/${course_css}" rel="stylesheet">
 	<script type="text/javascript" src="${system_dir}/APIWrapper.js"></script>
 	<script type="text/javascript" src="${system_dir}/SCOFunctions.js"></script>
 	<script type="text/javascript" src="${system_dir}/jquery-${jquery_ver}.min.js"></script>
@@ -13,7 +12,7 @@
 	<link rel="stylesheet" href="${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
 	
 	<link rel="stylesheet" href="${system_dir}/${theory_css}">
-	<link rel="stylesheet" href="${system_dir}/${all_css}">
+	<link rel="stylesheet" href="${system_dir}/${course_css}">
 	
 	<script type="text/javascript" async
 			src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">

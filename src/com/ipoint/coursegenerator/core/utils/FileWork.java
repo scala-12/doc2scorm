@@ -56,7 +56,7 @@ public class FileWork {
 
 		public final static File CSS4THEORY = new File(CSS_DIR, "theory.css");
 		public final static File CSS4TEST = new File(CSS_DIR, "test.css");
-		public final static File CSS4ALL = new File(CSS_DIR, "style.css");
+		public final static File CSS4COURSE = new File(CSS_DIR, "course.css");
 
 		public static final String JQUERY_VERSION = "3.1.1";
 		public static final String JQUERY_UI_VERSION = "1.12.1";
@@ -118,15 +118,15 @@ public class FileWork {
 	}
 
 	public static void copyFileFromResourceDirToDir(File resourceDir, File destDir) {
-		String jarPath = FileWork.class.getResource("/" + resourceDir).getFile();
+		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
+		
+		String jarPath = FileWork.class.getResource("/" + resDirPath).getFile();
 		if (jarPath.startsWith("file:")) {
 			jarPath = jarPath.substring("file:/".length());
 		}
 		if (jarPath.contains("!")) {
 			jarPath = jarPath.substring(0, jarPath.indexOf('!'));
 		}
-
-		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
 
 		try (JarFile jar = new JarFile(new File(jarPath));) {
 			final Enumeration<JarEntry> entries = jar.entries();
@@ -180,7 +180,7 @@ public class FileWork {
 			body.put("page_title", pageTitle);
 			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
 			body.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-			body.put("all_css", TemplateFiles.CSS4ALL.getName());
+			body.put("course_css", TemplateFiles.CSS4COURSE.getName());
 			body.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
 			body.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
 
