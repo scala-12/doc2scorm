@@ -2,11 +2,14 @@ package com.ipoint.coursegenerator.core.courseModel.content;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}
@@ -52,4 +55,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		return !newBlocks.isEmpty();
 	}
 
+	public Set<PictureInfo> getIntroImages() {
+		return Tools.getImagesRecursive(new ArrayList<AbstractBlock<?>>(this.getIntroBlocks()));
+	}
 }
