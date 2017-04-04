@@ -27,6 +27,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
@@ -297,6 +298,12 @@ public class CourseParser extends AbstractParser {
 												for (TableItem row : block.getItems()) {
 													items.add(new SequenceItem(
 															row.getValue().get(0).getFirstItem().getValue()));
+												}
+												questBlock = new SequenceBlock(items, task);
+											} else if (block.getItems().size() == 1) {
+												ArrayList<SequenceItem> items = new ArrayList<>();
+												for (CellBlock cell : block.getFirstItem().getValue()) {
+													items.add(new SequenceItem(cell.getFirstItem().getValue()));
 												}
 												questBlock = new SequenceBlock(items, task);
 											} else if (block.getFirstItem().getValue().size() == 2) {
