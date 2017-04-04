@@ -24,6 +24,7 @@ public class HeaderParser extends ParagraphParser {
 		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern
 				.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
 		private static final Pattern TEST_QUESTION_HEADER_PATTERN = Pattern.compile(".*(?:quest(?:ion)?|вопрос)");
+		private static final Pattern TEST_CORRECT_ANSWER_HEADER_PATTERN = Pattern.compile(".*(?:correct|правильный)");
 
 		private int level;
 		private String title;
@@ -104,24 +105,28 @@ public class HeaderParser extends ParagraphParser {
 		}
 
 		public static boolean isHeader(XWPFParagraph par) {
-			if (hasStyle(par)) {
-				XWPFStyle style = par.getDocument().getStyles().getStyle(par.getStyleID());
-
-				return getHeaderMatcher(SCO_THEORY_HEADER_PATTERN, style).matches()
-						|| getHeaderMatcher(SCO_TEST_HEADER_PATTERN, style).matches();
-			}
-
-			return false;
+			return isSomeHeader(new Pattern[] { SCO_THEORY_HEADER_PATTERN, SCO_TEST_HEADER_PATTERN }, par);
 		}
 
 		public static boolean isQuestion(XWPFParagraph par) {
+			return isSomeHeader(new Pattern[] { TEST_QUESTION_HEADER_PATTERN }, par);
+		}
+
+		public static boolean isCorrectAnswer(XWPFParagraph par) {
+			return isSomeHeader(new Pattern[] { TEST_CORRECT_ANSWER_HEADER_PATTERN }, par);
+		}
+
+		private static boolean isSomeHeader(Pattern[] patterns, XWPFParagraph par) {
+			boolean result = false;
+
 			if (hasStyle(par)) {
 				XWPFStyle style = par.getDocument().getStyles().getStyle(par.getStyleID());
-
-				return getHeaderMatcher(TEST_QUESTION_HEADER_PATTERN, style).matches();
+				for (Pattern pattern : patterns) {
+					result |= getHeaderMatcher(pattern, style).matches();
+				}
 			}
 
-			return false;
+			return result;
 		}
 
 		public Integer getLevel() {

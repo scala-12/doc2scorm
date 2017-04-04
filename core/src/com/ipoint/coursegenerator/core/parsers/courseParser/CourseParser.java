@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,6 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -278,7 +277,9 @@ public class CourseParser extends AbstractParser {
 
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
 						String task = null;
+
 						ArrayList<AbstractParagraphBlock<?>> answerBlocks = null;
+						HashMap<AbstractParagraphBlock<?>, XWPFParagraph> answer2Par = new HashMap<>();
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
 							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
 
@@ -313,21 +314,8 @@ public class CourseParser extends AbstractParser {
 											for (ListItem item : ((ListBlock) answerBlock).getItems()) {
 												ParagraphBlock block = (ParagraphBlock) item.getValue();
 
-												List<List<AbstractContentItem<?>>> parItems = block.getItems().stream()
-														.filter(parItem -> parItem.getValue().getFirstItem() != null)
-														.map(parItem -> parItem.getValue().getItems())
-														.collect(Collectors.toList());
-
-												boolean isFalse = true;
-												for (Iterator<List<AbstractContentItem<?>>> listIter = parItems
-														.iterator(); listIter.hasNext();) {
-													for (Iterator<AbstractContentItem<?>> iter = listIter.next()
-															.iterator(); isFalse && iter.hasNext();) {
-														isFalse = iter.next().isUnderline();
-													}
-												}
-
-												items.add(new ChoiceItem(block, !isFalse));
+												items.add(new ChoiceItem(block, HeaderParser.HeaderInfo
+														.isCorrectAnswer(answer2Par.get(block))));
 											}
 											questBlock = new ChoiceBlock(items, task);
 										}
@@ -347,6 +335,8 @@ public class CourseParser extends AbstractParser {
 									introBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
 								} else {
 									answerBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
+									answer2Par.put((AbstractParagraphBlock<?>) blockAndShift[0],
+											chapterPars.get(chapterElemNum));
 								}
 							}
 						}
