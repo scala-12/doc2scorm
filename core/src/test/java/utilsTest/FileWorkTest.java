@@ -15,7 +15,7 @@ import com.ipoint.coursegenerator.core.utils.FileWork;
 
 public class FileWorkTest {
 
-	private static final File testFile = new File("templates/js/APIWrapper.js");
+	private static final File testFile = new File("templates/js/systemFiles/APIWrapper.js");
 
 	@Test
 	public void getFileFromResources() {
