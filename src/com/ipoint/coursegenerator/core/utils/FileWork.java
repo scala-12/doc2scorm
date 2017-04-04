@@ -24,6 +24,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -48,15 +49,26 @@ public class FileWork {
 
 	public static class TemplateFiles {
 		private static final String TEMPLATE_DIR = "templates";
-		public static final File JS_DIR = new File(TEMPLATE_DIR, "js");
-		public static final File CSS_DIR = new File(TEMPLATE_DIR, "css");
 
-		public final static File SCO4THEORY = new File(TEMPLATE_DIR, "sco_theory_template.ftl");
-		public final static File SCO4TEST = new File(TEMPLATE_DIR, "sco_test_template.ftl");
+		private static final File JS_DIR = new File(TEMPLATE_DIR, "js");
+		public static final File JS_SYSTEM_DIR = new File(JS_DIR, "systemFiles");
 
-		public final static File CSS4THEORY = new File(CSS_DIR, "theory.css");
-		public final static File CSS4TEST = new File(CSS_DIR, "test.css");
-		public final static File CSS4COURSE = new File(CSS_DIR, "course.css");
+		private static final File CSS_DIR = new File(TEMPLATE_DIR, "css");
+		public static final File CSS_SYSTEM_DIR = new File(CSS_DIR, "systemFiles");
+
+		private static final File IMG_DIR = new File(TEMPLATE_DIR, "img");
+		public static final File IMG_TEST_SCO_DIR = new File(IMG_DIR, "testingSco");
+
+		private static final File SCO_TEMPLATES_DIR = new File(TEMPLATE_DIR, "sco");
+		public final static File SCO4THEORY = new File(SCO_TEMPLATES_DIR, "sco_theory_template.ftl");
+		public final static File SCO4TEST = new File(SCO_TEMPLATES_DIR, "sco_test_template.ftl");
+
+		private final static File HTML_DIR = new File(TEMPLATE_DIR, "html");
+		private final static File HTML_TESTING_DIR = new File(HTML_DIR, "testingSco");
+
+		public final static File CSS4THEORY = new File(CSS_SYSTEM_DIR, "theory.css");
+		public final static File CSS4TEST = new File(CSS_SYSTEM_DIR, "test.css");
+		public final static File CSS4COURSE = new File(CSS_SYSTEM_DIR, "course.css");
 
 		public static final String JQUERY_VERSION = "3.1.1";
 		public static final String JQUERY_UI_VERSION = "1.12.1";
@@ -117,9 +129,10 @@ public class FileWork {
 		return saveFile(getFileFromResources(fileFromResource), new File(destDir, fileFromResource.getName()), false);
 	}
 
-	public static void copyFileFromResourceDirToDir(File resourceDir, File destDir) {
+	private static void copyFileFromResourceDirToDir(File resourceDir, File destDir,
+			Map<String, String> templateVariables) {
 		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
-		
+
 		String jarPath = FileWork.class.getResource("/" + resDirPath).getFile();
 		if (jarPath.startsWith("file:")) {
 			jarPath = jarPath.substring("file:/".length());
@@ -135,14 +148,60 @@ public class FileWork {
 				if (!entry.isDirectory()) {
 					String fileName = entry.getName().replace(File.separatorChar, '/');
 					if ((fileName.length() > resDirPath.length()) && fileName.startsWith(resDirPath + '/')) {
-						saveFile(getFileFromResources(new File(resourceDir, fileName)), new File(destDir, fileName),
-								false);
+						File sourceFile = new File(resourceDir, fileName);
+						File destFile = new File(destDir, fileName);
+						if (fileName.toLowerCase().endsWith(".ftl")) {
+							saveTemplateFileWithVariables(sourceFile, destFile, templateVariables);
+						} else {
+							saveFile(getFileFromResources(sourceFile), destFile, false);
+						}
 					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void saveSystemDir(File systemDir) {
+		FileWork.copyFileFromResourceDirToDir(TemplateFiles.CSS_SYSTEM_DIR, systemDir, null);
+		FileWork.copyFileFromResourceDirToDir(TemplateFiles.JS_SYSTEM_DIR, systemDir, null);
+	}
+
+	public static void saveTestingDir(File testingDir, String introContent) {
+		HashMap<String, String> vars = new HashMap<>();
+		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+
+		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
+		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
+		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
+
+		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
+		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
+
+		String intro;
+		if ((introContent == null) || introContent.isEmpty()) {
+			intro = "<h3>Тестирование</h3><h1>Практические тестовые задания</h1>"
+					+ "<p>Внимательно прочитайте вопрос.<br>"
+					+ "Подумайте и выберите вариант ответа. Нажмите кнопку <b>" + "\"Продолжить\"</b>.</p>"
+					+ "<img src=\"sysimages/VNIMANIE.gif\" width=\"110\" height=\"28\" class=\"left-img\" longdesc=\"sysimages/VNIMANIE.gif\">"
+					+ "<p>Не пытайтесь вернуться к предыдущему вопросу при помощи кнопки <strong>\"Назад\"</strong>.<br>"
+					+ "Единственный способ исправить результат &#8211; закончить тест, а затем пройти его сначала.</p>"
+					+ "<p>Критерии оценки:</p>" + "<ul><li>90%-100%  &#8211 отлично</li>"
+					+ "<li>80%-89% &#8211 хорошо</li>" + "<li>60%-79% &#8211 удовлетворительно </li>"
+					+ "<li>меньше 60% &#8211 неудовлетворительно </li></ul>"
+					+ "<h5>В тесте Вам могут встретиться разные типы ответов:</h5>"
+					+ "<p><img src=\"images/1.gif\" align=\"absmiddle\"> &#8211; этот значок означает, что из всех вариантов надо выбрать один правильный.</p>"
+					+ "<p><img src=\"images/2.gif\" align=\"absmiddle\"> &#8211; может быть несколько правильных ответов (надо указать все варианты).</p>"
+					+ "<p><img src=\"images/3.gif\" align=\"absmiddle\"> &#8211; в это поле ввода надо впечатать текст с клавиатуры (будьте предельно внимательны при наборе текста, на результат тестирования может повлиять даже опечатка).</p>"
+					+ "<p><img src=\"images/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>";
+			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, testingDir, null);
+		} else {
+			intro = introContent;
+		}
+		vars.put("intro_content", intro);
+
+		copyFileFromResourceDirToDir(TemplateFiles.HTML_TESTING_DIR, testingDir, vars);
 	}
 
 	public static InputStream getFileFromResources(File fileFromResource) {
@@ -162,42 +221,50 @@ public class FileWork {
 	 * @return true if saved
 	 */
 	public static boolean saveHtmlDocument(Document htmlDoc, File htmlFile, String pageTitle) {
+		StringWriter buffer = new StringWriter();
 		try {
-			StringWriter buffer = new StringWriter();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			NodeList bodyChilds = htmlDoc.getElementsByTagName("body").item(0).getChildNodes();
 			for (int i = 0; i < bodyChilds.getLength(); i++) {
 				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
 			}
-			Configuration cfg = new Configuration();
-			cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), TemplateFiles.SCO4THEORY.getParent());
-			cfg.setObjectWrapper(new DefaultObjectWrapper());
 
-			Template tmpl = cfg.getTemplate(TemplateFiles.SCO4THEORY.getName(), STANDARD_ENCODING.name());
-			Map<String, String> body = new HashMap<>();
+			Map<String, String> vars = new HashMap<>();
 
-			body.put("page_title", pageTitle);
-			body.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-			body.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-			body.put("course_css", TemplateFiles.CSS4COURSE.getName());
-			body.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
-			body.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
+			vars.put("page_title", pageTitle);
+			vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+			vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
+			vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
+			vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
+			vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
 
-			body.put("body_content", buffer.toString());
+			vars.put("body_content", buffer.toString());
 
-			try (FileOutputStream htmlFOS = new FileOutputStream(htmlFile);
+			return saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY, htmlFile, vars);
+		} catch (TransformerFactoryConfigurationError | TransformerException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	private static boolean saveTemplateFileWithVariables(File file, File resultFile, Map<String, String> vars) {
+		resultFile.getParentFile().mkdirs();
+		Configuration cfg = new Configuration();
+		cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), file.getParent());
+		cfg.setObjectWrapper(new DefaultObjectWrapper());
+
+		try {
+			Template tmpl = cfg.getTemplate(file.getName(), STANDARD_ENCODING.name());
+			try (FileOutputStream htmlFOS = new FileOutputStream(resultFile);
 					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
-				tmpl.process(body, writerOS);
+				tmpl.process(vars, writerOS);
 				writerOS.flush();
 
 				return true;
 			}
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (TemplateException e) {
+		} catch (TemplateException | IOException e) {
 			e.printStackTrace();
 		}
 
