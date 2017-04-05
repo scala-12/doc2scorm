@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -56,7 +57,7 @@ public class FileWork {
 		private static final File CSS_DIR = new File(TEMPLATE_DIR, "css");
 		public static final File CSS_SYSTEM_DIR = new File(CSS_DIR, "systemFiles");
 
-		private static final File IMG_DIR = new File(TEMPLATE_DIR, "img");
+		private static final File IMG_DIR = new File(TEMPLATE_DIR, "images");
 		public static final File IMG_TEST_SCO_DIR = new File(IMG_DIR, "testingSco");
 
 		private static final File SCO_TEMPLATES_DIR = new File(TEMPLATE_DIR, "sco");
@@ -148,8 +149,8 @@ public class FileWork {
 				if (!entry.isDirectory()) {
 					String fileName = entry.getName().replace(File.separatorChar, '/');
 					if ((fileName.length() > resDirPath.length()) && fileName.startsWith(resDirPath + '/')) {
-						File sourceFile = new File(resourceDir, fileName);
-						File destFile = new File(destDir, fileName);
+						File sourceFile = new File(fileName);
+						File destFile = new File(destDir, fileName.substring(resDirPath.length()));
 						if (fileName.toLowerCase().endsWith(".ftl")) {
 							saveTemplateFileWithVariables(sourceFile, destFile, templateVariables);
 						} else {
@@ -195,11 +196,14 @@ public class FileWork {
 					+ "<p><img src=\"images/2.gif\" align=\"absmiddle\"> &#8211; может быть несколько правильных ответов (надо указать все варианты).</p>"
 					+ "<p><img src=\"images/3.gif\" align=\"absmiddle\"> &#8211; в это поле ввода надо впечатать текст с клавиатуры (будьте предельно внимательны при наборе текста, на результат тестирования может повлиять даже опечатка).</p>"
 					+ "<p><img src=\"images/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>";
-			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, testingDir, null);
+			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(testingDir, "images"), null);
 		} else {
 			intro = introContent;
 		}
 		vars.put("intro_content", intro);
+		vars.put("percents4markA", "90");
+		vars.put("percents4markB", "80");
+		vars.put("percents4markC", "60");
 
 		copyFileFromResourceDirToDir(TemplateFiles.HTML_TESTING_DIR, testingDir, vars);
 	}
@@ -211,28 +215,18 @@ public class FileWork {
 				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
 	}
 
-	/**
-	 * Save html page
-	 *
-	 * @param htmlDoc
-	 *            Html document
-	 * @param htmlFile
-	 *            html file
-	 * @return true if saved
-	 */
-	public static boolean saveHtmlDocument(Document htmlDoc, File htmlFile, String pageTitle) {
+	private static boolean saveHtmlDocument(File tmplFile, Map<String, String> extraVars, Document doc, File destFile) {
 		StringWriter buffer = new StringWriter();
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			NodeList bodyChilds = htmlDoc.getElementsByTagName("body").item(0).getChildNodes();
+			NodeList bodyChilds = doc.getElementsByTagName("body").item(0).getChildNodes();
 			for (int i = 0; i < bodyChilds.getLength(); i++) {
 				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
 			}
 
-			Map<String, String> vars = new HashMap<>();
+			Map<String, String> vars = new HashMap<>(extraVars);
 
-			vars.put("page_title", pageTitle);
 			vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
 			vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
 			vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
@@ -241,7 +235,7 @@ public class FileWork {
 
 			vars.put("body_content", buffer.toString());
 
-			return saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY, htmlFile, vars);
+			return saveTemplateFileWithVariables(tmplFile, destFile, vars);
 		} catch (TransformerFactoryConfigurationError | TransformerException e) {
 			e.printStackTrace();
 		}
@@ -249,8 +243,37 @@ public class FileWork {
 		return false;
 	}
 
+	public static boolean saveTheoryHtmlDocument(Document doc, File destFile, String pageTitle) {
+		HashMap<String, String> vars = new HashMap<>();
+		vars.put("page_title", pageTitle);
+
+		return saveHtmlDocument(TemplateFiles.SCO4THEORY, vars, doc, destFile);
+	}
+
+	public static boolean saveTestingHtmlDocument(Document doc, File destFile, String pageTitle, int type) {
+		HashMap<String, String> vars = new HashMap<>();
+		vars.put("page_title", pageTitle);
+		if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+
+		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+
+		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+
+		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+
+		}
+
+		return saveHtmlDocument(TemplateFiles.SCO4TEST, vars, doc, destFile);
+	}
+
 	private static boolean saveTemplateFileWithVariables(File file, File resultFile, Map<String, String> vars) {
 		resultFile.getParentFile().mkdirs();
+
+		if (resultFile.getName().toLowerCase().endsWith(".ftl")) {
+			String name = resultFile.getName();
+			resultFile = new File(resultFile.getParentFile(), name.substring(0, name.lastIndexOf("ftl")) + "html");
+		}
+
 		Configuration cfg = new Configuration();
 		cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), file.getParent());
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
