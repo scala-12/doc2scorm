@@ -3,6 +3,7 @@ package com.ipoint.coursegenerator.core.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,9 +11,18 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
@@ -28,6 +38,21 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
 
 public class Tools {
+
+	private static Transformer TRANSFORMER = _getTransformer();
+
+	private static Transformer _getTransformer() {
+		try {
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+			return transformer;
+		} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
 
 	public static byte[] convertStream2ByteArray(InputStream stream) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -133,6 +158,26 @@ public class Tools {
 		}
 
 		return result;
+	}
+
+	public static String getNodeString(Node node) {
+		if (node instanceof Text) {
+
+			return node.getTextContent();
+		} else {
+			try {
+				StringWriter writer = new StringWriter();
+				TRANSFORMER.transform(new DOMSource(node), new StreamResult(writer));
+				String output = writer.toString();
+
+				return (output.indexOf(">") < output.indexOf("?>")) ? output.substring(output.indexOf("?>") + 2)
+						: output;
+			} catch (TransformerException e) {
+				e.printStackTrace();
+
+				return null;
+			}
+		}
 	}
 
 }
