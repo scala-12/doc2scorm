@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
@@ -111,6 +112,27 @@ public class Tools {
 		}
 
 		return images;
+	}
+
+	public static Node getElementById(Node parent, String id) {
+		Node result = null;
+		for (int i = 0; (result == null) && (i < parent.getChildNodes().getLength()); i++) {
+			Node node = parent.getChildNodes().item(i);
+			if (node.hasAttributes() && id.equals(node.getAttributes().getNamedItem("id").getNodeValue())) {
+				result = node;
+			}
+		}
+
+		if (result == null) {
+			for (int i = 0; (result == null) && (i < parent.getChildNodes().getLength()); i++) {
+				Node node = parent.getChildNodes().item(i);
+				if (node.hasChildNodes()) {
+					result = getElementById(node, id);
+				}
+			}
+		}
+
+		return result;
 	}
 
 }
