@@ -331,7 +331,7 @@ public class CourseParser extends AbstractParser {
 											ParagraphBlock block = (ParagraphBlock) item.getValue();
 
 											items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
-													htmlAnswer2Par.get(item.toHtml(html).toString()))));
+													htmlAnswer2Par.get(Tools.getNodeString(item.toHtml(html))))));
 										}
 										questBlock = new ChoiceBlock(items);
 									}
@@ -353,13 +353,14 @@ public class CourseParser extends AbstractParser {
 									if (hasQuestion) {
 										if (block instanceof ListBlock) {
 											int shift = (int) blockAndShift[1];
-											for (int i = 0; i < shift; i++) {
-												htmlAnswer2Par.put(block.getItems().get(i).toHtml(html).toString(),
+											for (int i = 0; i <= shift; i++) {
+												htmlAnswer2Par.put(
+														Tools.getNodeString(block.getItems().get(i).toHtml(html)),
 														chapterPars.get(chapterElemNum + i));
 											}
 											chapterElemNum += shift;
 										} else {
-											htmlAnswer2Par.put(block.toHtml(html).toString(),
+											htmlAnswer2Par.put(Tools.getNodeString(block.toHtml(html)),
 													chapterPars.get(chapterElemNum));
 										}
 
