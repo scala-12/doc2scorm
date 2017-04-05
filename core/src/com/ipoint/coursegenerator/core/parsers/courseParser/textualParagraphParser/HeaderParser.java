@@ -24,7 +24,7 @@ public class HeaderParser extends ParagraphParser {
 		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern
 				.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
 		private static final Pattern TEST_QUESTION_HEADER_PATTERN = Pattern.compile(".*(?:quest(?:ion)?|вопрос)");
-		private static final Pattern TEST_CORRECT_ANSWER_HEADER_PATTERN = Pattern.compile(".*(?:correct|правильный)");
+		private static final Pattern TEST_CORRECT_ANSWER_HEADER_PATTERN = Pattern.compile(".*(?:(?:correct[\\s_]answer)|(?:правильный[\\s_]ответ))");
 
 		private int level;
 		private String title;
