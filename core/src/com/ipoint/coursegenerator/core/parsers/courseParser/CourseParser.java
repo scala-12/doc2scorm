@@ -290,7 +290,10 @@ public class CourseParser extends AbstractParser {
 
 							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
 								hasQuestion = true;
-								if ((answerBlocks != null) && (!answerBlocks.isEmpty())) {
+								if (answerBlocks == null) {
+									answerBlocks = new ArrayList<>();
+								}
+								if (!answerBlocks.isEmpty()) {
 									AbstractQuestionBlock<?> questBlock = null;
 
 									if (answerBlocks.get(0) instanceof TableBlock) {
