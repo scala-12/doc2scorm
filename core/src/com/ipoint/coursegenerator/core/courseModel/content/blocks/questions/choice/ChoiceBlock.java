@@ -59,9 +59,10 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		String type = (isOneChoice) ? "radio" : "checkbox";
 		Element div = super.toHtml(creatorTags);
-		Element answersBlock = div.getOwnerDocument().getElementById(AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionBlock.ANSWER_BLOCK_ID);
+
+		String type = (isOneChoice) ? "radio" : "checkbox";
 
 		Element fieldset = creatorTags.createElement("fieldset");
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
@@ -75,10 +76,13 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 				numbers.add(i);
 			}
 		}
-		ArrayList<Node[]> sortedAnswers = new ArrayList<>(this.correctOrder.length);
+		Node[][] sortedAnswers = new Node[this.correctOrder.length][];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
+			// old answer will be transformative and removed after
+			// new answer will be added after
 			Element span = (Element) answersBlock.getFirstChild();
+			answersBlock.removeChild(span);
 
 			Element answer = (Element) span.getElementsByTagName("input").item(0);
 			answer.setAttribute("type", type);
@@ -93,7 +97,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
 			answer.setAttribute("value", this.correctOrder[i]);
 
-			sortedAnswers.set(number, new Node[] { answer, span.getElementsByTagName("label").item(0) });
+			sortedAnswers[number] = new Node[] { answer, span.getElementsByTagName("label").item(0) };
 		}
 
 		for (Node[] pair : sortedAnswers) {
