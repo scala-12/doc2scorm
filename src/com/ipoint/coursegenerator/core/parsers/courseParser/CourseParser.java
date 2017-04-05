@@ -16,6 +16,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -35,6 +36,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.Abst
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn.FillInBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn.FillInItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceBlock;
@@ -277,73 +279,91 @@ public class CourseParser extends AbstractParser {
 						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
 
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
-						String task = null;
+						StringBuilder task = new StringBuilder();
 
 						ArrayList<AbstractParagraphBlock<?>> answerBlocks = null;
-						HashMap<AbstractParagraphBlock<?>, XWPFParagraph> answer2Par = new HashMap<>();
+						HashMap<String, XWPFParagraph> htmlAnswer2Par = new HashMap<>();
+						Document html = Tools.createEmptyDocument();
+						boolean hasQuestion = false;
 						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
 							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
 
 							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
-								if ((answerBlocks != null)) {
+								hasQuestion = true;
+								if ((answerBlocks != null) && (!answerBlocks.isEmpty())) {
 									AbstractQuestionBlock<?> questBlock = null;
-									if (answerBlocks.isEmpty()) {
-										questBlock = new FillInBlock(task);
-									} else {
-										AbstractParagraphBlock<?> answerBlock = answerBlocks.get(0);
-										if (answerBlock instanceof TableBlock) {
-											TableBlock block = (TableBlock) answerBlock;
-											if (block.getFirstItem().getValue().size() == 1) {
+
+									if (answerBlocks.get(0) instanceof TableBlock) {
+										TableBlock block = (TableBlock) answerBlocks.get(0);
+										if (block.getFirstItem().getValue().size() == 1) {
+											if (block.getItems().size() == 1) {
+												questBlock = new FillInBlock(new FillInItem(""));
+											} else {
 												ArrayList<SequenceItem> items = new ArrayList<>();
 												for (TableItem row : block.getItems()) {
 													items.add(new SequenceItem(
 															row.getValue().get(0).getFirstItem().getValue()));
 												}
-												questBlock = new SequenceBlock(items, task);
-											} else if (block.getItems().size() == 1) {
-												ArrayList<SequenceItem> items = new ArrayList<>();
-												for (CellBlock cell : block.getFirstItem().getValue()) {
-													items.add(new SequenceItem(cell.getFirstItem().getValue()));
-												}
-												questBlock = new SequenceBlock(items, task);
-											} else if (block.getFirstItem().getValue().size() == 2) {
-												ArrayList<MatchItem> items = new ArrayList<>();
-												for (TableItem row : block.getItems()) {
-													ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
-													pair.set(0, row.getValue().get(0).getFirstItem().getValue());
-													pair.set(0, row.getValue().get(1).getFirstItem().getValue());
-													items.add(new MatchItem(pair));
-												}
-												questBlock = new MatchBlock(items, task);
+												questBlock = new SequenceBlock(items);
 											}
-										} else if (answerBlock instanceof ListBlock) {
-											ArrayList<ChoiceItem> items = new ArrayList<>();
-											for (ListItem item : ((ListBlock) answerBlock).getItems()) {
-												ParagraphBlock block = (ParagraphBlock) item.getValue();
-
-												items.add(new ChoiceItem(block, HeaderParser.HeaderInfo
-														.isCorrectAnswer(answer2Par.get(block))));
+										} else if (block.getItems().size() == 1) {
+											ArrayList<SequenceItem> items = new ArrayList<>();
+											for (CellBlock cell : block.getFirstItem().getValue()) {
+												items.add(new SequenceItem(cell.getFirstItem().getValue()));
 											}
-											questBlock = new ChoiceBlock(items, task);
+											questBlock = new SequenceBlock(items);
+										} else if (block.getFirstItem().getValue().size() == 2) {
+											ArrayList<MatchItem> items = new ArrayList<>();
+											for (TableItem row : block.getItems()) {
+												ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
+												pair.set(0, row.getValue().get(0).getFirstItem().getValue());
+												pair.set(0, row.getValue().get(1).getFirstItem().getValue());
+												items.add(new MatchItem(pair));
+											}
+											questBlock = new MatchBlock(items);
 										}
+									} else if (answerBlocks.get(0) instanceof ListBlock) {
+										ArrayList<ChoiceItem> items = new ArrayList<>();
+										for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
+											ParagraphBlock block = (ParagraphBlock) item.getValue();
+
+											items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
+													htmlAnswer2Par.get(item.toHtml(html).toString()))));
+										}
+										questBlock = new ChoiceBlock(items);
 									}
 
 									if (questBlock != null) {
+										questBlock.setTask(task.toString());
+										task = new StringBuilder();
 										questionsBlocks.add(questBlock);
+										answerBlocks = new ArrayList<>();
 									}
 								}
-								answerBlocks = new ArrayList<>();
-								task = chapterPar.getText();
+
+								task.append(chapterPar.getText());
 							} else {
 								Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
 										maxHeader);
-								chapterElemNum += (int) blockAndShift[1];
-								if (answerBlocks == null) {
-									introBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
-								} else {
-									answerBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
-									answer2Par.put((AbstractParagraphBlock<?>) blockAndShift[0],
-											chapterPars.get(chapterElemNum));
+								AbstractParagraphBlock<?> block = (AbstractParagraphBlock<?>) blockAndShift[0];
+								if (block != null) {
+									if (hasQuestion) {
+										if (block instanceof ListBlock) {
+											int shift = (int) blockAndShift[1];
+											for (int i = 0; i < shift; i++) {
+												htmlAnswer2Par.put(block.getItems().get(i).toHtml(html).toString(),
+														chapterPars.get(chapterElemNum + i));
+											}
+											chapterElemNum += shift;
+										} else {
+											htmlAnswer2Par.put(block.toHtml(html).toString(),
+													chapterPars.get(chapterElemNum));
+										}
+
+										answerBlocks.add(block);
+									} else {
+										introBlocks.add(block);
+									}
 								}
 							}
 						}
