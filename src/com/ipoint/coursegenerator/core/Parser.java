@@ -20,6 +20,10 @@ import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
 import org.w3c.dom.Document;
 
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
+import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
@@ -118,13 +122,49 @@ public class Parser {
 		ResourcesProcessor.addFilesToResource(imagesNames, itemResource);
 	}
 
-	private void addScoToCourse(CourseTreeNode node, File htmlFile) {
-		Document html = Tools.createNewHTMLDocument();
-		html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
+	private void saveScoInCourse(ManifestType manifest, ItemType manifestItem, CourseTreeNode node, File courseDir) {
+		String scoName = TransliterationTool.convertRU2ENString(node.getTitle());
+		if (node.getPage() instanceof TheoryPage) {
+			File file = new File(courseDir, scoName.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
+			if (file.exists()) {
+				file = new File(courseDir, (scoName + "_" + UUID.randomUUID().toString()).replaceAll(" ", "_")
+						.replaceAll("[\\W&&[^-]]", "") + ".html");
+			}
 
-		if (FileWork.saveHtmlDocument(html, htmlFile, node.getTitle())) {
-			FileWork.saveImages(node.getPage().getImages(), new File(htmlFile.getParentFile(), FileWork.IMAGE_DIR_NAME),
-					pathToSOffice);
+			Document html = Tools.createNewHTMLDocument();
+			html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
+
+			if (FileWork.saveTheoryHtmlDocument(html, file, node.getTitle())) {
+				Set<PictureInfo> pics = ((TheoryPage) node.getPage()).getImages();
+				FileWork.saveImages(pics, new File(file.getParentFile(), FileWork.IMAGE_DIR_NAME), pathToSOffice);
+				this.addScoToManifest(manifest, manifestItem, file, pics);
+			}
+		} else if (node.getPage() instanceof TestingPage) {
+			File dir = new File(courseDir, scoName.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", ""));
+			if (dir.exists()) {
+				dir = new File(courseDir, (scoName + "_" + UUID.randomUUID().toString()).replaceAll(" ", "_")
+						.replaceAll("[\\W&&[^-]]", ""));
+			}
+
+			TestingPage page = (TestingPage) node.getPage();
+			StringBuilder intro = new StringBuilder();
+
+			for (AbstractParagraphBlock<?> block : page.getIntroBlocks()) {
+				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
+			}
+			FileWork.saveTestingDir(dir, intro.toString());
+
+			for (int i = 0; i < page.getBlocks().size(); i++) {
+				AbstractQuestionBlock<?> block = page.getBlocks().get(i);
+				Document html = Tools.createNewHTMLDocument();
+				html.getElementsByTagName("body").item(0).appendChild(block.toHtml(html));
+				File file = new File(dir, String.valueOf(i + 1) + ".html");
+				if (FileWork.saveTheoryHtmlDocument(html, file, node.getTitle())) {
+					Set<PictureInfo> pics = block.getImages();
+					FileWork.saveImages(pics, new File(dir, FileWork.IMAGE_DIR_NAME), pathToSOffice);
+					this.addScoToManifest(manifest, manifestItem, file, pics);
+				}
+			}
 		}
 	}
 
@@ -134,16 +174,7 @@ public class Parser {
 
 			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item);
 			if (item.getPage() != null) {
-				File htmlFile = new File(courseDir, TransliterationTool.convertRU2ENString(item.getTitle())
-						.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
-				if (htmlFile.exists()) {
-					htmlFile = new File(courseDir,
-							TransliterationTool.convertRU2ENString(item.getTitle() + "_" + UUID.randomUUID().toString())
-									.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
-				}
-
-				this.addScoToCourse(item, htmlFile);
-				this.addScoToManifest(manifest, manifestItem, htmlFile, item.getPage().getImages());
+				this.saveScoInCourse(manifest, manifestItem, item, courseDir);
 			}
 
 			if (!item.getChilds().isEmpty()) {
@@ -174,10 +205,7 @@ public class Parser {
 		String manifestContent = tuneManifest(manifest);
 		FileWork.saveTextFile(manifestContent, new File(directory, MANIFEST_NAME));
 
-		File sytemDir = new File(directory, COURSE_SYSTEM_DIR);
-
-		FileWork.copyFileFromResourceDirToDir(FileWork.TemplateFiles.CSS_DIR, sytemDir);
-		FileWork.copyFileFromResourceDirToDir(FileWork.TemplateFiles.JS_DIR, sytemDir);
+		FileWork.saveSystemDir(new File(directory, COURSE_SYSTEM_DIR));
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
