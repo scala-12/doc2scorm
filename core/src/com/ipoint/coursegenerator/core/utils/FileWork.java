@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -216,31 +207,23 @@ public class FileWork {
 	}
 
 	private static boolean saveHtmlDocument(File tmplFile, Map<String, String> extraVars, Document doc, File destFile) {
-		StringWriter buffer = new StringWriter();
-		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			NodeList bodyChilds = doc.getElementsByTagName("body").item(0).getChildNodes();
-			for (int i = 0; i < bodyChilds.getLength(); i++) {
-				transformer.transform(new DOMSource(bodyChilds.item(i)), new StreamResult(buffer));
-			}
-
-			Map<String, String> vars = new HashMap<>(extraVars);
-
-			vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-			vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-			vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
-			vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
-			vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
-
-			vars.put("body_content", buffer.toString());
-
-			return saveTemplateFileWithVariables(tmplFile, destFile, vars);
-		} catch (TransformerFactoryConfigurationError | TransformerException e) {
-			e.printStackTrace();
+		StringBuilder content = new StringBuilder();
+		NodeList bodyChilds = doc.getElementsByTagName("body").item(0).getChildNodes();
+		for (int i = 0; i < bodyChilds.getLength(); i++) {
+			content.append(Tools.getNodeString(bodyChilds.item(i)));
 		}
 
-		return false;
+		Map<String, String> vars = new HashMap<>(extraVars);
+
+		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
+		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
+		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
+		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
+
+		vars.put("body_content", content.toString());
+
+		return saveTemplateFileWithVariables(tmplFile, destFile, vars);
 	}
 
 	public static boolean saveTheoryHtmlDocument(Document doc, File destFile, String pageTitle) {
