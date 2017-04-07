@@ -13,7 +13,8 @@
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
 	
 	<link rel="stylesheet" href="${system_dir}/${test_css}">
-	<link rel="stylesheet" href="${system_dir}/${course_css}">
+	<link rel="stylesheet" href="../${system_dir}/${test_css}">
+	<link rel="stylesheet" href="../${system_dir}/${course_css}">
 	
 	<script type="text/javascript" async
 			src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
