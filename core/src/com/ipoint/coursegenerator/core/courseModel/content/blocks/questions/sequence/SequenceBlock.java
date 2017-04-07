@@ -84,4 +84,9 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		return div;
 	}
 
+	@Override
+	public int getType() {
+		return SEQUENCING;
+	}
+
 }
