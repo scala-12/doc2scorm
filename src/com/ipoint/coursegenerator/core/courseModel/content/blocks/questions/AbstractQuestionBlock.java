@@ -19,6 +19,16 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 	public static final String FORM_NAME = "examForm";
 	public static final String ANSWER_BLOCK_ID = "answers_block";
 
+	public final static int TRUE_FALSE = 0;
+	public final static int CHOICE = 1;
+	public final static int MULTIPLE_CHOICE = 2;
+	public final static int FILL_IN = 3;
+	public final static int LONG_FILL_IN = 4;
+	public final static int MATCHING = 5;
+	public final static int SEQUENCING = 6;
+
+	abstract public int getType();
+
 	private String task;
 
 	protected String[] correctOrder;
