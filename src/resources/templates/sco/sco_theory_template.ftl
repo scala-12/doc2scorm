@@ -3,6 +3,7 @@
 <head>
 	<title>${page_title}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<script type="text/javascript" src="${system_dir}/APIWrapper.js"></script>
 	<script type="text/javascript" src="${system_dir}/SCOFunctions.js"></script>
 	<script type="text/javascript" src="${system_dir}/jquery-${jquery_ver}.min.js"></script>
@@ -21,6 +22,7 @@
 			showMathMenuMSIE: false
 		});
 	</script>
+	
 	<script type="text/javascript">
 		$( function() {
 			$('input[type=submit],input[type=button],button').button();
