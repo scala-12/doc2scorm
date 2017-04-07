@@ -22,6 +22,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
@@ -298,7 +299,11 @@ public class FileWork {
 			}
 
 			Document html = Tools.createNewHTMLDocument();
-			html.getElementsByTagName("body").item(0).appendChild(quest.toHtml(html));
+			NodeList nodes = quest.toHtml(html).getChildNodes();
+			Node body = html.getElementsByTagName("body").item(0);
+			while (nodes.getLength() != 0) {
+				body.appendChild(nodes.item(0));
+			}
 			File destFile = new File(destDir, String.valueOf(i + 1) + ".html");
 			if (saveHtmlDocument(TemplateFiles.SCO4TEST, extraVars, html, destFile)) {
 				result.put(destFile, quest.getImages());
