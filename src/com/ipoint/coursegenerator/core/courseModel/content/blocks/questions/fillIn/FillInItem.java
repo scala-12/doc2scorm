@@ -10,12 +10,19 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.Abst
  * @author Kalashnikov Vladislav
  *
  */
-public class FillInItem extends AbstractQuestionItem<Object> {
+public class FillInItem extends AbstractQuestionItem<String> {
 
 	public static final String FILL_IN_ID = "fill_in_field";
 
-	public FillInItem() {
+	private final String answer;
+
+	public FillInItem(String answer) {
 		super(null);
+		this.answer = answer;
+	}
+
+	public String getCorrectAnswer() {
+		return this.answer;
 	}
 
 	@Override

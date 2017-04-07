@@ -51,7 +51,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element div = super.toHtml(creatorTags);
-		Element answersBlock = div.getOwnerDocument().getElementById(AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionBlock.ANSWER_BLOCK_ID);
 
 		Element table = creatorTags.createElement("table");
 		table.setAttribute("id", MATCH_BLOCK_ID);
@@ -76,10 +76,14 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 				numbers.add(i);
 			}
 		}
-		ArrayList<Element> sortedAnswers = new ArrayList<>(this.correctOrder.length);
+		Element[] sortedAnswers = new Element[this.correctOrder.length];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
+			// old answer will be transformative and removed after
+			// new answer will be added after
 			Element span = (Element) answersBlock.getFirstChild();
+			answersBlock.removeChild(span);
+
 			Element labelSpan = (Element) span.getFirstChild();
 			Element answerSpan = (Element) span.getLastChild();
 
@@ -110,7 +114,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 				answer.appendChild(answerSpan.getFirstChild());
 			}
 
-			sortedAnswers.set(number, answer);
+			sortedAnswers[number] = answer;
 
 			labels.appendChild(label);
 		}

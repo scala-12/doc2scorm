@@ -42,7 +42,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element div = super.toHtml(creatorTags);
-		Element answersBlock = div.getOwnerDocument().getElementById(AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionBlock.ANSWER_BLOCK_ID);
 
 		Element list = creatorTags.createElement("ul");
 		list.setAttribute("id", SEQUENCE_ANSWERS_BLOCK_ID);
@@ -56,10 +56,13 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 				numbers.add(i);
 			}
 		}
-		ArrayList<Element> sortedAnswers = new ArrayList<>(this.correctOrder.length);
+		Element[] sortedAnswers = new Element[this.correctOrder.length];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
+			// old answer will be transformative and removed after
+			// new answer will be added after
 			Element item = (Element) answersBlock.getFirstChild();
+			answersBlock.removeChild(item);
 
 			int number;
 			if (withoutCorrectness) {
@@ -69,7 +72,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 				number = Integer.parseInt(this.correctOrder[i]);
 			}
 			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + this.correctOrder[i]);
-			sortedAnswers.set(number, item);
+			sortedAnswers[number] = item;
 		}
 
 		for (Element answer : sortedAnswers) {
