@@ -14,8 +14,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.xwpf.usermodel.BodyElementType;
+import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -247,25 +249,27 @@ public class CourseParser extends AbstractParser {
 				}
 
 				int absNum = document.getBodyElements().indexOf(header);
-				ArrayList<XWPFParagraph> chapterPars = new ArrayList<>();
+				ArrayList<IBodyElement> chapterParsAndTables = new ArrayList<>();
 				if ((absNum != lastDocElemNum)) {
-					chapterPars.addAll(document.getBodyElements()
-							.subList(absNum + 1,
+					chapterParsAndTables
+							.addAll((document.getBodyElements().subList(absNum + 1,
 									(headerNum == lastHeaderNum) ? document.getBodyElements().size()
-											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1)))
-							.stream().filter(elem -> elem instanceof XWPFParagraph).map(elem -> (XWPFParagraph) elem)
-							.collect(Collectors.toList()));
+											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1))))
+													.stream()
+													.filter(elem -> (elem instanceof XWPFParagraph)
+															|| (elem instanceof XWPFTable))
+													.collect(Collectors.toList()));
 				}
 
-				if (!chapterPars.isEmpty()) {
+				if (!chapterParsAndTables.isEmpty()) {
 					AbstractPage<?> page = null;
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
 						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
 
-						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
-							Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
-									maxHeader);
+						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
+							Object[] blockAndShift = getBlockAndShift(chapterParsAndTables.get(chapterElemNum),
+									mathInfo, maxHeader);
 							chapterElemNum += (int) blockAndShift[1];
 							chapterBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
 						}
@@ -276,99 +280,112 @@ public class CourseParser extends AbstractParser {
 							page = theoryPage;
 						}
 					} else {
-						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
-
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
-						StringBuilder task = new StringBuilder();
+						ArrayList<AbstractParagraphBlock<?>> someAnswerBlocks = null;
 
-						ArrayList<AbstractParagraphBlock<?>> answerBlocks = null;
+						StringBuilder someTask = null;
+						HashMap<StringBuilder, List<AbstractParagraphBlock<?>>> task2Answers = new HashMap<>();
+						ArrayList<StringBuilder> sortedTasks = new ArrayList<>();
+
 						HashMap<String, XWPFParagraph> htmlAnswer2Par = new HashMap<>();
 						Document html = Tools.createEmptyDocument();
+
 						boolean hasQuestion = false;
-						for (int chapterElemNum = 0; chapterElemNum < chapterPars.size(); chapterElemNum++) {
-							XWPFParagraph chapterPar = chapterPars.get(chapterElemNum);
+						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
+							IBodyElement chapterElem = chapterParsAndTables.get(chapterElemNum);
+							XWPFParagraph par = (chapterElem instanceof XWPFParagraph) ? (XWPFParagraph) chapterElem
+									: null;
 
-							if (HeaderParser.HeaderInfo.isQuestion(chapterPar)) {
+							if ((par != null) && HeaderParser.HeaderInfo.isQuestion(par)) {
 								hasQuestion = true;
-								if (answerBlocks == null) {
-									answerBlocks = new ArrayList<>();
+								if ((someAnswerBlocks == null) || !someAnswerBlocks.isEmpty() || (someTask == null)) {
+									someTask = new StringBuilder();
+									someAnswerBlocks = new ArrayList<>();
 								}
-								if (!answerBlocks.isEmpty()) {
-									AbstractQuestionBlock<?> questBlock = null;
-
-									if (answerBlocks.get(0) instanceof TableBlock) {
-										TableBlock block = (TableBlock) answerBlocks.get(0);
-										if (block.getFirstItem().getValue().size() == 1) {
-											if (block.getItems().size() == 1) {
-												questBlock = new FillInBlock(new FillInItem(""));
-											} else {
-												ArrayList<SequenceItem> items = new ArrayList<>();
-												for (TableItem row : block.getItems()) {
-													items.add(new SequenceItem(
-															row.getValue().get(0).getFirstItem().getValue()));
-												}
-												questBlock = new SequenceBlock(items);
-											}
-										} else if (block.getItems().size() == 1) {
-											ArrayList<SequenceItem> items = new ArrayList<>();
-											for (CellBlock cell : block.getFirstItem().getValue()) {
-												items.add(new SequenceItem(cell.getFirstItem().getValue()));
-											}
-											questBlock = new SequenceBlock(items);
-										} else if (block.getFirstItem().getValue().size() == 2) {
-											ArrayList<MatchItem> items = new ArrayList<>();
-											for (TableItem row : block.getItems()) {
-												ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
-												pair.set(0, row.getValue().get(0).getFirstItem().getValue());
-												pair.set(0, row.getValue().get(1).getFirstItem().getValue());
-												items.add(new MatchItem(pair));
-											}
-											questBlock = new MatchBlock(items);
-										}
-									} else if (answerBlocks.get(0) instanceof ListBlock) {
-										ArrayList<ChoiceItem> items = new ArrayList<>();
-										for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
-											ParagraphBlock block = (ParagraphBlock) item.getValue();
-
-											items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
-													htmlAnswer2Par.get(Tools.getNodeString(item.toHtml(html))))));
-										}
-										questBlock = new ChoiceBlock(items);
-									}
-
-									if (questBlock != null) {
-										questBlock.setTask(task.toString());
-										task = new StringBuilder();
-										questionsBlocks.add(questBlock);
-										answerBlocks = new ArrayList<>();
-									}
-								}
-
-								task.append(chapterPar.getText());
+								someTask.append(par.getText());
 							} else {
-								Object[] blockAndShift = getBlockAndShift(chapterPars.get(chapterElemNum), mathInfo,
-										maxHeader);
+								Object[] blockAndShift = getBlockAndShift(chapterParsAndTables.get(chapterElemNum),
+										mathInfo, maxHeader);
 								AbstractParagraphBlock<?> block = (AbstractParagraphBlock<?>) blockAndShift[0];
 								if (block != null) {
 									if (hasQuestion) {
+										if (!task2Answers.containsKey(someTask)) {
+											task2Answers.put(someTask, someAnswerBlocks);
+											sortedTasks.add(someTask);
+										}
+
 										if (block instanceof ListBlock) {
 											int shift = (int) blockAndShift[1];
-											for (int i = 0; i <= shift; i++) {
-												htmlAnswer2Par.put(
-														Tools.getNodeString(block.getItems().get(i).toHtml(html)),
-														chapterPars.get(chapterElemNum + i));
+											for (int i = 0, count = 0; count <= shift; i++) {
+												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
+												if (elem instanceof XWPFParagraph) {
+													htmlAnswer2Par.put(
+															Tools.getNodeString(block.getItems().get(i).toHtml(html)),
+															(XWPFParagraph) elem);
+													count++;
+												}
 											}
 											chapterElemNum += shift;
 										} else {
-											htmlAnswer2Par.put(Tools.getNodeString(block.toHtml(html)),
-													chapterPars.get(chapterElemNum));
+											htmlAnswer2Par.put(Tools.getNodeString(block.toHtml(html)), par);
 										}
 
-										answerBlocks.add(block);
+										someAnswerBlocks.add(block);
 									} else {
 										introBlocks.add(block);
 									}
 								}
+							}
+						}
+
+						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
+						for (StringBuilder task : sortedTasks) {
+							List<AbstractParagraphBlock<?>> answerBlocks = task2Answers.get(task);
+							AbstractQuestionBlock<?> questBlock = null;
+
+							if (answerBlocks.get(0) instanceof TableBlock) {
+								TableBlock block = (TableBlock) answerBlocks.get(0);
+								if (block.getFirstItem().getValue().size() == 1) {
+									if (block.getItems().size() == 1) {
+										questBlock = new FillInBlock(new FillInItem(""));
+									} else {
+										ArrayList<SequenceItem> items = new ArrayList<>();
+										for (TableItem row : block.getItems()) {
+											items.add(
+													new SequenceItem(row.getValue().get(0).getFirstItem().getValue()));
+										}
+										questBlock = new SequenceBlock(items);
+									}
+								} else if (block.getItems().size() == 1) {
+									ArrayList<SequenceItem> items = new ArrayList<>();
+									for (CellBlock cell : block.getFirstItem().getValue()) {
+										items.add(new SequenceItem(cell.getFirstItem().getValue()));
+									}
+									questBlock = new SequenceBlock(items);
+								} else if (block.getFirstItem().getValue().size() == 2) {
+									ArrayList<MatchItem> items = new ArrayList<>();
+									for (TableItem row : block.getItems()) {
+										ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
+										pair.add(row.getValue().get(0).getFirstItem().getValue());
+										pair.add(row.getValue().get(1).getFirstItem().getValue());
+										items.add(new MatchItem(pair));
+									}
+									questBlock = new MatchBlock(items);
+								}
+							} else if (answerBlocks.get(0) instanceof ListBlock) {
+								ArrayList<ChoiceItem> items = new ArrayList<>();
+								for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
+									ParagraphBlock block = (ParagraphBlock) item.getValue();
+
+									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
+											htmlAnswer2Par.get(Tools.getNodeString(item.toHtml(html))))));
+								}
+								questBlock = new ChoiceBlock(items);
+							}
+
+							if (questBlock != null) {
+								questBlock.setTask(task.toString());
+								questionsBlocks.add(questBlock);
 							}
 						}
 
@@ -380,10 +397,10 @@ public class CourseParser extends AbstractParser {
 							testPage.setBlocks(questionsBlocks);
 							page = testPage;
 						}
-					}
 
-					if (page != null) {
-						page.setParent((CourseTreeNode) currentNode);
+						if (page != null) {
+							page.setParent((CourseTreeNode) currentNode);
+						}
 					}
 				}
 			}
@@ -395,11 +412,13 @@ public class CourseParser extends AbstractParser {
 		return courseModel;
 	}
 
-	private static Object[] getBlockAndShift(XWPFParagraph par, MathInfo mathInfo, int maxHeader) {
-		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(par, mathInfo);
+	private static Object[] getBlockAndShift(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
+		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 
-		if (HeaderParser.HeaderInfo.isHeader(par)) {
+		XWPFParagraph par = (elem instanceof XWPFParagraph) ? (XWPFParagraph) elem : null;
+
+		if ((par != null) && HeaderParser.HeaderInfo.isHeader(par)) {
 			block = HeaderParser.parse(par, maxHeader);
 		} else if (block instanceof ListBlock) {
 			// minus 1 because after this iteration
