@@ -14,17 +14,26 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
+import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn.FillInItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceItem;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -38,6 +47,8 @@ public class FileWork {
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
+
+	public static final int BUFFER_SIZE = 1024;
 
 	public static class TemplateFiles {
 		private static final String TEMPLATE_DIR = "templates";
@@ -53,7 +64,7 @@ public class FileWork {
 
 		private static final File SCO_TEMPLATES_DIR = new File(TEMPLATE_DIR, "sco");
 		public final static File SCO4THEORY = new File(SCO_TEMPLATES_DIR, "sco_theory_template.ftl");
-		public final static File SCO4TEST = new File(SCO_TEMPLATES_DIR, "sco_test_template.ftl");
+		public final static File SCO4TEST = new File(SCO_TEMPLATES_DIR, "sco_testing_template.ftl");
 
 		private final static File HTML_DIR = new File(TEMPLATE_DIR, "html");
 		private final static File HTML_TESTING_DIR = new File(HTML_DIR, "testingSco");
@@ -74,7 +85,7 @@ public class FileWork {
 					try (FileOutputStream fileOS = new FileOutputStream(outFile)) {
 						int bytesRead;
 						if (isText) {
-							char[] buffer = new char[1024];
+							char[] buffer = new char[BUFFER_SIZE];
 							try (OutputStreamWriter writerOS = new OutputStreamWriter(fileOS, STANDARD_ENCODING);
 									InputStreamReader readerIS = new InputStreamReader(is, STANDARD_ENCODING)) {
 								while ((bytesRead = readerIS.read(buffer)) != -1) {
@@ -82,7 +93,7 @@ public class FileWork {
 								}
 							}
 						} else {
-							byte[] buffer = new byte[1024];
+							byte[] buffer = new byte[BUFFER_SIZE];
 							while ((bytesRead = is.read(buffer)) != -1) {
 								fileOS.write(buffer, 0, bytesRead);
 							}
@@ -123,6 +134,21 @@ public class FileWork {
 
 	private static void copyFileFromResourceDirToDir(File resourceDir, File destDir,
 			Map<String, String> templateVariables) {
+		for (File file : getFilesInResourceFromDir(resourceDir)) {
+			File destFile = new File(destDir, file.getPath());
+			File sourceFile = new File(resourceDir, file.getPath());
+			if (file.getName().toLowerCase().endsWith(".ftl")) {
+				saveTemplateFileWithVariables(sourceFile, destFile, templateVariables);
+			} else {
+				saveFile(getFileFromResources(sourceFile), destFile, false);
+			}
+		}
+	}
+
+	/** @return files with path from directory */
+	private static Set<File> getFilesInResourceFromDir(File resourceDir) {
+		HashSet<File> files = new HashSet<>();
+
 		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
 
 		String jarPath = FileWork.class.getResource("/" + resDirPath).getFile();
@@ -140,19 +166,15 @@ public class FileWork {
 				if (!entry.isDirectory()) {
 					String fileName = entry.getName().replace(File.separatorChar, '/');
 					if ((fileName.length() > resDirPath.length()) && fileName.startsWith(resDirPath + '/')) {
-						File sourceFile = new File(fileName);
-						File destFile = new File(destDir, fileName.substring(resDirPath.length()));
-						if (fileName.toLowerCase().endsWith(".ftl")) {
-							saveTemplateFileWithVariables(sourceFile, destFile, templateVariables);
-						} else {
-							saveFile(getFileFromResources(sourceFile), destFile, false);
-						}
+						files.add(new File(fileName.substring(resDirPath.length())));
 					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		return files;
 	}
 
 	public static void saveSystemDir(File systemDir) {
@@ -162,6 +184,7 @@ public class FileWork {
 
 	public static void saveTestingDir(File testingDir, String introContent) {
 		HashMap<String, String> vars = new HashMap<>();
+
 		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
 
 		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
@@ -216,8 +239,11 @@ public class FileWork {
 		Map<String, String> vars = new HashMap<>(extraVars);
 
 		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+
 		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
 		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
+		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
+
 		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
 		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
 
@@ -233,20 +259,53 @@ public class FileWork {
 		return saveHtmlDocument(TemplateFiles.SCO4THEORY, vars, doc, destFile);
 	}
 
-	public static boolean saveTestingHtmlDocument(Document doc, File destFile, String pageTitle, int type) {
-		HashMap<String, String> vars = new HashMap<>();
-		vars.put("page_title", pageTitle);
-		if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+	public static Map<File, Set<PictureInfo>> saveTestingHtmlDocuments(File destDir, TestingPage page,
+			File pathToSOffice) {
+		HashMap<File, Set<PictureInfo>> result = new HashMap<>();
 
-		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+		HashMap<String, String> extraVars = new HashMap<>();
+		extraVars.put("page_title", page.getParent().getTitle());
 
-		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+		extraVars.put("answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		extraVars.put("companion_class", MatchItem.MATCH_LABEL_4_ANSWER_CLASS);
+		extraVars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
+		extraVars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
 
-		} else if (type == AbstractQuestionBlock.CHOICE_TYPE) {
+		extraVars.put("choice", String.valueOf(AbstractQuestionBlock.CHOICE));
+		extraVars.put("multiple", String.valueOf(AbstractQuestionBlock.MULTIPLE_CHOICE));
+		extraVars.put("fill_in", String.valueOf(AbstractQuestionBlock.FILL_IN));
+		extraVars.put("match", String.valueOf(AbstractQuestionBlock.MATCHING));
+		extraVars.put("sequence", String.valueOf(AbstractQuestionBlock.SEQUENCING));
 
+		for (int i = 0; i < page.getBlocks().size(); i++) {
+			AbstractQuestionBlock<?> quest = page.getBlocks().get(i);
+
+			extraVars.put("type", String.valueOf(quest.getType()));
+
+			if (quest instanceof ChoiceBlock) {
+				extraVars.put("answers_text", new String(
+						((ChoiceBlock) quest).getItems().stream().map(item -> "\"" + item.getValue().getText() + "\"")
+								.collect(Collectors.joining(",")).getBytes(STANDARD_ENCODING),
+						STANDARD_ENCODING));
+			} else if (quest instanceof MatchBlock) {
+				extraVars.put("sortable_block_id", MatchBlock.MATCH_ANSWERS_BLOCK_ID);
+				extraVars.put("sortable_elem_class", MatchItem.MATCH_ANSWER_CLASS);
+				extraVars.put("answer_id_prefix", MatchBlock.MATCH_ANSWER_ID_PREFIX);
+			} else if (quest instanceof SequenceBlock) {
+				extraVars.put("sortable_block_id", SequenceBlock.SEQUENCE_ANSWERS_BLOCK_ID);
+				extraVars.put("sortable_elem_class", SequenceItem.SEQUENCE_ANSWER_CLASS);
+				extraVars.put("answer_id_prefix", SequenceBlock.SEQUENCE_ANSWER_ID_PREFIX);
+			}
+
+			Document html = Tools.createNewHTMLDocument();
+			html.getElementsByTagName("body").item(0).appendChild(quest.toHtml(html));
+			File destFile = new File(destDir, String.valueOf(i + 1) + ".html");
+			if (saveHtmlDocument(TemplateFiles.SCO4TEST, extraVars, html, destFile)) {
+				result.put(destFile, quest.getImages());
+			}
 		}
 
-		return saveHtmlDocument(TemplateFiles.SCO4TEST, vars, doc, destFile);
+		return result;
 	}
 
 	private static boolean saveTemplateFileWithVariables(File file, File resultFile, Map<String, String> vars) {
