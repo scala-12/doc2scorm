@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn;
 
+import java.util.Collections;
+
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 
 /**
@@ -9,13 +11,13 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.Abst
  */
 public class FillInBlock extends AbstractQuestionBlock<FillInItem> {
 
-	public FillInBlock(String answer) {
+	public FillInBlock(FillInItem answer) {
 		this(answer, null);
 	}
 
-	public FillInBlock(String answer, String task) {
-		super(null, task);
-		this.correctOrder = new String[] { answer };
+	public FillInBlock(FillInItem answer, String task) {
+		super(Collections.singletonList(answer), task);
+		this.correctOrder = new String[] { answer.getCorrectAnswer() };
 	}
 
 }
