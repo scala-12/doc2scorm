@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,7 +24,6 @@ import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
@@ -154,16 +154,9 @@ public class Parser {
 			}
 			FileWork.saveTestingDir(dir, intro.toString());
 
-			for (int i = 0; i < page.getBlocks().size(); i++) {
-				AbstractQuestionBlock<?> block = page.getBlocks().get(i);
-				Document html = Tools.createNewHTMLDocument();
-				html.getElementsByTagName("body").item(0).appendChild(block.toHtml(html));
-				File file = new File(dir, String.valueOf(i + 1) + ".html");
-				if (FileWork.saveTheoryHtmlDocument(html, file, node.getTitle())) {
-					Set<PictureInfo> pics = block.getImages();
-					FileWork.saveImages(pics, new File(dir, FileWork.IMAGE_DIR_NAME), pathToSOffice);
-					this.addScoToManifest(manifest, manifestItem, file, pics);
-				}
+			Map<File, Set<PictureInfo>> file2Images = FileWork.saveTestingHtmlDocuments(dir, page, pathToSOffice);
+			for (File file : file2Images.keySet()) {
+				this.addScoToManifest(manifest, manifestItem, file, file2Images.get(file));
 			}
 		}
 	}
