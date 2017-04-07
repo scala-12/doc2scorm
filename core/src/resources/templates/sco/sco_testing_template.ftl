@@ -167,6 +167,7 @@
 		}
 
 		function selectedAnswer(){
+			var value = null;
 <#if isSomeChoice>
 			$('form #${answer_block_id} [type='
 	<#if isChoice>
@@ -175,10 +176,10 @@
 					+ 'checkbox'
 	</#if>
 					+ ']:checked').each(
-						function() {
-							value = ((value==null) ? "" : value + "~") + this.value;
-						}
-					);
+				function() {
+					value = ((value==null) ? "" : value + "~") + this.value;
+				}
+			);
 <#elseif isFillIn>
 			$('form #${answer_block_id} #${fill_in_field_id}').each(
 				function() {
