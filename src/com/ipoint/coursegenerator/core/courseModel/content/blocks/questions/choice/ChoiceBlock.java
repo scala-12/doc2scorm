@@ -110,4 +110,9 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		return div;
 	}
 
+	@Override
+	public int getType() {
+		return (isOneChoice) ? CHOICE : MULTIPLE_CHOICE;
+	}
+
 }
