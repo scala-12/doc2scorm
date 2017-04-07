@@ -20,4 +20,9 @@ public class FillInBlock extends AbstractQuestionBlock<FillInItem> {
 		this.correctOrder = new String[] { answer.getCorrectAnswer() };
 	}
 
+	@Override
+	public int getType() {
+		return FILL_IN;
+	}
+
 }

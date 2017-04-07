@@ -128,4 +128,8 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		return div;
 	}
 
+	@Override
+	public int getType() {
+		return MATCHING;
+	}
 }
