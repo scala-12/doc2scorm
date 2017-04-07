@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
 	
-	<link rel="stylesheet" href="${system_dir}/${test_css}">
+	<link rel="stylesheet" href="${test_css}">
 	<link rel="stylesheet" href="../${system_dir}/${test_css}">
 	<link rel="stylesheet" href="../${system_dir}/${course_css}">
 	
