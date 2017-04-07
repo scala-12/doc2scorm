@@ -94,7 +94,9 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 			}
 
 			Element label = creatorTags.createElement("li");
+			label.setAttribute("class", labelSpan.getAttribute("class"));
 			Element answer = creatorTags.createElement("li");
+			answer.setAttribute("class", answerSpan.getAttribute("class"));
 
 			int number;
 			if (withoutCorrectness) {

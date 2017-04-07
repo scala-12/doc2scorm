@@ -17,6 +17,7 @@ public class MatchItem extends AbstractQuestionItem<List<List<AbstractParagraphB
 
 	public static final String MATCH_ANSWER_CLASS = "match_answer";
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
+	public static final String[] MATCH_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
 	public MatchItem(List<List<AbstractParagraphBlock<?>>> pair) {
 		super(pair);
@@ -30,8 +31,16 @@ public class MatchItem extends AbstractQuestionItem<List<List<AbstractParagraphB
 	public Element toHtml(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 		Element label = creatorTags.createElement("span");
+		label.setAttribute("class", MATCH_LABEL_4_ANSWER_CLASS);
 		label.setAttribute("id", MATCH_LABEL_4_ANSWER_CLASS);
 		Element answer = creatorTags.createElement("span");
+
+		StringBuilder classes = new StringBuilder().append(MATCH_ANSWER_CLASS);
+		for (String classname : MATCH_ANSWER_OTHER_CLASSES) {
+			classes.append(' ').append(classname);
+		}
+
+		answer.setAttribute("class", classes.toString());
 		answer.setAttribute("id", MATCH_ANSWER_CLASS);
 
 		span.appendChild(label);
