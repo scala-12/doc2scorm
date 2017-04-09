@@ -15,11 +15,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -30,6 +30,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn.FillInItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
@@ -284,10 +285,17 @@ public class FileWork {
 			extraVars.put("type", String.valueOf(quest.getType()));
 
 			if (quest instanceof ChoiceBlock) {
-				extraVars.put("answers_text", new String(
-						((ChoiceBlock) quest).getItems().stream().map(item -> "\"" + item.getValue().getText() + "\"")
-								.collect(Collectors.joining(",")).getBytes(STANDARD_ENCODING),
-						STANDARD_ENCODING));
+				List<ChoiceItem> answerItems = ((ChoiceBlock) quest).getItems();
+				StringBuilder answerText = new StringBuilder();
+				for (int i1 = 0; i1 < answerItems.size(); i1++) {
+					if (i1 != 0) {
+						answerText.append(", ");
+					}
+					answerText.append(i1).append(" : \"").append(answerItems.get(i1).getValue().getText()).append("\"");
+				}
+
+				extraVars.put("answers_text",
+						new String(answerText.toString().getBytes(STANDARD_ENCODING), STANDARD_ENCODING));
 			} else if (quest instanceof MatchBlock) {
 				extraVars.put("sortable_block_id", MatchBlock.MATCH_ANSWERS_BLOCK_ID);
 				extraVars.put("sortable_elem_class", MatchItem.MATCH_ANSWER_CLASS);
