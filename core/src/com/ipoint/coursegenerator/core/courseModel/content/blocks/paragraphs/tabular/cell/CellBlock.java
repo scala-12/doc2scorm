@@ -24,14 +24,8 @@ public class CellBlock extends AbstractParagraphBlock<CellItem> {
 		return toHtml(creatorTags, true);
 	}
 
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
 	private Element toHtml(Document creatorTags, boolean styled) {
-		return (styled) ? this.getFirstItem().toHtml(creatorTags)
-				: this.getFirstItem().toHtmlWithoutStyles(creatorTags);
+		return this.getFirstItem().toHtml(creatorTags);
 	}
 
 	@Override

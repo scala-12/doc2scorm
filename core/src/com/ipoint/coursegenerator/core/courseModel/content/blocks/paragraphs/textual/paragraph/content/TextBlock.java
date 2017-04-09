@@ -37,18 +37,9 @@ public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element paragraph = creatorTags.createElement("span");
 		for (AbstractContentItem<?> run : this.getItems()) {
-			paragraph.appendChild((styled) ? run.toHtml(creatorTags) : run.toHtmlWithoutStyles(creatorTags));
+			paragraph.appendChild(run.toHtml(creatorTags));
 		}
 
 		return paragraph;

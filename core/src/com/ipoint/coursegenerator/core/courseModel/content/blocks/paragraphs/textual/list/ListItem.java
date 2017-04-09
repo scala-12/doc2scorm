@@ -25,18 +25,8 @@ public class ListItem extends AbstractParagraphItem<AbstractTextualBlock<?>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element listItem = creatorTags.createElement("li");
-		Node itemValue = (styled) ? this.getValue().toHtml(creatorTags)
-				: this.getValue().toHtmlWithoutStyles(creatorTags);
+		Node itemValue = this.getValue().toHtml(creatorTags);
 		if (this.getValue() instanceof ParagraphBlock) {
 			// because in this situation tag p equal tag li
 			while (itemValue.hasChildNodes()) {

@@ -1,11 +1,12 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public interface ConvertableWithText {
 
-	abstract public Element toHtmlWithoutStyles(Document creatorTags);
+	/** @return simple nodes */
+	abstract public NodeList toSimpleHtml(Document creatorTags);
 
 	abstract public String getText();
 

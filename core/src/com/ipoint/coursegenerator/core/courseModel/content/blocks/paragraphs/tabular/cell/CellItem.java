@@ -117,15 +117,6 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element tCell = creatorTags.createElement("td");
 
 		if ((this.getColSpan() != null) && (this.getRowSpan() != null)) {
@@ -137,7 +128,7 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 			}
 			if (this.getValue() != null) {
 				for (AbstractParagraphBlock<?> par : this.getValue()) {
-					tCell.appendChild((styled) ? par.toHtml(creatorTags) : par.toHtmlWithoutStyles(creatorTags));
+					tCell.appendChild(par.toHtml(creatorTags));
 				}
 			}
 		}

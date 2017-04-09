@@ -31,18 +31,9 @@ public class TableItem extends AbstractParagraphItem<List<CellBlock>> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element tRow = creatorTags.createElement("tr");
 		for (CellBlock cell : this.getValue()) {
-			tRow.appendChild((styled) ? cell.toHtml(creatorTags) : cell.toHtmlWithoutStyles(creatorTags));
+			tRow.appendChild(cell.toHtml(creatorTags));
 		}
 
 		return tRow;

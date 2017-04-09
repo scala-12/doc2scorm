@@ -7,6 +7,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.FormulaContentItem;
@@ -132,92 +133,99 @@ public abstract class AbstractContentItem<T> extends AbstractParagraphItem<T> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, true);
+		return (Element) this.toHtml(creatorTags, true);
 	}
 
 	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
+	public NodeList toSimpleHtml(Document creatorTags) {
+		Element span = creatorTags.createElement("span");
+		span.appendChild(toHtml(creatorTags, false));
+
+		return span.getChildNodes();
 	}
 
-	private Element toHtml(Document creatorTags, boolean styled) {
-		Element headTag = creatorTags.createElement(SPAN_TAG_NAME);
-		Element text = null;
+	private Node toHtml(Document creatorTags, boolean styled) {
+		Node topNode = creatorTags.createElement(SPAN_TAG_NAME);
+		Node bottomNode = null;
 
 		if (styled) {
 			if (this.isBold()) {
 				Element tag = creatorTags.createElement(BOLD_TAG_NAME);
-				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-					headTag = tag;
-					text = tag;
+				if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+					topNode = tag;
+					bottomNode = tag;
 				} else {
-					headTag.appendChild(tag);
-					text = tag;
+					topNode.appendChild(tag);
+					bottomNode = tag;
 				}
 			}
 
 			if (this.isItalic()) {
 				Element tag = creatorTags.createElement(ITALIC_TAG_NAME);
-				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-					headTag = tag;
-					text = tag;
+				if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+					topNode = tag;
+					bottomNode = tag;
 				} else {
-					headTag.appendChild(tag);
-					text = tag;
+					topNode.appendChild(tag);
+					bottomNode = tag;
 				}
 			}
 
 			if (this.isUnderline()) {
 				Element tag = creatorTags.createElement(UNDERLINE_TAG_NAME);
-				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-					headTag = tag;
-					text = tag;
+				if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+					topNode = tag;
+					bottomNode = tag;
 				} else {
-					headTag.appendChild(tag);
-					text = tag;
+					topNode.appendChild(tag);
+					bottomNode = tag;
 				}
 			}
 
 			if (this.getColor() != null) {
 				Element tag = creatorTags.createElement(FONT_TAG_NAME);
 				tag.setAttribute(COLOR_TAG_NAME, this.getColor());
-				if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-					headTag = tag;
-					text = tag;
+				if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+					topNode = tag;
+					bottomNode = tag;
 				} else {
-					headTag.appendChild(tag);
-					text = tag;
+					topNode.appendChild(tag);
+					bottomNode = tag;
 				}
 			}
 		}
 
 		if (this.isSuperscript()) {
 			Element tag = creatorTags.createElement(SUPERSCRIPT_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
+			if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+				topNode = tag;
+				bottomNode = tag;
 			} else {
-				headTag.appendChild(tag);
-				text = tag;
+				topNode.appendChild(tag);
+				bottomNode = tag;
 			}
 		} else if (this.isSubscript()) {
 			Element tag = creatorTags.createElement(SUBSCRIPT_TAG_NAME);
-			if (SPAN_TAG_NAME.equals(headTag.getNodeName())) {
-				headTag = tag;
-				text = tag;
+			if (SPAN_TAG_NAME.equals(topNode.getNodeName())) {
+				topNode = tag;
+				bottomNode = tag;
 			} else {
-				headTag.appendChild(tag);
-				text = tag;
+				topNode.appendChild(tag);
+				bottomNode = tag;
 			}
 		}
 
-		if (text == null) {
-			headTag.appendChild(getValueAsHtml(creatorTags));
+		if (bottomNode == null) {
+			if (styled) {
+				topNode.appendChild(getValueAsHtml(creatorTags));
+			} else {
+				topNode = getValueAsHtml(creatorTags);
+			}
 		} else {
-			text.appendChild(getValueAsHtml(creatorTags));
+			bottomNode.appendChild(getValueAsHtml(creatorTags));
 		}
 
-		return headTag;
+		return topNode;
 	}
 
 }

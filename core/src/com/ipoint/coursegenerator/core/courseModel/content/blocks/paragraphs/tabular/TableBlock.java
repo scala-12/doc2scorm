@@ -24,21 +24,12 @@ public class TableBlock extends AbstractParagraphBlock<TableItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element table = creatorTags.createElement("table");
 		Element tBody = creatorTags.createElement("tbody");
 		table.appendChild(tBody);
 
 		for (TableItem row : this.getItems()) {
-			tBody.appendChild((styled) ? row.toHtml(creatorTags) : row.toHtmlWithoutStyles(creatorTags));
+			tBody.appendChild(row.toHtml(creatorTags));
 		}
 
 		return table;
