@@ -95,7 +95,8 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 				number = Integer.parseInt(this.correctOrder[i]);
 			}
 
-			answer.setAttribute("value", this.correctOrder[i]);
+			// TODO: fix in iLogos this "feature" (+1)
+			answer.setAttribute("value", String.valueOf(Integer.parseInt(this.correctOrder[i]) + 1));
 
 			sortedAnswers[number] = new Node[] { answer, span.getElementsByTagName("label").item(0) };
 		}
