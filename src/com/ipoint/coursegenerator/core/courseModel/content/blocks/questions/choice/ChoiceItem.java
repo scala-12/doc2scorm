@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
@@ -40,7 +41,11 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 		input.setAttribute("name", NAME);
 
 		Element label = creatorTags.createElement("label");
-		label.appendChild(this.getValue().toHtmlWithoutStyles(creatorTags));
+		label.setAttribute("class", CLASS);
+		NodeList labelItems = this.getValue().toSimpleHtml(creatorTags);
+		while (labelItems.getLength() != 0) {
+			label.appendChild(labelItems.item(0));
+		}
 
 		String id = UUID.randomUUID().toString();
 		label.setAttribute("for", id);

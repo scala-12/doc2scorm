@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
@@ -47,10 +48,16 @@ public class MatchItem extends AbstractQuestionItem<List<List<AbstractParagraphB
 		span.appendChild(answer);
 
 		for (AbstractParagraphBlock<?> block : this.getValue().get(0)) {
-			label.appendChild(block.toHtml(creatorTags));
+			NodeList items = block.toSimpleHtml(creatorTags);
+			while (items.getLength() != 0) {
+				label.appendChild(items.item(0));
+			}
 		}
 		for (AbstractParagraphBlock<?> block : this.getValue().get(1)) {
-			answer.appendChild(block.toHtml(creatorTags));
+			NodeList items = block.toSimpleHtml(creatorTags);
+			while (items.getLength() != 0) {
+				answer.appendChild(items.item(0));
+			}
 		}
 
 		return span;
