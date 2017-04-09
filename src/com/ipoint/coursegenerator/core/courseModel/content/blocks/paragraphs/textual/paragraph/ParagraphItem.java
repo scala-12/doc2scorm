@@ -25,16 +25,7 @@ public class ParagraphItem extends AbstractParagraphItem<TextBlock> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
-		return (styled) ? this.getValue().toHtml(creatorTags) : this.getValue().toHtmlWithoutStyles(creatorTags);
+		return this.getValue().toHtml(creatorTags);
 	}
 
 	@Override

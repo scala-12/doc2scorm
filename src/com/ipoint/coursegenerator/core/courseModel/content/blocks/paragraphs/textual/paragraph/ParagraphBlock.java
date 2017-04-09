@@ -68,19 +68,10 @@ public class ParagraphBlock extends AbstractTextualBlock<ParagraphItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element par = creatorTags.createElement("p");
 
 		for (ParagraphItem item : this.getItems()) {
-			par.appendChild((styled) ? item.toHtml(creatorTags) : item.toHtmlWithoutStyles(creatorTags));
+			par.appendChild(item.toHtml(creatorTags));
 		}
 
 		if (this.getAlignment() != null) {

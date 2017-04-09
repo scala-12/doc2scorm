@@ -89,15 +89,6 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		return this.toHtml(creatorTags, true);
-	}
-
-	@Override
-	public Element toHtmlWithoutStyles(Document creatorTags) {
-		return this.toHtml(creatorTags, false);
-	}
-
-	private Element toHtml(Document creatorTags, boolean styled) {
 		Element list = null;
 		if (this.getMarkerType() == SIMPLE_MARKER) {
 			list = creatorTags.createElement("ul");
@@ -120,8 +111,7 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 		}
 
 		for (int i = 0; i < this.getItems().size(); ++i) {
-			Element listItem = (styled) ? this.getItems().get(i).toHtml(creatorTags)
-					: this.getItems().get(i).toHtmlWithoutStyles(creatorTags);
+			Element listItem = this.getItems().get(i).toHtml(creatorTags);
 			list.appendChild(listItem);
 			if ((i + 1) < this.getItems().size()) {
 				if (this.getItems().get(i + 1).getValue() instanceof ListBlock) {
@@ -130,8 +120,7 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 					// another list inserted into new list item - It is looks
 					// not correct.
 					ListItem item = this.getItems().get(++i);
-					listItem.appendChild((styled) ? item.toHtml(creatorTags).getFirstChild()
-							: item.toHtmlWithoutStyles(creatorTags).getFirstChild());
+					listItem.appendChild(item.toHtml(creatorTags).getFirstChild());
 				}
 			}
 		}

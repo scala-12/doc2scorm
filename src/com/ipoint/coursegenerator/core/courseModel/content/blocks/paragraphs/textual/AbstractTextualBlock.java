@@ -2,8 +2,8 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.te
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 
@@ -17,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  *            Type of item that included in block
  *
  */
-public abstract class AbstractTextualBlock<T extends AbstractItem<?>> extends AbstractParagraphBlock<T> {
+public abstract class AbstractTextualBlock<T extends AbstractParagraphItem<?>> extends AbstractParagraphBlock<T> {
 
 	protected AbstractTextualBlock(List<T> items) {
 		super(items);
