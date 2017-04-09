@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
@@ -36,7 +37,10 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractParagraphBlo
 		item.setAttribute("class", classes.toString());
 
 		for (AbstractParagraphBlock<?> block : this.getValue()) {
-			item.appendChild(block.toHtml(creatorTags));
+			NodeList items = block.toSimpleHtml(creatorTags);
+			while (items.getLength() != 0) {
+				item.appendChild(items.item(0));
+			}
 		}
 
 		return item;
