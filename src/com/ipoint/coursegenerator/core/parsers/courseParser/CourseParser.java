@@ -236,6 +236,7 @@ public class CourseParser extends AbstractParser {
 	public static CourseModel parse(InputStream stream, String courseName, int maxHeaderLevel) {
 
 		CourseModel courseModel = null;
+		// checked value for max header level
 		int maxHeader = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
 
 		try {
@@ -266,7 +267,9 @@ public class CourseParser extends AbstractParser {
 
 			int lastHeaderNum = trueHeaders.size() - 1;
 			int lastDocElemNum = document.getBodyElements().size() - 1;
+
 			AbstractTreeNode currentNode = null;
+			// depth in course model
 			int currentDepth = HeaderInfo.TOP_LEVEL;
 			int realDepth = currentDepth;
 
@@ -275,17 +278,27 @@ public class CourseParser extends AbstractParser {
 				HeaderInfo headerInfo = HeaderInfo.getHeaderInfo(header);
 
 				if ((currentNode == null) || (headerInfo.getLevel() == HeaderInfo.TOP_LEVEL)) {
+					// create node on top of model
 					currentNode = courseModel.createChild(headerInfo.getTitle());
+					// current depth is depth in course-model
 					currentDepth = HeaderInfo.TOP_LEVEL;
+					// real depth is depth in MS Word
 					realDepth = currentDepth;
 				} else {
+					// TODO: проверить использование переменных 'currentDepth' и
+					// 'realDepth'
+					// TODO: проверить в сложной структуре - скачущие уровни
+					// заголовков типа "1-4-2-4-3-1-6-1-2"
 					if (headerInfo.getLevel() < currentDepth) {
+						// create node after current-node-parent
 						currentNode = currentNode.getParent().createAfter(headerInfo.getTitle());
 						currentDepth--;
 					} else if (headerInfo.getLevel() > realDepth) {
+						// create node as child of current-node
 						currentNode = currentNode.createChild(headerInfo.getTitle());
 						currentDepth++;
 					} else {
+						// create node after current-node
 						currentNode = currentNode.createAfter(headerInfo.getTitle());
 					}
 
@@ -309,6 +322,7 @@ public class CourseParser extends AbstractParser {
 					AbstractPage<?> page = null;
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
+						// is not test
 						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
 
 						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
@@ -324,6 +338,8 @@ public class CourseParser extends AbstractParser {
 							page = theoryPage;
 						}
 					} else {
+						// is test
+
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
 						ArrayList<QuestionWithAnswers> questionsWithAnswers = new ArrayList<>();
 
@@ -340,6 +356,7 @@ public class CourseParser extends AbstractParser {
 									: null;
 
 							if ((par != null) && HeaderParser.HeaderInfo.isQuestion(par)) {
+								// task header as question text
 								hasQuestion = true;
 								if ((someAnswerBlocks == null) || !someAnswerBlocks.isEmpty() || (someTask == null)) {
 									someTask = new StringBuilder();
