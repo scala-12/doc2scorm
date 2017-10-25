@@ -1,6 +1,8 @@
 package com.ipoint.coursegenerator.core.parsers.courseParser;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -50,6 +52,7 @@ import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
+import com.ipoint.coursegenerator.core.utils.FileWork;
 import com.ipoint.coursegenerator.core.utils.Tools;
 import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
@@ -236,12 +239,22 @@ public class CourseParser extends AbstractParser {
 		int maxHeader = (maxHeaderLevel < 1) ? 1 : maxHeaderLevel;
 
 		try {
-			// We need in 2 independent Input streams for MathML and
-			// XWPFDocument
-			byte[] content = Tools.convertStream2ByteArray(stream);
-			MathInfo mathInfo = getAllFormulsAsMathML(new ByteArrayInputStream(content));
-			XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(content));
-			content = null;
+			// need in 2 independent Input streams for MathML and XWPFDocument
+			File tmpDoc = File.createTempFile("course_", ".docx");
+			try (BufferedInputStream bufIS = new BufferedInputStream(stream)) {
+				FileWork.saveRawFile(bufIS, tmpDoc);
+			}
+
+			MathInfo mathInfo = null;
+			try (FileInputStream fIS = new FileInputStream(tmpDoc)) {
+				mathInfo = getAllFormulsAsMathML(new BufferedInputStream(fIS));
+			}
+
+			XWPFDocument document = null;
+			try (FileInputStream fIS = new FileInputStream(tmpDoc)) {
+				document = new XWPFDocument(new BufferedInputStream(fIS));
+			}
+			tmpDoc.delete();
 
 			courseModel = CourseModel.createEmptyCourseModel(courseName);
 
