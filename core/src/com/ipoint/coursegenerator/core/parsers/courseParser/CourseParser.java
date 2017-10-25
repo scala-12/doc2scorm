@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -273,8 +274,9 @@ public class CourseParser extends AbstractParser {
 			int currentDepth = HeaderInfo.TOP_LEVEL;
 			int realDepth = currentDepth;
 
-			for (int headerNum = 0; headerNum < trueHeaders.size(); headerNum++) {
-				XWPFParagraph header = trueHeaders.get(headerNum);
+			int headerNumber = -1;
+			for (XWPFParagraph header : trueHeaders) {
+				headerNumber += 1;
 				HeaderInfo headerInfo = HeaderInfo.getHeaderInfo(header);
 
 				if ((currentNode == null) || (headerInfo.getLevel() == HeaderInfo.TOP_LEVEL)) {
@@ -305,18 +307,15 @@ public class CourseParser extends AbstractParser {
 					realDepth = headerInfo.getLevel();
 				}
 
-				int absNum = document.getBodyElements().indexOf(header);
-				ArrayList<IBodyElement> chapterParsAndTables = new ArrayList<>();
-				if ((absNum != lastDocElemNum)) {
-					chapterParsAndTables
-							.addAll((document.getBodyElements().subList(absNum + 1,
-									(headerNum == lastHeaderNum) ? document.getBodyElements().size()
-											: document.getBodyElements().indexOf(trueHeaders.get(headerNum + 1))))
-													.stream()
-													.filter(elem -> (elem instanceof XWPFParagraph)
-															|| (elem instanceof XWPFTable))
-													.collect(Collectors.toList()));
-				}
+				int absHeaderNumber = document.getBodyElements().indexOf(header);
+				List<IBodyElement> chapterParsAndTables = (absHeaderNumber == lastDocElemNum)
+						? Collections.<IBodyElement>emptyList()
+						: document.getBodyElements()
+								.subList(absHeaderNumber + 1,
+										(headerNumber == lastHeaderNum) ? document.getBodyElements().size()
+												: document.getBodyElements().indexOf(trueHeaders.get(headerNumber + 1)))
+								.stream().filter(elem -> (elem instanceof XWPFParagraph) || (elem instanceof XWPFTable))
+								.collect(Collectors.toList());
 
 				if (!chapterParsAndTables.isEmpty()) {
 					AbstractPage<?> page = null;
@@ -325,11 +324,13 @@ public class CourseParser extends AbstractParser {
 						// is not test
 						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
 
-						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
+						int chapterElemNum = 0;
+						while (chapterElemNum < chapterParsAndTables.size()) {
 							BlockWithShifting blockAndShift = getBlockAndShifting(
 									chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
-							chapterElemNum += blockAndShift.getShift();
 							chapterBlocks.add(blockAndShift.getBlock());
+
+							chapterElemNum += (1 + blockAndShift.getShift());
 						}
 
 						if (!chapterBlocks.isEmpty()) {
@@ -350,8 +351,10 @@ public class CourseParser extends AbstractParser {
 						Document html = Tools.createEmptyDocument();
 
 						boolean hasQuestion = false;
-						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
+						int chapterElemNum = 0;
+						while (chapterElemNum < chapterParsAndTables.size()) {
 							IBodyElement chapterElem = chapterParsAndTables.get(chapterElemNum);
+
 							XWPFParagraph par = (chapterElem instanceof XWPFParagraph) ? (XWPFParagraph) chapterElem
 									: null;
 
@@ -372,16 +375,22 @@ public class CourseParser extends AbstractParser {
 										questionsWithAnswers
 												.add(new QuestionWithAnswers(someTask.toString(), someAnswerBlocks));
 
+										// TODO: check all
 										if (block instanceof ListBlock) {
 											int shift = blockAndShift.getShift();
-											for (int i = 0, count = 0; count <= shift; i++) {
+
+											int i = 0;
+											int count = 0;
+											while (count <= shift) {
 												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
 												if (elem instanceof XWPFParagraph) {
 													htmlAnswer2Par.put(
 															Tools.getNodeString(block.getItems().get(i).toHtml(html)),
 															(XWPFParagraph) elem);
-													count++;
+													count += 1;
 												}
+
+												i += 1;
 											}
 											chapterElemNum += shift;
 										} else {
@@ -394,6 +403,8 @@ public class CourseParser extends AbstractParser {
 									}
 								}
 							}
+
+							chapterElemNum += 1;
 						}
 
 						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
