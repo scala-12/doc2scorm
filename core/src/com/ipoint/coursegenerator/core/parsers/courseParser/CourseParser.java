@@ -51,6 +51,7 @@ import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
 import com.ipoint.coursegenerator.core.utils.Tools;
+import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
  * Class for parsing to {@link CourseModel}
@@ -59,6 +60,21 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  *
  */
 public class CourseParser extends AbstractParser {
+
+	private static class BlockWithShifting extends Pair<AbstractParagraphBlock<?>, Integer> {
+
+		public BlockWithShifting(AbstractParagraphBlock<?> block, int shift) {
+			super(block, (shift > 0) ? shift : 0);
+		}
+
+		public AbstractParagraphBlock<?> getBlock() {
+			return this.left;
+		}
+
+		public int getShift() {
+			return this.right.intValue();
+		}
+	}
 
 	private static final String MATH_START = "<math>";
 
@@ -268,10 +284,10 @@ public class CourseParser extends AbstractParser {
 						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
 
 						for (int chapterElemNum = 0; chapterElemNum < chapterParsAndTables.size(); chapterElemNum++) {
-							Object[] blockAndShift = getBlockAndShift(chapterParsAndTables.get(chapterElemNum),
-									mathInfo, maxHeader);
-							chapterElemNum += (int) blockAndShift[1];
-							chapterBlocks.add((AbstractParagraphBlock<?>) blockAndShift[0]);
+							BlockWithShifting blockAndShift = getBlockAndShifting(
+									chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
+							chapterElemNum += blockAndShift.getShift();
+							chapterBlocks.add(blockAndShift.getBlock());
 						}
 
 						if (!chapterBlocks.isEmpty()) {
@@ -304,9 +320,9 @@ public class CourseParser extends AbstractParser {
 								}
 								someTask.append(par.getText());
 							} else {
-								Object[] blockAndShift = getBlockAndShift(chapterParsAndTables.get(chapterElemNum),
-										mathInfo, maxHeader);
-								AbstractParagraphBlock<?> block = (AbstractParagraphBlock<?>) blockAndShift[0];
+								BlockWithShifting blockAndShift = getBlockAndShifting(
+										chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
+								AbstractParagraphBlock<?> block = blockAndShift.getBlock();
 								if (block != null) {
 									if (hasQuestion) {
 										if (!task2Answers.containsKey(someTask)) {
@@ -315,7 +331,7 @@ public class CourseParser extends AbstractParser {
 										}
 
 										if (block instanceof ListBlock) {
-											int shift = (int) blockAndShift[1];
+											int shift = blockAndShift.getShift();
 											for (int i = 0, count = 0; count <= shift; i++) {
 												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
 												if (elem instanceof XWPFParagraph) {
@@ -412,7 +428,7 @@ public class CourseParser extends AbstractParser {
 		return courseModel;
 	}
 
-	private static Object[] getBlockAndShift(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
+	private static BlockWithShifting getBlockAndShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
 		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 
@@ -427,7 +443,7 @@ public class CourseParser extends AbstractParser {
 			shift = ((ListBlock) block).getSize() - 1;
 		}
 
-		return new Object[] { block, (shift > 0) ? shift : 0 };
+		return new BlockWithShifting(block, shift);
 	}
 
 }
