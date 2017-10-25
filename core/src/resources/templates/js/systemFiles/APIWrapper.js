@@ -523,28 +523,30 @@ function translateDataModelElement(name)
    case "student_preference":
    case "suspend_data":
    case "launch_data":
-   case "sco_answers_source_json":
-      {
+   case "sco_answers_source_json": {
          updatedName = getNewValue(name);
          _InternalErrorCode = API_CALL_PASSED_TO_LMS;
          DataModelElementReturnVal = api.GetValue(updatedName);
       }
-   case "core":
-      { 
+   case "core": { 
          DataModelElementReturnVal = convertCore(name,arrayOfComponents);
          return DataModelElementReturnVal;  
       }   
-   case "objectives":
-      {
+   case "objectives": {
          DataModelElementReturnVal = convertObjectives(name,arrayOfComponents);
          return DataModelElementReturnVal;      
       }
-   case "interactions":
-      {
+   case "interactions": {
          DataModelElementReturnVal = convertInteractions(name,
                                                             arrayOfComponents);
          return DataModelElementReturnVal;  
       }
+
+   case "max_time_allowed":{
+			updatedName = getNewValue(name);
+			_InternalErrorCode = API_CALL_PASSED_TO_LMS;
+			DataModelElementReturnVal = api.ParseTimeIntervalIntoMillis(api.GetValue(updatedName));
+		}
    }
 
    return DataModelElementReturnVal;
