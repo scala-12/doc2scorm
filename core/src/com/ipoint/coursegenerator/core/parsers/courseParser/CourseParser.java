@@ -471,10 +471,10 @@ public class CourseParser extends AbstractParser {
 							testPage.setBlocks(questionsBlocks);
 							page = testPage;
 						}
+					}
 
-						if (page != null) {
-							page.setParent((CourseTreeNode) currentNode);
-						}
+					if (page != null) {
+						page.setParent((CourseTreeNode) currentNode);
 					}
 				}
 			}
