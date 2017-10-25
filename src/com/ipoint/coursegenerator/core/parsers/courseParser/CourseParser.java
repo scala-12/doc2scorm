@@ -344,10 +344,11 @@ public class CourseParser extends AbstractParser {
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
 						ArrayList<QuestionWithAnswers> questionsWithAnswers = new ArrayList<>();
 
-						ArrayList<AbstractParagraphBlock<?>> someAnswerBlocks = null;
-						StringBuilder someTask = null;
+						ArrayList<AbstractParagraphBlock<?>> questionAnswers = null;
+						StringBuilder questionTask = null;
 
-						HashMap<String, XWPFParagraph> htmlAnswer2Par = new HashMap<>();
+						HashMap<String, XWPFParagraph> htmlAnswer2RealPar = new HashMap<>();
+
 						Document html = Tools.createEmptyDocument();
 
 						boolean hasQuestion = false;
@@ -358,48 +359,53 @@ public class CourseParser extends AbstractParser {
 							XWPFParagraph par = (chapterElem instanceof XWPFParagraph) ? (XWPFParagraph) chapterElem
 									: null;
 
-							if ((par != null) && HeaderParser.HeaderInfo.isQuestion(par)) {
+							if ((null != par) && HeaderParser.HeaderInfo.isQuestion(par)) {
 								// task header as question text
 								hasQuestion = true;
-								if ((someAnswerBlocks == null) || !someAnswerBlocks.isEmpty() || (someTask == null)) {
-									someTask = new StringBuilder();
-									someAnswerBlocks = new ArrayList<>();
+
+								if ((null == questionAnswers) || !questionAnswers.isEmpty()) {
+									// new answer blocks
+									questionAnswers = new ArrayList<>();
+									questionTask = new StringBuilder();
 								}
-								someTask.append(par.getText());
+
+								questionTask.append(par.getText());
 							} else {
-								BlockWithShifting blockAndShift = getBlockAndShifting(
-										chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
-								AbstractParagraphBlock<?> block = blockAndShift.getBlock();
-								if (block != null) {
+								BlockWithShifting blockWithShift = getBlockAndShifting(chapterElem, mathInfo, maxHeader);
+								if (blockWithShift.getBlock() != null) {
 									if (hasQuestion) {
 										questionsWithAnswers
-												.add(new QuestionWithAnswers(someTask.toString(), someAnswerBlocks));
+												.add(new QuestionWithAnswers(questionTask.toString(), questionAnswers));
 
 										// TODO: check all
-										if (block instanceof ListBlock) {
-											int shift = blockAndShift.getShift();
+										if (blockWithShift.getBlock() instanceof ListBlock) {
+											int shift = blockWithShift.getShift();
 
 											int i = 0;
 											int count = 0;
-											while (count <= shift) {
+											int lastChapterParElementShift = chapterParsAndTables.size()
+													- chapterElemNum;
+											while ((count <= shift) && (i < lastChapterParElementShift)) {
 												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
 												if (elem instanceof XWPFParagraph) {
-													htmlAnswer2Par.put(
-															Tools.getNodeString(block.getItems().get(i).toHtml(html)),
+													htmlAnswer2RealPar.put(Tools.getNodeString(
+															blockWithShift.getBlock().getItems().get(i).toHtml(html)),
 															(XWPFParagraph) elem);
 													count += 1;
 												}
 
 												i += 1;
 											}
+
 											chapterElemNum += shift;
-										} else {
-											htmlAnswer2Par.put(Tools.getNodeString(block.toHtml(html)), par);
+										} else if (null != par) {
+											htmlAnswer2RealPar.put(
+													Tools.getNodeString(blockWithShift.getBlock().toHtml(html)), par);
 										}
 
-										someAnswerBlocks.add(block);
+										questionAnswers.add(blockWithShift.getBlock());
 									} else {
-										introBlocks.add(block);
+										introBlocks.add(blockWithShift.getBlock());
 									}
 								}
 							}
@@ -446,7 +452,7 @@ public class CourseParser extends AbstractParser {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();
 
 									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
-											htmlAnswer2Par.get(Tools.getNodeString(item.toHtml(html))))));
+											htmlAnswer2RealPar.get(Tools.getNodeString(item.toHtml(html))))));
 								}
 								questBlock = new ChoiceBlock(items);
 							}
