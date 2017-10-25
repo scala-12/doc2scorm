@@ -2,126 +2,148 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
-	<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
-	<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"></script>
-	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.css">
-	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
-	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
-	<script type="text/javascript">
-		$( function() {
-			$('input[type=submit],input[type=button],button').button();
-			$('fieldset input[type="radio"],fieldset input[type="checkbox"]').checkboxradio();
-			$( 'fieldset' ).controlgroup().css('display', 'block');
-		});
-	</script>
-	
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
+<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
+<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"></script>
+<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.css">
+<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
+<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
 <script type="text/javascript">
-	var a=new Array();
-	var b=new Array();
-	var startQ=null;
-	var stopQ=null;
-	var duration=null;
-	var i=0;
+	var testingStartDate=null;
+	
+	var startQuest=null;
+	var stopQuest=null;
+	var questIndex=0;
+	
+	var timerID=0;
+	
+	var hasEndTime=false;
+	var timeLimit = null;
+	
 	var stTestTime=0;
+	
+	var isFirstQuest=true;
 
-	function time(Miliseconds){
-		var NewDate=new Date(Miliseconds);
-		YYYY=NewDate.getFullYear();
-		MM=NewDate.getMonth()+1;
-		DD=NewDate.getDate();
-		hh=NewDate.getHours();
-		mm=NewDate.getMinutes();
-		ss=NewDate.getSeconds();
-		if((new String(MM)).length<2){
-			MM="0"+MM;
+	function milisecondsToDate(miliseconds){
+		var date = new Date(miliseconds);
+		var year = date.getFullYear();
+		var month=date.getMonth()+1;
+		var day=date.getDate();
+		var hour=date.getHours();
+		var minute=date.getMinutes();
+		var second=date.getSeconds();
+		if((new String(month)).length<2){
+			month="0"+month;
 		}
-		if((new String(DD)).length<2){
-			DD="0"+DD;
+		if((new String(day)).length<2){
+			day="0"+day;
 		}
-		if((new String(hh)).length<2){
-			hh="0"+hh;
+		if((new String(hour)).length<2){
+			hour="0"+hour;
 		}
-		if((new String(mm)).length<2){
-			mm="0"+mm;
+		if((new String(minute)).length<2){
+			minute="0"+minute;
 		}
-		if((new String(ss)).length<2){
-	      ss="0"+ss;
+		if((new String(second)).length<2){
+	      second="0"+second;
 		}
-		val=YYYY+"-"+MM
-				+"-"+DD
-				+"T"+hh
-				+":"+mm
-				+":"+ss;
 		
-		return val;
+		return year
+				+"-"+month
+				+"-"+day
+				+"T"+hour
+				+":"+minute
+				+":"+second;
 	}
 
-	var questionDate=null;
-	var startDate=null;
-	var timerID=0;
-	// ограничение времени
-	var isAnd=false;
-	var stoptime=0;
-
 	function updateTimer(){
-	    if(!questionDate)
+	    if(!startQuest) {
 		    return;
+		}
 	    var currentDate=new Date().getTime();
-	    var elapsedQuestionSeconds=Math.round((currentDate-questionDate)/1000);
-	    var elapsedTotalSeconds=Math.round((currentDate-startDate)/1000);
-	    document.operationForm.totalTime.value=convertTotalSeconds(elapsedTotalSeconds);
-	    document.operationForm.questionTime.value=convertTotalSeconds(elapsedQuestionSeconds);
+		var testTime = currentDate-testingStartDate;
+	    $('#question_time').val(convertTotalSeconds(Math.round((currentDate-startQuest)/1000)));
 	    timerID=setTimeout("updateTimer()",1000);
 	    // ограничение времени
-		if(stoptime !=0)
-			if(currentDate-startDate+parseInt(stTestTime)>stoptime*60*1000)
-				isAnd=true;
-		if(isAnd){
-			if(parent.testParams[0]==6){
-				doLMSSetValue("cmi.suspend_data","done");
-			}else{
-				doLMSSetValue("cmi.suspend_data","");
+	    if (timeLimit == null) {
+	    	timeLimit = parent.doLMSGetValue("cmi.max_time_allowed");
+	    	if ((timeLimit + '').length == 0) {
+	    		timeLimit = -1;
+	    	}
+	    }
+		if (timeLimit < 0) {
+			if (isFirstQuest) {
+				isFirstQuest = false;
+				$('.without_timeout').show();
+				$('.with_timeout').hide();
 			}
-			parent.frames["question"].location.href="stopalert.html";
-			parent.frames["botton"].location.href="empty.html";
+			$('#total_time').val(convertTotalSeconds(Math.round(testTime/1000)));
+		} else {
+			if (isFirstQuest) {
+				isFirstQuest = false;
+				$('.with_timeout').show();
+				$('.without_timeout').hide();
+			}
+			$('#balance_time').val(convertTotalSeconds(Math.round((timeLimit-testTime)/1000)));
+			if(testTime+parseInt(stTestTime)>timeLimit) {
+				stopQuest=new Date().getTime();
+				var duration=(stopQuest-startQuest)/1000;
+				for (var i = questIndex; i < parent.questions.length; ++i) {
+					parent.ArrTimestamp[i]=milisecondsToDate(stopQuest);
+					parent.ArrLatency[i]=convertTotalSeconds(duration);
+					parent.ddd=startQuest-testingStartDate+parseInt(stTestTime);
+					
+					parent.justSubmitAnswer(i + 1, '', false, '');
+					stopQuest = 0;
+					duration = 0;
+					startQuest = new Date().getTime();
+				}
+				
 			
-			return;
+				if(parent.testParams[0]==6){
+					parent.doLMSSetValue("cmi.suspend_data","done");
+				}else{
+					parent.doLMSSetValue("cmi.suspend_data","");
+				}
+				parent.frames["question"].location.href="stopalert.html";
+				parent.frames["botton"].location.href="empty.html";
+				
+				return;
+			}
 		}
 	}
 
 	function next(){
-		if(!startDate){
-			startDate=new Date().getTime();
+		if(!testingStartDate){
+			testingStartDate=new Date().getTime();
 			if(parent.testParams[2])
 				stTestTime=parent.testParams[2];
 		}
-		if(!questionDate){
-			timerID=setTimeout("updateTimer()", 1000);
-			document.getElementById("timer").style.display = "inline";
-		}
-		//Анализ продолжительности и начала ответа
-		if(!startQ){
-			startQ=new Date().getTime();
+		if(startQuest){
+			//Анализ продолжительности и начала ответа
+			stopQuest=new Date().getTime();
+			var duration=(stopQuest-startQuest)/1000;		
+			if((startQuest!=null)&&(stopQuest!=null)){
+				parent.ArrTimestamp[questIndex]=milisecondsToDate(stopQuest);
+				parent.ArrLatency[questIndex]=convertTotalSeconds(duration);
+				parent.ddd=startQuest-testingStartDate+parseInt(stTestTime);
+				++questIndex;
+			}	
 		} else {
-	   		stopQ=new Date().getTime();
-			duration=(stopQ-startQ)/1000;
-			startQ=new Date().getTime();
+			timerID=setTimeout("updateTimer()", 1000);
+			$("#timer").show();
 		}
-	    if((startQ!=null)&&(stopQ!=null)){
-			parent.ArrTimestamp[i]=time(stopQ);
-			parent.ArrLatency[i]=convertTotalSeconds(duration);
-			parent.ddd=questionDate-startDate+parseInt(stTestTime);
-			++i;
-		}
+		
 		var oldAnsNumber=parent.answers.length;
 		parent.submitAnswer();
-		if((!questionDate)||(oldAnsNumber!=parent.answers.length)){
-			questionDate=new Date().getTime();
+		if((!startQuest)||(oldAnsNumber!=parent.answers.length)){
+			startQuest=new Date().getTime();
 		}
-		document.getElementById("question").value=(parent.answers.length+1)+'  из  '+parent.questions.length;
-		document.getElementById("qid").value=parent.currentQuestion;
+		var nextQuestIndex = parent.answers.length+1;
+		var questCount = parent.questions.length;
+		$("#question").val((nextQuestIndex - ((nextQuestIndex <= questCount) ? 0 : 1)) + ' из ' + questCount);
+		$("#qid").val(parent.currentQuestion);
 		countMark();
 	}
 
@@ -130,7 +152,7 @@
 			clearTimeout(timerID);
 			timerID=0;
 		}
-		questionDate=null;
+		startQuest=null;
 	}
 	
 	function countMark(){
@@ -148,39 +170,55 @@
 			}else{
 				percents=Math.round(minPercent*answersSum)-1;
 			}
-		document.getElementById("percents").value=percents+'%';
+		$("#percents").val(percents+'%');
 	}
+	$( function() {
+		$('.admin_info').hide();
+		$('input[type=submit],input[type=button],button').button();
+	});
 </script>
 </head>
 <body onUnload="stopTimer()">
-	<form name="operationForm" method="post" action="" align="right">
-		<table border="0" width="100%">
-			<tr>
-				<td align="left"><input id="btn" style="display: none;"
-					name="Submit" type="button" onClick="next()" value="Продолжить">
-				</td>
-				<td align="right"
-					style="font: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; text-align: left;">
-					<span id="timer" style="display: none;"> &nbsp;&nbsp;
-						Затрачено всего: <input
-						style="border-width: 0px; background-color: #FFFFFF" type="text"
-						id="totalTime" name="totalTime" size="8" value="" disabled />
-						&nbsp;&nbsp; на вопрос: <input
-						style="border-width: 0px; background-color: #FFFFFF" type="text"
-						id="questionTime" name="questionTime" size="8" disabled /> |
-						&nbsp;&nbsp; Вопрос: &nbsp;&nbsp;<input
-						style="border-width: 0px; background-color: #FFFFFF" type="text"
-						id="question" name="question" size="10" value="" disabled /> |
-						&nbsp;&nbsp; Правильных ответов: <input
-						style="border-width: 0px; background-color: #FFFFFF" type="text"
-						id="percents" name="percents" size="4" value="" disabled />
-						&nbsp;&nbsp; ID: <input
-						style="border-width: 0px; background-color: #FFFFFF" type="text"
-						id="qid" name="qid" size="4" value="" disabled />
-				</span>&nbsp;
-				</td>
-			</tr>
-		</table>
-	</form>
+	<table border="0" style="width:100%">
+	<tbody>
+		<tr>
+			<td align="left" style="vertical-align: middle;">
+				<input id="btn" style="display: none;" type="button" onClick="next()" value="Продолжить">
+			</td>
+			<td align="right" style="font: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; text-align: left;">
+				<table id="timer" style="display: none;">
+				<tbody style='vertical-align:top'>
+					<tr>
+						<td style='text-align:right'>Затрачено времени&nbsp;&nbsp;<strong>на вопрос:</strong></td>
+						<td><input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question_time" size="8" disabled /></td>
+						<td rowspan='2'>
+							<strong>Вопрос:</strong>
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question" size="10" value="" disabled />
+						</td>
+						<td rowspan='2' class='admin_info'>
+							<strong>Правильных ответов:</strong>
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="percents" size="4" value="" disabled />
+						</td>
+						<td rowspan='2' class='admin_info'>
+							<strong>ID:</strong>
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="qid" size="4" value="" disabled />
+						</td>
+					</tr>
+					<tr>
+						<td style='text-align:right'>
+							<strong class='without_timeout' style='display:none;'>всего:</strong>
+							<strong class='with_timeout' style='display:none;'>Осталось времени:</strong>
+						</td>
+						<td>
+							<input class='without_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="total_time" size="8" value="" disabled />
+							<input class='with_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="balance_time" size="8" value="" disabled />
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</td>
+		</tr>
+	<tbody>
+	</table>
 </body>
 </html>
