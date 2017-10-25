@@ -326,7 +326,7 @@ public class CourseParser extends AbstractParser {
 
 						int chapterElemNum = 0;
 						while (chapterElemNum < chapterParsAndTables.size()) {
-							BlockWithShifting blockAndShift = getBlockAndShifting(
+							BlockWithShifting blockAndShift = getBlockWithShifting(
 									chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
 							chapterBlocks.add(blockAndShift.getBlock());
 
@@ -371,7 +371,7 @@ public class CourseParser extends AbstractParser {
 
 								questionTask.append(par.getText());
 							} else {
-								BlockWithShifting blockWithShift = getBlockAndShifting(chapterElem, mathInfo, maxHeader);
+								BlockWithShifting blockWithShift = getBlockWithShifting(chapterElem, mathInfo, maxHeader);
 								if (blockWithShift.getBlock() != null) {
 									if (hasQuestion) {
 										questionsWithAnswers
@@ -486,7 +486,7 @@ public class CourseParser extends AbstractParser {
 		return courseModel;
 	}
 
-	private static BlockWithShifting getBlockAndShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
+	private static BlockWithShifting getBlockWithShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
 		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 
