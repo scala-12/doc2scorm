@@ -76,6 +76,21 @@ public class CourseParser extends AbstractParser {
 		}
 	}
 
+	private static class QuestionWithAnswers extends Pair<String, List<AbstractParagraphBlock<?>>> {
+
+		public QuestionWithAnswers(String task, List<AbstractParagraphBlock<?>> answersBlocks) {
+			super(task, answersBlocks);
+		}
+
+		public String getTask() {
+			return this.left;
+		}
+
+		public List<AbstractParagraphBlock<?>> getAnswersBlocks() {
+			return this.right;
+		}
+	}
+
 	private static final String MATH_START = "<math>";
 
 	private static final String MATH_END = MATH_START.replace("<", "</");
@@ -297,11 +312,10 @@ public class CourseParser extends AbstractParser {
 						}
 					} else {
 						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
-						ArrayList<AbstractParagraphBlock<?>> someAnswerBlocks = null;
+						ArrayList<QuestionWithAnswers> questionsWithAnswers = new ArrayList<>();
 
+						ArrayList<AbstractParagraphBlock<?>> someAnswerBlocks = null;
 						StringBuilder someTask = null;
-						HashMap<StringBuilder, List<AbstractParagraphBlock<?>>> task2Answers = new HashMap<>();
-						ArrayList<StringBuilder> sortedTasks = new ArrayList<>();
 
 						HashMap<String, XWPFParagraph> htmlAnswer2Par = new HashMap<>();
 						Document html = Tools.createEmptyDocument();
@@ -325,10 +339,8 @@ public class CourseParser extends AbstractParser {
 								AbstractParagraphBlock<?> block = blockAndShift.getBlock();
 								if (block != null) {
 									if (hasQuestion) {
-										if (!task2Answers.containsKey(someTask)) {
-											task2Answers.put(someTask, someAnswerBlocks);
-											sortedTasks.add(someTask);
-										}
+										questionsWithAnswers
+												.add(new QuestionWithAnswers(someTask.toString(), someAnswerBlocks));
 
 										if (block instanceof ListBlock) {
 											int shift = blockAndShift.getShift();
@@ -355,12 +367,11 @@ public class CourseParser extends AbstractParser {
 						}
 
 						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
-						for (StringBuilder task : sortedTasks) {
-							List<AbstractParagraphBlock<?>> answerBlocks = task2Answers.get(task);
+						for (QuestionWithAnswers question : questionsWithAnswers) {
 							AbstractQuestionBlock<?> questBlock = null;
 
-							if (answerBlocks.get(0) instanceof TableBlock) {
-								TableBlock block = (TableBlock) answerBlocks.get(0);
+							if (question.getAnswersBlocks().get(0) instanceof TableBlock) {
+								TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
 								if (block.getFirstItem().getValue().size() == 1) {
 									if (block.getItems().size() == 1) {
 										questBlock = new FillInBlock(new FillInItem(""));
@@ -388,9 +399,9 @@ public class CourseParser extends AbstractParser {
 									}
 									questBlock = new MatchBlock(items);
 								}
-							} else if (answerBlocks.get(0) instanceof ListBlock) {
+							} else if (question.getAnswersBlocks().get(0) instanceof ListBlock) {
 								ArrayList<ChoiceItem> items = new ArrayList<>();
-								for (ListItem item : ((ListBlock) answerBlocks.get(0)).getItems()) {
+								for (ListItem item : ((ListBlock) question.getAnswersBlocks().get(0)).getItems()) {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();
 
 									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
@@ -400,7 +411,7 @@ public class CourseParser extends AbstractParser {
 							}
 
 							if (questBlock != null) {
-								questBlock.setTask(task.toString());
+								questBlock.setTask(question.getTask());
 								questionsBlocks.add(questBlock);
 							}
 						}
