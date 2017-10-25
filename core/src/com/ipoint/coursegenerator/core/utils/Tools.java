@@ -39,6 +39,62 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 
 public class Tools {
 
+	abstract public static class Pair<LT, RT> implements Comparable<Pair<LT, RT>> {
+		protected final LT left;
+		protected final RT right;
+
+		public Pair(LT left, RT right) {
+			this.left = left;
+			this.right = right;
+		}
+
+		@Override
+		public int compareTo(final Pair<LT, RT> other) {
+			int leftCompare = 0;
+			if (this.left != null) {
+				leftCompare += this.left.hashCode();
+			}
+			if (other.left != null) {
+				leftCompare -= other.left.hashCode();
+			}
+
+			int rigthCompare = 0;
+			if (this.right != null) {
+				rigthCompare += this.right.hashCode();
+			}
+
+			if (other.right != null) {
+				rigthCompare -= other.right.hashCode();
+			}
+
+			return leftCompare ^ rigthCompare;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if ((null != obj) && (obj instanceof Pair)) {
+				Pair<?, ?> other = (Pair<?, ?>) obj;
+				return ((this.left == other.left)
+						|| ((null != this.left) && (null != other.left) && this.left.equals(other.left)))
+						&& ((this.right == other.right)
+								|| ((null != this.right) && (null != other.right) && this.right.equals(other.right)));
+			}
+
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return (this.left == null ? 0 : this.left.hashCode()) ^ (this.right == null ? 0 : this.right.hashCode());
+		}
+
+		@Override
+		public String toString() {
+			return new StringBuilder().append('(').append(this.left).append(',').append(this.right).append(')')
+					.toString();
+		}
+	}
+
 	private static Transformer TRANSFORMER = _getTransformer();
 
 	private static Transformer _getTransformer() {
