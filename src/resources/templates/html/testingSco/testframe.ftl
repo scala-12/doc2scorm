@@ -12,10 +12,13 @@
 <script type="text/javascript" src="../${system_dir}/APIWrapper.js">-</script>
 <script type="text/javascript" src="../${system_dir}/SCOFunctions.js">-</script>
 <script type="text/javascript" src="../${system_dir}/parser.js">-</script>
+<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
 <script type="text/javascript">
 	String.prototype.trim=function(){
 		return this.replace(/^[\s\n\t]*|[\s\n\t]*$/g,"");
 	}
+	
+	var date = new Date().getTime();
 
 	//Начало ответа
 	var ArrTimestamp=new Array();	
@@ -60,8 +63,21 @@
 		var col_loading=30;
 		if(getErrorString||doLMSGetValue){
 			loadPage();
-			window.frames["question"].location.href="intro.html?time="+(new Date().getTime());
-			window.frames["botton"].document.getElementById("btn").style.display="inline";
+			
+			var timerId = setInterval(
+				function() {
+					var frame = $(window.frames["botton"].document);
+					if (frame.length) {
+						var startButton = frame.find('#btn');
+						if (startButton.length) {
+							startButton.show();
+							clearInterval(timerId);
+						}
+					}
+				},
+				500
+			);
+			
 			errorList=new Array();
 		}else if(col_loading != 0){
 			--col_loading; 
@@ -197,40 +213,63 @@
 
 		StudentAnswers=""+StudentAnswers.trim();
 		answer_array=StudentAnswers.split('~');
-		if((questionType=="choice")
-				||(questionType=="true-false")){
-			for (var i=0;i<answer_array.length;++i)
-				if(i==0){
-					result=result+"<li>"+allAnswers[answer_array[i]-1]+"</li>";
-				}else if(i==answer_array.length-1){
-					result = result+ "<li>" + allAnswers[answer_array[i]-1] + "</li>";
-					//по скорм здесь "," надо брать в [  , ]
-				}else{
-					result=result+"<li>"+allAnswers[answer_array[i]-1]+"</li>";
+		if((questionType == "choice")
+				|| (questionType == "true-false")) {
+			for (var i = 0; i < answer_array.length; ++i) {
+				if (i == 0) {
+					result += allAnswers[answer_array[i] - 1];
+				} else {
+					result += '[,]' + allAnswers[answer_array[i] - 1];
 				}
-			result="<ul>"+result+"</ul>";
-		}else if(questionType=="fill-in"){
-			result=StudentAnswers;
-		}else if((questionType=="matching")
-				||(questionType == "sequencing")){
-			var delim='';
-			if(questionType=="matching"){
-				delim='[.]';
-			}else if(questionType == "sequencing"){
-				delim='[,]';
 			}
+		} else if (questionType == "sequencing") {
 			// TODO: изучить, как правильно оформлять
-			for(var i=0;i<answer_array.length;++i)
-				if(result==''){
-					result=allAnswers[answer_array[i]];
-				}else{
-					result=result+delim+allAnswers[answer_array[i]];
+			for (var i = 0; i < answer_array.length; ++i) {
+				if (result == '') {
+					result = allAnswers[answer_array[i]];
+				} else {
+					result = result + '[,]' + allAnswers[answer_array[i]];
 				}
+			}
+		}else if(questionType=="fill-in"){
+			// TODO: изучить, как правильно оформлять
+			result=StudentAnswers;
+		}else if (questionType == "matching") {
+			for (var i = 0; i < answer_array.length; ++i) {
+				if (result == '') {
+					result = i + '[.]' + allAnswers[answer_array[i]];
+				} else {
+					result += '[,]' + i + '[.]' + allAnswers[answer_array[i]];
+				}
+			}
 		}else{
 			result='1';
 		}
 
-		return result;
+		return (questionType=="fill-in") ? result : result.split(' ').join('_');
+	}
+
+	function getAnswerCorrectMeasure(type, correct, answer) {
+		var correctTokens = correct.trim().split("~");
+		var answerTokens = answer.trim().split('~');
+		var correctCount = 0;
+		var variantsCount = correctTokens.length;
+		if (type == 'choice') {
+			for (var j = 0; j < answerTokens.length; ++j) {
+				if (correct.search('(~|^)' + answerTokens[j] + '(?!\\d)') != -1) {
+					++correctCount;
+				}
+			}
+			variantsCount += answerTokens.length - correctCount;
+		} else if ((type != null) && (type != '')) {
+			for (var j = 0; j < answerTokens.length; ++j) {
+				if (correctTokens[j] == answerTokens[j]) {
+					++correctCount;
+				}
+			}
+		}
+		
+		return Number((correctCount / variantsCount).toFixed(7));
 	}
 
 	function weightQuestion(questionType,correctAnswer,answer,iscor){
@@ -271,26 +310,69 @@
 			}
 		}
 	}
+	
+	function justSubmitAnswer(questIndex, questionType, isProbabilistic, submitedAnswer) {
+		var answer = "" + submitedAnswer.trim();
+		
+		var correctAnswer=null;
+		for (var i = 0; i < questions.length; ++i) {
+			if (questIndex == questions[i][0]) {
+				correctAnswer = questions[i][1];
+				break;
+			}
+		}
+		correctAnswer = (correctAnswer == null) ? '-' + answer : "" + correctAnswer.trim();
+		
+		var correctMeasure = getAnswerCorrectMeasure(questionType, correctAnswer, answer);
+		var weight = weightQuestion(questionType, correctAnswer, answer, isCorrectAnswer(correctAnswer, answer));
+		
+		var answerItem = new Array(
+				questIndex,							//[0]	id вопроса
+				correctMeasure, 					//[1]	степень правильности
+				questionType, 						//[2]	тип вопроса
+				1,									//[3]	вес вопроса
+				getStudentAnswers(answer), 			//[4] 	ответ студента
+				getStudentAnswers(correctAnswer), 	//[5]	правильный ответ
+				ArrTimestamp[ArrTimestamp.length-1],//[6]	время
+				ArrLatency[ArrTimestamp.length-1], 	//[7]	Latency
+				col_wrong,							//[8]	неверные ответы для 4 типа
+				isProbabilistic						//[9]	возможен ли частично правильный ответ
+		);
+		col_wrong=0;
+		answers[answers.length]=answerItem;
+		doLMSSetValue("cmi.suspend_data", doLMSGetValue("cmi.suspend_data")
+				+ "\n" + answerItem.join("|"));
+		testParams[2]=ddd;
+		
+		var s_d=doLMSGetValue("cmi.suspend_data").split("\n");
+		var t_p=s_d[0].split("|");
+		t_p[2]=ddd;
+		s_d[0]=t_p.join("|");
+		doLMSSetValue("cmi.suspend_data", s_d.join("\n"));
+
+		computeTime();
+
+		doLMSCommit();
+	}
 
 	function submitAnswer(){
 		if(currentQuestion!=-1){
 			var answer=window.frames["question"].selectedAnswer();
-			var questionType=window.frames["question"].getType();
 			if(answer==null){
 				alert("Не выбран ответ.\nВыберите ответ и нажмите 'Продолжить'");
 				return;
 			}
+
+			answer=""+answer.trim();
 			var correctAnswer="";
-			for(var i=0;i<questions.length;++i)
+			for(var i=0;i<questions.length;++i) {
 				if(currentQuestion==questions[i][0]){
 					correctAnswer=questions[i][1];
 					break;
 				}
-
-			answer=""+answer.trim();
+			}
 			correctAnswer=""+correctAnswer.trim();
 			isCorrect=isCorrectAnswer(correctAnswer,answer);
-			weight=weightQuestion(questionType,correctAnswer,answer,isCorrectAnswer(correctAnswer,answer));
 			if(testParams[0]==2)
 				if(isCorrect==1){
 					alert("Правильно!");
@@ -311,38 +393,19 @@
 					return;
 				}
 			}
-			answerItem=new Array(currentQuestion,		//[0]	id вопроса
-					isCorrect, 							//[1]	верно/неверно
-					questionType, 						//[2]	тип вопроса
-					weight,								//[3]	вес вопроса
-					getStudentAnswers(answer), 			//[4] 	ответ студента
-					getStudentAnswers(correctAnswer), 	//[5]	правильный ответ
-					ArrTimestamp[ArrTimestamp.length-1],//[6]	время
-					ArrLatency[ArrTimestamp.length-1], 	//[7]	Latency
-					col_wrong							//[8]	неверные ответы для 4 типа
-			);
-			col_wrong=0;
-			answers[answers.length]=answerItem;
-			doLMSSetValue("cmi.suspend_data",doLMSGetValue("cmi.suspend_data")+"\n"+answerItem.join("|"));
-			testParams[2]=ddd;
-			var s_d=doLMSGetValue("cmi.suspend_data").split("\n");
-			var t_p=s_d[0].split("|");
-			t_p[2]=ddd;
-			s_d[0]=t_p.join("|");
-			var tmp=s_d.join("\n");
-			doLMSSetValue("cmi.suspend_data",tmp);
-			doLMSCommit();
+			
+			justSubmitAnswer(currentQuestion, window.frames["question"].getType(), window.frames["question"].isProbabilistic(), answer);
 		}
 		currentQuestion=nextQuestion();
 		if(itog){
-			window.frames["question"].location.href="empty.html";
-			window.frames["botton"].location.href="empty.html";
-			window.frames["question"].document.write("Тест пройден\n!!! Для повторного прохождения итогового теста обратитесь к преподавателю");
+			$('[name=question]').attr('src', "empty.html?time=" + date);
+			$('[name=botton]').attr('src', "empty.html?time=" + date);
+			window.frames["question"].document.write("Тест пройден\n" + "Для повторного прохождения итогового теста обратитесь к преподавателю");
 		}else if(currentQuestion!=null){
-			window.frames["question"].location.href=currentQuestion+".html?time="+(new Date().getTime());
+			$('[name=question]').attr('src', currentQuestion + ".html?time=" + date);
 		}else{
-			window.frames["question"].location.href="result.html?time="+(new Date().getTime());
-			window.frames["botton"].location.href="empty.html";
+			$('[name=question]').attr('src', "result.html?time=" + date);
+			$('[name=botton]').attr('src', "empty.html?time=" + date);
 		}
 	}
 
@@ -355,12 +418,18 @@
 			return;
 		}
 	}
+	
+	$( function() {
+		$('[name=question]').attr('src', "intro.html?time=" + date);
+		$('[name=botton]').attr('src', "operationframe.html?time=" + date);
+	});
 </script>
 </head>
 <frameset rows="*,80" frameborder="NO" border="0" framespacing="0"
 	onLoad="start()" onunload="finish(isTerminate)">
 	<frame src="intro.html" name="question">
-	<frame src="operationframe.html" name="botton" scrolling="NO" noresize>
+	<frame src="operationframe.html" name="botton" scrolling="NO" noresize style='border-top:1px solid gray'>
+	<frame name="hidden_frame" style='display:none'>
 </frameset>
 <noframes>
 	<body>You are not able to take testing due to inability to use frames</body>
