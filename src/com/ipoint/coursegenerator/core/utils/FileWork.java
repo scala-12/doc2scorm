@@ -1,4 +1,3 @@
-
 package com.ipoint.coursegenerator.core.utils;
 
 import java.io.ByteArrayInputStream;
