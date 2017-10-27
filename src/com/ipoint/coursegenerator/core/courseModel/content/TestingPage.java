@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.courseModel.content;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.Abs
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}
@@ -20,6 +22,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 
 	private final ArrayList<AbstractParagraphBlock<?>> introBlocks;
+	private BigDecimal maxTimeAllowed;
 	private int percents4markA = 90;
 	private int percents4markB = 80;
 	private int percents4markC = 60;
@@ -27,6 +30,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 	private TestingPage(CourseTreeNode parentNode) {
 		super(parentNode);
 		this.introBlocks = new ArrayList<>();
+		maxTimeAllowed = null;
 	}
 
 	public static TestingPage createEmptyPage() {
@@ -77,6 +81,20 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		return launchDate.toString();
 	}
 
+	public BigDecimal getMaxTimeAllowed() {
+		return this.maxTimeAllowed;
+	}
+
+	public boolean setMaxTimeAllowed(BigDecimal maxTimeAllowed) {
+		if (maxTimeAllowed.compareTo(Tools.BIG_ZERO) == 1) {
+			this.maxTimeAllowed = maxTimeAllowed;
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public int getPercents4markA() {
 		return this.percents4markA;
 	}
@@ -121,5 +139,4 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 			return false;
 		}
 	}
-
 }
