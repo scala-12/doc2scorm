@@ -6,24 +6,10 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.xmlbeans.XmlObject;
-import org.imsproject.xsd.imscpRootv1P1P2.ItemType;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
-import org.imsproject.xsd.imscpRootv1P1P2.ManifestType;
-import org.imsproject.xsd.imscpRootv1P1P2.OrganizationsType;
-import org.imsproject.xsd.imscpRootv1P1P2.ResourceType;
-import org.w3c.dom.Document;
 
-import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
-import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
-import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
@@ -54,41 +40,26 @@ public class Parser {
 			+ "adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th "
 			+ "Edition</schemaversion></metadata>";
 
-	private static final String MANIFEST_NAME = "imsmanifest.xml";
-
-	private File pathToSOffice = null;
+	private final File sOfficeFile;
 
 	/** From iLogos */
 	public static final String COURSE_SYSTEM_DIR = "system_files";
 
 	public Parser(String pathToSOffice) {
-		File path = new File(pathToSOffice);
-		if (path.exists()) {
-			this.pathToSOffice = path;
+		File sOfficeFile = null;
+		if ((null == pathToSOffice) || pathToSOffice.isEmpty()) {
+			sOfficeFile = null;
+		} else {
+			File path = new File(pathToSOffice);
+			if (path.exists()) {
+				sOfficeFile = path;
+			}
 		}
+		this.sOfficeFile = sOfficeFile;
 	}
 
 	public Parser() {
-
-	}
-
-	private ManifestDocument createImsManifestFile(String courseName) {
-		ManifestDocument manifest = ManifestDocument.Factory.newInstance();
-		ManifestProcessor manifestProcessor = new ManifestProcessor();
-		manifestProcessor.createManifest(manifest);
-
-		// Add Metadata for Manifest
-		MetadataProcessor metadataProcessor = new MetadataProcessor();
-		metadataProcessor.createMetadata(manifest.getManifest());
-
-		// Add Organization (default and root) to Manifest
-		OrganizationProcessor.createOrganization(manifest.getManifest(), courseName);
-
-		// Add Resources to Manifest
-		ResourcesProcessor resourcesProcessor = new ResourcesProcessor();
-		resourcesProcessor.createResources(manifest.getManifest());
-
-		return manifest;
+		this(null);
 	}
 
 	private String tuneManifest(ManifestDocument manifestDocument) {
@@ -97,114 +68,66 @@ public class Parser {
 				.replace(":adl=", ":adlcp=");
 	}
 
-	private ItemType addOrganizationElementToManifest(XmlObject parentItem, CourseTreeNode node) {
-		String id = UUID.randomUUID().toString();
-		String itemId = "ITEM_" + id;
-		String resourseId = (node.getPage() == null) ? null : "RES_" + id;
-
-		ItemType manifestItem = null;
-		if (parentItem instanceof ItemType) {
-			manifestItem = OrganizationProcessor.createItem((ItemType) parentItem, node.getTitle(), resourseId, itemId);
-		} else if (parentItem instanceof OrganizationsType) {
-			manifestItem = OrganizationProcessor.createItem((OrganizationsType) parentItem, node.getTitle(), resourseId,
-					itemId);
-		}
-
-		return manifestItem;
-	}
-
-	private void addScoToManifest(ManifestType manifest, ItemType manifestItem, File htmlFile,
-			Set<PictureInfo> images) {
-		ResourceType itemResource = ResourcesProcessor.createScoResource(manifest, htmlFile,
-				manifestItem.getIdentifierref());
-		List<String> imagesNames = images.stream().map(image -> image.getName()).collect(Collectors.toList());
-
-		ResourcesProcessor.addFilesToResource(imagesNames, itemResource);
-	}
-
-	private void saveScoInCourse(ManifestType manifest, ItemType manifestItem, CourseTreeNode node, File courseDir) {
-		String scoName = TransliterationTool.convertRU2ENString(node.getTitle());
-		if (node.getPage() instanceof TheoryPage) {
-			File file = new File(courseDir, scoName.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", "") + ".html");
-			if (file.exists()) {
-				file = new File(courseDir, (scoName + "_" + UUID.randomUUID().toString()).replaceAll(" ", "_")
-						.replaceAll("[\\W&&[^-]]", "") + ".html");
-			}
-
-			Document html = Tools.createNewHTMLDocument();
-			html.getElementsByTagName("body").item(0).appendChild(node.getPage().toHtml(html));
-
-			if (FileWork.saveTheoryHtmlDocument(html, file, node.getTitle())) {
-				Set<PictureInfo> pics = ((TheoryPage) node.getPage()).getImages();
-				FileWork.saveImages(pics, new File(file.getParentFile(), FileWork.IMAGE_DIR_NAME), pathToSOffice);
-				this.addScoToManifest(manifest, manifestItem, file, pics);
-			}
-		} else if (node.getPage() instanceof TestingPage) {
-			File dir = new File(courseDir, scoName.replaceAll(" ", "_").replaceAll("[\\W&&[^-]]", ""));
-			if (dir.exists()) {
-				dir = new File(courseDir, (scoName + "_" + UUID.randomUUID().toString()).replaceAll(" ", "_")
-						.replaceAll("[\\W&&[^-]]", ""));
-			}
-
-			TestingPage page = (TestingPage) node.getPage();
-			StringBuilder intro = new StringBuilder();
-
-			for (AbstractParagraphBlock<?> block : page.getIntroBlocks()) {
-				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
-			}
-			FileWork.saveTestingDir(dir, intro.toString());
-
-			Map<File, Set<PictureInfo>> file2Images = FileWork.saveTestingHtmlDocuments(dir, page, pathToSOffice);
-			for (File file : file2Images.keySet()) {
-				this.addScoToManifest(manifest, manifestItem, file, file2Images.get(file));
-			}
-		}
-	}
-
-	private void saveCourse(List<CourseTreeNode> items, ManifestType manifest, File courseDir, XmlObject parentItem) {
-		for (int i = 0; i < items.size(); i++) {
-			CourseTreeNode item = items.get(i);
-
-			ItemType manifestItem = addOrganizationElementToManifest(parentItem, item);
-			if (item.getPage() != null) {
-				this.saveScoInCourse(manifest, manifestItem, item, courseDir);
-			}
-
-			if (!item.getChilds().isEmpty()) {
-				this.saveCourse(item.getChilds(), manifest, courseDir, manifestItem);
-			}
-		}
-	}
-
 	// TODO: add variable for external templates
 	public String parse(InputStream stream, int headerLevel, String courseName, String path) throws IOException {
-		courseName = courseName.trim().replaceAll("\\s\\s+", " ");
+		courseName = Tools.removeExtraSpaces(courseName);
 
-		File directory = new File(path);
-		if (directory.exists()) {
-			FileUtils.deleteDirectory(directory);
+		File courseDir = new File(path);
+		if (courseDir.exists()) {
+			FileUtils.deleteDirectory(courseDir);
 		}
-		directory.mkdirs();
+		courseDir.mkdirs();
 
-		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
+		saveImsManifestFile(CourseParser.parse(stream, courseName, headerLevel), courseDir);
 
-		ManifestDocument manifest = this.createImsManifestFile(courseName);
-
-		if (!courseModel.getChilds().isEmpty()) {
-			this.saveCourse(courseModel.getChilds(), manifest.getManifest(), directory,
-					manifest.getManifest().getOrganizations());
-		}
-
-		String manifestContent = tuneManifest(manifest);
-		FileWork.saveTextFile(manifestContent, new File(directory, MANIFEST_NAME));
-
-		FileWork.saveSystemDir(new File(directory, COURSE_SYSTEM_DIR));
+		FileWork.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR));
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
-		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, directory.getPath());
+		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, courseDir.getPath());
 		zip.addToZip(new String[] { zipCourseFileName });
 
 		return zipCourseFileName;
+	}
+
+	private void saveImsManifestFile(CourseModel courseModel, File courseDir) throws IOException {
+		ManifestDocument manDocument = ManifestDocument.Factory.newInstance();
+
+		// Create Manifest for Manifest Document
+		ManifestProcessor manProcessor = new ManifestProcessor();
+		manProcessor.createManifest(manDocument);
+
+		// Add Metadata for Manifest
+		MetadataProcessor metadataProcessor = new MetadataProcessor();
+		metadataProcessor.createMetadata(manDocument.getManifest());
+
+		if (!courseModel.getChilds().isEmpty()) {
+			String courseSysName = Tools.generateSystemName(courseModel.getTitle());
+			OrganizationProcessor organizationProcessor = new OrganizationProcessor(manDocument.getManifest(),
+					courseModel.getTitle(), courseSysName);
+			ResourcesProcessor resourcesProcessor = new ResourcesProcessor(manDocument.getManifest());
+			createManifestScoUnitAndSavePage(courseDir, courseModel.getChilds(), organizationProcessor,
+					resourcesProcessor);
+		}
+
+		String manContent = tuneManifest(manDocument);
+		File manFile = new File(courseDir, "imsmanifest.xml");
+		manFile.createNewFile();
+
+		FileWork.saveTextFile(manContent, manFile);
+	}
+
+	private void createManifestScoUnitAndSavePage(File courseDir, List<CourseTreeNode> nodes,
+			OrganizationProcessor organizationProcessor, ResourcesProcessor resourcesProcessor) {
+		nodes.stream().forEach(node -> {
+			organizationProcessor.createItem(node);
+			resourcesProcessor.createItem(node);
+			FileWork.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, sOfficeFile);
+
+			if (!node.getChilds().isEmpty()) {
+				this.createManifestScoUnitAndSavePage(courseDir, node.getChilds(), organizationProcessor,
+						resourcesProcessor);
+			}
+		});
 	}
 
 	private String getCourseZipFilename(String courseName) {

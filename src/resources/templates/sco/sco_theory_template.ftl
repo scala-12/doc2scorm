@@ -2,36 +2,18 @@
 <html>
 <head>
 	<title>${page_title}</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	
+	<meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+	<meta http-equiv="Pragma" CONTENT="no-cache">
 	<script type="text/javascript" src="${system_dir}/APIWrapper.js"></script>
 	<script type="text/javascript" src="${system_dir}/SCOFunctions.js"></script>
-	<script type="text/javascript" src="${system_dir}/jquery-${jquery_ver}.min.js"></script>
-	<script type="text/javascript" src="${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"></script>
-	<link rel="stylesheet" href="${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.css">
-	<link rel="stylesheet" href="${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
-	<link rel="stylesheet" href="${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
+	<script type="text/javascript" src="${system_dir}/MathJax-2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&locale=ru">MathJax.Hub.Config({showMathMenu: false,showMathMenuMSIE: false});</script>
 	
-	<link rel="stylesheet" href="${system_dir}/${theory_css}">
-	<link rel="stylesheet" href="${system_dir}/${course_css}">
-	
-	<script type="text/javascript" async
-			src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-		MathJax.Hub.Config({
-			showMathMenu: false,
-			showMathMenuMSIE: false
-		});
-	</script>
-	
-	<script type="text/javascript">
-		$( function() {
-			$('input[type=submit],input[type=button],button').button();
-			$('fieldset input[type="radio"],fieldset input[type="checkbox"]').checkboxradio();
-			$( 'fieldset' ).controlgroup().css('display', 'block');
-		});
-	</script>
+	<link type="text/css" rel="stylesheet" href="${system_dir}/course.css">
+	<link type="text/css" rel="stylesheet" href="${system_dir}/theory.css">
+	<link type="text/css" rel="stylesheet" href="user_course.css">
+	<link type="text/css" rel="stylesheet" href="user_theory.css">
 </head>
-<body onLoad="loadPage()" onunload="return unloadPage('completed')">
+<body onLoad="loadPage()" onunload="return unloadPage('completed')"> 
 ${body_content}
 </body>
 </html>
