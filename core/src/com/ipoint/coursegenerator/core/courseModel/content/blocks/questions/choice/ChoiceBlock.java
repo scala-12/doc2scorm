@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,6 +13,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
+import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
  * This block is an analogue of text paragraph. These includes several
@@ -22,9 +24,26 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  */
 public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
+	private static class AnswerNodePair extends Pair<Element, Node> {
+
+		public AnswerNodePair(Element input, Node label) {
+			super(input, label);
+		}
+
+		public Element getInputElement() {
+			return this.left;
+		}
+
+		public Node getLabelElement() {
+			return this.right;
+		}
+
+	}
+
 	public static final String CHOICE_ANSWERS_FIELDSET_ID = "choice_answers_fieldset";
 
 	private boolean isOneChoice;
+	private int[] answerOrder;
 
 	public ChoiceBlock(List<ChoiceItem> items) {
 		this(items, null);
@@ -42,6 +61,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
 	public ChoiceBlock(List<ChoiceItem> items, String task) {
 		super(items, task);
+		this.answerOrder = null;
 	}
 
 	@Override
@@ -67,16 +87,21 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		Element fieldset = creatorTags.createElement("fieldset");
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
 
+		int answersCount = answersBlock.getChildNodes().getLength();
+
 		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = this.correctAnswers == null;
+		boolean withoutCorrectness = null == this.answerOrder;
+		ArrayList<Integer> correctAnswers = null;
 		if (withoutCorrectness) {
-			this.correctAnswers = new String[answersBlock.getChildNodes().getLength()];
-			numbers = new ArrayList<>(this.correctAnswers.length);
-			for (int i = 0; i < this.correctAnswers.length; i++) {
+			correctAnswers = new ArrayList<>(answersCount);
+			this.answerOrder = new int[answersCount];
+			numbers = new ArrayList<>(answersCount);
+			for (int i = 0; i < answersCount; i++) {
 				numbers.add(i);
 			}
 		}
-		Node[][] sortedAnswers = new Node[this.correctAnswers.length][];
+
+		AnswerNodePair[] stirredAnswers = new AnswerNodePair[answersCount];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			// old answer will be transformative and removed after
@@ -90,21 +115,30 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 			int number;
 			if (withoutCorrectness) {
 				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				this.correctAnswers[i] = String.valueOf(number);
+				if (this.getItems().get(i).isCorrect()) {
+					// TODO: fix in iLogos this "feature" (+1)
+					correctAnswers.add(number + 1);
+				}
+				this.answerOrder[i] = number;
 			} else {
-				number = Integer.parseInt(this.correctAnswers[i]);
+				number = this.answerOrder[i];
 			}
 
 			// TODO: fix in iLogos this "feature" (+1)
-			answer.setAttribute("value", String.valueOf(Integer.parseInt(this.correctAnswers[i]) + 1));
+			answer.setAttribute("value", String.valueOf(number + 1));
 
-			sortedAnswers[number] = new Node[] { answer, span.getElementsByTagName("label").item(0) };
+			stirredAnswers[number] = new AnswerNodePair(answer, span.getElementsByTagName("label").item(0));
 		}
 
-		for (Node[] pair : sortedAnswers) {
-			fieldset.appendChild(pair[0]);
-			fieldset.appendChild(pair[1]);
+		if (withoutCorrectness) {
+			this.correctAnswers = correctAnswers.stream().sorted().map(number -> number.toString())
+					.toArray(String[]::new);
 		}
+
+		Arrays.stream(stirredAnswers).forEach(pair -> {
+			fieldset.appendChild(pair.getInputElement());
+			fieldset.appendChild(pair.getLabelElement());
+		});
 
 		answersBlock.appendChild(fieldset);
 
