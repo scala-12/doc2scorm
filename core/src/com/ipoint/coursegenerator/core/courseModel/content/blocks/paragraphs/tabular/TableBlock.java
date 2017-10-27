@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * Table block which includes rows
@@ -42,7 +43,7 @@ public class TableBlock extends AbstractParagraphBlock<TableItem> {
 			text.append(row.getText()).append('\n');
 		}
 
-		return text.toString().trim();
+		return Tools.removeExtraSpaces(text.toString()).trim();
 	}
 
 }
