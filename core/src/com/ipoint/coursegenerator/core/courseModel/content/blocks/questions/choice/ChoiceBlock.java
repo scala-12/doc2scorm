@@ -50,7 +50,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 			this.toHtml(Tools.createEmptyDocument());
 		}
 
-		return this.correctOrder;
+		return this.correctAnswers;
 	}
 
 	/**
@@ -68,15 +68,15 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
 
 		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = this.correctOrder == null;
+		boolean withoutCorrectness = this.correctAnswers == null;
 		if (withoutCorrectness) {
-			this.correctOrder = new String[answersBlock.getChildNodes().getLength()];
-			numbers = new ArrayList<>(this.correctOrder.length);
-			for (int i = 0; i < this.correctOrder.length; i++) {
+			this.correctAnswers = new String[answersBlock.getChildNodes().getLength()];
+			numbers = new ArrayList<>(this.correctAnswers.length);
+			for (int i = 0; i < this.correctAnswers.length; i++) {
 				numbers.add(i);
 			}
 		}
-		Node[][] sortedAnswers = new Node[this.correctOrder.length][];
+		Node[][] sortedAnswers = new Node[this.correctAnswers.length][];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			// old answer will be transformative and removed after
@@ -90,13 +90,13 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 			int number;
 			if (withoutCorrectness) {
 				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				this.correctOrder[i] = String.valueOf(number);
+				this.correctAnswers[i] = String.valueOf(number);
 			} else {
-				number = Integer.parseInt(this.correctOrder[i]);
+				number = Integer.parseInt(this.correctAnswers[i]);
 			}
 
 			// TODO: fix in iLogos this "feature" (+1)
-			answer.setAttribute("value", String.valueOf(Integer.parseInt(this.correctOrder[i]) + 1));
+			answer.setAttribute("value", String.valueOf(Integer.parseInt(this.correctAnswers[i]) + 1));
 
 			sortedAnswers[number] = new Node[] { answer, span.getElementsByTagName("label").item(0) };
 		}
