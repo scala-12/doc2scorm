@@ -20,6 +20,9 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 
 	private final ArrayList<AbstractParagraphBlock<?>> introBlocks;
+	private int percents4markA = 90;
+	private int percents4markB = 80;
+	private int percents4markC = 60;
 
 	private TestingPage(CourseTreeNode parentNode) {
 		super(parentNode);
@@ -72,6 +75,51 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		}
 
 		return launchDate.toString();
+	}
+
+	public int getPercents4markA() {
+		return this.percents4markA;
+	}
+
+	public int getPercents4markB() {
+		return this.percents4markB;
+	}
+
+	public int getPercents4markC() {
+		return this.percents4markC;
+	}
+
+	public boolean setPercents4markA(int percents) {
+		if ((percents <= 100) && (percents > this.percents4markB)) {
+			this.percents4markA = percents;
+
+			return true;
+		} else {
+
+			return false;
+		}
+	}
+
+	public boolean setPercents4markB(int percents) {
+		if ((percents < this.percents4markA) && (percents > this.percents4markC)) {
+			this.percents4markB = percents;
+
+			return true;
+		} else {
+
+			return false;
+		}
+	}
+
+	public boolean setPercents4markC(int percents) {
+		if ((percents < this.percents4markC) && (percents > 0)) {
+			this.percents4markC = percents;
+
+			return true;
+		} else {
+
+			return false;
+		}
 	}
 
 }
