@@ -4,10 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -24,19 +21,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
-import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
 
 public class Tools {
 
@@ -139,61 +123,6 @@ public class Tools {
 		}
 
 		return null;
-	}
-
-	private static List<PictureInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
-		ArrayList<PictureInfo> images = new ArrayList<PictureInfo>();
-
-		for (ParagraphItem parItem : paragraph.getItems()) {
-			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
-				if (item instanceof ImageContentItem) {
-					ImageContentItem imageItem = (ImageContentItem) item;
-					PictureInfo image = new PictureInfo(imageItem.getImageFullName(), imageItem.getValue());
-					images.add(image);
-				}
-			}
-		}
-
-		return images;
-	}
-
-	public static Set<PictureInfo> getImagesRecursive(List<AbstractBlock<?>> blocks) {
-		HashSet<PictureInfo> images = new HashSet<>();
-
-		for (AbstractBlock<?> block : blocks) {
-			images.addAll(getImagesRecursive(block));
-		}
-
-		return images;
-	}
-
-	public static Set<PictureInfo> getImagesRecursive(AbstractBlock<?> block) {
-		HashSet<PictureInfo> images = new HashSet<>();
-
-		if (block instanceof AbstractTextualBlock) {
-			if (block instanceof ParagraphBlock) {
-				images.addAll(getImagesOfParagraph((ParagraphBlock) block));
-			} else if (block instanceof ListBlock) {
-				for (ListItem listItem : ((ListBlock) block).getItems()) {
-					if (listItem.getValue() instanceof ParagraphBlock) {
-						images.addAll(getImagesOfParagraph((ParagraphBlock) listItem.getValue()));
-					} else if (listItem.getValue() instanceof ListBlock) {
-						images.addAll(getImagesRecursive(listItem.getValue()));
-					}
-				}
-			}
-		} else if (block instanceof TableBlock) {
-			for (TableItem row : ((TableBlock) block).getItems()) {
-				for (CellBlock cell : row.getValue()) {
-					if (cell.getFirstItem().getValue() != null) {
-						images.addAll(
-								getImagesRecursive(new ArrayList<AbstractBlock<?>>(cell.getFirstItem().getValue())));
-					}
-				}
-			}
-		}
-
-		return images;
 	}
 
 	public static Node getElementById(Node parent, String id) {
