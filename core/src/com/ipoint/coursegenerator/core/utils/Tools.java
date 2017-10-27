@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -234,6 +235,48 @@ public class Tools {
 				return null;
 			}
 		}
+	}
+
+	public static String getValidFileName(String notValid) {
+		String validStr = notValid.replaceAll("(\\&#034;)|(\\&#39;)|[^\\w\\d]", "_").replaceAll("(^_+)|(_+$)", " ")
+				.trim().replaceAll("__+", "_");
+
+		return (validStr.isEmpty()) ? String.valueOf(notValid.hashCode()) : validStr;
+	}
+
+	public static String removeAllSpecialSymbols(String text) {
+		return removeSpecialSymbols(removeSpecialSymbolsFromHtml(text));
+	}
+
+	public static String removeSpecialSymbolsFromHtml(String html) {
+		return (html == null) ? null
+				: replaceStrings(html,
+						new String[][] { { "&amp;", " " }, { "&lt;", " " }, { "&gt;", " " }, { "&quot;", " " },
+								{ "&#39;", " " }, { "<br/>", " " }, { "&#034;", " " }, { "&#047;", " " },
+								{ "&#092;", " " } });
+	}
+
+	public static String removeSpecialSymbols(String text) {
+		return (text == null) ? null
+				: replaceStrings(text, new String[][] { { "&", " " }, { "<", " " }, { ">", " " }, { "\"", " " },
+						{ "'", " " }, { "\n", " " } });
+	}
+
+	private static String replaceStrings(String s, String[][] sourceTarget) {
+		for (int i = 0; i < sourceTarget.length; i++) {
+			s = s.replaceAll(sourceTarget[i][0], sourceTarget[i][1]);
+		}
+
+		return s;
+	}
+
+	public static String removeExtraSpaces(String str) {
+		return str.replaceAll("\\s\\s+", " ").trim();
+	}
+
+	public static String generateSystemName(String name) {
+		return Tools.getValidFileName(Tools.removeAllSpecialSymbols(
+				TransliterationTool.convertRU2ENString(name) + '_' + UUID.randomUUID().toString()));
 	}
 
 }
