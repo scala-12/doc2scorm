@@ -33,7 +33,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 			this.toHtml(Tools.createEmptyDocument());
 		}
 
-		return this.correctOrder;
+		return this.correctAnswers;
 	}
 
 	/**
@@ -48,15 +48,15 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		list.setAttribute("id", SEQUENCE_ANSWERS_BLOCK_ID);
 
 		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = this.correctOrder == null;
+		boolean withoutCorrectness = this.correctAnswers == null;
 		if (withoutCorrectness) {
-			this.correctOrder = new String[answersBlock.getChildNodes().getLength()];
-			numbers = new ArrayList<>(this.correctOrder.length);
-			for (int i = 0; i < this.correctOrder.length; i++) {
+			this.correctAnswers = new String[answersBlock.getChildNodes().getLength()];
+			numbers = new ArrayList<>(this.correctAnswers.length);
+			for (int i = 0; i < this.correctAnswers.length; i++) {
 				numbers.add(i);
 			}
 		}
-		Element[] sortedAnswers = new Element[this.correctOrder.length];
+		Element[] sortedAnswers = new Element[this.correctAnswers.length];
 
 		for (int i = 0; answersBlock.hasChildNodes(); i++) {
 			// old answer will be transformative and removed after
@@ -67,11 +67,11 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 			int number;
 			if (withoutCorrectness) {
 				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				this.correctOrder[i] = String.valueOf(number);
+				this.correctAnswers[i] = String.valueOf(number);
 			} else {
-				number = Integer.parseInt(this.correctOrder[i]);
+				number = Integer.parseInt(this.correctAnswers[i]);
 			}
-			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + this.correctOrder[i]);
+			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + this.correctAnswers[i]);
 			sortedAnswers[number] = item;
 		}
 

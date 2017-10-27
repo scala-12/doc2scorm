@@ -1,14 +1,11 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions;
 
 import java.util.List;
-import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
@@ -31,10 +28,10 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 
 	private String task;
 
-	protected String[] correctOrder;
+	protected String[] correctAnswers;
 
 	public String[] getCorrect() {
-		return correctOrder;
+		return correctAnswers;
 	}
 
 	protected AbstractQuestionBlock(List<T> items) {
