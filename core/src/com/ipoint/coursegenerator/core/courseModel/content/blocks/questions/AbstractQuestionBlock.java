@@ -41,6 +41,7 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 	protected AbstractQuestionBlock(List<T> items, String task) {
 		super(items);
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
+		this.correctAnswers = null;
 	}
 
 	public String getTask() {
