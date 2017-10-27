@@ -26,8 +26,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
+import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
+import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -49,6 +52,7 @@ public class FileWork {
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
+	private final static Map<String, String> DEFAULT_TMPL_VARS = _getDefaultVars();
 
 	public static final int BUFFER_SIZE = 1024;
 
@@ -77,6 +81,32 @@ public class FileWork {
 
 		public static final String JQUERY_VERSION = "3.1.1";
 		public static final String JQUERY_UI_VERSION = "1.12.1";
+	}
+
+	private static Map<String, String> _getDefaultVars() {
+		HashMap<String, String> vars = new HashMap<>();
+
+		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
+
+		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
+		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
+		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
+
+		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
+		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
+
+		vars.put("answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		vars.put("companion_class", MatchItem.MATCH_LABEL_4_ANSWER_CLASS);
+		vars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
+		vars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
+
+		vars.put("choice", String.valueOf(AbstractQuestionBlock.CHOICE));
+		vars.put("multiple", String.valueOf(AbstractQuestionBlock.MULTIPLE_CHOICE));
+		vars.put("fill_in", String.valueOf(AbstractQuestionBlock.FILL_IN));
+		vars.put("match", String.valueOf(AbstractQuestionBlock.MATCHING));
+		vars.put("sequence", String.valueOf(AbstractQuestionBlock.SEQUENCING));
+
+		return vars;
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
@@ -184,46 +214,6 @@ public class FileWork {
 		FileWork.copyFileFromResourceDirToDir(TemplateFiles.JS_SYSTEM_DIR, systemDir, null);
 	}
 
-	public static void saveTestingDir(File testingDir, String introContent) {
-		HashMap<String, String> vars = new HashMap<>();
-
-		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-
-		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
-		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
-
-		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
-		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
-
-		String intro;
-		if ((introContent == null) || introContent.isEmpty()) {
-			intro = "<h3>Тестирование</h3><h1>Практические тестовые задания</h1>"
-					+ "<p>Внимательно прочитайте вопрос.<br>"
-					+ "Подумайте и выберите вариант ответа. Нажмите кнопку <b>" + "\"Продолжить\"</b>.</p>"
-					+ "<img src=\"sysimages/VNIMANIE.gif\" width=\"110\" height=\"28\" class=\"left-img\" longdesc=\"sysimages/VNIMANIE.gif\">"
-					+ "<p>Не пытайтесь вернуться к предыдущему вопросу при помощи кнопки <strong>\"Назад\"</strong>.<br>"
-					+ "Единственный способ исправить результат &#8211; закончить тест, а затем пройти его сначала.</p>"
-					+ "<p>Критерии оценки:</p>" + "<ul><li>90%-100%  &#8211 отлично</li>"
-					+ "<li>80%-89% &#8211 хорошо</li>" + "<li>60%-79% &#8211 удовлетворительно </li>"
-					+ "<li>меньше 60% &#8211 неудовлетворительно </li></ul>"
-					+ "<h5>В тесте Вам могут встретиться разные типы ответов:</h5>"
-					+ "<p><img src=\"images/1.gif\" align=\"absmiddle\"> &#8211; этот значок означает, что из всех вариантов надо выбрать один правильный.</p>"
-					+ "<p><img src=\"images/2.gif\" align=\"absmiddle\"> &#8211; может быть несколько правильных ответов (надо указать все варианты).</p>"
-					+ "<p><img src=\"images/3.gif\" align=\"absmiddle\"> &#8211; в это поле ввода надо впечатать текст с клавиатуры (будьте предельно внимательны при наборе текста, на результат тестирования может повлиять даже опечатка).</p>"
-					+ "<p><img src=\"images/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>";
-			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(testingDir, "images"), null);
-		} else {
-			intro = introContent;
-		}
-		vars.put("intro_content", intro);
-		vars.put("percents4markA", "90");
-		vars.put("percents4markB", "80");
-		vars.put("percents4markC", "60");
-
-		copyFileFromResourceDirToDir(TemplateFiles.HTML_TESTING_DIR, testingDir, vars);
-	}
-
 	public static InputStream getFileFromResources(File fileFromResource) {
 		String path = fileFromResource.getPath().replace(File.separatorChar, '/');
 
@@ -254,74 +244,143 @@ public class FileWork {
 		return saveTemplateFileWithVariables(tmplFile, destFile, vars);
 	}
 
-	public static boolean saveTheoryHtmlDocument(Document doc, File destFile, String pageTitle) {
-		HashMap<String, String> vars = new HashMap<>();
-		vars.put("page_title", pageTitle);
+	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, File courseDir, File sOfficeFile) {
+		HashMap<String, String> scoVars = new HashMap<>(DEFAULT_TMPL_VARS);
+		scoVars.put("page_title", page.getParent().getTitle());
 
-		return saveHtmlDocument(TemplateFiles.SCO4THEORY, vars, doc, destFile);
-	}
-
-	public static Map<File, Set<PictureInfo>> saveTestingHtmlDocuments(File destDir, TestingPage page,
-			File pathToSOffice) {
-		HashMap<File, Set<PictureInfo>> result = new HashMap<>();
-
-		HashMap<String, String> extraVars = new HashMap<>();
-		extraVars.put("page_title", page.getParent().getTitle());
-
-		extraVars.put("answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID);
-		extraVars.put("companion_class", MatchItem.MATCH_LABEL_4_ANSWER_CLASS);
-		extraVars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
-		extraVars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
-
-		extraVars.put("choice", String.valueOf(AbstractQuestionBlock.CHOICE));
-		extraVars.put("multiple", String.valueOf(AbstractQuestionBlock.MULTIPLE_CHOICE));
-		extraVars.put("fill_in", String.valueOf(AbstractQuestionBlock.FILL_IN));
-		extraVars.put("match", String.valueOf(AbstractQuestionBlock.MATCHING));
-		extraVars.put("sequence", String.valueOf(AbstractQuestionBlock.SEQUENCING));
-
-		for (int i = 0; i < page.getBlocks().size(); i++) {
-			AbstractQuestionBlock<?> quest = page.getBlocks().get(i);
-
-			extraVars.put("type", String.valueOf(quest.getType()));
-
-			if (quest instanceof ChoiceBlock) {
-				List<ChoiceItem> answerItems = ((ChoiceBlock) quest).getItems();
-				StringBuilder answerText = new StringBuilder();
-				for (int i1 = 0; i1 < answerItems.size(); i1++) {
-					if (i1 != 0) {
-						answerText.append(", ");
-					}
-					answerText.append(i1).append(" : \"").append(answerItems.get(i1).getValue().getText()).append("\"");
-				}
-
-				extraVars.put("answers_text",
-						new String(answerText.toString().getBytes(STANDARD_ENCODING), STANDARD_ENCODING));
-			} else if (quest instanceof MatchBlock) {
-				extraVars.put("sortable_block_id", MatchBlock.MATCH_ANSWERS_BLOCK_ID);
-				extraVars.put("sortable_elem_class", MatchItem.MATCH_ANSWER_CLASS);
-				extraVars.put("answer_id_prefix", MatchBlock.MATCH_ANSWER_ID_PREFIX);
-			} else if (quest instanceof SequenceBlock) {
-				extraVars.put("sortable_block_id", SequenceBlock.SEQUENCE_ANSWERS_BLOCK_ID);
-				extraVars.put("sortable_elem_class", SequenceItem.SEQUENCE_ANSWER_CLASS);
-				extraVars.put("answer_id_prefix", SequenceBlock.SEQUENCE_ANSWER_ID_PREFIX);
-			}
+		if (page instanceof TheoryPage) {
+			StringBuilder content = new StringBuilder();
 
 			Document html = Tools.createNewHTMLDocument();
-			NodeList nodes = quest.toHtml(html).getChildNodes();
-			Node body = html.getElementsByTagName("body").item(0);
-			while (nodes.getLength() != 0) {
-				body.appendChild(nodes.item(0));
+			html.getElementsByTagName("body").item(0).appendChild(page.toHtml(html));
+
+			NodeList bodyChilds = html.getElementsByTagName("body").item(0).getChildNodes();
+			for (int i = 0; i < bodyChilds.getLength(); i++) {
+				content.append(Tools.getNodeString(bodyChilds.item(i)));
 			}
-			File destFile = new File(destDir, String.valueOf(i + 1) + ".html");
-			if (saveHtmlDocument(TemplateFiles.SCO4TEST, extraVars, html, destFile)) {
-				result.put(destFile, quest.getImages());
+
+			scoVars.put("body_content", content.toString());
+
+			boolean successful = saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY,
+					new File(courseDir, page.getParent().getPageLocation()), scoVars);
+
+			if (successful) {
+				page.getImages().stream().forEach(image -> {
+					savePageImages(page, courseDir, sOfficeFile);
+				});
+			}
+
+			return successful;
+		} else {
+			TestingPage testingPage = (TestingPage) page;
+
+			createTestingDir(courseDir, testingPage, scoVars);
+
+			boolean allSuccessful = true;
+
+			for (int i = 0; i < page.getBlocks().size(); i++) {
+				HashMap<String, String> vars = new HashMap<>(scoVars);
+				AbstractQuestionBlock<?> question = testingPage.getBlocks().get(i);
+
+				vars.put("type", String.valueOf(question.getType()));
+
+				if (question instanceof ChoiceBlock) {
+					List<ChoiceItem> answerItems = ((ChoiceBlock) question).getItems();
+					StringBuilder answerText = new StringBuilder();
+					for (int i1 = 0; i1 < answerItems.size(); i1++) {
+						if (i1 != 0) {
+							answerText.append(", ");
+						}
+						answerText.append(i1).append(" : \"").append(answerItems.get(i1).getValue().getText())
+								.append("\"");
+					}
+
+					vars.put("answers_text",
+							new String(answerText.toString().getBytes(STANDARD_ENCODING), STANDARD_ENCODING));
+				} else if (question instanceof MatchBlock) {
+					vars.put("sortable_block_id", MatchBlock.MATCH_ANSWERS_BLOCK_ID);
+					vars.put("sortable_elem_class", MatchItem.MATCH_ANSWER_CLASS);
+					vars.put("answer_id_prefix", MatchBlock.MATCH_ANSWER_ID_PREFIX);
+				} else if (question instanceof SequenceBlock) {
+					vars.put("sortable_block_id", SequenceBlock.SEQUENCE_ANSWERS_BLOCK_ID);
+					vars.put("sortable_elem_class", SequenceItem.SEQUENCE_ANSWER_CLASS);
+					vars.put("answer_id_prefix", SequenceBlock.SEQUENCE_ANSWER_ID_PREFIX);
+				}
+
+				Document html = Tools.createNewHTMLDocument();
+				NodeList nodes = question.toHtml(html).getChildNodes();
+				Node body = html.getElementsByTagName("body").item(0);
+				while (nodes.getLength() != 0) {
+					body.appendChild(nodes.item(0));
+				}
+
+				if (saveHtmlDocument(TemplateFiles.SCO4TEST, vars, html, new File(courseDir,
+						page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
+					Set<PictureInfo> images = page.getImages();
+					if (!images.isEmpty()) {
+						File imgDir = new File(courseDir, ((page instanceof TestingPage)
+								? page.getParent().getPageLocation() + File.separator : "") + FileWork.IMAGE_DIR_NAME);
+						if (!imgDir.exists()) {
+							imgDir.mkdirs();
+						}
+
+						images.stream().forEach(image -> {
+							savePageImages(page, courseDir, sOfficeFile);
+						});
+					}
+
+				} else {
+					allSuccessful = false;
+				}
+			}
+
+			return allSuccessful;
+		}
+	}
+
+	private static void createTestingDir(File courseDir, TestingPage page, Map<String, String> vars) {
+		File scoDir = new File(courseDir, page.getParent().getSystemName());
+
+		StringBuilder intro = new StringBuilder();
+		if (page.getIntroBlocks().isEmpty()) {
+			intro.append("<h3>Тестирование</h3><h1>Практические тестовые задания</h1>")
+					.append("<p>Внимательно прочитайте вопрос.<br>")
+					.append("Подумайте и выберите вариант ответа. Нажмите кнопку <b>" + "\"Продолжить\"</b>.</p>")
+					.append("<img src=\"").append(IMAGE_DIR_NAME)
+					.append("/VNIMANIE.gif\" width=\"110\" height=\"28\" class=\"left-img\" longdesc=\"sysimages/VNIMANIE.gif\">")
+					.append("<p>Не пытайтесь вернуться к предыдущему вопросу при помощи кнопки <strong>\"Назад\"</strong>.<br>")
+					.append("Единственный способ исправить результат &#8211; закончить тест, а затем пройти его сначала.</p>")
+					.append("<p>Критерии оценки:</p>" + "<ul><li>").append(page.getPercents4markA())
+					.append("%-100%  &#8211 отлично</li>").append("<li>").append(page.getPercents4markB()).append("%-")
+					.append(page.getPercents4markA() - 1).append("% &#8211 хорошо</li>" + "<li>")
+					.append(page.getPercents4markC()).append("%-").append(page.getPercents4markB() - 1)
+					.append("% &#8211 удовлетворительно </li>").append("<li>меньше ").append(page.getPercents4markC())
+					.append("% &#8211 неудовлетворительно </li></ul>")
+					.append("<h5>В тесте Вам могут встретиться разные типы ответов:</h5>").append("<p><img src=\"")
+					.append(IMAGE_DIR_NAME)
+					.append("/1.gif\" align=\"absmiddle\"> &#8211; этот значок означает, что из всех вариантов надо выбрать один правильный.</p>")
+					.append("<p><img src=\"").append(IMAGE_DIR_NAME)
+					.append("/2.gif\" align=\"absmiddle\"> &#8211; может быть несколько правильных ответов (надо указать все варианты).</p>")
+					.append("<p><img src=\"").append(IMAGE_DIR_NAME)
+					.append("/3.gif\" align=\"absmiddle\"> &#8211; в это поле ввода надо впечатать текст с клавиатуры (будьте предельно внимательны при наборе текста, на результат тестирования может повлиять даже опечатка).</p>")
+					.append("<p><img src=\"").append(IMAGE_DIR_NAME)
+					.append("/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>");
+			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(scoDir, IMAGE_DIR_NAME), null);
+		} else {
+			for (AbstractParagraphBlock<?> block : page.getIntroBlocks()) {
+				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
 			}
 		}
 
-		return result;
+		vars.put("intro_content", intro.toString());
+		vars.put("percents4markA", String.valueOf(page.getPercents4markA()));
+		vars.put("percents4markB", String.valueOf(page.getPercents4markB()));
+		vars.put("percents4markC", String.valueOf(page.getPercents4markC()));
+
+		copyFileFromResourceDirToDir(TemplateFiles.HTML_TESTING_DIR, scoDir, vars);
 	}
 
-	private static boolean saveTemplateFileWithVariables(File file, File resultFile, Map<String, String> vars) {
+	private static boolean saveTemplateFileWithVariables(File tmplFile, File resultFile, Map<String, String> vars) {
 		resultFile.getParentFile().mkdirs();
 
 		if (resultFile.getName().toLowerCase().endsWith(".ftl")) {
@@ -330,11 +389,11 @@ public class FileWork {
 		}
 
 		Configuration cfg = new Configuration();
-		cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), file.getParent());
+		cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), tmplFile.getParent());
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 		try {
-			Template tmpl = cfg.getTemplate(file.getName(), STANDARD_ENCODING.name());
+			Template tmpl = cfg.getTemplate(tmplFile.getName(), STANDARD_ENCODING.name());
 			try (FileOutputStream htmlFOS = new FileOutputStream(resultFile);
 					Writer writerOS = new OutputStreamWriter(htmlFOS, STANDARD_ENCODING)) {
 				tmpl.process(vars, writerOS);
@@ -349,57 +408,36 @@ public class FileWork {
 		return false;
 	}
 
-	/**
-	 * Save image in directory
-	 *
-	 * @param pictureInfo
-	 *            Picture info
-	 * @param imgsDir
-	 *            Absolute directory for saving
-	 * @param sofficeFile
-	 *            File for run LibreOffice
-	 * @return true if have not errors
-	 */
-	public static boolean saveImage(PictureInfo pictureInfo, File imgsDir, File sofficeFile) {
-		byte[] byteImage = null;
+	private static Set<PictureInfo> savePageImages(AbstractPage<?> page, File courseDir, File sOfficeFile) {
+		File imgsDir = new File(courseDir,
+				((page instanceof TestingPage) ? page.getParent().getSystemName() + File.separator : "")
+						+ IMAGE_DIR_NAME);
+		HashSet<PictureInfo> withErrors = new HashSet<>();
 
-		switch (pictureInfo.getData().getPictureType()) {
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG:
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP:
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF:
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG:
-			byteImage = pictureInfo.getData().getData();
-			break;
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF:
-			byteImage = ImageFormatConverter.transcodeEmfToPng(pictureInfo.getData().getData(), sofficeFile);
-			break;
-		case org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF:
-			byteImage = ImageFormatConverter.transcodeWmfToPng(pictureInfo.getData().getData(), sofficeFile);
-			break;
-		}
+		page.getImages().stream().forEach(image -> {
+			byte[] byteImage;
 
-		return (byteImage != null)
-				&& saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, pictureInfo.getName()));
-	}
+			int imgType = image.getData().getPictureType();
+			if ((org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG == imgType)
+					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP == imgType)
+					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF == imgType)
+					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG == imgType)) {
+				byteImage = image.getData().getData();
+			} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF == imgType) {
+				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getData().getData(), sOfficeFile);
+			} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF == imgType) {
+				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getData().getData(), sOfficeFile);
+			} else {
+				byteImage = null;
+			}
 
-	/**
-	 * Save images in directory
-	 *
-	 * @param picturesInfo
-	 *            List of picture info
-	 * @param pageImgsDir
-	 *            Absolute directory for saving
-	 * @param pathToSOffice
-	 *            File for run LibreOffice
-	 * @return true if have not errors
-	 */
-	public static boolean saveImages(Set<PictureInfo> picturesInfo, File pageImgsDir, File pathToSOffice) {
-		boolean successful = true;
-		for (PictureInfo pictureInfo : picturesInfo) {
-			successful = saveImage(pictureInfo, pageImgsDir, pathToSOffice) && successful;
-		}
+			if ((byteImage == null)
+					|| saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, image.getName()))) {
+				withErrors.add(image);
+			}
+		});
 
-		return successful;
+		return withErrors;
 	}
 
 }
