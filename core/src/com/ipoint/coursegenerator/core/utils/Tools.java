@@ -80,6 +80,8 @@ public class Tools {
 		}
 	}
 
+	public static final BigDecimal BIG_ZERO = new BigDecimal(0);
+
 	private static Transformer TRANSFORMER = _getTransformer();
 
 	private static Transformer _getTransformer() {

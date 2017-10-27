@@ -61,6 +61,11 @@ public class OrganizationProcessor {
 				itemType.addNewItem().newCursor().insertElementWithText("datafromlms",
 						"http://www.adlnet.org/xsd/adlcp_rootv1p2", testingPage.getLaunchData());
 				itemType.removeItem(0);
+				if (testingPage.getMaxTimeAllowed() != null) {
+					itemType.addNewItem().newCursor().insertElementWithText("maxtimeallowed",
+							"http://www.adlnet.org/xsd/adlcp_rootv1p2", testingPage.getMaxTimeAllowed().toString());
+					itemType.removeItem(0);
+				}
 			}
 
 			itemType.setIdentifierref("REF_" + node.getSystemName());
