@@ -371,7 +371,8 @@ public class CourseParser extends AbstractParser {
 
 								questionTask.append(par.getText());
 							} else {
-								BlockWithShifting blockWithShift = getBlockWithShifting(chapterElem, mathInfo, maxHeader);
+								BlockWithShifting blockWithShift = getBlockWithShifting(chapterElem, mathInfo,
+										maxHeader);
 								if (blockWithShift.getBlock() != null) {
 									if (hasQuestion) {
 										questionsWithAnswers
@@ -421,7 +422,7 @@ public class CourseParser extends AbstractParser {
 								TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
 								if (block.getFirstItem().getValue().size() == 1) {
 									if (block.getItems().size() == 1) {
-										questBlock = new FillInBlock(new FillInItem(""));
+										questBlock = new FillInBlock(new FillInItem(block.getText()));
 									} else {
 										ArrayList<SequenceItem> items = new ArrayList<>();
 										for (TableItem row : block.getItems()) {
