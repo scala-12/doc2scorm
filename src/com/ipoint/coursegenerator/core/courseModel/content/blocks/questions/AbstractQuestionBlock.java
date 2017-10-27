@@ -90,8 +90,4 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return div;
 	}
 
-	public Set<PictureInfo> getImages() {
-		return Tools.getImagesRecursive(this);
-	}
-
 }
