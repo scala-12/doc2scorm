@@ -62,4 +62,16 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		return images;
 	}
 
+	public String getLaunchData() {
+		StringBuilder launchDate = new StringBuilder();
+		launchDate.append("3|1-").append(this.getBlocks().size());
+
+		for (int i = 0; i < this.getBlocks().size(); i++) {
+			AbstractQuestionBlock<?> block = this.getBlocks().get(i);
+			launchDate.append('\n').append(i + 1).append("|").append(String.join("~", block.getCorrect()));
+		}
+
+		return launchDate.toString();
+	}
+
 }
