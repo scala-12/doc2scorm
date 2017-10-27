@@ -1,7 +1,10 @@
 package com.ipoint.coursegenerator.core.courseModel.content;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -9,6 +12,13 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 
@@ -92,6 +102,58 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 		}
 
 		return pageBody;
+	}
+
+	public Set<PictureInfo> getImages() {
+		return getImagesRecursive(this.getBlocks());
+	}
+
+	protected static Set<PictureInfo> getImagesRecursive(List<? extends AbstractBlock<?>> blocks) {
+		HashSet<PictureInfo> images = new HashSet<>();
+
+		blocks.stream().forEach(block -> getImagesRecursive(block));
+
+		return images;
+	}
+
+	private static Set<PictureInfo> getImagesRecursive(AbstractBlock<?> block) {
+		HashSet<PictureInfo> images = new HashSet<>();
+
+		if (block instanceof AbstractTextualBlock) {
+			if (block instanceof ParagraphBlock) {
+				images.addAll(getImagesOfParagraph((ParagraphBlock) block));
+			} else if (block instanceof ListBlock) {
+				((ListBlock) block).getItems().stream().forEach(listItem -> {
+					images.addAll((listItem.getValue() instanceof ParagraphBlock)
+							? getImagesOfParagraph((ParagraphBlock) listItem.getValue())
+							: (listItem.getValue() instanceof ListBlock) ? getImagesRecursive(listItem.getValue())
+									: Collections.emptySet());
+				});
+			}
+		} else if (block instanceof TableBlock) {
+			((TableBlock) block).getItems().stream().forEach(row -> {
+				row.getValue().stream().filter(cell -> cell.getFirstItem().getValue() != null)
+						.forEach(cell -> images.addAll(getImagesRecursive(cell.getFirstItem().getValue())));
+			});
+		}
+
+		return images;
+	}
+
+	private static List<PictureInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
+		ArrayList<PictureInfo> images = new ArrayList<PictureInfo>();
+
+		for (ParagraphItem parItem : paragraph.getItems()) {
+			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
+				if (item instanceof ImageContentItem) {
+					ImageContentItem imageItem = (ImageContentItem) item;
+					PictureInfo image = new PictureInfo(imageItem.getImageFullName(), imageItem.getValue());
+					images.add(image);
+				}
+			}
+		}
+
+		return images;
 	}
 
 }
