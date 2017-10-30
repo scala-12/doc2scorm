@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection;
 
 import java.util.List;
 

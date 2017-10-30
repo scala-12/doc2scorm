@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;

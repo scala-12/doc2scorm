@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice;
 
 import java.util.UUID;
 
@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 
 /**
