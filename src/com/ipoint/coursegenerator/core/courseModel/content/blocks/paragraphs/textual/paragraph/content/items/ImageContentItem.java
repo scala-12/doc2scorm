@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.FileTools;
 
 /**
  * Item that includes picture data
@@ -226,7 +226,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	protected Node getValueAsHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
 		img.setAttribute("src",
-				new File(FileWork.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));
+				new File(FileTools.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));
 
 		if (this.getHeight() != null) {
 			img.setAttribute("height", String.valueOf(this.getHeight()));
