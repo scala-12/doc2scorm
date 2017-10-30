@@ -26,7 +26,6 @@ import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
-import com.ipoint.coursegenerator.core.courseModel.content.PictureInfo;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
