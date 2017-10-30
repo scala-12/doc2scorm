@@ -1,4 +1,4 @@
-package test.java.courseModel.blocks.textual;
+package test.java.courseModel.content.blocks.paragraphs.textual;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,8 +25,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
 
-import test.java.courseModel.blocks.AbstractBlockTest;
-import test.java.courseParser.paragraphs.ParagraphParserTest;
+import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
+import test.java.courseParser.textualParagraphParser.ParagraphParserTest;
 import test.utils.TestTools;
 
 @RunWith(Parameterized.class)
