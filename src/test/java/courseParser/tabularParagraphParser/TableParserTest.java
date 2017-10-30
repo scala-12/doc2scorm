@@ -1,4 +1,4 @@
-package test.java.courseParser.paragraphs;
+package test.java.courseParser.tabularParagraphParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

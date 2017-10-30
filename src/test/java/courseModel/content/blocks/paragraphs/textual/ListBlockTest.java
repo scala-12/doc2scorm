@@ -1,4 +1,4 @@
-package test.java.courseModel.blocks.textual;
+package test.java.courseModel.content.blocks.paragraphs.textual;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
-import test.java.courseModel.blocks.AbstractBlockTest;
+import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
 import test.utils.TestTools;
 
 public class ListBlockTest extends AbstractBlockTest {

@@ -1,4 +1,4 @@
-package test.java.courseModel.blocks.tabular;
+package test.java.courseModel.content.blocks.paragraphs.tabular;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +16,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
-import test.java.courseModel.blocks.AbstractBlockTest;
+import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
 import test.utils.TestTools;
 
 public class TableBlockTest extends AbstractBlockTest {

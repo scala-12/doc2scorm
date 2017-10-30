@@ -1,4 +1,4 @@
-package test.java.courseModel.blocks;
+package test.java.courseModel.content.blocks.paragraphs;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
