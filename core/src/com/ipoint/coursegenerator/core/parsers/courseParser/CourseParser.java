@@ -54,7 +54,7 @@ import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
-import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.FileTools;
 import com.ipoint.coursegenerator.core.utils.Tools;
 import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
@@ -245,7 +245,7 @@ public class CourseParser extends AbstractParser {
 			// need in 2 independent Input streams for MathML and XWPFDocument
 			File tmpDoc = File.createTempFile("course_", ".docx");
 			try (BufferedInputStream bufIS = new BufferedInputStream(stream)) {
-				FileWork.saveRawFile(bufIS, tmpDoc);
+				FileTools.saveRawFile(bufIS, tmpDoc);
 			}
 
 			MathInfo mathInfo = null;

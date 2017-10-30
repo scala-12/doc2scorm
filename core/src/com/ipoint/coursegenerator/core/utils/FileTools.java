@@ -44,7 +44,7 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-public class FileWork {
+public class FileTools {
 
 	public final static String IMAGE_WMF = "image/x-wmf";
 	public final static String IMAGE_PNG = "image/png";
@@ -182,7 +182,7 @@ public class FileWork {
 
 		String resDirPath = resourceDir.getPath().replace(File.separatorChar, '/');
 
-		String jarPath = FileWork.class.getResource("/" + resDirPath).getFile();
+		String jarPath = FileTools.class.getResource("/" + resDirPath).getFile();
 		if (jarPath.startsWith("file:")) {
 			jarPath = jarPath.substring("file:/".length());
 		}
@@ -209,14 +209,14 @@ public class FileWork {
 	}
 
 	public static void saveSystemDir(File systemDir) {
-		FileWork.copyFileFromResourceDirToDir(TemplateFiles.CSS_SYSTEM_DIR, systemDir, null);
-		FileWork.copyFileFromResourceDirToDir(TemplateFiles.JS_SYSTEM_DIR, systemDir, null);
+		FileTools.copyFileFromResourceDirToDir(TemplateFiles.CSS_SYSTEM_DIR, systemDir, null);
+		FileTools.copyFileFromResourceDirToDir(TemplateFiles.JS_SYSTEM_DIR, systemDir, null);
 	}
 
 	public static InputStream getFileFromResources(File fileFromResource) {
 		String path = fileFromResource.getPath().replace(File.separatorChar, '/');
 
-		return FileWork.class.getClassLoader().getResourceAsStream(
+		return FileTools.class.getClassLoader().getResourceAsStream(
 				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
 	}
 
@@ -318,7 +318,7 @@ public class FileWork {
 					Set<PictureInfo> images = page.getImages();
 					if (!images.isEmpty()) {
 						File imgDir = new File(courseDir, ((page instanceof TestingPage)
-								? page.getParent().getPageLocation() + File.separator : "") + FileWork.IMAGE_DIR_NAME);
+								? page.getParent().getPageLocation() + File.separator : "") + FileTools.IMAGE_DIR_NAME);
 						if (!imgDir.exists()) {
 							imgDir.mkdirs();
 						}
@@ -388,7 +388,7 @@ public class FileWork {
 		}
 
 		Configuration cfg = new Configuration();
-		cfg.setClassLoaderForTemplateLoading(FileWork.class.getClassLoader(), tmplFile.getParent());
+		cfg.setClassLoaderForTemplateLoading(FileTools.class.getClassLoader(), tmplFile.getParent());
 		cfg.setObjectWrapper(new DefaultObjectWrapper());
 
 		try {

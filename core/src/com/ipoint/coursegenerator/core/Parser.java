@@ -13,7 +13,7 @@ import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
-import com.ipoint.coursegenerator.core.utils.FileWork;
+import com.ipoint.coursegenerator.core.utils.FileTools;
 import com.ipoint.coursegenerator.core.utils.Tools;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
@@ -80,7 +80,7 @@ public class Parser {
 
 		saveImsManifestFile(CourseParser.parse(stream, courseName, headerLevel), courseDir);
 
-		FileWork.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR));
+		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR));
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, courseDir.getPath());
@@ -113,7 +113,7 @@ public class Parser {
 		File manFile = new File(courseDir, "imsmanifest.xml");
 		manFile.createNewFile();
 
-		FileWork.saveTextFile(manContent, manFile);
+		FileTools.saveTextFile(manContent, manFile);
 	}
 
 	private void createManifestScoUnitAndSavePage(File courseDir, List<CourseTreeNode> nodes,
@@ -121,7 +121,7 @@ public class Parser {
 		nodes.stream().forEach(node -> {
 			organizationProcessor.createItem(node);
 			resourcesProcessor.createItem(node);
-			FileWork.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, sOfficeFile);
+			FileTools.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, sOfficeFile);
 
 			if (!node.getChilds().isEmpty()) {
 				this.createManifestScoUnitAndSavePage(courseDir, node.getChilds(), organizationProcessor,
