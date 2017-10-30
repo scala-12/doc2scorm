@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.utils.FileTools;
 
 /**
@@ -17,7 +17,7 @@ import com.ipoint.coursegenerator.core.utils.FileTools;
  * @author Kalashnikov Vladislav
  *
  */
-public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
+public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 
 	private Integer position;
 
@@ -56,7 +56,7 @@ public class ImageContentItem extends AbstractContentItem<XWPFPictureData> {
 	 *            If it is true then picture in text else behind or front
 	 * 
 	 */
-	public ImageContentItem(XWPFRun run, XWPFPictureData imageData, String style, boolean isWrap) {
+	public ImageRunItem(XWPFRun run, XWPFPictureData imageData, String style, boolean isWrap) {
 		super(run, imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {

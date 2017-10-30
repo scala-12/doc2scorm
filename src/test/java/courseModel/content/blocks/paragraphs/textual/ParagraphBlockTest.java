@@ -18,11 +18,11 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
 
 import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
@@ -57,7 +57,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 			assertEquals(htmlBlock.getNodeName().toLowerCase(), "p");
 			if (0 == block.getItems().stream()
 					.map(pItem -> pItem.getValue().getItems().stream()
-							.filter(cItem -> cItem instanceof FormulaContentItem).findFirst().isPresent())
+							.filter(cItem -> cItem instanceof FormulaRunItem).findFirst().isPresent())
 					.filter(hasFormula -> hasFormula).count()) {
 				assertEquals(htmlBlock.getTextContent(), blockText);
 				// from doc
@@ -73,8 +73,8 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 				} else if (TestTools.STYLED_TEXT_PAR.equals(content[0])) {
 					for (ParagraphItem pItem : block.getItems()) {
 						assertTrue(htmlStyles.containsAll(
-								pItem.getValue().getItems().stream().filter(item -> item instanceof TextContentItem)
-										.map(item -> ParagraphParserTest.getItemStyles((TextContentItem) item))
+								pItem.getValue().getItems().stream().filter(item -> item instanceof TextRunItem)
+										.map(item -> ParagraphParserTest.getItemStyles((TextRunItem) item))
 										.filter(item -> item != null).collect(Collectors.toSet())));
 					}
 				}
@@ -103,8 +103,8 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	private static List<String> getBlockLinks(ParagraphBlock block, boolean textIsLink) {
 		ArrayList<String> links = new ArrayList<>();
 		for (ParagraphItem pItem : block.getItems()) {
-			if (pItem.getValue() instanceof HyperlinkBlock) {
-				HyperlinkBlock linkBlock = (HyperlinkBlock) pItem.getValue();
+			if (pItem.getValue() instanceof HyperlinkRunsBlock) {
+				HyperlinkRunsBlock linkBlock = (HyperlinkRunsBlock) pItem.getValue();
 				if (textIsLink) {
 					assertTrue(block.getText().contains(linkBlock.getUrl()));
 				}

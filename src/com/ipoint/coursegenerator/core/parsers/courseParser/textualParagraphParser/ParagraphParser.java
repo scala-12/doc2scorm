@@ -9,9 +9,9 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser.HyperlinkParser;
@@ -116,13 +116,13 @@ public class ParagraphParser extends AbstractParser {
 		if (hasFormuls && paragraph.getRuns().isEmpty()) {
 			for (CTOMathPara mathPara : paragraph.getCTP().getOMathParaList()) {
 				for (int i = 0; i < mathPara.getOMathList().size(); ++i) {
-					TextBlock block = TextParser.parse(mathInfo, true);
+					TextualRunsBlock block = TextParser.parse(mathInfo, true);
 					itemsOfParagraph.add(new ParagraphItem(block));
 				}
 			}
 		} else {
 			for (List<XWPFRun> runList : parseParagraphOnPieces(paragraph)) {
-				TextBlock block = null;
+				TextualRunsBlock block = null;
 				if ((runList == null) && hasFormuls) {
 					if (paragraph.getCTP().getOMathList() != null) {
 						block = TextParser.parse(mathInfo, false);

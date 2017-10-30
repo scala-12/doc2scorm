@@ -8,11 +8,11 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 
@@ -36,8 +36,8 @@ public class TextParser extends AbstractParser {
 	 *            Flag that formula is paragraph
 	 * @return Text block with formula
 	 */
-	public static TextBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
-		return new TextBlock(new FormulaContentItem(mathInfo.read(), paragraphFlag));
+	public static TextualRunsBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
+		return new TextualRunsBlock(new FormulaRunItem(mathInfo.read(), paragraphFlag));
 	}
 
 	private static final int EMU_TO_PX_COEF = 9525;
@@ -48,8 +48,8 @@ public class TextParser extends AbstractParser {
 	 * @param runs
 	 * @return
 	 */
-	public static TextBlock parse(List<XWPFRun> runs) {
-		ArrayList<AbstractContentItem<?>> blockItems = null;
+	public static TextualRunsBlock parse(List<XWPFRun> runs) {
+		ArrayList<AbstractContentRunItem<?>> blockItems = null;
 
 		if (runs != null) {
 			if (!runs.isEmpty()) {
@@ -131,17 +131,17 @@ public class TextParser extends AbstractParser {
 						}
 
 						if (pictureData != null) {
-							blockItems.add(new ImageContentItem(run, pictureData, picStyle, isWrap));
+							blockItems.add(new ImageRunItem(run, pictureData, picStyle, isWrap));
 						}
 					} else {
 						// Text
-						blockItems.add(new TextContentItem(run));
+						blockItems.add(new TextRunItem(run));
 					}
 				}
 			}
 		}
 
-		return (blockItems.isEmpty()) ? null : new TextBlock(blockItems);
+		return (blockItems.isEmpty()) ? null : new TextualRunsBlock(blockItems);
 	}
 
 }

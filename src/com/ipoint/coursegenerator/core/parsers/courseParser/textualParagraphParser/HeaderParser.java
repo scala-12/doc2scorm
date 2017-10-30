@@ -9,10 +9,10 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.HeaderBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
 
 /**
- * Parsing to {@link HeaderBlock}
+ * Parsing to {@link HeaderParagraphBlock}
  *
  * @author Kalashnikov Vladislav
  */
@@ -143,19 +143,19 @@ public class HeaderParser extends ParagraphParser {
 	}
 
 	/**
-	 * Parsing to {@link HeaderBlock} from {@link XWPFParagraph}
+	 * Parsing to {@link HeaderParagraphBlock} from {@link XWPFParagraph}
 	 *
 	 * @param par
 	 *            Paragraph for parsing
 	 * @param maxLevel
 	 *            Max available level of header
-	 * @return {@link HeaderBlock}
+	 * @return {@link HeaderParagraphBlock}
 	 */
-	public static HeaderBlock parse(XWPFParagraph par, int maxLevel) {
+	public static HeaderParagraphBlock parse(XWPFParagraph par, int maxLevel) {
 		if (HeaderInfo.isHeader(par)) {
 			HeaderInfo headerInfo = new HeaderInfo(par);
 
-			return new HeaderBlock(ParagraphParser.parse(par, null).getItems(), headerInfo.getLevel() - maxLevel);
+			return new HeaderParagraphBlock(ParagraphParser.parse(par, null).getItems(), headerInfo.getLevel() - maxLevel);
 		}
 
 		return null;

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
 /**
  * This block is an analogue of paragraph header.
@@ -17,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  * @author Kalashnikov Vladislav
  *
  */
-public class HeaderBlock extends ParagraphBlock {
+public class HeaderParagraphBlock extends ParagraphBlock {
 
 	private int level;
 
@@ -30,11 +30,11 @@ public class HeaderBlock extends ParagraphBlock {
 	 */
 	public static final int LEVEL_OFFSET = 1;
 
-	public HeaderBlock(List<ParagraphItem> items) {
+	public HeaderParagraphBlock(List<ParagraphItem> items) {
 		this(items, 1);
 	}
 
-	public HeaderBlock(List<ParagraphItem> items, int level) {
+	public HeaderParagraphBlock(List<ParagraphItem> items, int level) {
 		super(items, null);
 		if (!this.setLevel(level)) {
 			this.setLevel(MIN_HEADER_LEVEL);
@@ -74,8 +74,8 @@ public class HeaderBlock extends ParagraphBlock {
 	public Element toHtml(Document creatorTags) {
 		Element header = creatorTags.createElement("h".concat(String.valueOf(this.getLevel() + LEVEL_OFFSET)));
 
-		for (AbstractContentItem<?> item : this.getItems().get(0).getValue().getItems()) {
-			if (item instanceof TextContentItem) {
+		for (AbstractContentRunItem<?> item : this.getItems().get(0).getValue().getItems()) {
+			if (item instanceof TextRunItem) {
 				Node text = item.toHtml(creatorTags).getFirstChild();
 				while (text.hasChildNodes()) {
 					// remove all tags for text style - only text

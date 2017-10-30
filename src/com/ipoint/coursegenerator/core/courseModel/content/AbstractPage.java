@@ -11,20 +11,20 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
 
 /**
- * Page. These includes {@link AbstractParagraphBlock}
+ * Page. These includes {@link AbstractSectionBlock}
  * 
  * @see CourseModel
  * @author Kalashnikov Vladislav
@@ -120,14 +120,14 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 	private static Set<PictureInfo> getImagesRecursive(AbstractBlock<?> block) {
 		HashSet<PictureInfo> images = new HashSet<>();
 
-		if (block instanceof AbstractTextualBlock) {
+		if (block instanceof AbstractTextualSectionBlock) {
 			if (block instanceof ParagraphBlock) {
 				images.addAll(getImagesOfParagraph((ParagraphBlock) block));
-			} else if (block instanceof ListBlock) {
-				((ListBlock) block).getItems().stream().forEach(listItem -> {
+			} else if (block instanceof ListSectionBlock) {
+				((ListSectionBlock) block).getItems().stream().forEach(listItem -> {
 					images.addAll((listItem.getValue() instanceof ParagraphBlock)
 							? getImagesOfParagraph((ParagraphBlock) listItem.getValue())
-							: (listItem.getValue() instanceof ListBlock) ? getImagesRecursive(listItem.getValue())
+							: (listItem.getValue() instanceof ListSectionBlock) ? getImagesRecursive(listItem.getValue())
 									: Collections.emptySet());
 				});
 			}
@@ -145,9 +145,9 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 		ArrayList<PictureInfo> images = new ArrayList<PictureInfo>();
 
 		for (ParagraphItem parItem : paragraph.getItems()) {
-			for (AbstractContentItem<?> item : parItem.getValue().getItems()) {
-				if (item instanceof ImageContentItem) {
-					ImageContentItem imageItem = (ImageContentItem) item;
+			for (AbstractContentRunItem<?> item : parItem.getValue().getItems()) {
+				if (item instanceof ImageRunItem) {
+					ImageRunItem imageItem = (ImageRunItem) item;
 					PictureInfo image = new PictureInfo(imageItem.getImageFullName(), imageItem.getValue());
 					images.add(image);
 				}

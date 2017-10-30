@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 
 /**
- * Parsing to {@link ListBlock}
+ * Parsing to {@link ListSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -21,20 +21,20 @@ import com.ipoint.coursegenerator.core.parsers.MathInfo;
 public class ListParser extends AbstractParser {
 
 	/**
-	 * Parsing to {@link ListBlock} from list of {@link XWPFParagraph}
+	 * Parsing to {@link ListSectionBlock} from list of {@link XWPFParagraph}
 	 * 
 	 * @param pars
 	 *            Paragraphs as items of list
 	 * @param mathInfo
 	 *            Info about MathML formulas
-	 * @return {@link ListBlock}
+	 * @return {@link ListSectionBlock}
 	 */
-	public static ListBlock parse(XWPFParagraph par, MathInfo mathInfo) {
-		ListBlock block = null;
+	public static ListSectionBlock parse(XWPFParagraph par, MathInfo mathInfo) {
+		ListSectionBlock block = null;
 
 		List<XWPFParagraph> list = getAtomListParagraphs(par);
 		if ((list != null) && !list.isEmpty()) {
-			block = new ListBlock(list.stream().map(item -> new ListItem(ParagraphParser.parse(item, mathInfo)))
+			block = new ListSectionBlock(list.stream().map(item -> new ListSectionItem(ParagraphParser.parse(item, mathInfo)))
 					.collect(Collectors.toList()));
 			block.setMarkerType(getMarkerTypeFromString(par.getNumFmt()));
 		}
@@ -102,19 +102,19 @@ public class ListParser extends AbstractParser {
 	 *         founded then return type "simple marker"
 	 */
 	private static int getMarkerTypeFromString(String markerName) {
-		int markerType = ListBlock.SIMPLE_MARKER;
+		int markerType = ListSectionBlock.SIMPLE_MARKER;
 
 		if (markerName != null) {
 			if (markerName.equalsIgnoreCase("upperLetter")) {
-				markerType = ListBlock.UPPER_LETTER_MARKER;
+				markerType = ListSectionBlock.UPPER_LETTER_MARKER;
 			} else if (markerName.equalsIgnoreCase("lowerLetter")) {
-				markerType = ListBlock.LOWER_LETTER_MARKER;
+				markerType = ListSectionBlock.LOWER_LETTER_MARKER;
 			} else if (markerName.equalsIgnoreCase("upperRoman")) {
-				markerType = ListBlock.UPPER_ROMAN_MARKER;
+				markerType = ListSectionBlock.UPPER_ROMAN_MARKER;
 			} else if (markerName.equalsIgnoreCase("lowerRoman")) {
-				markerType = ListBlock.LOWER_ROMAN_MARKER;
+				markerType = ListSectionBlock.LOWER_ROMAN_MARKER;
 			} else if (markerName.equalsIgnoreCase("decimal")) {
-				markerType = ListBlock.DECIMAL_MARKER;
+				markerType = ListSectionBlock.DECIMAL_MARKER;
 			}
 		}
 

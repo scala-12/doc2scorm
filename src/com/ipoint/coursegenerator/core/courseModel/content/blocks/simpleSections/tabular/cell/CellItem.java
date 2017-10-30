@@ -1,24 +1,24 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
- * This item may includes {@link TextBlock}, {@link HyperlinkBlock} or
+ * This item may includes {@link TextualRunsBlock}, {@link HyperlinkRunsBlock} or
  * {@link TableBlock} blocks or null
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<?>>> {
+public class CellItem extends AbstractSectionItem<List<AbstractSectionBlock<?>>> {
 
 	/**
 	 * Count of cells which combined in row
@@ -30,7 +30,7 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 	 */
 	private Integer colSpan;
 
-	public CellItem(List<AbstractParagraphBlock<?>> blocks) {
+	public CellItem(List<AbstractSectionBlock<?>> blocks) {
 		super(blocks);
 		this.setRowSpan(1);
 		this.setColSpan(1);
@@ -101,7 +101,7 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 	 *            Value of cell. May be null
 	 */
 	@Override
-	public boolean setValue(List<AbstractParagraphBlock<?>> paragraphs) {
+	public boolean setValue(List<AbstractSectionBlock<?>> paragraphs) {
 		this.value = paragraphs;
 		if (paragraphs != null) {
 			if (paragraphs.isEmpty()) {
@@ -127,7 +127,7 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 				tCell.setAttribute("rowspan", this.getRowSpan().toString());
 			}
 			if (this.getValue() != null) {
-				for (AbstractParagraphBlock<?> par : this.getValue()) {
+				for (AbstractSectionBlock<?> par : this.getValue()) {
 					tCell.appendChild(par.toHtml(creatorTags));
 				}
 			}
@@ -139,7 +139,7 @@ public class CellItem extends AbstractParagraphItem<List<AbstractParagraphBlock<
 	@Override
 	public String getText() {
 		StringBuilder text = new StringBuilder();
-		for (AbstractParagraphBlock<?> block : this.getValue()) {
+		for (AbstractSectionBlock<?> block : this.getValue()) {
 			text.append(block.getText());
 		}
 

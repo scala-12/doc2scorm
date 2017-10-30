@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content;
 
 import java.util.List;
 
@@ -6,16 +6,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Hyperlink block. This block is {@link TextBlock} with hyperlink
+ * Hyperlink block. This block is {@link TextualRunsBlock} with hyperlink
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class HyperlinkBlock extends TextBlock {
+public class HyperlinkRunsBlock extends TextualRunsBlock {
 
 	private String url;
 
-	public HyperlinkBlock(List<AbstractContentItem<?>> runs, String url) {
+	public HyperlinkRunsBlock(List<AbstractContentRunItem<?>> runs, String url) {
 		super(runs);
 		if (!this.setUrl(url)) {
 			// TODO: Exception empty url of link

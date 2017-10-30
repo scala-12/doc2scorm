@@ -3,12 +3,12 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 
 /**
- * Method for parsing to {@link AbstractTextualBlock}
+ * Method for parsing to {@link AbstractTextualSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -16,16 +16,16 @@ import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphPar
 public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 
 	/**
-	 * Parsing from list of {@link IBodyElement} to {@link AbstractTextualBlock}
+	 * Parsing from list of {@link IBodyElement} to {@link AbstractTextualSectionBlock}
 	 * 
 	 * @param par
 	 *            Paragraph
 	 * @param mathInfo
 	 *            Info about MathML formulas
-	 * @return {@link AbstractTextualBlock}
+	 * @return {@link AbstractTextualSectionBlock}
 	 */
-	public static AbstractTextualBlock<?> parse(XWPFParagraph par, MathInfo mathInfo) {
-		AbstractTextualBlock<?> block = null;
+	public static AbstractTextualSectionBlock<?> parse(XWPFParagraph par, MathInfo mathInfo) {
+		AbstractTextualSectionBlock<?> block = null;
 
 		if (!par.getRuns().isEmpty() || (par.getCTP() != null)) {
 			if (ListParser.isListElement(par)) {

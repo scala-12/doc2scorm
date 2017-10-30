@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class TableBlock extends AbstractParagraphBlock<TableItem> {
+public class TableBlock extends AbstractSectionBlock<TableItem> {
 
 	public TableBlock(List<TableItem> rows) {
 		super(rows);

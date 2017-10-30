@@ -1,19 +1,19 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs;
 
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
- * Item for {@link TextBlock}. This item includes text and him properties.
+ * Item for {@link TextualRunsBlock}. This item includes text and him properties.
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class TextContentItem extends AbstractContentItem<String> {
+public class TextRunItem extends AbstractContentRunItem<String> {
 
 	/**
 	 * Create text item from run of text
@@ -21,7 +21,7 @@ public class TextContentItem extends AbstractContentItem<String> {
 	 * @param run
 	 *            Run of text
 	 */
-	public TextContentItem(XWPFRun run) {
+	public TextRunItem(XWPFRun run) {
 		super(run, run.toString());
 	}
 

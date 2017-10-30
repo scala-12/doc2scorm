@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
- * Page. These includes {@link AbstractParagraphBlock}
+ * Page. These includes {@link AbstractSectionBlock}
  * 
  * @see CourseModel
  * @author Kalashnikov Vladislav
@@ -22,7 +22,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  */
 public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 
-	private final ArrayList<AbstractParagraphBlock<?>> introBlocks;
+	private final ArrayList<AbstractSectionBlock<?>> introBlocks;
 	private BigDecimal maxTimeAllowed;
 	private int percents4markA = 90;
 	private int percents4markB = 80;
@@ -38,7 +38,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		return new TestingPage(null);
 	}
 
-	public List<AbstractParagraphBlock<?>> getIntroBlocks() {
+	public List<AbstractSectionBlock<?>> getIntroBlocks() {
 		return new ArrayList<>(this.introBlocks);
 	}
 
@@ -46,9 +46,9 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		this.introBlocks.clear();
 	}
 
-	public boolean setIntroBlocks(List<AbstractParagraphBlock<?>> blocks) {
-		ArrayList<AbstractParagraphBlock<?>> newBlocks = new ArrayList<>();
-		for (AbstractParagraphBlock<?> block : blocks) {
+	public boolean setIntroBlocks(List<AbstractSectionBlock<?>> blocks) {
+		ArrayList<AbstractSectionBlock<?>> newBlocks = new ArrayList<>();
+		for (AbstractSectionBlock<?> block : blocks) {
 			if (block != null) {
 				newBlocks.add(block);
 			}

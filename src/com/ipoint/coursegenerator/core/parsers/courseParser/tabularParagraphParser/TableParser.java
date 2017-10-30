@@ -8,12 +8,12 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
@@ -114,17 +114,17 @@ public class TableParser extends AbstractParser {
 						if (!tableCell.getBodyElements().isEmpty()) {
 							// TODO: Change API - use one method for paragraphs
 							// conversion in CourseParser (now is two similar)
-							ArrayList<AbstractParagraphBlock<?>> blocks = new ArrayList<>();
+							ArrayList<AbstractSectionBlock<?>> blocks = new ArrayList<>();
 							for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
-								AbstractParagraphBlock<?> paragraphBlock = AbstractParagraphParser
+								AbstractSectionBlock<?> paragraphBlock = AbstractParagraphParser
 										.parse(tableCell.getBodyElements().get(k), mathInfo);
 
 								if (paragraphBlock != null) {
-									if (paragraphBlock instanceof ListBlock) {
+									if (paragraphBlock instanceof ListSectionBlock) {
 										// minus 1 because after this iteration
 										// "i" will be
 										// incremented
-										int iShift = ((ListBlock) paragraphBlock).getSize() - 1;
+										int iShift = ((ListSectionBlock) paragraphBlock).getSize() - 1;
 										if (iShift > 0) {
 											i += iShift;
 										}
