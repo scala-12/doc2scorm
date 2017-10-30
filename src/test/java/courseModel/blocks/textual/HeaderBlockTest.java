@@ -1,4 +1,4 @@
-package test.java.courseModelTest.blocksTest.textual;
+package test.java.courseModel.blocks.textual;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,14 +8,14 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.HeaderBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 
-import test.java.TestUtils;
-import test.java.courseModelTest.blocksTest.AbstractBlockTest;
+import test.java.courseModel.blocks.AbstractBlockTest;
+import test.utils.TestTools;
 
 public class HeaderBlockTest extends AbstractBlockTest {
 
 	@Override
 	public void toHtml() {
-		for (XWPFParagraph par : TestUtils.getHeaderParagraphs()) {
+		for (XWPFParagraph par : TestTools.getHeaderParagraphs()) {
 			HeaderBlock block = HeaderParser.parse(par, 10);
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 

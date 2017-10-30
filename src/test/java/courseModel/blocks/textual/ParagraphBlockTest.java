@@ -1,4 +1,4 @@
-package test.java.courseModelTest.blocksTest.textual;
+package test.java.courseModel.blocks.textual;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,9 +25,9 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
 
-import test.java.TestUtils;
-import test.java.courseModelTest.blocksTest.AbstractBlockTest;
-import test.java.courseParserTest.paragraphsTest.ParagraphParserTest;
+import test.java.courseModel.blocks.AbstractBlockTest;
+import test.java.courseParser.paragraphs.ParagraphParserTest;
+import test.utils.TestTools;
 
 @RunWith(Parameterized.class)
 public class ParagraphBlockTest extends AbstractBlockTest {
@@ -41,14 +41,14 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	@SuppressWarnings("rawtypes")
 	@Parameters
 	public static Collection data() {
-		return Arrays.asList(new Object[][] { { TestUtils.getTestTextParagraphs() }, { TestUtils.getTestHyperlinks() },
-				{ TestUtils.getOnlyTextParagraphs() } });
+		return Arrays.asList(new Object[][] { { TestTools.getTestTextParagraphs() }, { TestTools.getTestHyperlinks() },
+				{ TestTools.getOnlyTextParagraphs() } });
 	}
 
 	@Override
 	public void toHtml() {
 		for (XWPFParagraph par : this.pars) {
-			ParagraphBlock block = ParagraphParser.parse(par, TestUtils.getMathMLFormulas());
+			ParagraphBlock block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			String blockText = block.getText();
@@ -67,10 +67,10 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 			// search special paragraphs with styles
 			String[] content = blockText.split(":");
 			if ((content.length == 2) && (content[0].indexOf(' ') == -1)) {
-				if (TestUtils.SIMPLE_TEXT_PAR.equals(content[0])) {
+				if (TestTools.SIMPLE_TEXT_PAR.equals(content[0])) {
 					assertEquals(htmlBlock.getFirstChild().getNodeName().toLowerCase(), "span");
 					assertEquals(htmlBlock.getFirstChild().getFirstChild().getNodeName().toLowerCase(), "span");
-				} else if (TestUtils.STYLED_TEXT_PAR.equals(content[0])) {
+				} else if (TestTools.STYLED_TEXT_PAR.equals(content[0])) {
 					for (ParagraphItem pItem : block.getItems()) {
 						assertTrue(htmlStyles.containsAll(
 								pItem.getValue().getItems().stream().filter(item -> item instanceof TextContentItem)
@@ -80,7 +80,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 				}
 			}
 
-			boolean isHyperlinkTest = TestUtils.getTestHyperlinks().contains(par);
+			boolean isHyperlinkTest = TestTools.getTestHyperlinks().contains(par);
 			assertTrue(getHtmlLinks(htmlBlock, isHyperlinkTest).equals(getBlockLinks(block, isHyperlinkTest)));
 		}
 	}
@@ -143,17 +143,17 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	private static String getNodeStyle(Element node) {
 		if (node.getNodeName() != null) {
 			if ("b".equalsIgnoreCase(node.getNodeName()) || "strong".equalsIgnoreCase(node.getNodeName()))
-				return TestUtils.BOLD_TEXT;
+				return TestTools.BOLD_TEXT;
 			if ("i".equalsIgnoreCase(node.getNodeName()))
-				return TestUtils.ITALIC_TEXT;
+				return TestTools.ITALIC_TEXT;
 			if ("sup".equalsIgnoreCase(node.getNodeName()))
-				return TestUtils.SUPERSCRIPT_TEXT;
+				return TestTools.SUPERSCRIPT_TEXT;
 			if ("sub".equalsIgnoreCase(node.getNodeName()))
-				return TestUtils.SUBSCRIPT_TEXT;
+				return TestTools.SUBSCRIPT_TEXT;
 			if ("u".equalsIgnoreCase(node.getNodeName()))
-				return TestUtils.UNDERLINE_TEXT;
+				return TestTools.UNDERLINE_TEXT;
 			if ("font".equalsIgnoreCase(node.getNodeName()) && (node.getAttribute("color") != null))
-				return TestUtils.COLORED_TEXT;
+				return TestTools.COLORED_TEXT;
 		}
 
 		return null;

@@ -1,4 +1,4 @@
-package test.java.courseModelTest.blocksTest.tabular;
+package test.java.courseModel.blocks.tabular;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,8 +16,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
-import test.java.TestUtils;
-import test.java.courseModelTest.blocksTest.AbstractBlockTest;
+import test.java.courseModel.blocks.AbstractBlockTest;
+import test.utils.TestTools;
 
 public class TableBlockTest extends AbstractBlockTest {
 
@@ -43,8 +43,8 @@ public class TableBlockTest extends AbstractBlockTest {
 	 */
 	@Override
 	public void toHtml() {
-		for (XWPFTable table : TestUtils.getTestTables()) {
-			TableBlock block = TableParser.parse(table, TestUtils.getMathMLFormulas());
+		for (XWPFTable table : TestTools.getTestTables()) {
+			TableBlock block = TableParser.parse(table, TestTools.getMathMLFormulas());
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 			Node htmlTBody = htmlBlock.getFirstChild();
 
@@ -52,14 +52,14 @@ public class TableBlockTest extends AbstractBlockTest {
 			assertEquals(htmlTBody.getNodeName().toLowerCase(), "tbody");
 			assertEquals(htmlTBody.getChildNodes().getLength(), block.getItems().size());
 
-			for (int rowNum = TestUtils.CONTENT_FROM_ROW; rowNum < htmlTBody.getChildNodes().getLength(); rowNum++) {
+			for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < htmlTBody.getChildNodes().getLength(); rowNum++) {
 				Node htmlRow = htmlTBody.getChildNodes().item(rowNum);
 				List<CellBlock> row = block.getItems().get(rowNum).getValue();
 
 				assertEquals(htmlRow.getNodeName().toLowerCase(), "tr");
 				assertEquals(htmlRow.getChildNodes().getLength(), row.size());
 
-				for (int cellNum = TestUtils.CONTENT_FROM_COLUMN; cellNum < htmlRow.getChildNodes()
+				for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < htmlRow.getChildNodes()
 						.getLength(); cellNum++) {
 					CellItem cell = row.get(cellNum).getFirstItem();
 					Element htmlCell = (Element) htmlRow.getChildNodes().item(cellNum);

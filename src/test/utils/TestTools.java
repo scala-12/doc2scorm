@@ -1,4 +1,4 @@
-package test.java;
+package test.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
-public class TestUtils {
+public class TestTools {
 
 	public static final String COURSE_NAME = "WORD-2010.docx";
 
@@ -63,7 +63,7 @@ public class TestUtils {
 	 * @return InputStream for file from resources or null
 	 */
 	public static InputStream getFileFromTestResources(String fileName) {
-		return TestUtils.class.getClassLoader().getResourceAsStream(fileName);
+		return TestTools.class.getClassLoader().getResourceAsStream(fileName);
 	}
 
 	/**
@@ -342,19 +342,19 @@ public class TestUtils {
 	 * Returns info about all cell of table, that not merged in column
 	 * 
 	 * @return rows List, row is cell List, cell is
-	 *         {@link TestUtils#getSpecialCellInfo(org.apache.poi.xwpf.usermodel.XWPFTableCell)}
+	 *         {@link TestTools#getSpecialCellInfo(org.apache.poi.xwpf.usermodel.XWPFTableCell)}
 	 */
 	public static List<List<int[]>> getSpecialTableContentCellsInfo(
 			XWPFTable table) {
 		ArrayList<List<int[]>> tableInfo = new ArrayList<>();
-		for (int rowNum = TestUtils.CONTENT_FROM_ROW; rowNum < table.getRows()
+		for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < table.getRows()
 				.size(); rowNum++) {
 			XWPFTableRow tRow = table.getRow(rowNum);
 
 			ArrayList<int[]> rowInfo = new ArrayList<>();
-			for (int cellNum = TestUtils.CONTENT_FROM_COLUMN; cellNum < tRow
+			for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < tRow
 					.getTableCells().size(); cellNum++) {
-				int[] cellInfo = TestUtils.getSpecialCellInfo(tRow
+				int[] cellInfo = TestTools.getSpecialCellInfo(tRow
 						.getCell(cellNum));
 				if (cellInfo != null) {
 					rowInfo.add(cellInfo);

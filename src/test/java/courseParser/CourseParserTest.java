@@ -1,4 +1,4 @@
-package test.java.courseParserTest;
+package test.java.courseParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 
-import test.java.TestUtils;
+import test.utils.TestTools;
 
 @RunWith(Parameterized.class)
 public class CourseParserTest {
@@ -41,7 +41,7 @@ public class CourseParserTest {
 	public CourseParserTest(String courseName, int headerLevel) {
 		this.courseName = courseName;
 		// this.headerLevel = headerLevel;
-		this.courseModel = CourseParser.parse(TestUtils.getTestDocFile(), courseName, headerLevel);
+		this.courseModel = CourseParser.parse(TestTools.getTestDocFile(), courseName, headerLevel);
 	}
 
 	@Test
