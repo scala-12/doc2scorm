@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content;
 
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
@@ -9,14 +9,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.FormulaContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
 /**
- * Item that may be {@link TextContentItem}, {@link FormulaContentItem} or
- * {@link ImageContentItem}
+ * Item that may be {@link TextRunItem}, {@link FormulaRunItem} or
+ * {@link ImageRunItem}
  * 
  * @author Kalashnikov Vladislav
  * 
@@ -24,7 +24,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
  *            Type of item that included in block
  *
  */
-public abstract class AbstractContentItem<T> extends AbstractParagraphItem<T> {
+public abstract class AbstractContentRunItem<T> extends AbstractSectionItem<T> {
 
 	public static final String SPAN_TAG_NAME = "span";
 	private static final String BOLD_TAG_NAME = "b";
@@ -43,7 +43,7 @@ public abstract class AbstractContentItem<T> extends AbstractParagraphItem<T> {
 	private boolean subscript;
 	private String color;
 
-	protected AbstractContentItem(XWPFRun run, T value) {
+	protected AbstractContentRunItem(XWPFRun run, T value) {
 		super(value);
 
 		if (run != null) {

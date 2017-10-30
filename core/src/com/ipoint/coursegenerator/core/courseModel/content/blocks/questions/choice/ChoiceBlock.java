@@ -8,14 +8,14 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * This block is an analogue of text paragraph. These includes several
- * {@link TextBlock}, {@link HyperlinkBlock}
+ * {@link TextualRunsBlock}, {@link HyperlinkRunsBlock}
  * 
  * @author Kalashnikov Vladislav
  *

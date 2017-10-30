@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,19 +6,19 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
- * List block which may includes several {@link TextBlock} or
- * {@link HyperlinkBlock} as one item
+ * List block which may includes several {@link TextualRunsBlock} or
+ * {@link HyperlinkRunsBlock} as one item
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ListBlock extends AbstractTextualBlock<ListItem> {
+public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionItem> {
 
 	public static final int SIMPLE_MARKER = 0;
 	public static final int UPPER_LETTER_MARKER = 1;
@@ -38,7 +38,7 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 	 * @param items
 	 *            Items of block
 	 */
-	public ListBlock(List<ListItem> items) {
+	public ListSectionBlock(List<ListSectionItem> items) {
 		super(items);
 		this.setMarkerType(SIMPLE_MARKER);
 	}
@@ -73,11 +73,11 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 	public int getSize() {
 		int size = 0;
 
-		for (ListItem item : this.getItems()) {
+		for (ListSectionItem item : this.getItems()) {
 			if (item.getValue() instanceof ParagraphBlock) {
 				++size;
-			} else if (item.getValue() instanceof ListBlock) {
-				size += ((ListBlock) item.getValue()).getSize();
+			} else if (item.getValue() instanceof ListSectionBlock) {
+				size += ((ListSectionBlock) item.getValue()).getSize();
 			}
 		}
 
@@ -114,12 +114,12 @@ public class ListBlock extends AbstractTextualBlock<ListItem> {
 			Element listItem = this.getItems().get(i).toHtml(creatorTags);
 			list.appendChild(listItem);
 			if ((i + 1) < this.getItems().size()) {
-				if (this.getItems().get(i + 1).getValue() instanceof ListBlock) {
+				if (this.getItems().get(i + 1).getValue() instanceof ListSectionBlock) {
 					// first child because this method returns <li>, but we need
 					// insert into listItem a other list. If don't do it then
 					// another list inserted into new list item - It is looks
 					// not correct.
-					ListItem item = this.getItems().get(++i);
+					ListSectionItem item = this.getItems().get(++i);
 					listItem.appendChild(item.toHtml(creatorTags).getFirstChild());
 				}
 			}

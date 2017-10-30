@@ -28,7 +28,6 @@ import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -37,6 +36,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.matc
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -365,7 +365,7 @@ public class FileTools {
 					.append("/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>");
 			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(scoDir, IMAGE_DIR_NAME), null);
 		} else {
-			for (AbstractParagraphBlock<?> block : page.getIntroBlocks()) {
+			for (AbstractSectionBlock<?> block : page.getIntroBlocks()) {
 				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
 			}
 		}

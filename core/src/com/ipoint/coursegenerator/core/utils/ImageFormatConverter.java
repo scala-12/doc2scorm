@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
 
 import net.arnx.wmf2svg.gdi.svg.SvgGdi;
 import net.arnx.wmf2svg.gdi.svg.SvgGdiException;
@@ -79,9 +79,9 @@ public class ImageFormatConverter {
 			ByteArrayInputStream in = new ByteArrayInputStream(data);
 			new WmfParser().parse(in, gdi);
 
-			float height = ImageContentItem
+			float height = ImageRunItem
 					.toPxSize(gdi.getDocument().getFirstChild().getAttributes().getNamedItem("height").getNodeValue());
-			float width = ImageContentItem
+			float width = ImageRunItem
 					.toPxSize(gdi.getDocument().getFirstChild().getAttributes().getNamedItem("width").getNodeValue());
 
 			if ((pathToSOffice != null) && pathToSOffice.exists()) {

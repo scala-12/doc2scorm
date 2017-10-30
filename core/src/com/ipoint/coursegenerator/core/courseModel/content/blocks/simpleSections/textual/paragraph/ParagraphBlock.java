@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,15 +8,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.TextContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
 /**
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractTextualBlock<ParagraphItem> {
+public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
 	public static final int LEFT_ALIGN = 0;
 
@@ -97,13 +97,13 @@ public class ParagraphBlock extends AbstractTextualBlock<ParagraphItem> {
 	@Override
 	public String getText() {
 		StringBuilder text = new StringBuilder();
-		ArrayList<TextContentItem> items = new ArrayList<>();
+		ArrayList<TextRunItem> items = new ArrayList<>();
 		for (ParagraphItem parItem : this.getItems()) {
-			parItem.getValue().getItems().stream().filter(item -> item instanceof TextContentItem)
-					.forEach(item -> items.add((TextContentItem) item));
+			parItem.getValue().getItems().stream().filter(item -> item instanceof TextRunItem)
+					.forEach(item -> items.add((TextRunItem) item));
 		}
 
-		for (TextContentItem item : items) {
+		for (TextRunItem item : items) {
 			text.append(item.getValue());
 		}
 

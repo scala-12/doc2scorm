@@ -6,21 +6,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
 /**
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class MatchItem extends AbstractQuestionItem<List<List<AbstractParagraphBlock<?>>>> {
+public class MatchItem extends AbstractQuestionItem<List<List<AbstractSectionBlock<?>>>> {
 
 	public static final String MATCH_ANSWER_CLASS = "match_answer";
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
 	public static final String[] MATCH_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
-	public MatchItem(List<List<AbstractParagraphBlock<?>>> pair) {
+	public MatchItem(List<List<AbstractSectionBlock<?>>> pair) {
 		super(pair);
 	}
 
@@ -47,13 +47,13 @@ public class MatchItem extends AbstractQuestionItem<List<List<AbstractParagraphB
 		span.appendChild(label);
 		span.appendChild(answer);
 
-		for (AbstractParagraphBlock<?> block : this.getValue().get(0)) {
+		for (AbstractSectionBlock<?> block : this.getValue().get(0)) {
 			NodeList items = block.toSimpleHtml(creatorTags);
 			while (items.getLength() != 0) {
 				label.appendChild(items.item(0));
 			}
 		}
-		for (AbstractParagraphBlock<?> block : this.getValue().get(1)) {
+		for (AbstractSectionBlock<?> block : this.getValue().get(1)) {
 			NodeList items = block.toSimpleHtml(creatorTags);
 			while (items.getLength() != 0) {
 				answer.appendChild(items.item(0));

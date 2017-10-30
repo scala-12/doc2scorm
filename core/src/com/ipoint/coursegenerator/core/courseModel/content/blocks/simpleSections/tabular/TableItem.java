@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
 /**
  * This item includes {@link CellBlock}).
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
  * @author Kalashnikov Vladislav
  *
  */
-public class TableItem extends AbstractParagraphItem<List<CellBlock>> {
+public class TableItem extends AbstractSectionItem<List<CellBlock>> {
 
 	/**
 	 * Create row as block item

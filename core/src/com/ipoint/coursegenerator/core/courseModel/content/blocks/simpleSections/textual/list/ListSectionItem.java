@@ -1,22 +1,22 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 
 /**
- * Item includes {@link ParagraphBlock} or {@link ListBlock}
+ * Item includes {@link ParagraphBlock} or {@link ListSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ListItem extends AbstractParagraphItem<AbstractTextualBlock<?>> {
+public class ListSectionItem extends AbstractSectionItem<AbstractTextualSectionBlock<?>> {
 
-	public ListItem(AbstractTextualBlock<?> paragraph) {
+	public ListSectionItem(AbstractTextualSectionBlock<?> paragraph) {
 		super(paragraph);
 	}
 

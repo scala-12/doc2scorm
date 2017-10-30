@@ -9,10 +9,10 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.junit.Test;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
 import test.utils.TestTools;

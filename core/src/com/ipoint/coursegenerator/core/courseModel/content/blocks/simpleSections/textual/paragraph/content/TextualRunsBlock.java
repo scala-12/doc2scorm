@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,27 +6,27 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 
 /**
  * This block is analogue paragraph in life. Text block which may include
- * {@link AbstractContentItem}
+ * {@link AbstractContentRunItem}
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
+public class TextualRunsBlock extends AbstractTextualSectionBlock<AbstractContentRunItem<?>> {
 
-	public TextBlock(List<AbstractContentItem<?>> runs) {
+	public TextualRunsBlock(List<AbstractContentRunItem<?>> runs) {
 		super(runs);
 	}
 
-	public TextBlock(AbstractContentItem<?> run) {
+	public TextualRunsBlock(AbstractContentRunItem<?> run) {
 		this(toList(run));
 	}
 
-	private static ArrayList<AbstractContentItem<?>> toList(AbstractContentItem<?> run) {
-		ArrayList<AbstractContentItem<?>> list = new ArrayList<>();
+	private static ArrayList<AbstractContentRunItem<?>> toList(AbstractContentRunItem<?> run) {
+		ArrayList<AbstractContentRunItem<?>> list = new ArrayList<>();
 		list.add(run);
 
 		return list;
@@ -38,7 +38,7 @@ public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element paragraph = creatorTags.createElement("span");
-		for (AbstractContentItem<?> run : this.getItems()) {
+		for (AbstractContentRunItem<?> run : this.getItems()) {
 			paragraph.appendChild(run.toHtml(creatorTags));
 		}
 
@@ -48,7 +48,7 @@ public class TextBlock extends AbstractTextualBlock<AbstractContentItem<?>> {
 	@Override
 	public String getText() {
 		StringBuilder text = new StringBuilder();
-		for (AbstractContentItem<?> item : this.getItems()) {
+		for (AbstractContentRunItem<?> item : this.getItems()) {
 			text.append(item.getText());
 		}
 

@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections;
 
 import java.util.List;
 
@@ -7,22 +7,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.AbstractTextualBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 
 /**
  * Abstract paragraph block. These may be {@link TableBlock} or
- * {@link AbstractTextualBlock}
+ * {@link AbstractTextualSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  * 
  * @param <T>
  *            Type of item that included in block
  */
-public abstract class AbstractParagraphBlock<T extends AbstractParagraphItem<?>> extends AbstractBlock<T>
+public abstract class AbstractSectionBlock<T extends AbstractSectionItem<?>> extends AbstractBlock<T>
 		implements ConvertableWithText {
 
-	protected AbstractParagraphBlock(List<T> items) {
+	protected AbstractSectionBlock(List<T> items) {
 		super(items);
 	}
 

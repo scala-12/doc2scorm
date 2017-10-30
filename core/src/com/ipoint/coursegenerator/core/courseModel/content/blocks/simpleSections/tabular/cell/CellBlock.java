@@ -1,10 +1,10 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
 /**
  * This block is an analogue of table cell. There may includes only one
@@ -13,7 +13,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.Abs
  * @author Kalashnikov Vladislav
  *
  */
-public class CellBlock extends AbstractParagraphBlock<CellItem> {
+public class CellBlock extends AbstractSectionBlock<CellItem> {
 
 	public CellBlock(CellItem item) {
 		super(Lists.newArrayList(item));

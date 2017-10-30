@@ -1,11 +1,11 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.AbstractContentItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -14,11 +14,11 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class FormulaContentItem extends AbstractContentItem<Node> {
+public class FormulaRunItem extends AbstractContentRunItem<Node> {
 
 	private boolean paragraphFlag;
 
-	public FormulaContentItem(Node math, boolean paragraphFlag) {
+	public FormulaRunItem(Node math, boolean paragraphFlag) {
 		super(null, math);
 		this.setParagraphFlag(paragraphFlag);
 	}

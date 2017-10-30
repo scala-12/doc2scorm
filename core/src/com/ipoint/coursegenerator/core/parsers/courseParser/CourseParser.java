@@ -31,13 +31,6 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.AbstractParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice.ChoiceItem;
@@ -47,6 +40,13 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.matc
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.match.MatchItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.sequence.SequenceItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
@@ -66,13 +66,13 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  */
 public class CourseParser extends AbstractParser {
 
-	private static class BlockWithShifting extends Pair<AbstractParagraphBlock<?>, Integer> {
+	private static class BlockWithShifting extends Pair<AbstractSectionBlock<?>, Integer> {
 
-		public BlockWithShifting(AbstractParagraphBlock<?> block, int shift) {
+		public BlockWithShifting(AbstractSectionBlock<?> block, int shift) {
 			super(block, (shift > 0) ? shift : 0);
 		}
 
-		public AbstractParagraphBlock<?> getBlock() {
+		public AbstractSectionBlock<?> getBlock() {
 			return this.left;
 		}
 
@@ -81,9 +81,9 @@ public class CourseParser extends AbstractParser {
 		}
 	}
 
-	private static class QuestionWithAnswers extends Pair<String, List<AbstractParagraphBlock<?>>> {
+	private static class QuestionWithAnswers extends Pair<String, List<AbstractSectionBlock<?>>> {
 
-		public QuestionWithAnswers(String task, List<AbstractParagraphBlock<?>> answersBlocks) {
+		public QuestionWithAnswers(String task, List<AbstractSectionBlock<?>> answersBlocks) {
 			super(task, answersBlocks);
 		}
 
@@ -91,7 +91,7 @@ public class CourseParser extends AbstractParser {
 			return this.left;
 		}
 
-		public List<AbstractParagraphBlock<?>> getAnswersBlocks() {
+		public List<AbstractSectionBlock<?>> getAnswersBlocks() {
 			return this.right;
 		}
 	}
@@ -323,7 +323,7 @@ public class CourseParser extends AbstractParser {
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
 						// is not test
-						ArrayList<AbstractParagraphBlock<?>> chapterBlocks = new ArrayList<>();
+						ArrayList<AbstractSectionBlock<?>> chapterBlocks = new ArrayList<>();
 
 						int chapterElemNum = 0;
 						while (chapterElemNum < chapterParsAndTables.size()) {
@@ -342,10 +342,10 @@ public class CourseParser extends AbstractParser {
 					} else {
 						// is test
 
-						ArrayList<AbstractParagraphBlock<?>> introBlocks = new ArrayList<>();
+						ArrayList<AbstractSectionBlock<?>> introBlocks = new ArrayList<>();
 						ArrayList<QuestionWithAnswers> questionsWithAnswers = new ArrayList<>();
 
-						ArrayList<AbstractParagraphBlock<?>> questionAnswers = null;
+						ArrayList<AbstractSectionBlock<?>> questionAnswers = null;
 						StringBuilder questionTask = null;
 
 						HashMap<String, XWPFParagraph> htmlAnswer2RealPar = new HashMap<>();
@@ -380,7 +380,7 @@ public class CourseParser extends AbstractParser {
 												.add(new QuestionWithAnswers(questionTask.toString(), questionAnswers));
 
 										// TODO: check all
-										if (blockWithShift.getBlock() instanceof ListBlock) {
+										if (blockWithShift.getBlock() instanceof ListSectionBlock) {
 											int shift = blockWithShift.getShift();
 
 											int i = 0;
@@ -441,16 +441,16 @@ public class CourseParser extends AbstractParser {
 								} else if (block.getFirstItem().getValue().size() == 2) {
 									ArrayList<MatchItem> items = new ArrayList<>();
 									for (TableItem row : block.getItems()) {
-										ArrayList<List<AbstractParagraphBlock<?>>> pair = new ArrayList<>();
+										ArrayList<List<AbstractSectionBlock<?>>> pair = new ArrayList<>();
 										pair.add(row.getValue().get(0).getFirstItem().getValue());
 										pair.add(row.getValue().get(1).getFirstItem().getValue());
 										items.add(new MatchItem(pair));
 									}
 									questBlock = new MatchBlock(items);
 								}
-							} else if (question.getAnswersBlocks().get(0) instanceof ListBlock) {
+							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
 								HashSet<ChoiceItem> items = new HashSet<>();
-								for (ListItem item : ((ListBlock) question.getAnswersBlocks().get(0)).getItems()) {
+								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0)).getItems()) {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();
 
 									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
@@ -489,18 +489,18 @@ public class CourseParser extends AbstractParser {
 	}
 
 	private static BlockWithShifting getBlockWithShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
-		AbstractParagraphBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
+		AbstractSectionBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 
 		XWPFParagraph par = (elem instanceof XWPFParagraph) ? (XWPFParagraph) elem : null;
 
 		if ((par != null) && HeaderParser.HeaderInfo.isHeader(par)) {
 			block = HeaderParser.parse(par, maxHeader);
-		} else if (block instanceof ListBlock) {
+		} else if (block instanceof ListSectionBlock) {
 			// minus 1 because after this iteration
 			// "elNum" will be
 			// incremented
-			shift = ((ListBlock) block).getSize() - 1;
+			shift = ((ListSectionBlock) block).getSize() - 1;
 		}
 
 		return new BlockWithShifting(block, shift);

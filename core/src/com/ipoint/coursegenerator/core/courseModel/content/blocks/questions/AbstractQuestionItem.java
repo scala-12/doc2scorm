@@ -1,7 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
 /**
  * This item includes {@link CellBlock}).
