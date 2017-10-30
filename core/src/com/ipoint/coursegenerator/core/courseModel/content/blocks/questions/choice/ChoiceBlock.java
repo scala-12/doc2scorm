@@ -1,19 +1,17 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.choice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.HyperlinkBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.TextBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
-import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
  * This block is an analogue of text paragraph. These includes several
@@ -24,53 +22,38 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  */
 public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
-	private static class AnswerNodePair extends Pair<Element, Node> {
-
-		public AnswerNodePair(Element input, Node label) {
-			super(input, label);
-		}
-
-		public Element getInputElement() {
-			return this.left;
-		}
-
-		public Node getLabelElement() {
-			return this.right;
-		}
-
-	}
-
 	public static final String CHOICE_ANSWERS_FIELDSET_ID = "choice_answers_fieldset";
 
 	private boolean isOneChoice;
-	private int[] answerOrder;
 
-	public ChoiceBlock(List<ChoiceItem> items) {
-		this(items, null);
+	// TODO: fix in iLogos this "feature" (+1)
+	private static final int _SHIFT = 1;
+
+	public ChoiceBlock(Set<ChoiceItem> items) {
+		this(new ArrayList<>(items), null);
 
 		isOneChoice = true;
-		for (int i = 0, correct = 0; isOneChoice && (i < items.size()); i++) {
-			if (items.get(i).isCorrect()) {
-				correct++;
-				if (correct > 1) {
+
+		Iterator<ChoiceItem> iter = items.iterator();
+		boolean hasCorrect = false;
+		Integer index = _SHIFT - 1;
+		ArrayList<Integer> correctAnswers = new ArrayList<>(this.getItems().size());
+		while (iter.hasNext()) {
+			index += 1;
+			if (iter.next().isCorrect()) {
+				correctAnswers.add(index);
+				if (hasCorrect) {
 					isOneChoice = false;
 				}
+				hasCorrect = true;
 			}
 		}
+
+		this.correctAnswers = correctAnswers.stream().sorted().map(number -> number.toString()).toArray(String[]::new);
 	}
 
 	public ChoiceBlock(List<ChoiceItem> items, String task) {
 		super(items, task);
-		this.answerOrder = null;
-	}
-
-	@Override
-	public String[] getCorrect() {
-		if (super.getCorrect() == null) {
-			this.toHtml(Tools.createEmptyDocument());
-		}
-
-		return this.correctAnswers;
 	}
 
 	/**
@@ -87,58 +70,20 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		Element fieldset = creatorTags.createElement("fieldset");
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
 
-		int answersCount = answersBlock.getChildNodes().getLength();
-
-		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = null == this.answerOrder;
-		ArrayList<Integer> correctAnswers = null;
-		if (withoutCorrectness) {
-			correctAnswers = new ArrayList<>(answersCount);
-			this.answerOrder = new int[answersCount];
-			numbers = new ArrayList<>(answersCount);
-			for (int i = 0; i < answersCount; i++) {
-				numbers.add(i);
-			}
-		}
-
-		AnswerNodePair[] stirredAnswers = new AnswerNodePair[answersCount];
-
-		for (int i = 0; answersBlock.hasChildNodes(); i++) {
-			// old answer will be transformative and removed after
-			// new answer will be added after
+		int i = _SHIFT - 1;
+		while (answersBlock.hasChildNodes()) {
 			Element span = (Element) answersBlock.getFirstChild();
-			answersBlock.removeChild(span);
-
 			Element answer = (Element) span.getElementsByTagName("input").item(0);
 			answer.setAttribute("type", type);
 
-			int number;
-			if (withoutCorrectness) {
-				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				if (this.getItems().get(i).isCorrect()) {
-					// TODO: fix in iLogos this "feature" (+1)
-					correctAnswers.add(number + 1);
-				}
-				this.answerOrder[i] = number;
-			} else {
-				number = this.answerOrder[i];
-			}
+			i += 1;
+			answer.setAttribute("value", String.valueOf(i));
 
-			// TODO: fix in iLogos this "feature" (+1)
-			answer.setAttribute("value", String.valueOf(number + 1));
+			fieldset.appendChild(span.getFirstChild());
+			fieldset.appendChild(span.getLastChild());
 
-			stirredAnswers[number] = new AnswerNodePair(answer, span.getElementsByTagName("label").item(0));
+			answersBlock.removeChild(span);
 		}
-
-		if (withoutCorrectness) {
-			this.correctAnswers = correctAnswers.stream().sorted().map(number -> number.toString())
-					.toArray(String[]::new);
-		}
-
-		Arrays.stream(stirredAnswers).forEach(pair -> {
-			fieldset.appendChild(pair.getInputElement());
-			fieldset.appendChild(pair.getLabelElement());
-		});
 
 		answersBlock.appendChild(fieldset);
 
