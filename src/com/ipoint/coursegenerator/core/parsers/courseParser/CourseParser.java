@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -448,7 +449,7 @@ public class CourseParser extends AbstractParser {
 									questBlock = new MatchBlock(items);
 								}
 							} else if (question.getAnswersBlocks().get(0) instanceof ListBlock) {
-								ArrayList<ChoiceItem> items = new ArrayList<>();
+								HashSet<ChoiceItem> items = new HashSet<>();
 								for (ListItem item : ((ListBlock) question.getAnswersBlocks().get(0)).getItems()) {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();
 
