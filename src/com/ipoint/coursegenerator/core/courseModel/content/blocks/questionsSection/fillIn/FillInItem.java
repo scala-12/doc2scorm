@@ -1,9 +1,9 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 
 /**
  * 

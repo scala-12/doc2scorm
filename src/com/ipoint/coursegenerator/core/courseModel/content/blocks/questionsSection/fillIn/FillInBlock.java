@@ -1,8 +1,8 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.fillIn;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn;
 
 import java.util.Collections;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 
 /**
  * 
