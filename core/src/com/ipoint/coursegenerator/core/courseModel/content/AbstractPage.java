@@ -21,6 +21,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tex
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.paragraph.content.items.ImageContentItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.utils.PictureInfo;
 
 /**
  * Page. These includes {@link AbstractParagraphBlock}

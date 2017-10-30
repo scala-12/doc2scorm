@@ -10,6 +10,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.Abs
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questions.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.utils.PictureInfo;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
