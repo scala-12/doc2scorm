@@ -1,4 +1,4 @@
-package test.java.courseParserTest.paragraphsTest;
+package test.java.courseParser.paragraphs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,26 +15,26 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tab
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.tabular.cell.CellItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
-import test.java.TestUtils;
+import test.utils.TestTools;
 
 public class TableParserTest {
 
 	@Test
 	public void parseTables() {
-		for (XWPFTable table : TestUtils.getTestTables()) {
-			List<List<int[]>> tblInfo = TestUtils.getSpecialTableContentCellsInfo(table);
+		for (XWPFTable table : TestTools.getTestTables()) {
+			List<List<int[]>> tblInfo = TestTools.getSpecialTableContentCellsInfo(table);
 			assertNotNull(tblInfo);
 
-			TableBlock block = TableParser.parse(table, TestUtils.getMathMLFormulas());
+			TableBlock block = TableParser.parse(table, TestTools.getMathMLFormulas());
 			List<TableItem> rows = block.getItems();
-			assertEquals(rows.size(), TestUtils.getSpecialTableRowCount(table).intValue());
+			assertEquals(rows.size(), TestTools.getSpecialTableRowCount(table).intValue());
 
-			for (int rowNum = TestUtils.CONTENT_FROM_ROW; rowNum < rows.size(); rowNum++) {
+			for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < rows.size(); rowNum++) {
 				XWPFTableRow tRow = table.getRow(rowNum);
 				List<CellBlock> cells = rows.get(rowNum).getValue();
-				assertEquals(Integer.valueOf(cells.size()), TestUtils.getSpecialCellCountInRow(tRow));
+				assertEquals(Integer.valueOf(cells.size()), TestTools.getSpecialCellCountInRow(tRow));
 
-				for (int cellNum = TestUtils.CONTENT_FROM_COLUMN; cellNum < cells.size(); cellNum++) {
+				for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < cells.size(); cellNum++) {
 					assertEquals(cells.get(cellNum).getItems().size(), 1);
 					CellItem cell = cells.get(cellNum).getFirstItem();
 					assertNotNull(cell.getValue());

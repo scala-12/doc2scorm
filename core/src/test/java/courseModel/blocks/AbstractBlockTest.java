@@ -1,4 +1,4 @@
-package test.java.courseModelTest.blocksTest;
+package test.java.courseModel.blocks;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -6,7 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import test.java.courseModelTest.ConvertableTest;
+import test.java.courseModel.ConvertableTest;
 
 public abstract class AbstractBlockTest implements ConvertableTest {
 	private Document HTML_DOC;

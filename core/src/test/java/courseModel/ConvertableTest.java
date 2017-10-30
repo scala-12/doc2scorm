@@ -1,4 +1,4 @@
-package test.java.courseModelTest;
+package test.java.courseModel;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package test.java.courseModelTest.blocksTest.textual;
+package test.java.courseModel.blocks.textual;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,16 +12,16 @@ import org.w3c.dom.Node;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.paragraphs.textual.list.ListBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
-import test.java.TestUtils;
-import test.java.courseModelTest.blocksTest.AbstractBlockTest;
+import test.java.courseModel.blocks.AbstractBlockTest;
+import test.utils.TestTools;
 
 public class ListBlockTest extends AbstractBlockTest {
 
 	@Override
 	public void toHtml() {
 		List<XWPFParagraph> lastList = null;
-		for (List<XWPFParagraph> list : TestUtils.getTestListsParagraphs()) {
-			ListBlock block = ListParser.parse(list.get(0), TestUtils.getMathMLFormulas());
+		for (List<XWPFParagraph> list : TestTools.getTestListsParagraphs()) {
+			ListBlock block = ListParser.parse(list.get(0), TestTools.getMathMLFormulas());
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			if (lastList != null) {
