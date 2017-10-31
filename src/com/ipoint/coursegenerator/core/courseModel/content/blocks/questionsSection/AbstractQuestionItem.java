@@ -1,6 +1,6 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
 /**
@@ -9,7 +9,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  * @author Kalashnikov Vladislav
  *
  */
-public abstract class AbstractQuestionItem<T> extends AbstractItem<T> {
+public abstract class AbstractQuestionItem<T> extends AbstractSectionItem<T> {
 
 	public AbstractQuestionItem(T value) {
 		super(value);
