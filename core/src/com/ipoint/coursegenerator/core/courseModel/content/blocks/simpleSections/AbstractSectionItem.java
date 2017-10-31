@@ -28,4 +28,9 @@ public abstract class AbstractSectionItem<T> extends AbstractItem<T> implements 
 		return span.getChildNodes();
 	}
 
+	@Override
+	public String toString() {
+		return this.getText();
+	}
+
 }
