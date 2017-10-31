@@ -57,4 +57,14 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 		return span;
 	}
 
+	@Override
+	public String getText() {
+		return this.getValue().getText();
+	}
+
+	@Override
+	public String toString() {
+		return this.getValue().getText() + ((this.isCorrect()) ? " - (правильный)" : "");
+	}
+
 }

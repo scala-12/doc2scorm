@@ -78,4 +78,10 @@ public class MatchItem extends AbstractQuestionItem<List<Label2Answer>> {
 		return span;
 	}
 
+	@Override
+	public String getText() {
+		// TODO
+		return null;
+	}
+
 }

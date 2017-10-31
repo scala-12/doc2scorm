@@ -46,4 +46,10 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractSectionBlock
 		return item;
 	}
 
+	@Override
+	public String getText() {
+		// TODO
+		return null;
+	}
+
 }

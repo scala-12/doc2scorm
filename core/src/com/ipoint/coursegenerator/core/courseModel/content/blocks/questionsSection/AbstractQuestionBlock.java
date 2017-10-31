@@ -5,12 +5,13 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
  */
-public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> extends AbstractBlock<T> {
+public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> extends AbstractSectionBlock<T> {
 
 	public static final String TASK_BLOCK_ID = "task_block";
 	public static final String FORM_NAME = "examForm";
@@ -86,6 +87,26 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		}
 
 		return div;
+	}
+
+	@Override
+	public String getText() {
+		return getQuestionText(false);
+	}
+
+	@Override
+	public String toString() {
+		return getQuestionText(true);
+	}
+
+	private String getQuestionText(boolean withCorrectMarkers) {
+		StringBuilder text = new StringBuilder();
+		text.append("Задание: ").append(this.getTask()).append("\nОтветы:\n");
+
+		this.getItems().stream().forEach((withCorrectMarkers) ? item -> text.append(item.toString()).append('\n')
+				: item -> text.append(item.getText()).append('\n'));
+
+		return Tools.removeExtraSpaces(text.toString()).trim();
 	}
 
 }
