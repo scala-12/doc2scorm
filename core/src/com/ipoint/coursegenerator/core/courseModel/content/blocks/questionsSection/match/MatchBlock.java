@@ -1,13 +1,17 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
@@ -30,18 +34,32 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		this(items, null);
 	}
 
-	public MatchBlock(List<MatchItem> items, String task) {
-		super(items, task);
-		this.correctAnswers = null;
+	public MatchBlock(final List<MatchItem> items, String task) {
+		super(itemsWithShuffledAnswers(items), task, false);
+
+		final List<List<AbstractSectionBlock<?>>> shuffledAnswers = this.getItems().stream()
+				.map(pair -> pair.getValue().getAnswerSections()).collect(Collectors.toList());
+
+		this.correctAnswers = items.stream()
+				.map(pair -> String.valueOf(shuffledAnswers.indexOf(pair.getValue().getAnswerSections())))
+				.toArray(String[]::new);
 	}
 
-	@Override
-	public String[] getCorrect() {
-		if (super.getCorrect() == null) {
-			this.toHtml(Tools.createEmptyDocument());
-		}
+	private static List<MatchItem> itemsWithShuffledAnswers(List<MatchItem> items) {
+		List<List<AbstractSectionBlock<?>>> labels = items.stream().map(pair -> pair.getValue().getLabelSections())
+				.collect(Collectors.toList());
 
-		return this.correctAnswers;
+		List<List<AbstractSectionBlock<?>>> shuffledAnswers = items.stream()
+				.map(pair -> pair.getValue().getAnswerSections()).collect(Collectors.toList());
+		Collections.shuffle(shuffledAnswers);
+
+		final Iterator<List<AbstractSectionBlock<?>>> shuffledAnswerIter = shuffledAnswers.iterator();
+		final ArrayList<MatchItem> shuffledItems = new ArrayList<>(items.size());
+		labels.stream().forEach(label -> {
+			shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next())));
+		});
+
+		return shuffledItems;
 	}
 
 	/**
@@ -62,31 +80,20 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 		Element labels = creatorTags.createElement("ul");
 		labels.setAttribute("id", MATCH_LABEL_BLOCK_ID);
+
 		Element answers = creatorTags.createElement("ul");
 		answers.setAttribute("id", MATCH_ANSWERS_BLOCK_ID);
+
 		table.getFirstChild().getFirstChild().getFirstChild().appendChild(labels);
 		table.getFirstChild().getFirstChild().getLastChild().appendChild(answers);
 
-		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = this.correctAnswers == null;
-		if (withoutCorrectness) {
-			this.correctAnswers = new String[answersBlock.getChildNodes().getLength()];
-			numbers = new ArrayList<>(this.correctAnswers.length);
-			for (int i = 0; i < this.correctAnswers.length; i++) {
-				numbers.add(i);
-			}
-		}
-		Element[] sortedAnswers = new Element[this.correctAnswers.length];
+		int i = -1;
+		while (answersBlock.hasChildNodes()) {
+			i += 1;
 
-		for (int i = 0; answersBlock.hasChildNodes(); i++) {
-			// old answer will be transformative and removed after
-			// new answer will be added after
 			Element span = (Element) answersBlock.getFirstChild();
-			answersBlock.removeChild(span);
-
 			Element labelSpan = (Element) span.getFirstChild();
 			Element answerSpan = (Element) span.getLastChild();
-
 			if (!labelSpan.getAttribute("id").equals(MatchItem.MATCH_LABEL_4_ANSWER_CLASS)) {
 				Element tmp = labelSpan;
 				labelSpan = answerSpan;
@@ -95,18 +102,10 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 			Element label = creatorTags.createElement("li");
 			label.setAttribute("class", labelSpan.getAttribute("class"));
+
 			Element answer = creatorTags.createElement("li");
 			answer.setAttribute("class", answerSpan.getAttribute("class"));
-
-			int number;
-			if (withoutCorrectness) {
-				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				this.correctAnswers[i] = String.valueOf(number);
-			} else {
-				number = Integer.parseInt(this.correctAnswers[i]);
-			}
-
-			answer.setAttribute("id", MATCH_ANSWER_ID_PREFIX + this.correctAnswers[i]);
+			answer.setAttribute("id", MATCH_ANSWER_ID_PREFIX + String.valueOf(i));
 
 			while (labelSpan.hasChildNodes()) {
 				label.appendChild(labelSpan.getFirstChild());
@@ -116,13 +115,10 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 				answer.appendChild(answerSpan.getFirstChild());
 			}
 
-			sortedAnswers[number] = answer;
-
 			labels.appendChild(label);
-		}
-
-		for (Element answer : sortedAnswers) {
 			answers.appendChild(answer);
+
+			answersBlock.removeChild(span);
 		}
 
 		answersBlock.appendChild(table);

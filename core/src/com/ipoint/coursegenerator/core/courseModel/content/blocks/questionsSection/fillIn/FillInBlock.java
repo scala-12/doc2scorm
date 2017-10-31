@@ -16,7 +16,7 @@ public class FillInBlock extends AbstractQuestionBlock<FillInItem> {
 	}
 
 	public FillInBlock(FillInItem answer, String task) {
-		super(Collections.singletonList(answer), task);
+		super(Collections.singletonList(answer), task, false);
 		this.correctAnswers = new String[] { answer.getCorrectAnswer() };
 	}
 

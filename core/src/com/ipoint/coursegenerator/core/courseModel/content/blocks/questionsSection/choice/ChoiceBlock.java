@@ -1,8 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,23 +27,23 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	// TODO: fix in iLogos this "feature" (+1)
 	private static final int _SHIFT = 1;
 
-	public ChoiceBlock(Set<ChoiceItem> items) {
+	public ChoiceBlock(List<ChoiceItem> items) {
 		this(items, null);
 	}
 
-	public ChoiceBlock(Set<ChoiceItem> items, String task) {
-		super(new ArrayList<>(items), task);
+	public ChoiceBlock(List<ChoiceItem> items, String task) {
+		super(items, task, true);
 
 		boolean isOneChoice = true;
 
-		Iterator<ChoiceItem> iter = items.iterator();
 		boolean hasCorrect = false;
-		Integer index = _SHIFT - 1;
-		ArrayList<Integer> correctAnswers = new ArrayList<>(this.getItems().size());
-		while (iter.hasNext()) {
+		int index = _SHIFT - 1;
+		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
+
+		for (ChoiceItem item : this.getItems()) {
 			index += 1;
-			if (iter.next().isCorrect()) {
-				correctAnswers.add(index);
+			if (item.isCorrect()) {
+				correctAnswers.add(String.valueOf(index));
 				if (hasCorrect) {
 					isOneChoice = false;
 				}
@@ -52,8 +51,12 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 			}
 		}
 
+		if (!hasCorrect) {
+			// TODO: exception
+		}
+
 		this.isOneChoice = isOneChoice;
-		this.correctAnswers = correctAnswers.stream().sorted().map(number -> number.toString()).toArray(String[]::new);
+		this.correctAnswers = correctAnswers.stream().toArray(String[]::new);
 	}
 
 	/**
@@ -72,11 +75,12 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
 		int i = _SHIFT - 1;
 		while (answersBlock.hasChildNodes()) {
+			i += 1;
+
 			Element span = (Element) answersBlock.getFirstChild();
 			Element answer = (Element) span.getElementsByTagName("input").item(0);
 			answer.setAttribute("type", type);
 
-			i += 1;
 			answer.setAttribute("value", String.valueOf(i));
 
 			fieldset.appendChild(span.getFirstChild());
