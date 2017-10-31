@@ -39,4 +39,9 @@ public abstract class AbstractSectionBlock<T extends AbstractSectionItem<?>> ext
 		return span.getChildNodes();
 	}
 
+	@Override
+	public String toString() {
+		return this.getText();
+	}
+
 }
