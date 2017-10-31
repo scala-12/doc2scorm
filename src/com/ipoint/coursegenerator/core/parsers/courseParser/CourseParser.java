@@ -10,8 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -441,23 +439,15 @@ public class CourseParser extends AbstractParser {
 									}
 									questBlock = new SequenceBlock(items);
 								} else if (block.getFirstItem().getValue().size() == 2) {
-									ArrayList<MatchItem> items = new ArrayList<>();
-									for (TableItem row : block.getItems()) {
-										List<AbstractSectionBlock<?>> labels = row.getValue().get(0).getFirstItem()
-												.getValue();
-										HashSet<Label2Answer> labels2Answers = new HashSet<>(labels.size());
-										for (Iterator<AbstractSectionBlock<?>> labelIter = labels
-												.iterator(), answerIter = row.getValue().get(1).getFirstItem()
-														.getValue().iterator(); labelIter.hasNext();) {
-											labels2Answers.add(new Label2Answer(labelIter.next(), answerIter.next()));
-										}
-
-										items.add(new MatchItem(labels2Answers));
-									}
-									questBlock = new MatchBlock(items);
+									questBlock = new MatchBlock(
+											block.getItems().stream()
+													.map(row -> new MatchItem(new Label2Answer(
+															row.getValue().get(0).getFirstItem().getValue(),
+															row.getValue().get(1).getFirstItem().getValue())))
+													.collect(Collectors.toList()));
 								}
 							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
-								HashSet<ChoiceItem> items = new HashSet<>();
+								ArrayList<ChoiceItem> items = new ArrayList<>();
 								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0))
 										.getItems()) {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();

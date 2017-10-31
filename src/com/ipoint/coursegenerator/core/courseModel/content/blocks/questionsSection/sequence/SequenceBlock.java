@@ -2,7 +2,6 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,16 +23,16 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 	}
 
 	public SequenceBlock(List<SequenceItem> items, String task) {
-		super(items, task);
-	}
+		super(new ArrayList<>(items), task, true);
 
-	@Override
-	public String[] getCorrect() {
-		if (super.getCorrect() == null) {
-			this.toHtml(Tools.createEmptyDocument());
+		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
+
+		List<SequenceItem> shuffledItems = this.getItems();
+		for (SequenceItem item : items) {
+			correctAnswers.add(String.valueOf(shuffledItems.indexOf(item)));
 		}
 
-		return this.correctAnswers;
+		this.correctAnswers = correctAnswers.stream().toArray(String[]::new);
 	}
 
 	/**
@@ -47,36 +46,14 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		Element list = creatorTags.createElement("ul");
 		list.setAttribute("id", SEQUENCE_ANSWERS_BLOCK_ID);
 
-		ArrayList<Integer> numbers = null;
-		boolean withoutCorrectness = this.correctAnswers == null;
-		if (withoutCorrectness) {
-			this.correctAnswers = new String[answersBlock.getChildNodes().getLength()];
-			numbers = new ArrayList<>(this.correctAnswers.length);
-			for (int i = 0; i < this.correctAnswers.length; i++) {
-				numbers.add(i);
-			}
-		}
-		Element[] sortedAnswers = new Element[this.correctAnswers.length];
+		int i = -1;
+		while (answersBlock.hasChildNodes()) {
+			i += 1;
 
-		for (int i = 0; answersBlock.hasChildNodes(); i++) {
-			// old answer will be transformative and removed after
-			// new answer will be added after
 			Element item = (Element) answersBlock.getFirstChild();
-			answersBlock.removeChild(item);
+			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + String.valueOf(i));
 
-			int number;
-			if (withoutCorrectness) {
-				number = numbers.remove(ThreadLocalRandom.current().nextInt(0, numbers.size()));
-				this.correctAnswers[i] = String.valueOf(number);
-			} else {
-				number = Integer.parseInt(this.correctAnswers[i]);
-			}
-			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + this.correctAnswers[i]);
-			sortedAnswers[number] = item;
-		}
-
-		for (Element answer : sortedAnswers) {
-			list.appendChild(answer);
+			list.appendChild(item);
 		}
 
 		answersBlock.appendChild(list);

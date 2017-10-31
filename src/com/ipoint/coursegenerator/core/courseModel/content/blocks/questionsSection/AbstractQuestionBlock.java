@@ -1,5 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -35,14 +37,21 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return correctAnswers;
 	}
 
-	protected AbstractQuestionBlock(List<T> items) {
-		this(items, null);
+	protected AbstractQuestionBlock(List<T> items, boolean needShuffle) {
+		this(items, null, needShuffle);
 	}
 
-	protected AbstractQuestionBlock(List<T> items, String task) {
-		super(items);
+	protected AbstractQuestionBlock(List<T> items, String task, boolean needShuffle) {
+		super((needShuffle) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 		this.correctAnswers = null;
+	}
+
+	private static <T extends AbstractQuestionItem<?>> List<T> shuffledItems(List<T> items) {
+		ArrayList<T> shuffledItems = new ArrayList<>(items);
+		Collections.shuffle(shuffledItems);
+
+		return shuffledItems;
 	}
 
 	public String getTask() {
