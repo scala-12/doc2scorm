@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
@@ -21,7 +22,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 			if (items.isEmpty()) {
 				// TODO: exception empty list items
 			} else {
-				this.items = items;
+				this.items = new ArrayList<>(items);
 			}
 		} else {
 			// TODO: exception null pointer value for block
@@ -43,7 +44,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 	 * @return All items of block
 	 */
 	public List<T> getItems() {
-		return this.items;
+		return new ArrayList<>(this.items);
 	}
 
 }
