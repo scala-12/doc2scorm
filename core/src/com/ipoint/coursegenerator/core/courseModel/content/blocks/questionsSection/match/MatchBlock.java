@@ -78,7 +78,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		table.getFirstChild().getFirstChild().appendChild(creatorTags.createElement("td"));
 		table.getFirstChild().getFirstChild().appendChild(creatorTags.createElement("td"));
 
-		Element labels = creatorTags.createElement("ul");
+		Element labels = creatorTags.createElement("ol");
 		labels.setAttribute("id", MATCH_LABEL_BLOCK_ID);
 
 		Element answers = creatorTags.createElement("ul");
