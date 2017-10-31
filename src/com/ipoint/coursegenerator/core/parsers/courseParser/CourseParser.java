@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
@@ -441,16 +443,23 @@ public class CourseParser extends AbstractParser {
 								} else if (block.getFirstItem().getValue().size() == 2) {
 									ArrayList<MatchItem> items = new ArrayList<>();
 									for (TableItem row : block.getItems()) {
-										ArrayList<List<AbstractSectionBlock<?>>> pair = new ArrayList<>();
-										pair.add(row.getValue().get(0).getFirstItem().getValue());
-										pair.add(row.getValue().get(1).getFirstItem().getValue());
-										items.add(new MatchItem(pair));
+										List<AbstractSectionBlock<?>> labels = row.getValue().get(0).getFirstItem()
+												.getValue();
+										HashSet<Label2Answer> labels2Answers = new HashSet<>(labels.size());
+										for (Iterator<AbstractSectionBlock<?>> labelIter = labels
+												.iterator(), answerIter = row.getValue().get(1).getFirstItem()
+														.getValue().iterator(); labelIter.hasNext();) {
+											labels2Answers.add(new Label2Answer(labelIter.next(), answerIter.next()));
+										}
+
+										items.add(new MatchItem(labels2Answers));
 									}
 									questBlock = new MatchBlock(items);
 								}
 							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
 								HashSet<ChoiceItem> items = new HashSet<>();
-								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0)).getItems()) {
+								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0))
+										.getItems()) {
 									ParagraphBlock block = (ParagraphBlock) item.getValue();
 
 									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(

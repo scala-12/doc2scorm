@@ -1,27 +1,46 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class MatchItem extends AbstractQuestionItem<List<List<AbstractSectionBlock<?>>>> {
+public class MatchItem extends AbstractQuestionItem<List<Label2Answer>> {
+
+	public static class Label2Answer extends Pair<AbstractSectionBlock<?>, AbstractSectionBlock<?>> {
+
+		public Label2Answer(AbstractSectionBlock<?> label, AbstractSectionBlock<?> answer) {
+			super(label, answer);
+		}
+
+		public AbstractSectionBlock<?> getLabel() {
+			return this.left;
+		}
+
+		public AbstractSectionBlock<?> getAnswer() {
+			return this.right;
+		}
+	}
 
 	public static final String MATCH_ANSWER_CLASS = "match_answer";
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
 	public static final String[] MATCH_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
-	public MatchItem(List<List<AbstractSectionBlock<?>>> pair) {
-		super(pair);
+	public MatchItem(Set<Label2Answer> pair) {
+		super(new ArrayList<>(pair));
 	}
 
 	/**
@@ -47,15 +66,11 @@ public class MatchItem extends AbstractQuestionItem<List<List<AbstractSectionBlo
 		span.appendChild(label);
 		span.appendChild(answer);
 
-		for (AbstractSectionBlock<?> block : this.getValue().get(0)) {
-			NodeList items = block.toSimpleHtml(creatorTags);
-			while (items.getLength() != 0) {
-				label.appendChild(items.item(0));
-			}
-		}
-		for (AbstractSectionBlock<?> block : this.getValue().get(1)) {
-			NodeList items = block.toSimpleHtml(creatorTags);
-			while (items.getLength() != 0) {
+		for (Label2Answer label2Answer : this.getValue()) {
+			NodeList items1 = label2Answer.getLabel().toSimpleHtml(creatorTags);
+			NodeList items = label2Answer.getAnswer().toSimpleHtml(creatorTags);
+			while (items1.getLength() != 0) {
+				label.appendChild(items1.item(0));
 				answer.appendChild(items.item(0));
 			}
 		}
