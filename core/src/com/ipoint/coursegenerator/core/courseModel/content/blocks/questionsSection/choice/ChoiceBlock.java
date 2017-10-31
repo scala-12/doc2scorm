@@ -2,7 +2,6 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.w3c.dom.Document;
@@ -24,15 +23,19 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 
 	public static final String CHOICE_ANSWERS_FIELDSET_ID = "choice_answers_fieldset";
 
-	private boolean isOneChoice;
+	private final boolean isOneChoice;
 
 	// TODO: fix in iLogos this "feature" (+1)
 	private static final int _SHIFT = 1;
 
 	public ChoiceBlock(Set<ChoiceItem> items) {
-		this(new ArrayList<>(items), null);
+		this(items, null);
+	}
 
-		isOneChoice = true;
+	public ChoiceBlock(Set<ChoiceItem> items, String task) {
+		super(new ArrayList<>(items), task);
+
+		boolean isOneChoice = true;
 
 		Iterator<ChoiceItem> iter = items.iterator();
 		boolean hasCorrect = false;
@@ -49,11 +52,8 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 			}
 		}
 
+		this.isOneChoice = isOneChoice;
 		this.correctAnswers = correctAnswers.stream().sorted().map(number -> number.toString()).toArray(String[]::new);
-	}
-
-	public ChoiceBlock(List<ChoiceItem> items, String task) {
-		super(items, task);
 	}
 
 	/**
