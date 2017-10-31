@@ -90,8 +90,13 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 
 	@Override
 	public String getText() {
-		// TODO
-		return null;
+
+		return String.join(" ",
+				this.getValue().getLabelSections().stream().map(section -> section.getText())
+						.collect(Collectors.toList()))
+				+ " - " + String.join(" ", this.getValue().getAnswerSections().stream()
+						.map(section -> section.getText()).collect(Collectors.toList()));
 	}
+
 
 }

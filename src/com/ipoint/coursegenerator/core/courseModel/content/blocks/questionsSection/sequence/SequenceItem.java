@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,8 +49,9 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractSectionBlock
 
 	@Override
 	public String getText() {
-		// TODO
-		return null;
+
+		return String.join(" ",
+				this.getValue().stream().map(section -> section.getText()).collect(Collectors.toList()));
 	}
 
 }
