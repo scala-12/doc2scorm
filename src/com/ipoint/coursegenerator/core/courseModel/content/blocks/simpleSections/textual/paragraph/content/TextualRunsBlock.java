@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 
 /**
@@ -17,11 +18,11 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class TextualRunsBlock extends AbstractTextualSectionBlock<AbstractContentRunItem<?>> {
 
-	public TextualRunsBlock(List<AbstractContentRunItem<?>> runs) {
+	public TextualRunsBlock(List<AbstractContentRunItem<?>> runs) throws BlockCreationException {
 		super(runs);
 	}
 
-	public TextualRunsBlock(AbstractContentRunItem<?> run) {
+	public TextualRunsBlock(AbstractContentRunItem<?> run) throws BlockCreationException {
 		this(toList(run));
 	}
 

@@ -1,5 +1,6 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
@@ -11,7 +12,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public abstract class AbstractQuestionItem<T> extends AbstractSectionItem<T> {
 
-	public AbstractQuestionItem(T value) {
+	public AbstractQuestionItem(T value) throws ItemCreationException {
 		super(value);
 	}
 

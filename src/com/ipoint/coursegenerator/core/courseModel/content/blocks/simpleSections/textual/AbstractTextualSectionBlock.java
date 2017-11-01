@@ -2,6 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSection
 
 import java.util.List;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
@@ -19,7 +20,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public abstract class AbstractTextualSectionBlock<T extends AbstractSectionItem<?>> extends AbstractSectionBlock<T> {
 
-	protected AbstractTextualSectionBlock(List<T> items) {
+	protected AbstractTextualSectionBlock(List<T> items) throws BlockCreationException {
 		super(items);
 	}
 

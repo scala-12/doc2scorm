@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
@@ -27,11 +28,11 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	// TODO: fix in iLogos this "feature" (+1)
 	private static final int _SHIFT = 1;
 
-	public ChoiceBlock(List<ChoiceItem> items) {
+	public ChoiceBlock(List<ChoiceItem> items) throws BlockCreationException {
 		this(items, null);
 	}
 
-	public ChoiceBlock(List<ChoiceItem> items, String task) {
+	public ChoiceBlock(List<ChoiceItem> items, String task) throws BlockCreationException {
 		super(items, task, true);
 
 		boolean isOneChoice = true;

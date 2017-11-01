@@ -5,10 +5,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 
 public abstract class AbstractSectionItem<T> extends AbstractItem<T> implements ConvertableWithText {
 
-	protected AbstractSectionItem(T value) {
+	protected AbstractSectionItem(T value) throws ItemCreationException {
 		super(value);
 	}
 

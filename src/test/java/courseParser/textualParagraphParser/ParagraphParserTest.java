@@ -16,6 +16,8 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Test;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
@@ -24,11 +26,10 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
-
-import test.utils.TestTools;
-
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
+
+import test.utils.TestTools;
 
 public class ParagraphParserTest {
 
@@ -41,7 +42,14 @@ public class ParagraphParserTest {
 				Set<Set<String>> stylesFromDoc = par.getRuns().stream().map(run -> TestTools.getRunStyles(run))
 						.filter(style -> style != null).collect(Collectors.toSet());
 
-				ParagraphBlock block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+				ParagraphBlock block = null;
+				try {
+					block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+				} catch (BlockCreationException | ItemCreationException e) {
+					e.printStackTrace();
+				}
+
+				assertNotNull(block);
 
 				assertEquals(block.getText(), content[0] + ":" + content[1]);
 
@@ -54,9 +62,8 @@ public class ParagraphParserTest {
 							.collect(Collectors.toSet());
 					assertTrue(stylesFromDoc.containsAll(stylesFromText));
 
-					block.getFirstItem().getValue().getItems().stream()
-							.map(item -> getItemStyles((TextRunItem) item)).collect(Collectors.toList())
-							.containsAll(stylesFromText);
+					block.getFirstItem().getValue().getItems().stream().map(item -> getItemStyles((TextRunItem) item))
+							.collect(Collectors.toList()).containsAll(stylesFromText);
 				}
 			}
 		}
@@ -85,7 +92,15 @@ public class ParagraphParserTest {
 		for (XWPFParagraph par : TestTools.getOnlyTextParagraphs()) {
 			if (TestTools.getHeaderParagraphs().contains(par)) {
 				assertTrue(HeaderInfo.isHeader(par));
-				HeaderParagraphBlock block = HeaderParser.parse(par, 0);
+				HeaderParagraphBlock block = null;
+				try {
+					block = HeaderParser.parse(par, 0);
+				} catch (BlockCreationException | ItemCreationException e) {
+					e.printStackTrace();
+				}
+
+				assertNotNull(block);
+
 				assertEquals(par.getText(), block.getText());
 			} else {
 				assertFalse(HeaderParser.HeaderInfo.isHeader(par));
@@ -96,7 +111,13 @@ public class ParagraphParserTest {
 	@Test
 	public void parseTextParagraphs() {
 		for (XWPFParagraph par : TestTools.getOnlyTextParagraphs()) {
-			ParagraphBlock block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+			ParagraphBlock block = null;
+			try {
+				block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+			} catch (BlockCreationException | ItemCreationException e) {
+				e.printStackTrace();
+			}
+
 			assertNotNull(block);
 			assertEquals(par.getText(), block.getText());
 		}
@@ -108,7 +129,12 @@ public class ParagraphParserTest {
 			IBodyElement elem = TestTools.getTestDoc().getBodyElements().get(i);
 			if ((elem.getElementType().equals(BodyElementType.PARAGRAPH) && !((XWPFParagraph) elem).getText().isEmpty())
 					|| elem.getElementType().equals(BodyElementType.TABLE)) {
-				AbstractSectionBlock<?> block = AbstractParagraphParser.parse(elem, TestTools.getMathMLFormulas());
+				AbstractSectionBlock<?> block = null;
+				try {
+					block = AbstractParagraphParser.parse(elem, TestTools.getMathMLFormulas());
+				} catch (BlockCreationException | ItemCreationException e) {
+					e.printStackTrace();
+				}
 
 				assertNotNull(block);
 
@@ -137,7 +163,15 @@ public class ParagraphParserTest {
 	}
 
 	private static void parseListParagraph(List<XWPFParagraph> list) {
-		ListSectionBlock block = ListParser.parse(list.get(0), TestTools.getMathMLFormulas());
+		ListSectionBlock block = null;
+		try {
+			block = ListParser.parse(list.get(0), TestTools.getMathMLFormulas());
+		} catch (BlockCreationException | ItemCreationException e) {
+			e.printStackTrace();
+		}
+
+		assertNotNull(block);
+
 		assertEquals(block.getItems().size(), list.size());
 
 		for (int i = 0; i < list.size(); i++) {

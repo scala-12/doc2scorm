@@ -30,6 +30,8 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
@@ -415,7 +417,8 @@ public class CourseParser extends AbstractParser {
 							chapterElemNum += 1;
 						}
 
-						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>();
+						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>(
+								questionsWithAnswers.size());
 						for (QuestionWithAnswers question : questionsWithAnswers) {
 							AbstractQuestionBlock<?> questBlock = null;
 
@@ -430,6 +433,7 @@ public class CourseParser extends AbstractParser {
 											items.add(
 													new SequenceItem(row.getValue().get(0).getFirstItem().getValue()));
 										}
+
 										questBlock = new SequenceBlock(items);
 									}
 								} else if (block.getItems().size() == 1) {
@@ -438,22 +442,23 @@ public class CourseParser extends AbstractParser {
 										items.add(new SequenceItem(cell.getFirstItem().getValue()));
 									}
 									questBlock = new SequenceBlock(items);
+
 								} else if (block.getFirstItem().getValue().size() == 2) {
-									questBlock = new MatchBlock(
-											block.getItems().stream()
-													.map(row -> new MatchItem(new Label2Answer(
-															row.getValue().get(0).getFirstItem().getValue(),
-															row.getValue().get(1).getFirstItem().getValue())))
-													.collect(Collectors.toList()));
+									ArrayList<MatchItem> items = new ArrayList<>();
+									for (TableItem row : block.getItems()) {
+										items.add(new MatchItem(
+												new Label2Answer(row.getValue().get(0).getFirstItem().getValue(),
+														row.getValue().get(1).getFirstItem().getValue())));
+									}
+									questBlock = new MatchBlock(items);
 								}
 							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
 								ArrayList<ChoiceItem> items = new ArrayList<>();
 								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0))
 										.getItems()) {
-									ParagraphBlock block = (ParagraphBlock) item.getValue();
-
-									items.add(new ChoiceItem(block, HeaderParser.HeaderInfo.isCorrectAnswer(
-											htmlAnswer2RealPar.get(Tools.getNodeString(item.toHtml(html))))));
+									items.add(new ChoiceItem((ParagraphBlock) item.getValue(),
+											HeaderParser.HeaderInfo.isCorrectAnswer(
+													htmlAnswer2RealPar.get(Tools.getNodeString(item.toHtml(html))))));
 								}
 								questBlock = new ChoiceBlock(items);
 							}
@@ -479,15 +484,20 @@ public class CourseParser extends AbstractParser {
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (
+
+		IOException e) {
 			System.err.println("Error : Cannot convert create XWPFDocument from input stream!");
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return courseModel;
 	}
 
-	private static BlockWithShifting getBlockWithShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader) {
+	private static BlockWithShifting getBlockWithShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader)
+			throws BlockCreationException, ItemCreationException {
 		AbstractSectionBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 

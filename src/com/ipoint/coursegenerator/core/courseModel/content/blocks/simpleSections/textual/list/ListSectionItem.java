@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
@@ -16,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class ListSectionItem extends AbstractSectionItem<AbstractTextualSectionBlock<?>> {
 
-	public ListSectionItem(AbstractTextualSectionBlock<?> paragraph) {
+	public ListSectionItem(AbstractTextualSectionBlock<?> paragraph) throws ItemCreationException {
 		super(paragraph);
 	}
 

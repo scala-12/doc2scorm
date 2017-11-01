@@ -9,6 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
 
 /**
@@ -24,7 +26,8 @@ public class HeaderParser extends ParagraphParser {
 		private static final Pattern SCO_TEST_HEADER_PATTERN = Pattern
 				.compile(".*(?:(?:test(?:ing)?)|(?:тест(?:ирование)))[\\s_](\\d+)$");
 		private static final Pattern TEST_QUESTION_HEADER_PATTERN = Pattern.compile(".*(?:quest(?:ion)?|вопрос)");
-		private static final Pattern TEST_CORRECT_ANSWER_HEADER_PATTERN = Pattern.compile(".*(?:(?:correct[\\s_]answer)|(?:правильный[\\s_]ответ))");
+		private static final Pattern TEST_CORRECT_ANSWER_HEADER_PATTERN = Pattern
+				.compile(".*(?:(?:correct[\\s_]answer)|(?:правильный[\\s_]ответ))");
 
 		private int level;
 		private String title;
@@ -151,11 +154,13 @@ public class HeaderParser extends ParagraphParser {
 	 *            Max available level of header
 	 * @return {@link HeaderParagraphBlock}
 	 */
-	public static HeaderParagraphBlock parse(XWPFParagraph par, int maxLevel) {
+	public static HeaderParagraphBlock parse(XWPFParagraph par, int maxLevel)
+			throws BlockCreationException, ItemCreationException {
 		if (HeaderInfo.isHeader(par)) {
 			HeaderInfo headerInfo = new HeaderInfo(par);
 
-			return new HeaderParagraphBlock(ParagraphParser.parse(par, null).getItems(), headerInfo.getLevel() - maxLevel);
+			return new HeaderParagraphBlock(ParagraphParser.parse(par, null).getItems(),
+					headerInfo.getLevel() - maxLevel);
 		}
 
 		return null;

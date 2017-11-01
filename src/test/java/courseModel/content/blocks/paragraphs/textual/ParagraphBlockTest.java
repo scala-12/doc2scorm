@@ -1,6 +1,7 @@
 package test.java.courseModel.content.blocks.paragraphs.textual;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
@@ -48,15 +51,23 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	@Override
 	public void toHtml() {
 		for (XWPFParagraph par : this.pars) {
-			ParagraphBlock block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+			ParagraphBlock block = null;
+			try {
+				block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
+			} catch (BlockCreationException | ItemCreationException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(block);
+
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			String blockText = block.getText();
 			Set<Set<String>> htmlStyles = getHtmlStyles((Element) htmlBlock.getFirstChild());
 
 			assertEquals(htmlBlock.getNodeName().toLowerCase(), "p");
-			if (0 == block.getItems().stream()
-					.map(pItem -> pItem.getValue().getItems().stream()
+			if (0 == block.getItems()
+					.stream().map(pItem -> pItem.getValue().getItems().stream()
 							.filter(cItem -> cItem instanceof FormulaRunItem).findFirst().isPresent())
 					.filter(hasFormula -> hasFormula).count()) {
 				assertEquals(htmlBlock.getTextContent(), blockText);

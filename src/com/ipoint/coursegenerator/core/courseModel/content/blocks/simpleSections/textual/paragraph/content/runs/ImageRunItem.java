@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.utils.FileTools;
 
@@ -54,9 +55,11 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 	 *            Style of picture
 	 * @param isWrap
 	 *            If it is true then picture in text else behind or front
+	 * @throws ItemCreationException
 	 * 
 	 */
-	public ImageRunItem(XWPFRun run, XWPFPictureData imageData, String style, boolean isWrap) {
+	public ImageRunItem(XWPFRun run, XWPFPictureData imageData, String style, boolean isWrap)
+			throws ItemCreationException {
 		super(run, imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {

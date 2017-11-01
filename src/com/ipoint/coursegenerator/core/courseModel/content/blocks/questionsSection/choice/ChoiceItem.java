@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
@@ -23,7 +24,7 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 
 	public static final String CLASS = "choice_answer";
 
-	public ChoiceItem(ParagraphBlock content, boolean isCorrect) {
+	public ChoiceItem(ParagraphBlock content, boolean isCorrect) throws ItemCreationException {
 		super(content);
 		this.isCorrect = isCorrect;
 	}

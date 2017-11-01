@@ -8,6 +8,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTObject;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
@@ -36,7 +38,8 @@ public class TextParser extends AbstractParser {
 	 *            Flag that formula is paragraph
 	 * @return Text block with formula
 	 */
-	public static TextualRunsBlock parse(MathInfo mathInfo, boolean paragraphFlag) {
+	public static TextualRunsBlock parse(MathInfo mathInfo, boolean paragraphFlag)
+			throws BlockCreationException, ItemCreationException {
 		return new TextualRunsBlock(new FormulaRunItem(mathInfo.read(), paragraphFlag));
 	}
 
@@ -48,7 +51,7 @@ public class TextParser extends AbstractParser {
 	 * @param runs
 	 * @return
 	 */
-	public static TextualRunsBlock parse(List<XWPFRun> runs) {
+	public static TextualRunsBlock parse(List<XWPFRun> runs) throws ItemCreationException, BlockCreationException {
 		ArrayList<AbstractContentRunItem<?>> blockItems = null;
 
 		if (runs != null) {

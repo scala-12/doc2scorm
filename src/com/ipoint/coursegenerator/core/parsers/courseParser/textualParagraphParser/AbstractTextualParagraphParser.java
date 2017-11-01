@@ -3,6 +3,8 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
@@ -16,7 +18,8 @@ import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphPar
 public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 
 	/**
-	 * Parsing from list of {@link IBodyElement} to {@link AbstractTextualSectionBlock}
+	 * Parsing from list of {@link IBodyElement} to
+	 * {@link AbstractTextualSectionBlock}
 	 * 
 	 * @param par
 	 *            Paragraph
@@ -24,7 +27,8 @@ public class AbstractTextualParagraphParser extends AbstractParagraphParser {
 	 *            Info about MathML formulas
 	 * @return {@link AbstractTextualSectionBlock}
 	 */
-	public static AbstractTextualSectionBlock<?> parse(XWPFParagraph par, MathInfo mathInfo) {
+	public static AbstractTextualSectionBlock<?> parse(XWPFParagraph par, MathInfo mathInfo)
+			throws BlockCreationException, ItemCreationException {
 		AbstractTextualSectionBlock<?> block = null;
 
 		if (!par.getRuns().isEmpty() || (par.getCTP() != null)) {

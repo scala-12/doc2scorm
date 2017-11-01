@@ -8,6 +8,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
@@ -86,7 +88,8 @@ public class TableParser extends AbstractParser {
 	 *            Info about MathML formulas
 	 * @return {@link TableBlock}
 	 */
-	public static TableBlock parse(XWPFTable table, MathInfo mathInfo) {
+	public static TableBlock parse(XWPFTable table, MathInfo mathInfo)
+			throws BlockCreationException, ItemCreationException {
 		ArrayList<TableItem> block = new ArrayList<TableItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {

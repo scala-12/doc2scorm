@@ -3,6 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSection
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
@@ -15,7 +16,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class ParagraphItem extends AbstractSectionItem<TextualRunsBlock> {
 
-	public ParagraphItem(TextualRunsBlock value) {
+	public ParagraphItem(TextualRunsBlock value) throws ItemCreationException {
 		super(value);
 	}
 

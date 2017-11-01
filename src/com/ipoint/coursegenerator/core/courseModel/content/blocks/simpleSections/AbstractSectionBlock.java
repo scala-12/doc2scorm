@@ -7,6 +7,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 
@@ -22,7 +23,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
 public abstract class AbstractSectionBlock<T extends AbstractSectionItem<?>> extends AbstractBlock<T>
 		implements ConvertableWithText {
 
-	protected AbstractSectionBlock(List<T> items) {
+	protected AbstractSectionBlock(List<T> items) throws BlockCreationException {
 		super(items);
 	}
 

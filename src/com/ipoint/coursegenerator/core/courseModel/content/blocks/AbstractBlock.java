@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock.AbstractItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 
 /**
  * Abstract block which includes items. These can't have empty items.
@@ -20,9 +22,9 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 
 		protected T value;
 
-		protected AbstractItem(T value) {
-			if (this.setValue(value)) {
-				// TODO: exception - illegal value for block item
+		protected AbstractItem(T value) throws ItemCreationException {
+			if (!this.setValue(value)) {
+				throw new ItemCreationException(this, value);
 			}
 		}
 
@@ -47,27 +49,36 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 		 * @return If successful then true
 		 */
 		public boolean setValue(T value) {
-			if (value == null) {
-				return false;
-			} else {
+			boolean isValidValue = isValidValue(value);
+			if (isValidValue) {
 				this.value = value;
-				return true;
 			}
+
+			return isValidValue;
+		}
+
+		public boolean isValidValue(T value) {
+			return (value != null);
 		}
 
 	}
 
-	private List<T> items;
+	private final List<T> items;
 
-	protected AbstractBlock(List<T> items) {
+	protected AbstractBlock(List<T> items) throws BlockCreationException {
 		if (items != null) {
 			if (items.isEmpty()) {
-				// TODO: exception empty list items
+				throw new BlockCreationException(this, items);
 			} else {
-				this.items = new ArrayList<>(items);
+				int nullCount = items.stream().filter(item -> item == null).toArray().length;
+				if (nullCount == 0) {
+					this.items = new ArrayList<>(items);
+				} else {
+					throw new BlockCreationException(this, items, nullCount);
+				}
 			}
 		} else {
-			// TODO: exception null pointer value for block
+			throw new BlockCreationException(this, items);
 		}
 	}
 

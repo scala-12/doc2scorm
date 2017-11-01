@@ -1,6 +1,7 @@
 package test.java.courseModel.content.blocks.paragraphs.tabular;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -9,6 +10,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
@@ -44,7 +47,15 @@ public class TableBlockTest extends AbstractBlockTest {
 	@Override
 	public void toHtml() {
 		for (XWPFTable table : TestTools.getTestTables()) {
-			TableBlock block = TableParser.parse(table, TestTools.getMathMLFormulas());
+			TableBlock block = null;
+			try {
+				block = TableParser.parse(table, TestTools.getMathMLFormulas());
+			} catch (BlockCreationException | ItemCreationException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(block);
+
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 			Node htmlTBody = htmlBlock.getFirstChild();
 

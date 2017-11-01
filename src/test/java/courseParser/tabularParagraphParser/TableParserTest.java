@@ -9,6 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.junit.Test;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
@@ -25,7 +27,15 @@ public class TableParserTest {
 			List<List<int[]>> tblInfo = TestTools.getSpecialTableContentCellsInfo(table);
 			assertNotNull(tblInfo);
 
-			TableBlock block = TableParser.parse(table, TestTools.getMathMLFormulas());
+			TableBlock block = null;
+			try {
+				block = TableParser.parse(table, TestTools.getMathMLFormulas());
+			} catch (BlockCreationException | ItemCreationException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(block);
+
 			List<TableItem> rows = block.getItems();
 			assertEquals(rows.size(), TestTools.getSpecialTableRowCount(table).intValue());
 

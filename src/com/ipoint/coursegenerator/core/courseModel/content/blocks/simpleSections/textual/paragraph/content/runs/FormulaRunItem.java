@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -18,7 +19,7 @@ public class FormulaRunItem extends AbstractContentRunItem<Node> {
 
 	private boolean paragraphFlag;
 
-	public FormulaRunItem(Node math, boolean paragraphFlag) {
+	public FormulaRunItem(Node math, boolean paragraphFlag) throws ItemCreationException {
 		super(null, math);
 		this.setParagraphFlag(paragraphFlag);
 	}
