@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
@@ -30,11 +32,11 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 	public static final String MATCH_LABEL_BLOCK_ID = "match_labels_block";
 	public static final String MATCH_ANSWER_ID_PREFIX = MatchItem.MATCH_ANSWER_CLASS + '_';
 
-	public MatchBlock(List<MatchItem> items) {
+	public MatchBlock(List<MatchItem> items) throws BlockCreationException {
 		this(items, null);
 	}
 
-	public MatchBlock(final List<MatchItem> items, String task) {
+	public MatchBlock(final List<MatchItem> items, String task) throws BlockCreationException {
 		super(itemsWithShuffledAnswers(items), task, false);
 
 		final List<List<AbstractSectionBlock<?>>> shuffledAnswers = this.getItems().stream()
@@ -55,8 +57,13 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 		final Iterator<List<AbstractSectionBlock<?>>> shuffledAnswerIter = shuffledAnswers.iterator();
 		final ArrayList<MatchItem> shuffledItems = new ArrayList<>(items.size());
-		labels.stream()
-				.forEach(label -> shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next()))));
+		labels.stream().forEach(label -> {
+			try {
+				shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next())));
+			} catch (ItemCreationException e) {
+				e.printStackTrace();
+			}
+		});
 
 		return shuffledItems;
 	}

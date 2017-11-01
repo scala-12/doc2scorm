@@ -9,6 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
@@ -106,7 +108,8 @@ public class ParagraphParser extends AbstractParser {
 	 *            Info about MathML formulas
 	 * @return {@link ParagraphBlock}
 	 */
-	public static ParagraphBlock parse(XWPFParagraph paragraph, MathInfo mathInfo) {
+	public static ParagraphBlock parse(XWPFParagraph paragraph, MathInfo mathInfo)
+			throws BlockCreationException, ItemCreationException {
 		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
 		boolean hasFormuls = mathInfo != null;
 		if (hasFormuls) {

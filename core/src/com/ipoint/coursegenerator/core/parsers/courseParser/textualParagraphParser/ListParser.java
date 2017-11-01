@@ -2,11 +2,12 @@ package com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPar
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
@@ -29,13 +30,18 @@ public class ListParser extends AbstractParser {
 	 *            Info about MathML formulas
 	 * @return {@link ListSectionBlock}
 	 */
-	public static ListSectionBlock parse(XWPFParagraph par, MathInfo mathInfo) {
+	public static ListSectionBlock parse(XWPFParagraph par, MathInfo mathInfo)
+			throws BlockCreationException, ItemCreationException {
 		ListSectionBlock block = null;
 
 		List<XWPFParagraph> list = getAtomListParagraphs(par);
 		if ((list != null) && !list.isEmpty()) {
-			block = new ListSectionBlock(list.stream().map(item -> new ListSectionItem(ParagraphParser.parse(item, mathInfo)))
-					.collect(Collectors.toList()));
+			ArrayList<ListSectionItem> items = new ArrayList<>(list.size());
+			for (XWPFParagraph item : list) {
+				items.add(new ListSectionItem(ParagraphParser.parse(item, mathInfo)));
+			}
+
+			block = new ListSectionBlock(items);
 			block.setMarkerType(getMarkerTypeFromString(par.getNumFmt()));
 		}
 

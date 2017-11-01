@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -38,11 +39,11 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return correctAnswers;
 	}
 
-	protected AbstractQuestionBlock(List<T> items, boolean needShuffle) {
+	protected AbstractQuestionBlock(List<T> items, boolean needShuffle) throws BlockCreationException {
 		this(items, null, needShuffle);
 	}
 
-	protected AbstractQuestionBlock(List<T> items, String task, boolean needShuffle) {
+	protected AbstractQuestionBlock(List<T> items, String task, boolean needShuffle) throws BlockCreationException {
 		super((needShuffle) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 		this.correctAnswers = null;

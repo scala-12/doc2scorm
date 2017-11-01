@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
@@ -30,11 +31,11 @@ public class HeaderParagraphBlock extends ParagraphBlock {
 	 */
 	public static final int LEVEL_OFFSET = 1;
 
-	public HeaderParagraphBlock(List<ParagraphItem> items) {
+	public HeaderParagraphBlock(List<ParagraphItem> items) throws BlockCreationException {
 		this(items, 1);
 	}
 
-	public HeaderParagraphBlock(List<ParagraphItem> items, int level) {
+	public HeaderParagraphBlock(List<ParagraphItem> items, int level) throws BlockCreationException {
 		super(items, null);
 		if (!this.setLevel(level)) {
 			this.setLevel(MIN_HEADER_LEVEL);

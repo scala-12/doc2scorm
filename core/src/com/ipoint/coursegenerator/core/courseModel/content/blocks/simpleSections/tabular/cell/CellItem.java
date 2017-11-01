@@ -5,6 +5,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
@@ -12,8 +13,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
- * This item may includes {@link TextualRunsBlock}, {@link HyperlinkRunsBlock} or
- * {@link TableBlock} blocks or null
+ * This item may includes {@link TextualRunsBlock}, {@link HyperlinkRunsBlock}
+ * or {@link TableBlock} blocks or null
  * 
  * @author Kalashnikov Vladislav
  *
@@ -30,12 +31,12 @@ public class CellItem extends AbstractSectionItem<List<AbstractSectionBlock<?>>>
 	 */
 	private Integer colSpan;
 
-	public CellItem(List<AbstractSectionBlock<?>> blocks) {
+	public CellItem(List<AbstractSectionBlock<?>> blocks) throws ItemCreationException {
 		super(blocks);
 		onConstructor();
 	}
 
-	public CellItem() throws Exception {
+	public CellItem() {
 		super();
 		onConstructor();
 	}

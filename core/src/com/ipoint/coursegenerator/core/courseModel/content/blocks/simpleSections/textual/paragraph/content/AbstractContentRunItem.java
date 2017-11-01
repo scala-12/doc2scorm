@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
@@ -43,10 +44,16 @@ public abstract class AbstractContentRunItem<T> extends AbstractSectionItem<T> {
 	private boolean subscript;
 	private String color;
 
-	protected AbstractContentRunItem(XWPFRun run, T value) {
+	protected AbstractContentRunItem(XWPFRun run, T value) throws ItemCreationException {
 		super(value);
 
-		if (run != null) {
+		if (run == null) {
+			this.setBold(false);
+			this.setItalic(false);
+			this.setSuperscript(false);
+			this.setSubscript(false);
+			this.setUnderline(false);
+		} else {
 			boolean isHyperlink = (run instanceof XWPFHyperlinkRun);
 
 			this.setBold(run.isBold());
@@ -63,12 +70,6 @@ public abstract class AbstractContentRunItem<T> extends AbstractSectionItem<T> {
 			// } else if ((styleNumber > 0) && (styleNumber < 10)) {
 			// tempElement = el;
 			// }
-		} else {
-			this.setBold(false);
-			this.setItalic(false);
-			this.setSuperscript(false);
-			this.setSubscript(false);
-			this.setUnderline(false);
 		}
 	}
 

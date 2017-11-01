@@ -6,6 +6,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -18,11 +19,11 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 	public static final String SEQUENCE_ANSWERS_BLOCK_ID = "sequence_answers_block";
 	public static final String SEQUENCE_ANSWER_ID_PREFIX = SequenceItem.SEQUENCE_ANSWER_CLASS + '_';
 
-	public SequenceBlock(List<SequenceItem> items) {
+	public SequenceBlock(List<SequenceItem> items) throws BlockCreationException {
 		this(items, null);
 	}
 
-	public SequenceBlock(List<SequenceItem> items, String task) {
+	public SequenceBlock(List<SequenceItem> items, String task) throws BlockCreationException {
 		super(new ArrayList<>(items), task, true);
 
 		ArrayList<String> correctAnswers = new ArrayList<>(items.size());

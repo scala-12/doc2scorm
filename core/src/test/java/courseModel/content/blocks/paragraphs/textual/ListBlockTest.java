@@ -2,6 +2,7 @@ package test.java.courseModel.content.blocks.paragraphs.textual;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
@@ -21,7 +24,15 @@ public class ListBlockTest extends AbstractBlockTest {
 	public void toHtml() {
 		List<XWPFParagraph> lastList = null;
 		for (List<XWPFParagraph> list : TestTools.getTestListsParagraphs()) {
-			ListSectionBlock block = ListParser.parse(list.get(0), TestTools.getMathMLFormulas());
+			ListSectionBlock block = null;
+			try {
+				block = ListParser.parse(list.get(0), TestTools.getMathMLFormulas());
+			} catch (BlockCreationException | ItemCreationException e) {
+				e.printStackTrace();
+			}
+
+			assertNotNull(block);
+
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			if (lastList != null) {

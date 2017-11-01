@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
@@ -36,12 +37,12 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
 	private Integer alignment;
 
-	public ParagraphBlock(List<ParagraphItem> items, Integer align) {
+	public ParagraphBlock(List<ParagraphItem> items, Integer align) throws BlockCreationException {
 		super(items);
 		this.alignment = align;
 	}
 
-	public ParagraphBlock(ParagraphItem item, Integer align) {
+	public ParagraphBlock(ParagraphItem item, Integer align) throws BlockCreationException {
 		this(Lists.newArrayList(item), align);
 	}
 

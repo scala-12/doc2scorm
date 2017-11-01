@@ -5,6 +5,9 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.HyperlinkRunsBlockCreationException;
+
 /**
  * Hyperlink block. This block is {@link TextualRunsBlock} with hyperlink
  * 
@@ -15,10 +18,11 @@ public class HyperlinkRunsBlock extends TextualRunsBlock {
 
 	private String url;
 
-	public HyperlinkRunsBlock(List<AbstractContentRunItem<?>> runs, String url) {
+	public HyperlinkRunsBlock(List<AbstractContentRunItem<?>> runs, String url)
+			throws BlockCreationException {
 		super(runs);
 		if (!this.setUrl(url)) {
-			// TODO: Exception empty url of link
+			throw new HyperlinkRunsBlockCreationException(this, runs, url);
 		}
 	}
 
@@ -34,15 +38,17 @@ public class HyperlinkRunsBlock extends TextualRunsBlock {
 	 * @return if new address is not null then true
 	 */
 	public boolean setUrl(String url) {
-		if (url != null) {
-			if (!url.isEmpty()) {
-				this.url = url;
+		if (isValidUrl(url)) {
+			this.url = url;
 
-				return true;
-			}
+			return true;
+		} else {
+			return false;
 		}
+	}
 
-		return false;
+	public static boolean isValidUrl(String url) {
+		return (url != null) && !url.isEmpty();
 	}
 
 	/**

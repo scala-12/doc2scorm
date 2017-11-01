@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
@@ -37,7 +38,7 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
 	public static final String[] MATCH_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
-	public MatchItem(Label2Answer pair) {
+	public MatchItem(Label2Answer pair) throws ItemCreationException {
 		super(pair);
 	}
 

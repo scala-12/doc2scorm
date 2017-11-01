@@ -4,11 +4,13 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
- * Item for {@link TextualRunsBlock}. This item includes text and him properties.
+ * Item for {@link TextualRunsBlock}. This item includes text and him
+ * properties.
  * 
  * @author Kalashnikov Vladislav
  *
@@ -21,7 +23,7 @@ public class TextRunItem extends AbstractContentRunItem<String> {
 	 * @param run
 	 *            Run of text
 	 */
-	public TextRunItem(XWPFRun run) {
+	public TextRunItem(XWPFRun run) throws ItemCreationException {
 		super(run, run.toString());
 	}
 
@@ -30,13 +32,9 @@ public class TextRunItem extends AbstractContentRunItem<String> {
 	 *            Text of item. If there is null then return false
 	 * @return if successful then true
 	 */
-	public boolean setValue(String text) {
-		if (text != null) {
-			if (!text.isEmpty()) {
-				this.value = text;
-
-				return true;
-			}
+	public boolean isValidValue(String text) {
+		if (super.isValidValue(text) && !text.isEmpty()) {
+			return true;
 		}
 
 		return false;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
@@ -22,7 +23,7 @@ public class TableItem extends AbstractSectionItem<List<CellBlock>> {
 	 * @param cells
 	 *            Cells of row. There cannot be null
 	 */
-	public TableItem(List<CellBlock> cells) {
+	public TableItem(List<CellBlock> cells) throws ItemCreationException {
 		super(cells);
 	}
 

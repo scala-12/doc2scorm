@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
@@ -37,8 +38,9 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 	 * 
 	 * @param items
 	 *            Items of block
+	 * @throws BlockCreationException
 	 */
-	public ListSectionBlock(List<ListSectionItem> items) {
+	public ListSectionBlock(List<ListSectionItem> items) throws BlockCreationException {
 		super(items);
 		this.setMarkerType(SIMPLE_MARKER);
 	}

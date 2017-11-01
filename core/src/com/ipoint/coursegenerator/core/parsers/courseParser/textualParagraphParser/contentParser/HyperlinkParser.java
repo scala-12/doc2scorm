@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 
 /**
@@ -20,7 +22,8 @@ public class HyperlinkParser extends TextParser {
 	 * 
 	 * @return {@link HyperlinkRunsBlock}
 	 */
-	public static HyperlinkRunsBlock parse(List<XWPFRun> hyperRuns) {
+	public static HyperlinkRunsBlock parse(List<XWPFRun> hyperRuns)
+			throws BlockCreationException, ItemCreationException {
 		if (hyperRuns != null) {
 			if (!hyperRuns.isEmpty()) {
 				XWPFHyperlinkRun link = (XWPFHyperlinkRun) hyperRuns.get(0);
