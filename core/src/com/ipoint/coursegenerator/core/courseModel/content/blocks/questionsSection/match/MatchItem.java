@@ -98,5 +98,4 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 						.map(section -> section.getText()).collect(Collectors.toList()));
 	}
 
-
 }

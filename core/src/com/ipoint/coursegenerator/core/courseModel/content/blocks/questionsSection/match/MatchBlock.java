@@ -55,9 +55,8 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 		final Iterator<List<AbstractSectionBlock<?>>> shuffledAnswerIter = shuffledAnswers.iterator();
 		final ArrayList<MatchItem> shuffledItems = new ArrayList<>(items.size());
-		labels.stream().forEach(label -> {
-			shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next())));
-		});
+		labels.stream()
+				.forEach(label -> shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next()))));
 
 		return shuffledItems;
 	}
