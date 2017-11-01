@@ -20,6 +20,10 @@ public abstract class AbstractItem<T extends Object> implements Convertable {
 		}
 	}
 
+	protected AbstractItem() {
+		this.value = null;
+	}
+
 	/**
 	 * Returns value of item
 	 * 

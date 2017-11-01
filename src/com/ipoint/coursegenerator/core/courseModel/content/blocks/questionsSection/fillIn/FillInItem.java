@@ -17,7 +17,7 @@ public class FillInItem extends AbstractQuestionItem<String> {
 	private final String answer;
 
 	public FillInItem(String answer) {
-		super(null);
+		super();
 		this.answer = answer;
 	}
 
