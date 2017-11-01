@@ -3,6 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -100,22 +101,22 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 
 	@Override
 	public String getText() {
-		return getQuestionText(false);
+		return this.getQuestionText(false);
 	}
 
 	@Override
 	public String toString() {
-		return getQuestionText(true);
+		return this.getQuestionText(true);
 	}
 
 	private String getQuestionText(boolean withCorrectMarkers) {
-		StringBuilder text = new StringBuilder();
-		text.append("Задание: ").append(this.getTask()).append("\nОтветы:\n");
 
-		this.getItems().stream().forEach((withCorrectMarkers) ? item -> text.append(item.toString()).append('\n')
-				: item -> text.append(item.getText()).append('\n'));
-
-		return Tools.removeExtraSpaces(text.toString()).trim();
+		return "Task: " + this.getTask() + ",\nAnswers: [\n"
+				+ Tools.removeExtraSpaces(String.join(",\n",
+						this.getItems().stream()
+								.map((withCorrectMarkers) ? item -> item.toString() : item -> item.getText())
+								.collect(Collectors.toList())))
+				+ "\n]";
 	}
 
 }
