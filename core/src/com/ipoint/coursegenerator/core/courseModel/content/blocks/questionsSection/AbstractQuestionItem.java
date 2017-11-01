@@ -14,4 +14,8 @@ public abstract class AbstractQuestionItem<T> extends AbstractSectionItem<T> {
 	public AbstractQuestionItem(T value) {
 		super(value);
 	}
+
+	protected AbstractQuestionItem() {
+		super();
+	}
 }

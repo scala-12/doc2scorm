@@ -32,12 +32,17 @@ public class CellItem extends AbstractSectionItem<List<AbstractSectionBlock<?>>>
 
 	public CellItem(List<AbstractSectionBlock<?>> blocks) {
 		super(blocks);
-		this.setRowSpan(1);
-		this.setColSpan(1);
+		onConstructor();
 	}
 
-	public CellItem() {
-		this(null);
+	public CellItem() throws Exception {
+		super();
+		onConstructor();
+	}
+
+	private void onConstructor() {
+		this.setRowSpan(1);
+		this.setColSpan(1);
 	}
 
 	/**
