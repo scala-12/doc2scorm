@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock.AbstractItem;
 
 /**
  * Abstract block which includes items. These can't have empty items.
@@ -14,6 +15,47 @@ import com.ipoint.coursegenerator.core.courseModel.Convertable;
  *            Type of item that included in block
  */
 public abstract class AbstractBlock<T extends AbstractItem<?>> implements Convertable {
+
+	public static abstract class AbstractItem<T extends Object> implements Convertable {
+
+		protected T value;
+
+		protected AbstractItem(T value) {
+			if (this.setValue(value)) {
+				// TODO: exception - illegal value for block item
+			}
+		}
+
+		protected AbstractItem() {
+			this.value = null;
+		}
+
+		/**
+		 * Returns value of item
+		 * 
+		 * @return value of item
+		 */
+		public T getValue() {
+			return this.value;
+		}
+
+		/**
+		 * Set value for item
+		 * 
+		 * @param value
+		 *            Value for item
+		 * @return If successful then true
+		 */
+		public boolean setValue(T value) {
+			if (value == null) {
+				return false;
+			} else {
+				this.value = value;
+				return true;
+			}
+		}
+
+	}
 
 	private List<T> items;
 
