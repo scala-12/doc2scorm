@@ -54,4 +54,9 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractSectionBlock
 				this.getValue().stream().map(section -> section.getText()).collect(Collectors.toList()));
 	}
 
+	@Override
+	public String toString() {
+		return this.getText();
+	}
+
 }

@@ -66,4 +66,16 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		return SEQUENCING;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder text = new StringBuilder();
+		int i = -1;
+		for (String item : this.getItems().stream().map(item -> item.getText() + " ").toArray(String[]::new)) {
+			i += 1;
+			text.append(this.correctAnswers[i]).append(". ").append(item);
+		}
+
+		return text.toString();
+	}
+
 }

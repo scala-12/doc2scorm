@@ -37,11 +37,11 @@ public class FillInItem extends AbstractQuestionItem<String> {
 
 	@Override
 	public String getText() {
-		return "(Пропущенное слово)";
+		return "(Input field)";
 	}
 
 	@Override
 	public String toString() {
-		return this.getValue();
+		return "(" + this.answer + ")";
 	}
 }
