@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
  */
 public class MathInfo {
 
-	private List<Node> mathMLFormulList;
+	private final List<Node> mathMLFormulList;
 
 	private int reedFormulCount;
 
