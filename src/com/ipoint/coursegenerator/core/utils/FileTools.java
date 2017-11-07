@@ -29,6 +29,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock.QuestionType;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
@@ -98,11 +99,11 @@ public class FileTools {
 		vars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
 		vars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
 
-		vars.put("choice", String.valueOf(AbstractQuestionBlock.CHOICE));
-		vars.put("multiple", String.valueOf(AbstractQuestionBlock.MULTIPLE_CHOICE));
-		vars.put("fill_in", String.valueOf(AbstractQuestionBlock.FILL_IN));
-		vars.put("match", String.valueOf(AbstractQuestionBlock.MATCHING));
-		vars.put("sequence", String.valueOf(AbstractQuestionBlock.SEQUENCING));
+		vars.put("choice", String.valueOf(QuestionType.CHOICE.ordinal()));
+		vars.put("multiple", String.valueOf(QuestionType.MULTIPLE_CHOICE.ordinal()));
+		vars.put("fill_in", String.valueOf(QuestionType.FILL_IN.ordinal()));
+		vars.put("match", String.valueOf(QuestionType.MATCHING.ordinal()));
+		vars.put("sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()));
 
 		return vars;
 	}
@@ -280,7 +281,7 @@ public class FileTools {
 				HashMap<String, String> vars = new HashMap<>(scoVars);
 				AbstractQuestionBlock<?> question = testingPage.getBlocks().get(i);
 
-				vars.put("type", String.valueOf(question.getType()));
+				vars.put("type", String.valueOf(question.getType().ordinal()));
 
 				if (question instanceof ChoiceBlock) {
 					List<ChoiceItem> answerItems = ((ChoiceBlock) question).getItems();

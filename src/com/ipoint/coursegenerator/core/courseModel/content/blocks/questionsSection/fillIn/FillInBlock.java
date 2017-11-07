@@ -20,8 +20,8 @@ public class FillInBlock extends AbstractQuestionBlockWithOneAnswer<FillInItem> 
 	}
 
 	@Override
-	public int getType() {
-		return FILL_IN;
+	public QuestionType getType() {
+		return QuestionType.FILL_IN;
 	}
 
 }

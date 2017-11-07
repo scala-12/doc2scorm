@@ -87,8 +87,8 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 	}
 
 	@Override
-	public int getType() {
-		return (isOneChoice) ? CHOICE : MULTIPLE_CHOICE;
+	public QuestionType getType() {
+		return (isOneChoice) ? QuestionType.CHOICE : QuestionType.MULTIPLE_CHOICE;
 	}
 
 }
