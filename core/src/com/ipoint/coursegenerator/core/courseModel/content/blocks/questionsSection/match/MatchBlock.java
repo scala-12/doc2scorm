@@ -1,22 +1,22 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.MatchQuestionBlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
+import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
  * This block is an analogue of text paragraph. These includes several
@@ -27,44 +27,60 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  */
 public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
+	public static class Label2Answer extends Pair<List<AbstractSectionBlock<?>>, List<AbstractSectionBlock<?>>> {
+
+		public Label2Answer(List<AbstractSectionBlock<?>> label, List<AbstractSectionBlock<?>> answer) {
+			super(label, answer);
+		}
+
+		public List<AbstractSectionBlock<?>> getLabelSections() {
+			return this.left;
+		}
+
+		public List<AbstractSectionBlock<?>> getAnswerSections() {
+			return this.right;
+		}
+	}
+
 	public static final String MATCH_BLOCK_ID = "match_block";
 	public static final String MATCH_ANSWERS_BLOCK_ID = "match_answers_block";
 	public static final String MATCH_LABEL_BLOCK_ID = "match_labels_block";
+	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
 
-	public MatchBlock(List<MatchItem> items) throws BlockCreationException {
-		this(items, null);
+	private List<List<AbstractSectionBlock<?>>> labels;
+
+	public MatchBlock(List<Label2Answer> pairs) throws BlockCreationException {
+		this(pairs, null);
 	}
 
-	public MatchBlock(final List<MatchItem> items, String task) throws BlockCreationException {
-		super(itemsWithShuffledAnswers(items), task, false);
+	public MatchBlock(List<Label2Answer> pairs, String task) throws BlockCreationException {
+		this(pairs.stream().map(pair -> pair.getLabelSections()).collect(Collectors.toList()),
+				pairs.stream().map(pair -> {
+					try {
+						return new MatchItem(pair.getAnswerSections());
+					} catch (ItemCreationException e) {
+						e.printStackTrace();
+					}
 
-		final List<List<AbstractSectionBlock<?>>> shuffledAnswers = this.getItems().stream()
-				.map(pair -> pair.getValue().getAnswerSections()).collect(Collectors.toList());
-
-		this.correctAnswers = items.stream()
-				.map(pair -> String.valueOf(shuffledAnswers.indexOf(pair.getValue().getAnswerSections())))
-				.toArray(String[]::new);
+					return null;
+				}).filter(item -> item != null).collect(Collectors.toList()), task);
 	}
 
-	private static List<MatchItem> itemsWithShuffledAnswers(List<MatchItem> items) {
-		List<List<AbstractSectionBlock<?>>> labels = items.stream().map(pair -> pair.getValue().getLabelSections())
-				.collect(Collectors.toList());
+	private MatchBlock(List<List<AbstractSectionBlock<?>>> labels, List<MatchItem> items, String task)
+			throws BlockCreationException {
+		super(items, task, true);
 
-		List<List<AbstractSectionBlock<?>>> shuffledAnswers = items.stream()
-				.map(pair -> pair.getValue().getAnswerSections()).collect(Collectors.toList());
-		Collections.shuffle(shuffledAnswers);
+		this.labels = labels;
 
-		final Iterator<List<AbstractSectionBlock<?>>> shuffledAnswerIter = shuffledAnswers.iterator();
-		final ArrayList<MatchItem> shuffledItems = new ArrayList<>(items.size());
-		labels.stream().forEach(label -> {
-			try {
-				shuffledItems.add(new MatchItem(new Label2Answer(label, shuffledAnswerIter.next())));
-			} catch (ItemCreationException e) {
-				e.printStackTrace();
-			}
-		});
+		this.correctAnswers = items.stream().map(item -> String.valueOf(item.getIndex())).toArray(String[]::new);
 
-		return shuffledItems;
+		if (items.size() != labels.size()) {
+			throw new MatchQuestionBlockCreationException(this, items);
+		}
+	}
+
+	public List<List<AbstractSectionBlock<?>>> getLabels() {
+		return new ArrayList<>(this.labels);
 	}
 
 	/**
@@ -72,7 +88,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 	 * answers
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtml(final Document creatorTags) {
 		Element div = super.toHtml(creatorTags);
 		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionBlock.ANSWER_BLOCK_ID);
 
@@ -83,30 +99,29 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		table.getFirstChild().getFirstChild().appendChild(creatorTags.createElement("td"));
 		table.getFirstChild().getFirstChild().appendChild(creatorTags.createElement("td"));
 
-		Element labels = creatorTags.createElement("ol");
+		final Element labels = creatorTags.createElement("ol");
 		labels.setAttribute("id", MATCH_LABEL_BLOCK_ID);
+		this.getLabels().stream().forEach(label -> {
+			final Element labelHtml = creatorTags.createElement("li");
+			labelHtml.setAttribute("class", MATCH_LABEL_4_ANSWER_CLASS);
+			label.stream().forEach(labelBlock -> {
+				NodeList labelNodes = labelBlock.toSimpleHtml(creatorTags);
+				while (labelNodes.getLength() != 0) {
+					labelHtml.appendChild(labelNodes.item(0));
+					labelHtml.appendChild(creatorTags.createTextNode(" "));
+				}
+			});
+			labels.appendChild(labelHtml);
+		});
 
 		Element answers = creatorTags.createElement("ul");
 		answers.setAttribute("id", MATCH_ANSWERS_BLOCK_ID);
+		while (answersBlock.hasChildNodes()) {
+			answers.appendChild(answersBlock.getFirstChild());
+		}
 
 		table.getFirstChild().getFirstChild().getFirstChild().appendChild(labels);
 		table.getFirstChild().getFirstChild().getLastChild().appendChild(answers);
-
-		while (answersBlock.hasChildNodes()) {
-			Element span = (Element) answersBlock.getFirstChild();
-			Element input = (Element) span.getFirstChild();
-			Element label = (Element) span.getLastChild();
-			if (!input.getAttribute("id").startsWith(MatchItem.MATCH_ANSWER_ID_PREFIX)) {
-				Element tmp = label;
-				label = input;
-				input = tmp;
-			}
-
-			labels.appendChild(label);
-			answers.appendChild(input);
-
-			answersBlock.removeChild(span);
-		}
 
 		answersBlock.appendChild(table);
 
@@ -116,5 +131,17 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 	@Override
 	public int getType() {
 		return MATCHING;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder text = new StringBuilder();
+		int i = -1;
+		for (String item : this.getItems().stream().map(item -> item.getText() + " ").toArray(String[]::new)) {
+			i += 1;
+			text.append(this.correctAnswers[i]).append(". ").append(item);
+		}
+
+		return text.toString();
 	}
 }

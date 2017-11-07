@@ -38,8 +38,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem.Label2Answer;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchBlock.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
@@ -444,11 +443,10 @@ public class CourseParser extends AbstractParser {
 									questBlock = new SequenceBlock(items);
 
 								} else if (block.getFirstItem().getValue().size() == 2) {
-									ArrayList<MatchItem> items = new ArrayList<>();
+									ArrayList<Label2Answer> items = new ArrayList<>();
 									for (TableItem row : block.getItems()) {
-										items.add(new MatchItem(
-												new Label2Answer(row.getValue().get(0).getFirstItem().getValue(),
-														row.getValue().get(1).getFirstItem().getValue())));
+										items.add(new Label2Answer(row.getValue().get(0).getFirstItem().getValue(),
+												row.getValue().get(1).getFirstItem().getValue()));
 									}
 									questBlock = new MatchBlock(items);
 								}
