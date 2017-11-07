@@ -36,7 +36,9 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 
 	public static final String MATCH_ANSWER_CLASS = "match_answer";
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
-	public static final String[] MATCH_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
+	public static final String MATCH_ANSWER_CLASSES = String.join(" ",
+			new String[] { MATCH_ANSWER_CLASS, "ui-state-default" });
+	public static final String MATCH_ANSWER_ID_PREFIX = MATCH_ANSWER_CLASS + '_';
 
 	public MatchItem(Label2Answer pair) throws ItemCreationException {
 		super(pair);
@@ -48,20 +50,16 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 	 */
 	@Override
 	public Element toHtml(Document creatorTags) {
-		Element span = creatorTags.createElement("span");
+		Element mainSpan = creatorTags.createElement("span");
 
-		Element label = creatorTags.createElement("span");
+		Element input = creatorTags.createElement("li");
+		input.setAttribute("class", MATCH_ANSWER_CLASSES);
+		input.setAttribute("id", MATCH_ANSWER_ID_PREFIX + String.valueOf(this.getIndex()));
+		mainSpan.appendChild(input);
+
+		Element label = creatorTags.createElement("li");
 		label.setAttribute("class", MATCH_LABEL_4_ANSWER_CLASS);
-		label.setAttribute("id", MATCH_LABEL_4_ANSWER_CLASS);
-
-		StringBuilder classes = new StringBuilder().append(MATCH_ANSWER_CLASS);
-		for (String classname : MATCH_ANSWER_OTHER_CLASSES) {
-			classes.append(' ').append(classname);
-		}
-
-		Element answer = creatorTags.createElement("span");
-		answer.setAttribute("class", classes.toString());
-		answer.setAttribute("id", MATCH_ANSWER_CLASS);
+		mainSpan.appendChild(label);
 
 		int i = 0;
 		for (AbstractSectionBlock<?> labelSection : this.getValue().getLabelSections()) {
@@ -78,15 +76,12 @@ public class MatchItem extends AbstractQuestionItem<Label2Answer> {
 			if (i == 0) {
 				i = 1;
 			} else {
-				answer.appendChild(creatorTags.createTextNode(" "));
+				input.appendChild(creatorTags.createTextNode(" "));
 			}
-			answer.appendChild(answerSection.toSimpleHtml(creatorTags).item(0));
+			input.appendChild(answerSection.toSimpleHtml(creatorTags).item(0));
 		}
 
-		span.appendChild(label);
-		span.appendChild(answer);
-
-		return span;
+		return mainSpan;
 	}
 
 	@Override

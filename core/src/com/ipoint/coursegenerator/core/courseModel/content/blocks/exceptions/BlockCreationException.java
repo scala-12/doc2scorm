@@ -13,29 +13,17 @@ public class BlockCreationException extends Exception {
 
 	private final AbstractBlock<?> block;
 	private final List<? extends AbstractItem<?>> items;
-	private final int nullCount;
 
 	public BlockCreationException(final AbstractBlock<?> block, final List<? extends AbstractItem<?>> items) {
 		this(block, items, ((items == null) ? "List items pointer is null"
 				: (items.isEmpty()) ? "List items is empty" : UNEXPECTED));
 	}
 
-	private BlockCreationException(final AbstractBlock<?> block, final List<? extends AbstractItem<?>> items,
-			String errMsg, Integer nullCount) {
+	protected BlockCreationException(final AbstractBlock<?> block, final List<? extends AbstractItem<?>> items,
+			String errMsg) {
 		super(((errMsg == null) || errMsg.isEmpty()) ? UNEXPECTED : errMsg);
 		this.block = block;
 		this.items = items;
-		this.nullCount = nullCount;
-	}
-
-	protected BlockCreationException(final AbstractBlock<?> block, final List<? extends AbstractItem<?>> items,
-			String errMsg) {
-		this(block, items, errMsg, 0);
-	}
-
-	public BlockCreationException(final AbstractBlock<?> block, final List<? extends AbstractItem<?>> items,
-			int nullCount) {
-		this(block, items, (nullCount == 0) ? UNEXPECTED : "Has null items in list", nullCount);
 	}
 
 	public AbstractBlock<?> getBlock() {
@@ -44,10 +32,6 @@ public class BlockCreationException extends Exception {
 
 	public List<? extends AbstractItem<?>> getItems() {
 		return this.items;
-	}
-
-	public int getNullCount() {
-		return this.nullCount;
 	}
 
 }

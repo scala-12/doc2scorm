@@ -1,7 +1,9 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock.AbstractItem;
@@ -21,6 +23,9 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 	public static abstract class AbstractItem<T extends Object> implements Convertable {
 
 		protected T value;
+
+		int index = -1;
+		AbstractBlock<?> parent = null;
 
 		protected AbstractItem(T value) throws ItemCreationException {
 			if (!this.setValue(value)) {
@@ -61,21 +66,32 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 			return (value != null);
 		}
 
+		public int getIndex() {
+			return this.index;
+		}
+
 	}
 
-	private final List<T> items;
+	private final LinkedList<T> items;
 
 	protected AbstractBlock(List<T> items) throws BlockCreationException {
 		if (items != null) {
-			if (items.isEmpty()) {
-				throw new BlockCreationException(this, items);
+			LinkedList<T> checkedItems = new LinkedList<>(
+					items.stream().filter(item -> item != null).collect(Collectors.toList()));
+			if (checkedItems.isEmpty()) {
+				throw new BlockCreationException(this, checkedItems);
 			} else {
-				int nullCount = items.stream().filter(item -> item == null).toArray().length;
-				if (nullCount == 0) {
-					this.items = new ArrayList<>(items);
-				} else {
-					throw new BlockCreationException(this, items, nullCount);
+				int index = -1;
+				for (T item : checkedItems) {
+					index += 1;
+					if (item.parent != null) {
+						item.parent.items.remove(item);
+					}
+					item.parent = this;
+					item.index = index;
 				}
+
+				this.items = checkedItems;
 			}
 		} else {
 			throw new BlockCreationException(this, items);
