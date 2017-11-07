@@ -68,7 +68,7 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 
 	private MatchBlock(List<List<AbstractSectionBlock<?>>> labels, List<MatchItem> items, String task)
 			throws BlockCreationException {
-		super(items, task, true);
+		super(items, task);
 
 		this.labels = labels;
 

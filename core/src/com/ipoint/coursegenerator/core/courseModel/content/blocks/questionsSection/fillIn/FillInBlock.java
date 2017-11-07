@@ -17,7 +17,7 @@ public class FillInBlock extends AbstractQuestionBlock<FillInItem> {
 	}
 
 	public FillInBlock(FillInItem answer, String task) throws BlockCreationException {
-		super(Collections.singletonList(answer), task, false);
+		super(Collections.singletonList(answer), task);
 		this.correctAnswers = new String[] { answer.getCorrectAnswer() };
 	}
 
