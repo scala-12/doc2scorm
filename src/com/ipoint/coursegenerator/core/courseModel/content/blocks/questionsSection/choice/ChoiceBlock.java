@@ -26,7 +26,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	private final boolean isOneChoice;
 
 	// TODO: fix in iLogos this "feature" (+1)
-	private static final int _SHIFT = 1;
+	public static final int _SHIFT = 1;
 
 	public ChoiceBlock(List<ChoiceItem> items) throws BlockCreationException {
 		this(items, null);
@@ -38,13 +38,11 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		boolean isOneChoice = true;
 
 		boolean hasCorrect = false;
-		int index = _SHIFT - 1;
 		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
 
 		for (ChoiceItem item : this.getItems()) {
-			index += 1;
 			if (item.isCorrect()) {
-				correctAnswers.add(String.valueOf(index));
+				correctAnswers.add(String.valueOf(item.getIndex() + _SHIFT));
 				if (hasCorrect) {
 					isOneChoice = false;
 				}
@@ -74,15 +72,10 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 		Element fieldset = creatorTags.createElement("fieldset");
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
 
-		int i = _SHIFT - 1;
 		while (answersBlock.hasChildNodes()) {
-			i += 1;
-
 			Element span = (Element) answersBlock.getFirstChild();
 			Element answer = (Element) span.getElementsByTagName("input").item(0);
 			answer.setAttribute("type", type);
-
-			answer.setAttribute("value", String.valueOf(i));
 
 			fieldset.appendChild(span.getFirstChild());
 			fieldset.appendChild(span.getLastChild());

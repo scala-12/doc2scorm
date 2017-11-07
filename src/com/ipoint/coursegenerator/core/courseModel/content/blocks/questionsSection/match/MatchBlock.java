@@ -30,7 +30,6 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 	public static final String MATCH_BLOCK_ID = "match_block";
 	public static final String MATCH_ANSWERS_BLOCK_ID = "match_answers_block";
 	public static final String MATCH_LABEL_BLOCK_ID = "match_labels_block";
-	public static final String MATCH_ANSWER_ID_PREFIX = MatchItem.MATCH_ANSWER_CLASS + '_';
 
 	public MatchBlock(List<MatchItem> items) throws BlockCreationException {
 		this(items, null);
@@ -93,36 +92,18 @@ public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
 		table.getFirstChild().getFirstChild().getFirstChild().appendChild(labels);
 		table.getFirstChild().getFirstChild().getLastChild().appendChild(answers);
 
-		int i = -1;
 		while (answersBlock.hasChildNodes()) {
-			i += 1;
-
 			Element span = (Element) answersBlock.getFirstChild();
-			Element labelSpan = (Element) span.getFirstChild();
-			Element answerSpan = (Element) span.getLastChild();
-			if (!labelSpan.getAttribute("id").equals(MatchItem.MATCH_LABEL_4_ANSWER_CLASS)) {
-				Element tmp = labelSpan;
-				labelSpan = answerSpan;
-				answerSpan = tmp;
-			}
-
-			Element label = creatorTags.createElement("li");
-			label.setAttribute("class", labelSpan.getAttribute("class"));
-
-			Element answer = creatorTags.createElement("li");
-			answer.setAttribute("class", answerSpan.getAttribute("class"));
-			answer.setAttribute("id", MATCH_ANSWER_ID_PREFIX + String.valueOf(i));
-
-			while (labelSpan.hasChildNodes()) {
-				label.appendChild(labelSpan.getFirstChild());
-			}
-
-			while (answerSpan.hasChildNodes()) {
-				answer.appendChild(answerSpan.getFirstChild());
+			Element input = (Element) span.getFirstChild();
+			Element label = (Element) span.getLastChild();
+			if (!input.getAttribute("id").startsWith(MatchItem.MATCH_ANSWER_ID_PREFIX)) {
+				Element tmp = label;
+				label = input;
+				input = tmp;
 			}
 
 			labels.appendChild(label);
-			answers.appendChild(answer);
+			answers.appendChild(input);
 
 			answersBlock.removeChild(span);
 		}

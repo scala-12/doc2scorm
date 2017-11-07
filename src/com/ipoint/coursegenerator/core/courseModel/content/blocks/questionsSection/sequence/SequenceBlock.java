@@ -17,20 +17,18 @@ import com.ipoint.coursegenerator.core.utils.Tools;
 public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 
 	public static final String SEQUENCE_ANSWERS_BLOCK_ID = "sequence_answers_block";
-	public static final String SEQUENCE_ANSWER_ID_PREFIX = SequenceItem.SEQUENCE_ANSWER_CLASS + '_';
 
 	public SequenceBlock(List<SequenceItem> items) throws BlockCreationException {
 		this(items, null);
 	}
 
 	public SequenceBlock(List<SequenceItem> items, String task) throws BlockCreationException {
-		super(new ArrayList<>(items), task, true);
+		super(items, task, true);
 
 		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
 
-		List<SequenceItem> shuffledItems = this.getItems();
 		for (SequenceItem item : items) {
-			correctAnswers.add(String.valueOf(shuffledItems.indexOf(item)));
+			correctAnswers.add(String.valueOf(item.getIndex()));
 		}
 
 		this.correctAnswers = correctAnswers.stream().toArray(String[]::new);
@@ -47,12 +45,8 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 		Element list = creatorTags.createElement("ul");
 		list.setAttribute("id", SEQUENCE_ANSWERS_BLOCK_ID);
 
-		int i = -1;
 		while (answersBlock.hasChildNodes()) {
-			i += 1;
-
 			Element item = (Element) answersBlock.getFirstChild();
-			item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + String.valueOf(i));
 
 			list.appendChild(item);
 		}

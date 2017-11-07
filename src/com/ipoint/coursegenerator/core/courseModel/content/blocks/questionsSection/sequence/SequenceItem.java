@@ -20,6 +20,7 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractSectionBlock
 
 	public static final String SEQUENCE_ANSWER_CLASS = "sequence_answer";
 	public static final String[] SEQUENCE_ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
+	public static final String SEQUENCE_ANSWER_ID_PREFIX = SequenceItem.SEQUENCE_ANSWER_CLASS + '_';
 
 	public SequenceItem(List<AbstractSectionBlock<?>> content) throws ItemCreationException {
 		super(content);
@@ -37,6 +38,7 @@ public class SequenceItem extends AbstractQuestionItem<List<AbstractSectionBlock
 		}
 
 		item.setAttribute("class", classes.toString());
+		item.setAttribute("id", SEQUENCE_ANSWER_ID_PREFIX + String.valueOf(this.getIndex()));
 
 		for (AbstractSectionBlock<?> block : this.getValue()) {
 			NodeList items = block.toSimpleHtml(creatorTags);

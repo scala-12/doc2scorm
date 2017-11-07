@@ -298,11 +298,11 @@ public class FileTools {
 				} else if (question instanceof MatchBlock) {
 					vars.put("sortable_block_id", MatchBlock.MATCH_ANSWERS_BLOCK_ID);
 					vars.put("sortable_elem_class", MatchItem.MATCH_ANSWER_CLASS);
-					vars.put("answer_id_prefix", MatchBlock.MATCH_ANSWER_ID_PREFIX);
+					vars.put("answer_id_prefix", MatchItem.MATCH_ANSWER_ID_PREFIX);
 				} else if (question instanceof SequenceBlock) {
 					vars.put("sortable_block_id", SequenceBlock.SEQUENCE_ANSWERS_BLOCK_ID);
 					vars.put("sortable_elem_class", SequenceItem.SEQUENCE_ANSWER_CLASS);
-					vars.put("answer_id_prefix", SequenceBlock.SEQUENCE_ANSWER_ID_PREFIX);
+					vars.put("answer_id_prefix", SequenceItem.SEQUENCE_ANSWER_ID_PREFIX);
 				}
 
 				Document html = Tools.createNewHTMLDocument();
