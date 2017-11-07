@@ -130,8 +130,8 @@ public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 	}
 
 	@Override
-	public int getType() {
-		return MATCHING;
+	public QuestionType getType() {
+		return QuestionType.MATCHING;
 	}
 
 	@Override

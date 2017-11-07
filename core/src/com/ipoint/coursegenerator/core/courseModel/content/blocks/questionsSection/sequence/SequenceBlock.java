@@ -58,8 +58,8 @@ public class SequenceBlock extends AbstractQuestionBlockWithAnswers<SequenceItem
 	}
 
 	@Override
-	public int getType() {
-		return SEQUENCING;
+	public QuestionType getType() {
+		return QuestionType.SEQUENCING;
 	}
 
 	@Override
