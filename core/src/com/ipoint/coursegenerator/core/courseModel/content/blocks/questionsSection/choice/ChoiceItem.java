@@ -9,7 +9,6 @@ import org.w3c.dom.NodeList;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * 
@@ -62,12 +61,7 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 
 	@Override
 	public String getText() {
-		return Tools.removeExtraSpaces(this.getValue().getText());
-	}
-
-	@Override
-	public String toString() {
-		return this.getText() + ((this.isCorrect()) ? " - (correct)" : "");
+		return super.getText() + this.getValue().getText();
 	}
 
 }
