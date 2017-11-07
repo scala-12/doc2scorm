@@ -53,7 +53,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 		 *            Value for item
 		 * @return If successful then true
 		 */
-		public boolean setValue(T value) {
+		public final boolean setValue(T value) {
 			boolean isValidValue = isValidValue(value);
 			if (isValidValue) {
 				this.value = value;

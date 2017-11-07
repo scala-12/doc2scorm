@@ -100,22 +100,10 @@ public class CellItem extends AbstractSectionItem<List<AbstractSectionBlock<?>>>
 		return this.colSpan;
 	}
 
-	/**
-	 * Setup value of cell
-	 * 
-	 * @param paragraphs
-	 *            Value of cell. May be null
-	 */
 	@Override
-	public boolean setValue(List<AbstractSectionBlock<?>> paragraphs) {
-		this.value = paragraphs;
-		if (paragraphs != null) {
-			if (paragraphs.isEmpty()) {
-				this.value = null;
-			}
-		}
+	public boolean isValidValue(List<AbstractSectionBlock<?>> paragraphs) {
 
-		return true;
+		return (paragraphs == null) || !paragraphs.isEmpty();
 	}
 
 	/**
