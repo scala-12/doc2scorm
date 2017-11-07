@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,6 +74,10 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 	}
 
 	private final LinkedList<T> items;
+
+	protected AbstractBlock(T item) throws BlockCreationException {
+		this(Collections.singletonList(item));
+	}
 
 	protected AbstractBlock(List<T> items) throws BlockCreationException {
 		if (items != null) {

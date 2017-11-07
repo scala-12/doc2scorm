@@ -27,6 +27,10 @@ public abstract class AbstractSectionBlock<T extends AbstractSectionItem<?>> ext
 		super(items);
 	}
 
+	protected AbstractSectionBlock(T item) throws BlockCreationException {
+		super(item);
+	}
+
 	@Override
 	public NodeList toSimpleHtml(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
