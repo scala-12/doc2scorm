@@ -72,7 +72,7 @@ public class TableBlockTest extends AbstractBlockTest {
 
 				for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < htmlRow.getChildNodes()
 						.getLength(); cellNum++) {
-					CellItem cell = row.get(cellNum).getFirstItem();
+					CellItem cell = row.get(cellNum).getItem();
 					Element htmlCell = (Element) htmlRow.getChildNodes().item(cellNum);
 
 					assertEquals(htmlCell.getNodeName().toLowerCase(), "td");

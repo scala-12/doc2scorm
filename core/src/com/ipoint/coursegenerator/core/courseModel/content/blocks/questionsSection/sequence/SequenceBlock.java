@@ -8,13 +8,14 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
  *
  */
-public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
+public class SequenceBlock extends AbstractQuestionBlockWithAnswers<SequenceItem> {
 
 	public static final String SEQUENCE_ANSWERS_BLOCK_ID = "sequence_answers_block";
 

@@ -382,6 +382,7 @@ public class CourseParser extends AbstractParser {
 
 										// TODO: check all
 										if (blockWithShift.getBlock() instanceof ListSectionBlock) {
+											ListSectionBlock listBlock = (ListSectionBlock) blockWithShift.getBlock();
 											int shift = blockWithShift.getShift();
 
 											int i = 0;
@@ -391,8 +392,9 @@ public class CourseParser extends AbstractParser {
 											while ((count <= shift) && (i < lastChapterParElementShift)) {
 												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
 												if (elem instanceof XWPFParagraph) {
-													htmlAnswer2RealPar.put(Tools.getNodeString(
-															blockWithShift.getBlock().getItems().get(i).toHtml(html)),
+													htmlAnswer2RealPar.put(
+															Tools.getNodeString(
+																	listBlock.getItems().get(i).toHtml(html)),
 															(XWPFParagraph) elem);
 													count += 1;
 												}
@@ -423,30 +425,30 @@ public class CourseParser extends AbstractParser {
 
 							if (question.getAnswersBlocks().get(0) instanceof TableBlock) {
 								TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
-								if (block.getFirstItem().getValue().size() == 1) {
-									if (block.getItems().size() == 1) {
+								List<TableItem> rows = block.getItems();
+								if (rows.get(0).getValue().size() == 1) {
+									if (rows.size() == 1) {
 										questBlock = new FillInBlock(new FillInItem(block.getText()));
 									} else {
 										ArrayList<SequenceItem> items = new ArrayList<>();
-										for (TableItem row : block.getItems()) {
-											items.add(
-													new SequenceItem(row.getValue().get(0).getFirstItem().getValue()));
+										for (TableItem row : rows) {
+											items.add(new SequenceItem(row.getValue().get(0).getItem().getValue()));
 										}
 
 										questBlock = new SequenceBlock(items);
 									}
-								} else if (block.getItems().size() == 1) {
+								} else if (rows.size() == 1) {
 									ArrayList<SequenceItem> items = new ArrayList<>();
-									for (CellBlock cell : block.getFirstItem().getValue()) {
-										items.add(new SequenceItem(cell.getFirstItem().getValue()));
+									for (CellBlock cell : rows.get(0).getValue()) {
+										items.add(new SequenceItem(cell.getItem().getValue()));
 									}
 									questBlock = new SequenceBlock(items);
 
-								} else if (block.getFirstItem().getValue().size() == 2) {
+								} else if (rows.get(0).getValue().size() == 2) {
 									ArrayList<Label2Answer> items = new ArrayList<>();
-									for (TableItem row : block.getItems()) {
-										items.add(new Label2Answer(row.getValue().get(0).getFirstItem().getValue(),
-												row.getValue().get(1).getFirstItem().getValue()));
+									for (TableItem row : rows) {
+										items.add(new Label2Answer(row.getValue().get(0).getItem().getValue(),
+												row.getValue().get(1).getItem().getValue()));
 									}
 									questBlock = new MatchBlock(items);
 								}

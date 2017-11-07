@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
@@ -19,7 +20,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
+public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 
 	public static final String CHOICE_ANSWERS_FIELDSET_ID = "choice_answers_fieldset";
 

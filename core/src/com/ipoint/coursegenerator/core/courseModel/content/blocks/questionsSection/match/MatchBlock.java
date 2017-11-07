@@ -12,6 +12,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Blo
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.MatchQuestionBlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
@@ -25,7 +26,7 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  * @author Kalashnikov Vladislav
  *
  */
-public class MatchBlock extends AbstractQuestionBlock<MatchItem> {
+public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 
 	public static class Label2Answer extends Pair<List<AbstractSectionBlock<?>>, List<AbstractSectionBlock<?>>> {
 

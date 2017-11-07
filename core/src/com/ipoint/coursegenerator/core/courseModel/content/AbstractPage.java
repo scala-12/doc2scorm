@@ -127,14 +127,14 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 				((ListSectionBlock) block).getItems().stream().forEach(listItem -> {
 					images.addAll((listItem.getValue() instanceof ParagraphBlock)
 							? getImagesOfParagraph((ParagraphBlock) listItem.getValue())
-							: (listItem.getValue() instanceof ListSectionBlock) ? getImagesRecursive(listItem.getValue())
-									: Collections.emptySet());
+							: (listItem.getValue() instanceof ListSectionBlock)
+									? getImagesRecursive(listItem.getValue()) : Collections.emptySet());
 				});
 			}
 		} else if (block instanceof TableBlock) {
 			((TableBlock) block).getItems().stream().forEach(row -> {
-				row.getValue().stream().filter(cell -> cell.getFirstItem().getValue() != null)
-						.forEach(cell -> images.addAll(getImagesRecursive(cell.getFirstItem().getValue())));
+				row.getValue().stream().filter(cell -> cell.getItem().getValue() != null)
+						.forEach(cell -> images.addAll(getImagesRecursive(cell.getItem().getValue())));
 			});
 		}
 

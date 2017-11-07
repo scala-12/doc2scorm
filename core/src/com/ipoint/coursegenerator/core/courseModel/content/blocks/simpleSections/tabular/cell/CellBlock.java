@@ -27,12 +27,17 @@ public class CellBlock extends AbstractSectionBlock<CellItem> {
 	}
 
 	private Element toHtml(Document creatorTags, boolean styled) {
-		return this.getFirstItem().toHtml(creatorTags);
+		return this.getItem().toHtml(creatorTags);
 	}
 
 	@Override
 	public String getText() {
-		return this.getFirstItem().getText();
+		return this.getItem().getText();
+	}
+
+	@Override
+	public CellItem getItem() {
+		return super.getItem();
 	}
 
 }

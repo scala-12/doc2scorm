@@ -62,8 +62,9 @@ public class ParagraphParserTest {
 							.collect(Collectors.toSet());
 					assertTrue(stylesFromDoc.containsAll(stylesFromText));
 
-					block.getFirstItem().getValue().getItems().stream().map(item -> getItemStyles((TextRunItem) item))
-							.collect(Collectors.toList()).containsAll(stylesFromText);
+					block.getItems().get(0).getValue().getItems().stream()
+							.map(item -> getItemStyles((TextRunItem) item)).collect(Collectors.toList())
+							.containsAll(stylesFromText);
 				}
 			}
 		}
