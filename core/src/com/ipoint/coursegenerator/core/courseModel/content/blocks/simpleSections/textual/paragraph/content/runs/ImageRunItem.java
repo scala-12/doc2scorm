@@ -20,17 +20,17 @@ import com.ipoint.coursegenerator.core.utils.FileTools;
  */
 public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 
-	private Integer position;
+	private ImageAlign align;
 
-	private int zPosition;
+	private ImageZPosition zPosition;
 
-	public static final int LEFT_POSITION = 0;
-	public static final int CENTER_POSITION = 1;
-	public static final int RIGHT_POSITION = 2;
+	public static enum ImageAlign {
+		LEFT, CENTER, RIGHT, UNDEFINED
+	}
 
-	public static final int BEHIND_POSITION = 0;
-	public static final int INTO_POSITION = 1;
-	public static final int FRONT_POSITION = 2;
+	public static enum ImageZPosition {
+		BEHIND, INTO, FRONT
+	}
 
 	private static final String BEHIND_CLASS = "behind_text";
 	private static final String FRON_CLASS = "before_text";
@@ -63,16 +63,16 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 		super(run, imageData);
 
 		if (isWrap || (getAttrValue(style, "mso-position-horizontal") == null)) {
-			this.zPosition = INTO_POSITION;
+			this.zPosition = ImageZPosition.INTO;
 		} else if (getAttrValue(style, "z-index").contains("-")) {
-			this.zPosition = BEHIND_POSITION;
+			this.zPosition = ImageZPosition.BEHIND;
 		} else {
-			this.zPosition = FRONT_POSITION;
+			this.zPosition = ImageZPosition.FRONT;
 		}
 
 		this.height = Float.valueOf(toPxSize(getAttrValue(style, "height"))).intValue();
 		this.width = Float.valueOf(toPxSize(getAttrValue(style, "width"))).intValue();
-		this.position = getPositionFromMSWord(getAttrValue(style, "mso-position-horizontal"));
+		this.align = getAlignFromMSWord(getAttrValue(style, "mso-position-horizontal"));
 	}
 
 	/**
@@ -147,18 +147,18 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 		return null;
 	}
 
-	private static Integer getPositionFromMSWord(String positionMS) {
+	private static ImageAlign getAlignFromMSWord(String positionMS) {
 		if (positionMS != null) {
 			if ("right".equalsIgnoreCase(positionMS)) {
-				return RIGHT_POSITION;
+				return ImageAlign.RIGHT;
 			} else if ("left".equalsIgnoreCase(positionMS)) {
-				return LEFT_POSITION;
+				return ImageAlign.LEFT;
 			} else if ("center".equalsIgnoreCase(positionMS)) {
-				return CENTER_POSITION;
+				return ImageAlign.CENTER;
 			}
 		}
 
-		return null;
+		return ImageAlign.UNDEFINED;
 	}
 
 	/**
@@ -195,30 +195,18 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 		}
 	}
 
-	/**
-	 * Returns position code of image
-	 * 
-	 * @return position code of image
-	 */
-	public Integer getPosition() {
-		return this.position;
+	/** @return Align of image */
+	public ImageAlign getAlign() {
+		return this.align;
 	}
 
-	/**
-	 * Returns width of picture in pixels
-	 * 
-	 * @return width of picture in pixels
-	 */
+	/** @return width of picture in pixels */
 	public Integer getWidth() {
 		return this.width;
 	}
 
-	/**
-	 * Returns z-index code position of picture
-	 * 
-	 * @return z-index code position of picture
-	 */
-	public int getZPosition() {
+	/** @return z-index code position of picture */
+	public ImageZPosition getZPosition() {
 		return this.zPosition;
 	}
 
@@ -239,24 +227,16 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 			img.setAttribute("width", String.valueOf(this.getWidth()));
 		}
 
-		if (this.getPosition() != null) {
-			switch (this.getPosition()) {
-			case CENTER_POSITION:
-				img.setAttribute("align", "center");
-				break;
-			case LEFT_POSITION:
-				img.setAttribute("align", "left");
-				break;
-			case RIGHT_POSITION:
-				img.setAttribute("align", "right");
-				break;
-			}
+		if (this.getAlign() != ImageAlign.UNDEFINED) {
+			img.setAttribute("align",
+					(this.getAlign() != ImageAlign.CENTER) ? "center"
+							: ((this.getAlign() != ImageAlign.LEFT) ? "left"
+									: ((this.getAlign() != ImageAlign.RIGHT) ? "right" : null)));
 		}
 
-		if (this.getZPosition() == FRONT_POSITION) {
-			img.setAttribute("class", FRON_CLASS);
-		} else if (this.getZPosition() == BEHIND_POSITION) {
-			img.setAttribute("class", BEHIND_CLASS);
+		if (this.getZPosition() != ImageZPosition.INTO) {
+			img.setAttribute("class", (this.getZPosition() == ImageZPosition.FRONT) ? FRON_CLASS
+					: ((this.getZPosition() == ImageZPosition.BEHIND) ? BEHIND_CLASS : null));
 		}
 
 		return img;
