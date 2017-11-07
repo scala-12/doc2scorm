@@ -1,9 +1,10 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell;
 
+import java.util.Collections;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
@@ -17,7 +18,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
 public class CellBlock extends AbstractSectionBlock<CellItem> {
 
 	public CellBlock(CellItem item) throws BlockCreationException {
-		super(Lists.newArrayList(item));
+		super(Collections.singletonList(item));
 	}
 
 	@Override
