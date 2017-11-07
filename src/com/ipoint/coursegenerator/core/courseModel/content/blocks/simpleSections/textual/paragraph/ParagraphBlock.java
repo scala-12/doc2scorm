@@ -1,13 +1,13 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Lists;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
@@ -19,13 +19,9 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
-	public static final int LEFT_ALIGN = 0;
-
-	public static final int CENTER_ALIGN = 1;
-
-	public static final int RIGHT_ALIGN = 2;
-
-	public static final int JUST_ALIGN = 3;
+	public static enum TextAlign {
+		LEFT, CENTER, RIGHT, JUSTIFY, UNDEFINED
+	}
 
 	private static final String LEFT_ALIGN_CLASS = "left_align";
 
@@ -35,33 +31,33 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
 	private static final String JUST_ALIGN_CLASS = "justify_align";
 
-	private Integer alignment;
+	private TextAlign alignment;
 
-	public ParagraphBlock(List<ParagraphItem> items, Integer align) throws BlockCreationException {
+	public ParagraphBlock(List<ParagraphItem> items, TextAlign align) throws BlockCreationException {
 		super(items);
 		this.alignment = align;
 	}
 
-	public ParagraphBlock(ParagraphItem item, Integer align) throws BlockCreationException {
-		this(Lists.newArrayList(item), align);
+	public ParagraphBlock(ParagraphItem item, TextAlign align) throws BlockCreationException {
+		this(Collections.singletonList(item), align);
 	}
 
-	public Integer getAlignment() {
+	public TextAlign getAlignment() {
 		return this.alignment;
 	}
 
-	public static Integer convertAlignValue(ParagraphAlignment align) {
+	public static TextAlign convertAlignValue(ParagraphAlignment align) {
 		if (ParagraphAlignment.LEFT == align) {
-			return LEFT_ALIGN;
+			return TextAlign.LEFT;
 		} else if (ParagraphAlignment.RIGHT == align) {
-			return RIGHT_ALIGN;
+			return TextAlign.RIGHT;
 		} else if (ParagraphAlignment.CENTER == align) {
-			return CENTER_ALIGN;
+			return TextAlign.CENTER;
 		} else if (ParagraphAlignment.BOTH == align) {
-			return JUST_ALIGN;
+			return TextAlign.JUSTIFY;
 		}
 
-		return null;
+		return TextAlign.UNDEFINED;
 	}
 
 	/**
@@ -75,21 +71,12 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 			par.appendChild(item.toHtml(creatorTags));
 		}
 
-		if (this.getAlignment() != null) {
-			switch (this.getAlignment()) {
-			case LEFT_ALIGN:
-				par.setAttribute("class", LEFT_ALIGN_CLASS);
-				break;
-			case CENTER_ALIGN:
-				par.setAttribute("class", CENTER_ALIGN_CLASS);
-				break;
-			case RIGHT_ALIGN:
-				par.setAttribute("class", RIGHT_ALIGN_CLASS);
-				break;
-			case JUST_ALIGN:
-				par.setAttribute("class", JUST_ALIGN_CLASS);
-				break;
-			}
+		if (this.getAlignment() != TextAlign.UNDEFINED) {
+			par.setAttribute("class",
+					(this.getAlignment() == TextAlign.LEFT) ? LEFT_ALIGN_CLASS
+							: ((this.getAlignment() == TextAlign.CENTER) ? CENTER_ALIGN_CLASS
+									: ((this.getAlignment() == TextAlign.RIGHT) ? RIGHT_ALIGN_CLASS
+											: ((this.getAlignment() == TextAlign.JUSTIFY) ? JUST_ALIGN_CLASS : null))));
 		}
 
 		return par;
