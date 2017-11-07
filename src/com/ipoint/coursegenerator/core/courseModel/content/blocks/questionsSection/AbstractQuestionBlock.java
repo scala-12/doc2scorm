@@ -39,7 +39,7 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return correctAnswers;
 	}
 
-	protected AbstractQuestionBlock(List<T> items, boolean needShuffle) throws BlockCreationException {
+	protected AbstractQuestionBlock(List<T> items) throws BlockCreationException {
 		this(items, null);
 	}
 
