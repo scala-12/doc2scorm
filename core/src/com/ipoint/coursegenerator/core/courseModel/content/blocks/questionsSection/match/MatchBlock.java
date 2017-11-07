@@ -145,4 +145,5 @@ public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 
 		return text.toString();
 	}
+
 }
