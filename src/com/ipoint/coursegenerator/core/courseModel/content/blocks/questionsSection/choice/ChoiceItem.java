@@ -40,7 +40,7 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 		Element span = creatorTags.createElement("span");
 		Element input = creatorTags.createElement("input");
 		input.setAttribute("name", NAME);
-		input.setAttribute("value", String.valueOf(this.getIndex() + ChoiceBlock._SHIFT));
+		input.setAttribute("value", String.valueOf(this.getIndex()));
 
 		Element label = creatorTags.createElement("label");
 		label.setAttribute("class", CLASS);
