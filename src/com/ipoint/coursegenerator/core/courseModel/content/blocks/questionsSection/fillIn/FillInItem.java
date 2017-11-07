@@ -37,11 +37,6 @@ public class FillInItem extends AbstractQuestionItem<String> {
 
 	@Override
 	public String getText() {
-		return "(Input field)";
-	}
-
-	@Override
-	public String toString() {
-		return "(" + this.answer + ")";
+		return super.getText() + "(Input field)";
 	}
 }

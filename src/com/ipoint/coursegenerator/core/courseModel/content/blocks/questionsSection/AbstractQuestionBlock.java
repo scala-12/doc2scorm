@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -113,11 +114,10 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 	private String getQuestionText(boolean withCorrectMarkers) {
 
 		return "Task: " + this.getTask() + ",\nAnswers: [\n"
-				+ Tools.removeExtraSpaces(String.join(",\n",
-						this.getItems().stream()
-								.map((withCorrectMarkers) ? item -> item.toString() : item -> item.getText())
-								.collect(Collectors.toList())))
-				+ "\n]";
+				+ String.join(",\n",
+						this.getItems().stream().map(item -> Tools.removeExtraSpaces(item.getText()))
+								.collect(Collectors.toList()))
+				+ "\n]" + ((withCorrectMarkers) ? "\nCorrect: " + Arrays.toString(this.correctAnswers) : "");
 	}
 
 }

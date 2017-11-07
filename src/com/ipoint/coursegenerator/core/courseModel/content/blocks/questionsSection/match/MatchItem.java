@@ -54,7 +54,7 @@ public class MatchItem extends AbstractQuestionItem<List<AbstractSectionBlock<?>
 	@Override
 	public String getText() {
 
-		return String.join(" ",
+		return super.getText() + String.join(" ",
 				this.getValue().stream().map(section -> section.getText()).collect(Collectors.toList()));
 	}
 
