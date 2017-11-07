@@ -47,4 +47,9 @@ public class TableBlock extends AbstractSectionBlock<TableItem> {
 		return Tools.removeExtraSpaces(text.toString()).trim();
 	}
 
+	@Override
+	public List<TableItem> getItems() {
+		return super.getItems();
+	}
+
 }

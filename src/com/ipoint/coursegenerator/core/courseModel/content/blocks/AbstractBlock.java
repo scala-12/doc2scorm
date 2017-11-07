@@ -99,21 +99,17 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 	}
 
 	/**
-	 * Returns first item of block
-	 * 
-	 * @return First item of block
-	 */
-	public T getFirstItem() {
-		return this.getItems().get(0);
-	}
-
-	/**
 	 * Returns all items of block
 	 * 
 	 * @return All items of block
 	 */
-	public List<T> getItems() {
+	protected List<T> getItems() {
 		return new ArrayList<>(this.items);
+	}
+
+	/** @return Item of block */
+	protected T getItem() {
+		return this.items.getFirst();
 	}
 
 }

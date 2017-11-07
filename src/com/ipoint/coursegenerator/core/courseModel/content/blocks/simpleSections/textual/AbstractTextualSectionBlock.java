@@ -24,4 +24,9 @@ public abstract class AbstractTextualSectionBlock<T extends AbstractSectionItem<
 		super(items);
 	}
 
+	@Override
+	public List<T> getItems() {
+		return super.getItems();
+	}
+
 }

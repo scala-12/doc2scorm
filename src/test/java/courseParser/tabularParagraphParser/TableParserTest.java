@@ -45,8 +45,7 @@ public class TableParserTest {
 				assertEquals(Integer.valueOf(cells.size()), TestTools.getSpecialCellCountInRow(tRow));
 
 				for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < cells.size(); cellNum++) {
-					assertEquals(cells.get(cellNum).getItems().size(), 1);
-					CellItem cell = cells.get(cellNum).getFirstItem();
+					CellItem cell = cells.get(cellNum).getItem();
 					assertNotNull(cell.getValue());
 
 					assertEquals(rowNum, tblInfo.get(rowNum - 1).get(cellNum - 1)[0]);
