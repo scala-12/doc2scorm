@@ -26,9 +26,6 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 
 	private final boolean isOneChoice;
 
-	// TODO: fix in iLogos this "feature" (+1)
-	public static final int _SHIFT = 1;
-
 	public ChoiceBlock(List<ChoiceItem> items) throws BlockCreationException {
 		this(items, null);
 	}
@@ -43,7 +40,7 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 
 		for (ChoiceItem item : this.getItems()) {
 			if (item.isCorrect()) {
-				correctAnswers.add(String.valueOf(item.getIndex() + _SHIFT));
+				correctAnswers.add(String.valueOf(item.getIndex()));
 				if (hasCorrect) {
 					isOneChoice = false;
 				}
