@@ -94,7 +94,7 @@ public class FileTools {
 		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
 
 		vars.put("answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID);
-		vars.put("companion_class", MatchItem.MATCH_LABEL_4_ANSWER_CLASS);
+		vars.put("companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS);
 		vars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
 		vars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
 
