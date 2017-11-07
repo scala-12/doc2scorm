@@ -9,6 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock.MarkerType;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
@@ -100,27 +101,27 @@ public class ListParser extends AbstractParser {
 	}
 
 	/**
-	 * Returns equivalent of marker type in number format from string
+	 * Returns equivalent of marker type from string
 	 * 
 	 * @param markerName
 	 *            Equivalent of marker type in string format
-	 * @return Equivalent of marker type in number format. If equivalent not
-	 *         founded then return type "simple marker"
+	 * @return Equivalent of marker type. If equivalent not founded then return
+	 *         type "simple marker"
 	 */
-	private static int getMarkerTypeFromString(String markerName) {
-		int markerType = ListSectionBlock.SIMPLE_MARKER;
+	private static MarkerType getMarkerTypeFromString(String markerName) {
+		MarkerType markerType = MarkerType.SIMPLE_MARKER;
 
 		if (markerName != null) {
 			if (markerName.equalsIgnoreCase("upperLetter")) {
-				markerType = ListSectionBlock.UPPER_LETTER_MARKER;
+				markerType = MarkerType.UPPER_LETTER_MARKER;
 			} else if (markerName.equalsIgnoreCase("lowerLetter")) {
-				markerType = ListSectionBlock.LOWER_LETTER_MARKER;
+				markerType = MarkerType.LOWER_LETTER_MARKER;
 			} else if (markerName.equalsIgnoreCase("upperRoman")) {
-				markerType = ListSectionBlock.UPPER_ROMAN_MARKER;
+				markerType = MarkerType.UPPER_ROMAN_MARKER;
 			} else if (markerName.equalsIgnoreCase("lowerRoman")) {
-				markerType = ListSectionBlock.LOWER_ROMAN_MARKER;
+				markerType = MarkerType.LOWER_ROMAN_MARKER;
 			} else if (markerName.equalsIgnoreCase("decimal")) {
-				markerType = ListSectionBlock.DECIMAL_MARKER;
+				markerType = MarkerType.DECIMAL_MARKER;
 			}
 		}
 

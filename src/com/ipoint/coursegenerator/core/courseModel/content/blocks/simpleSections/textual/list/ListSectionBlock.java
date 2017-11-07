@@ -21,17 +21,14 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionItem> {
 
-	public static final int SIMPLE_MARKER = 0;
-	public static final int UPPER_LETTER_MARKER = 1;
-	public static final int LOWER_LETTER_MARKER = 2;
-	public static final int UPPER_ROMAN_MARKER = 3;
-	public static final int LOWER_ROMAN_MARKER = 4;
-	public static final int DECIMAL_MARKER = 5;
+	public static enum MarkerType {
+		SIMPLE_MARKER, UPPER_LETTER_MARKER, LOWER_LETTER_MARKER, UPPER_ROMAN_MARKER, LOWER_ROMAN_MARKER, DECIMAL_MARKER
+	}
 
 	/**
 	 * Type list marker
 	 */
-	private int type;
+	private MarkerType type;
 
 	/**
 	 * Create list block first level and with simple marker
@@ -42,33 +39,16 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 	 */
 	public ListSectionBlock(List<ListSectionItem> items) throws BlockCreationException {
 		super(items);
-		this.setMarkerType(SIMPLE_MARKER);
+		this.setMarkerType(MarkerType.SIMPLE_MARKER);
 	}
 
-	/**
-	 * Changing list marker type
-	 * 
-	 * @param type
-	 *            Type of marker
-	 * @return if successful then true
-	 */
-	public boolean setMarkerType(int type) {
-		if ((type == DECIMAL_MARKER) || (type == LOWER_LETTER_MARKER) || (type == LOWER_ROMAN_MARKER)
-				|| (type == UPPER_LETTER_MARKER) || (type == UPPER_ROMAN_MARKER) || (type == SIMPLE_MARKER)) {
-			this.type = type;
-
-			return true;
-		} else {
-			return false;
-		}
+	/** Changing list marker type */
+	public void setMarkerType(MarkerType type) {
+		this.type = type;
 	}
 
-	/**
-	 * Returns type of list marker
-	 * 
-	 * @return type of list marker
-	 */
-	public int getMarkerType() {
+	/** @return type of list marker */
+	public MarkerType getMarkerType() {
 		return this.type;
 	}
 
@@ -92,19 +72,19 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element list = null;
-		if (this.getMarkerType() == SIMPLE_MARKER) {
+		if (this.getMarkerType() == MarkerType.SIMPLE_MARKER) {
 			list = creatorTags.createElement("ul");
 		} else {
 			String typeMarker = null;
-			if (this.getMarkerType() == UPPER_LETTER_MARKER) {
+			if (this.getMarkerType() == MarkerType.UPPER_LETTER_MARKER) {
 				typeMarker = "A";
-			} else if (this.getMarkerType() == LOWER_LETTER_MARKER) {
+			} else if (this.getMarkerType() == MarkerType.LOWER_LETTER_MARKER) {
 				typeMarker = "a";
-			} else if (this.getMarkerType() == UPPER_ROMAN_MARKER) {
+			} else if (this.getMarkerType() == MarkerType.UPPER_ROMAN_MARKER) {
 				typeMarker = "I";
-			} else if (this.getMarkerType() == LOWER_ROMAN_MARKER) {
+			} else if (this.getMarkerType() == MarkerType.LOWER_ROMAN_MARKER) {
 				typeMarker = "i";
-			} else if (this.getMarkerType() == DECIMAL_MARKER) {
+			} else if (this.getMarkerType() == MarkerType.DECIMAL_MARKER) {
 				typeMarker = "1";
 			}
 
