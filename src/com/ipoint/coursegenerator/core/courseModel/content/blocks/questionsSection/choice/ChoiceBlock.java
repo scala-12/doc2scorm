@@ -33,7 +33,7 @@ public class ChoiceBlock extends AbstractQuestionBlock<ChoiceItem> {
 	}
 
 	public ChoiceBlock(List<ChoiceItem> items, String task) throws BlockCreationException {
-		super(items, task, true);
+		super(items, task);
 
 		boolean isOneChoice = true;
 

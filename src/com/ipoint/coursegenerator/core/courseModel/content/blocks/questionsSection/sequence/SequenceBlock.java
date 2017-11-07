@@ -23,7 +23,7 @@ public class SequenceBlock extends AbstractQuestionBlock<SequenceItem> {
 	}
 
 	public SequenceBlock(List<SequenceItem> items, String task) throws BlockCreationException {
-		super(items, task, true);
+		super(items, task);
 
 		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
 

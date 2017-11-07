@@ -40,11 +40,11 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 	}
 
 	protected AbstractQuestionBlock(List<T> items, boolean needShuffle) throws BlockCreationException {
-		this(items, null, needShuffle);
+		this(items, null);
 	}
 
-	protected AbstractQuestionBlock(List<T> items, String task, boolean needShuffle) throws BlockCreationException {
-		super((needShuffle) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
+	protected AbstractQuestionBlock(List<T> items, String task) throws BlockCreationException {
+		super((items.size() > 1) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 		this.correctAnswers = null;
 	}
