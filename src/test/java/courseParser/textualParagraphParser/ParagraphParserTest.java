@@ -126,8 +126,8 @@ public class ParagraphParserTest {
 
 	@Test
 	public void parseAllParagraphsAndTables() {
-		for (int i = 0; i < TestTools.getTestDoc().getBodyElements().size(); i++) {
-			IBodyElement elem = TestTools.getTestDoc().getBodyElements().get(i);
+		for (int i = 0; i < TestTools.getDocBodyElementsWithoutTestSections().size(); i++) {
+			IBodyElement elem = TestTools.getDocBodyElementsWithoutTestSections().get(i);
 			if ((elem.getElementType().equals(BodyElementType.PARAGRAPH) && !((XWPFParagraph) elem).getText().isEmpty())
 					|| elem.getElementType().equals(BodyElementType.TABLE)) {
 				AbstractSectionBlock<?> block = null;
@@ -146,7 +146,7 @@ public class ParagraphParserTest {
 					// conversion in CourseParser (now is two similar)
 					int iShift = ((ListSectionBlock) block).getSize();
 					if (iShift > 0) {
-						parseListParagraph(TestTools.getTestDoc().getBodyElements().subList(i, i + iShift).stream()
+						parseListParagraph(TestTools.getDocBodyElementsWithoutTestSections().subList(i, i + iShift).stream()
 								.filter(bodyElem -> bodyElem instanceof XWPFParagraph).map(par -> (XWPFParagraph) par)
 								.collect(Collectors.toList()));
 						i += iShift - 1;

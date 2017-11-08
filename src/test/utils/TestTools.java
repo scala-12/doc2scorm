@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.poi.xwpf.usermodel.BodyElementType;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
@@ -22,6 +23,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
+import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ListParser;
 
 public class TestTools {
@@ -29,6 +31,8 @@ public class TestTools {
 	public static final String COURSE_NAME = "WORD-2010.docx";
 
 	private static XWPFDocument DOC_DOCUMENT;
+	private static List<IBodyElement> DOC_BODY_ELEMENTS_TEST_ONLY;
+	private static List<IBodyElement> DOC_BODY_ELEMENTS_WITHOUT_TEST_SECTIONS;
 
 	public static final int COLUMN_COUNT_COLUMN = 0;
 	public static final int ROW_COUNT_COLUMN = 1;
@@ -80,6 +84,64 @@ public class TestTools {
 		}
 
 		return DOC_DOCUMENT;
+	}
+
+	public static List<IBodyElement> getDocBodyElementsWithoutTestSections() {
+		initBodyElems();
+
+		return DOC_BODY_ELEMENTS_WITHOUT_TEST_SECTIONS;
+	}
+
+	public static List<IBodyElement> getDocBodyElementsWithTestSectionsOnly() {
+		initBodyElems();
+
+		return DOC_BODY_ELEMENTS_TEST_ONLY;
+	}
+
+	private static void initBodyElems() {
+		if (DOC_BODY_ELEMENTS_WITHOUT_TEST_SECTIONS == null) {
+			List<IBodyElement> docBodyElements = getTestDoc().getBodyElements();
+			ArrayList<IBodyElement> withoutTestSections = new ArrayList<>(docBodyElements.size());
+			ArrayList<IBodyElement> withTestSections = new ArrayList<>(docBodyElements.size());
+			List<XWPFParagraph> allHeaders = docBodyElements.stream()
+					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH))
+					.map(elem -> (XWPFParagraph) elem).filter(par -> HeaderParser.HeaderInfo.isHeader(par))
+					.collect(Collectors.toList());
+			List<XWPFParagraph> testHeaders = allHeaders.stream()
+					.filter(header -> !HeaderInfo.getHeaderInfo(header).isTheoryNoneTestHeader())
+					.collect(Collectors.toList());
+
+			XWPFParagraph header = allHeaders.get(0);
+			for (int i = 0; (i < testHeaders.size()) && (header != null); i++) {
+				XWPFParagraph testHeader = testHeaders.get(i);
+
+				if (!testHeader.equals(header)) {
+					withoutTestSections.addAll(docBodyElements.subList(docBodyElements.indexOf(header),
+							docBodyElements.indexOf(testHeader) - 1));
+				}
+
+				int testHeaderNum = allHeaders.indexOf(testHeader);
+				header = (testHeaderNum < (allHeaders.size() - 1)) ? allHeaders.get(testHeaderNum + 1) : null;
+
+				if (header == null) {
+					withTestSections.addAll(
+							docBodyElements.subList(docBodyElements.indexOf(testHeader), docBodyElements.size()));
+				} else {
+					withTestSections.addAll(docBodyElements.subList(docBodyElements.indexOf(testHeader),
+							docBodyElements.indexOf(header) - 1));
+				}
+			}
+
+			if (header != null) {
+				withoutTestSections
+						.addAll(docBodyElements.subList(docBodyElements.indexOf(header), docBodyElements.size()));
+			}
+
+			withoutTestSections.trimToSize();
+			withTestSections.trimToSize();
+			DOC_BODY_ELEMENTS_WITHOUT_TEST_SECTIONS = withoutTestSections;
+			DOC_BODY_ELEMENTS_TEST_ONLY = withTestSections;
+		}
 	}
 
 	public static MathInfo getMathMLFormulas() {
@@ -178,9 +240,9 @@ public class TestTools {
 	public static List<XWPFParagraph> getTestHyperlinks() {
 		if (HYPERLINK_PARAGRAPHS == null) {
 			HYPERLINK_PARAGRAPHS = getDocumentPart(HYPERLINKS_PART).stream()
-					.filter(elem -> elem instanceof XWPFParagraph)
-					.map(par -> (XWPFParagraph) par).filter(par -> par.getRuns().stream()
-							.map(run -> run instanceof XWPFHyperlinkRun).collect(Collectors.toSet()).contains(true))
+					.filter(elem -> elem instanceof XWPFParagraph).map(par -> (XWPFParagraph) par)
+					.filter(par -> par.getRuns().stream().map(run -> run instanceof XWPFHyperlinkRun)
+							.collect(Collectors.toSet()).contains(true))
 					.collect(Collectors.toList());
 		}
 
@@ -268,8 +330,7 @@ public class TestTools {
 	}
 
 	/**
-	 * Returns true, if table from special part of document and has valid
-	 * content
+	 * Returns true, if table from special part of document and has valid content
 	 */
 	private static boolean isSpecialTable(XWPFTable table) {
 		if (getSpecialTableRowCount(table) != null) {
