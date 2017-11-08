@@ -110,9 +110,9 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 	}
 
 	protected static Set<PictureInfo> getImagesRecursive(List<? extends AbstractBlock<?>> blocks) {
-		HashSet<PictureInfo> images = new HashSet<>();
+		final HashSet<PictureInfo> images = new HashSet<>();
 
-		blocks.stream().forEach(block -> getImagesRecursive(block));
+		blocks.stream().forEach(block -> images.addAll(getImagesRecursive(block)));
 
 		return images;
 	}
