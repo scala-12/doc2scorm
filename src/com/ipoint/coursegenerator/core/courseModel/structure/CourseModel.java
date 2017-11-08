@@ -13,10 +13,12 @@ public class CourseModel extends AbstractTreeNode {
 	 */
 
 	private String title;
+	private boolean hasFormulas;
 
 	private CourseModel(String courseName) {
 		super();
 		this.setTitle((isCorrectName(courseName)) ? courseName : "course_" + String.valueOf(this.hashCode()));
+		this.hasFormulas = false;
 	}
 
 	public static CourseModel createEmptyCourseModel(String courseName) {
@@ -35,6 +37,14 @@ public class CourseModel extends AbstractTreeNode {
 
 	private static boolean isCorrectName(String name) {
 		return !((name == null) || name.isEmpty());
+	}
+
+	public boolean hasFormulas() {
+		return this.hasFormulas;
+	}
+
+	public void setFormulasStatus(boolean hasFormulas) {
+		this.hasFormulas = hasFormulas;
 	}
 
 }
