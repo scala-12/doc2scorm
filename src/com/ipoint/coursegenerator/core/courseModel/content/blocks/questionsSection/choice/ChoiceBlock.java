@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ChoiceBlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
@@ -49,7 +50,7 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 		}
 
 		if (!hasCorrect) {
-			// TODO: exception
+			throw new ChoiceBlockCreationException(this, items);
 		}
 
 		this.isOneChoice = isOneChoice;
