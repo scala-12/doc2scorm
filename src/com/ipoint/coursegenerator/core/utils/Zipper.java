@@ -19,13 +19,6 @@ public class Zipper {
 
 	private File zipDir;
 
-	private boolean zipExists;
-
-	private boolean fileExists(String fileName) {
-		File f = new File(fileName);
-		return f.exists();
-	}
-
 	private boolean isDir(String fileName) {
 		File f = new File(fileName);
 		return f.isDirectory();
@@ -34,7 +27,6 @@ public class Zipper {
 	public Zipper(String zip, String dir) {
 		this.zipFileName = zip;
 		this.zipDir = new File(dir);
-		this.zipExists = fileExists(zip);
 	}
 
 	private void addDir(ZipOutputStream out, FileOutputStream dest, File subDir, String root, String[] ignoreList) {
@@ -91,7 +83,7 @@ public class Zipper {
 			BufferedOutputStream dest = null;
 			BufferedInputStream is = null;
 			ZipEntry entry;
-			Enumeration e = zipFile.entries();
+			Enumeration<?> e = zipFile.entries();
 			while (e.hasMoreElements()) {
 				entry = (ZipEntry) e.nextElement();
 				if (entry.isDirectory()) {
@@ -124,15 +116,15 @@ public class Zipper {
 		}
 	}
 
-	public Enumeration printZipList() {
+	public void printZipList() {
 		// try {
-		for (Enumeration entries = zipFile.entries(); entries.hasMoreElements();) {
+		for (Enumeration<?> entries = zipFile.entries(); entries.hasMoreElements();) {
 			String zipEntryName = ((ZipEntry) entries.nextElement()).getName();
 			System.out.println(zipEntryName);
 		}
 		// } catch (IOException e) {}
 
-		return null;
+		// return null;
 	}
 
 	public void printDirList(File dir, String pref) {
