@@ -59,28 +59,21 @@ public class TestTools {
 	public static final String COLORED_TEXT = "color";
 
 	// GLOBAL
-	/**
-	 * @return InputStream for file from resources or null
-	 */
+	/** @return InputStream for file from resources or null */
 	public static InputStream getFileFromTestResources(String fileName) {
 		return TestTools.class.getClassLoader().getResourceAsStream(fileName);
 	}
 
-	/**
-	 * @return Input stream for test document
-	 */
+	/** @return Input stream for test document */
 	public static InputStream getTestDocFile() {
 		return getFileFromTestResources(COURSE_NAME);
 	}
 
-	/**
-	 * @return Test document
-	 */
+	/** @return Test document */
 	public static XWPFDocument getTestDoc() {
 		if (DOC_DOCUMENT == null) {
 			try {
-				DOC_DOCUMENT = new XWPFDocument(
-						getFileFromTestResources(COURSE_NAME));
+				DOC_DOCUMENT = new XWPFDocument(getFileFromTestResources(COURSE_NAME));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -91,8 +84,7 @@ public class TestTools {
 
 	public static MathInfo getMathMLFormulas() {
 		if (MATH_ML_FORMULAS == null) {
-			MATH_ML_FORMULAS = CourseParser
-					.getAllFormulsAsMathML(getTestDocFile());
+			MATH_ML_FORMULAS = CourseParser.getAllFormulsAsMathML(getTestDocFile());
 		} else {
 			MATH_ML_FORMULAS.reset();
 		}
@@ -101,42 +93,32 @@ public class TestTools {
 	}
 
 	// PARAGRAPHs
-	/**
-	 * @return List of all text paragraphs
-	 */
+	/** @return List of all text paragraphs */
 	public static List<XWPFParagraph> getOnlyTextParagraphs() {
 		if (PARAGRAPHS == null) {
-			PARAGRAPHS = getTestDoc().getBodyElements().stream()
-					.filter(el -> (el instanceof XWPFParagraph))
-					.map(par -> (XWPFParagraph) par)
-					.filter(par -> !par.getText().isEmpty())
+			PARAGRAPHS = getTestDoc().getBodyElements().stream().filter(el -> (el instanceof XWPFParagraph))
+					.map(par -> (XWPFParagraph) par).filter(par -> !par.getText().isEmpty())
 					.collect(Collectors.toList());
 		}
 
 		return PARAGRAPHS;
 	}
 
-	/**
-	 * @return List of headers
-	 */
+	/** @return List of headers */
 	public static List<XWPFParagraph> getHeaderParagraphs() {
 		if (HEADERS == null) {
-			HEADERS = getOnlyTextParagraphs().stream()
-					.filter(par -> HeaderParser.HeaderInfo.isHeader(par))
+			HEADERS = getOnlyTextParagraphs().stream().filter(par -> HeaderParser.HeaderInfo.isHeader(par))
 					.collect(Collectors.toList());
 		}
 
 		return HEADERS;
 	}
 
-	/**
-	 * @return List of lists that contains paragraphs of one list
-	 */
+	/** @return List of lists that contains paragraphs of one list */
 	public static List<List<XWPFParagraph>> getTestListsParagraphs() {
 		if (LISTS == null) {
-			List<XWPFParagraph> listTestPars = getDocumentPart(LIST_PART)
-					.stream().filter(elem -> elem instanceof XWPFParagraph)
-					.map(par -> (XWPFParagraph) par)
+			List<XWPFParagraph> listTestPars = getDocumentPart(LIST_PART).stream()
+					.filter(elem -> elem instanceof XWPFParagraph).map(par -> (XWPFParagraph) par)
 					.collect(Collectors.toList());
 
 			LISTS = new ArrayList<List<XWPFParagraph>>();
@@ -159,9 +141,7 @@ public class TestTools {
 		return LISTS;
 	}
 
-	/**
-	 * @return Set of styles for run
-	 */
+	/** @return Set of styles for run */
 	public static Set<String> getRunStyles(XWPFRun run) {
 		HashSet<String> result = new HashSet<>();
 		if (run.isBold())
@@ -184,51 +164,37 @@ public class TestTools {
 		return (result.isEmpty()) ? null : result;
 	}
 
-	/**
-	 * @return List of text paragraph from special document part
-	 */
+	/** @return List of text paragraph from special document part */
 	public static List<XWPFParagraph> getTestTextParagraphs() {
 		if (SIMPLE_PARAGRAPHS == null) {
-			SIMPLE_PARAGRAPHS = getDocumentPart(SIMPLE_TEXT_PART).stream()
-					.filter(elem -> elem instanceof XWPFParagraph)
-					.map(par -> (XWPFParagraph) par)
-					.collect(Collectors.toList());
+			SIMPLE_PARAGRAPHS = getDocumentPart(SIMPLE_TEXT_PART).stream().filter(elem -> elem instanceof XWPFParagraph)
+					.map(par -> (XWPFParagraph) par).collect(Collectors.toList());
 		}
 
 		return SIMPLE_PARAGRAPHS;
 	}
 
-	/**
-	 * @return List of hyperlink paragraph from special document part
-	 */
+	/** @return List of hyperlink paragraph from special document part */
 	public static List<XWPFParagraph> getTestHyperlinks() {
 		if (HYPERLINK_PARAGRAPHS == null) {
-			HYPERLINK_PARAGRAPHS = getDocumentPart(HYPERLINKS_PART)
-					.stream()
+			HYPERLINK_PARAGRAPHS = getDocumentPart(HYPERLINKS_PART).stream()
 					.filter(elem -> elem instanceof XWPFParagraph)
-					.map(par -> (XWPFParagraph) par)
-					.filter(par -> par.getRuns().stream()
-							.map(run -> run instanceof XWPFHyperlinkRun)
-							.collect(Collectors.toSet()).contains(true))
+					.map(par -> (XWPFParagraph) par).filter(par -> par.getRuns().stream()
+							.map(run -> run instanceof XWPFHyperlinkRun).collect(Collectors.toSet()).contains(true))
 					.collect(Collectors.toList());
 		}
 
 		return HYPERLINK_PARAGRAPHS;
 	}
 
-	/**
-	 * @return Part of document without subparts - only parts
-	 */
+	/** @return Part of document without subparts - only parts */
 	private static List<IBodyElement> getDocumentPart(String containedString) {
-		XWPFParagraph tableTestHeader = getHeaderParagraphs()
-				.stream()
-				.filter(header -> (header.getText() != null)
-						&& header.getText().toLowerCase()
-								.contains(containedString)).findFirst().get();
+		XWPFParagraph tableTestHeader = getHeaderParagraphs().stream().filter(
+				header -> (header.getText() != null) && header.getText().toLowerCase().contains(containedString))
+				.findFirst().get();
 		int fromHeader = getTestDoc().getPosOfParagraph(tableTestHeader) + 1;
-		int toHeader = getTestDoc().getBodyElements().indexOf(
-				getHeaderParagraphs().get(
-						getHeaderParagraphs().indexOf(tableTestHeader) + 1));
+		int toHeader = getTestDoc().getBodyElements()
+				.indexOf(getHeaderParagraphs().get(getHeaderParagraphs().indexOf(tableTestHeader) + 1));
 		if (toHeader == -1) {
 			toHeader = getTestDoc().getBodyElements().size();
 		}
@@ -237,29 +203,21 @@ public class TestTools {
 	}
 
 	// TABLEs
-	/**
-	 * @return List of tables from special document part
-	 */
+	/** @return List of tables from special document part */
 	public static List<XWPFTable> getTestTables() {
 		if (TABLES == null) {
-			TABLES = getDocumentPart(TABLE_PART)
-					.stream()
-					.filter(elem -> (elem instanceof XWPFTable)
-							&& isSpecialTable((XWPFTable) elem))
-					.map(table -> (XWPFTable) table)
-					.collect(Collectors.toList());
+			TABLES = getDocumentPart(TABLE_PART).stream()
+					.filter(elem -> (elem instanceof XWPFTable) && isSpecialTable((XWPFTable) elem))
+					.map(table -> (XWPFTable) table).collect(Collectors.toList());
 		}
 
 		return TABLES;
 	}
 
-	/**
-	 * @return Count of cells in row for special table from cell
-	 */
+	/** @return Count of cells in row for special table from cell */
 	public static Integer getSpecialCellCountInRow(XWPFTableRow row) {
 		try {
-			int count = Integer.parseInt(row.getCell(COLUMN_COUNT_COLUMN)
-					.getText());
+			int count = Integer.parseInt(row.getCell(COLUMN_COUNT_COLUMN).getText());
 			if (count > 0) {
 				return count;
 			}
@@ -280,8 +238,7 @@ public class TestTools {
 	 */
 	private static int[] getSpecialCellInfo(XWPFTableCell cell) {
 		try {
-			return new int[] {
-					Integer.parseInt(cell.getText().split(";")[0].split("-")[0]),
+			return new int[] { Integer.parseInt(cell.getText().split(";")[0].split("-")[0]),
 					Integer.parseInt(cell.getText().split(";")[0].split("-")[1]),
 					Integer.parseInt(cell.getText().split(";")[1].split("-")[0]),
 					Integer.parseInt(cell.getText().split(";")[1].split("-")[1]) };
@@ -291,20 +248,15 @@ public class TestTools {
 		return null;
 	}
 
-	/**
-	 * @return Count of columns for special table from cell
-	 */
+	/** @return Count of columns for special table from cell */
 	public static Integer getSpecialTableColumnCount(XWPFTable table) {
 		return getSpecialCellCountInRow(table.getRow(0));
 	}
 
-	/**
-	 * @return Count of rows for special table from cell
-	 */
+	/** @return Count of rows for special table from cell */
 	public static Integer getSpecialTableRowCount(XWPFTable table) {
 		try {
-			int count = Integer.parseInt(table.getRow(0)
-					.getCell(ROW_COUNT_COLUMN).getText());
+			int count = Integer.parseInt(table.getRow(0).getCell(ROW_COUNT_COLUMN).getText());
 			if (count > 0) {
 				return count;
 			}
@@ -344,18 +296,14 @@ public class TestTools {
 	 * @return rows List, row is cell List, cell is
 	 *         {@link TestTools#getSpecialCellInfo(org.apache.poi.xwpf.usermodel.XWPFTableCell)}
 	 */
-	public static List<List<int[]>> getSpecialTableContentCellsInfo(
-			XWPFTable table) {
+	public static List<List<int[]>> getSpecialTableContentCellsInfo(XWPFTable table) {
 		ArrayList<List<int[]>> tableInfo = new ArrayList<>();
-		for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < table.getRows()
-				.size(); rowNum++) {
+		for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < table.getRows().size(); rowNum++) {
 			XWPFTableRow tRow = table.getRow(rowNum);
 
 			ArrayList<int[]> rowInfo = new ArrayList<>();
-			for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < tRow
-					.getTableCells().size(); cellNum++) {
-				int[] cellInfo = TestTools.getSpecialCellInfo(tRow
-						.getCell(cellNum));
+			for (int cellNum = TestTools.CONTENT_FROM_COLUMN; cellNum < tRow.getTableCells().size(); cellNum++) {
+				int[] cellInfo = TestTools.getSpecialCellInfo(tRow.getCell(cellNum));
 				if (cellInfo != null) {
 					rowInfo.add(cellInfo);
 				}
