@@ -44,6 +44,7 @@ import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Version;
 
 public class FileTools {
 
@@ -53,6 +54,8 @@ public class FileTools {
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
 	private final static Map<String, String> DEFAULT_TMPL_VARS = _getDefaultVars();
+
+	private static final Version CFG_VERSION = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
 
 	public static final int BUFFER_SIZE = 1024;
 
@@ -373,9 +376,9 @@ public class FileTools {
 			resultFile = new File(resultFile.getParentFile(), name.substring(0, name.lastIndexOf("ftl")) + "html");
 		}
 
-		Configuration cfg = new Configuration();
+		Configuration cfg = new Configuration(CFG_VERSION);
 		cfg.setClassLoaderForTemplateLoading(FileTools.class.getClassLoader(), tmplFile.getParent());
-		cfg.setObjectWrapper(new DefaultObjectWrapper());
+		cfg.setObjectWrapper(new DefaultObjectWrapper(CFG_VERSION));
 
 		try {
 			Template tmpl = cfg.getTemplate(tmplFile.getName(), STANDARD_ENCODING.name());
