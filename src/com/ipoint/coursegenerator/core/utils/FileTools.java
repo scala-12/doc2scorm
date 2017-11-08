@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -252,6 +253,7 @@ public class FileTools {
 		HashMap<String, String> scoVars = new HashMap<>(DEFAULT_TMPL_VARS);
 		scoVars.put("page_title", page.getParent().getTitle());
 
+		boolean successful = true;
 		if (page instanceof TheoryPage) {
 			StringBuilder content = new StringBuilder();
 
@@ -265,22 +267,12 @@ public class FileTools {
 
 			scoVars.put("body_content", content.toString());
 
-			boolean successful = saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY,
+			successful = saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY,
 					new File(courseDir, page.getParent().getPageLocation()), scoVars);
-
-			if (successful) {
-				page.getImages().stream().forEach(image -> {
-					savePageImages(page, courseDir, sOfficeFile);
-				});
-			}
-
-			return successful;
 		} else {
 			TestingPage testingPage = (TestingPage) page;
 
 			createTestingDir(courseDir, testingPage, scoVars);
-
-			boolean allSuccessful = true;
 
 			for (int i = 0; i < page.getBlocks().size(); i++) {
 				HashMap<String, String> vars = new HashMap<>(scoVars);
@@ -320,26 +312,15 @@ public class FileTools {
 
 				if (saveHtmlDocument(TemplateFiles.SCO4TEST, vars, html, new File(courseDir,
 						page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
-					Set<PictureInfo> images = page.getImages();
-					if (!images.isEmpty()) {
-						File imgDir = new File(courseDir, ((page instanceof TestingPage)
-								? page.getParent().getPageLocation() + File.separator : "") + FileTools.IMAGE_DIR_NAME);
-						if (!imgDir.exists()) {
-							imgDir.mkdirs();
-						}
-
-						images.stream().forEach(image -> {
-							savePageImages(page, courseDir, sOfficeFile);
-						});
-					}
-
 				} else {
-					allSuccessful = false;
+					successful = false;
 				}
 			}
-
-			return allSuccessful;
 		}
+
+		savePageImages(page, courseDir, sOfficeFile);
+
+		return successful;
 	}
 
 	private static void createTestingDir(File courseDir, TestingPage page, Map<String, String> vars) {
@@ -413,35 +394,41 @@ public class FileTools {
 	}
 
 	private static Set<PictureInfo> savePageImages(AbstractPage<?> page, File courseDir, File sOfficeFile) {
-		File imgsDir = new File(courseDir,
-				((page instanceof TestingPage) ? page.getParent().getSystemName() + File.separator : "")
-						+ IMAGE_DIR_NAME);
-		HashSet<PictureInfo> withErrors = new HashSet<>();
+		Set<PictureInfo> images = page.getImages();
+		HashSet<PictureInfo> result = null;
+		if (!images.isEmpty()) {
+			final HashSet<PictureInfo> withErrors = new HashSet<>();
+			File imgsDir = new File(courseDir,
+					((page instanceof TestingPage) ? page.getParent().getSystemName() + File.separator : "")
+							+ IMAGE_DIR_NAME);
+			imgsDir.mkdirs();
 
-		page.getImages().stream().forEach(image -> {
-			byte[] byteImage;
+			images.stream().forEach(image -> {
+				byte[] byteImage;
 
-			int imgType = image.getData().getPictureType();
-			if ((org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG == imgType)
-					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP == imgType)
-					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF == imgType)
-					|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG == imgType)) {
-				byteImage = image.getData().getData();
-			} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF == imgType) {
-				byteImage = ImageFormatConverter.transcodeEmfToPng(image.getData().getData(), sOfficeFile);
-			} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF == imgType) {
-				byteImage = ImageFormatConverter.transcodeWmfToPng(image.getData().getData(), sOfficeFile);
-			} else {
-				byteImage = null;
-			}
+				int imgType = image.getData().getPictureType();
+				if ((org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_PNG == imgType)
+						|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_BMP == imgType)
+						|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_GIF == imgType)
+						|| (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_JPEG == imgType)) {
+					byteImage = image.getData().getData();
+				} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_EMF == imgType) {
+					byteImage = ImageFormatConverter.transcodeEmfToPng(image.getData().getData(), sOfficeFile);
+				} else if (org.apache.poi.xwpf.usermodel.Document.PICTURE_TYPE_WMF == imgType) {
+					byteImage = ImageFormatConverter.transcodeWmfToPng(image.getData().getData(), sOfficeFile);
+				} else {
+					byteImage = null;
+				}
 
-			if ((byteImage == null)
-					|| saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, image.getName()))) {
-				withErrors.add(image);
-			}
-		});
+				if ((byteImage == null)
+						|| saveRawFile(new ByteArrayInputStream(byteImage), new File(imgsDir, image.getName()))) {
+					withErrors.add(image);
+				}
+			});
+			result = withErrors;
+		}
 
-		return withErrors;
+		return (result == null) ? Collections.emptySet() : result;
 	}
 
 }
