@@ -78,9 +78,10 @@ public class Parser {
 		}
 		courseDir.mkdirs();
 
-		saveImsManifestFile(CourseParser.parse(stream, courseName, headerLevel), courseDir);
+		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
+		saveImsManifestFile(courseModel, courseDir);
 
-		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR));
+		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR), courseModel.hasFormulas());
 
 		String zipCourseFileName = getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, courseDir.getPath());
