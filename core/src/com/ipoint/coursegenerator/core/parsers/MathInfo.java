@@ -46,4 +46,8 @@ public class MathInfo {
 		this.reedFormulCount = 0;
 	}
 
+	public int count() {
+		return this.mathMLFormulList.size();
+	}
+
 }

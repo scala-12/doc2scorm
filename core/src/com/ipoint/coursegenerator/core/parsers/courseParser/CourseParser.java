@@ -261,6 +261,7 @@ public class CourseParser extends AbstractParser {
 			tmpDoc.delete();
 
 			courseModel = CourseModel.createEmptyCourseModel(courseName);
+			courseModel.setFormulasStatus((mathInfo != null) && (mathInfo.count() != 0));
 
 			List<XWPFParagraph> trueHeaders = document.getBodyElements().stream()
 					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH)
