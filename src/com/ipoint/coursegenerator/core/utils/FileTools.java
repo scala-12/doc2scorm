@@ -60,6 +60,7 @@ public class FileTools {
 
 		private static final File JS_DIR = new File(TEMPLATE_DIR, "js");
 		public static final File JS_SYSTEM_DIR = new File(JS_DIR, "systemFiles");
+		public static final File MATHJAX_DIR = new File(JS_DIR, "MathJax-2.7.1");
 
 		private static final File CSS_DIR = new File(TEMPLATE_DIR, "css");
 		public static final File CSS_SYSTEM_DIR = new File(CSS_DIR, "systemFiles");
@@ -208,9 +209,13 @@ public class FileTools {
 		return files;
 	}
 
-	public static void saveSystemDir(File systemDir) {
+	public static void saveSystemDir(File systemDir, boolean withMathjax) {
 		FileTools.copyFileFromResourceDirToDir(TemplateFiles.CSS_SYSTEM_DIR, systemDir, null);
 		FileTools.copyFileFromResourceDirToDir(TemplateFiles.JS_SYSTEM_DIR, systemDir, null);
+		if (withMathjax) {
+			FileTools.copyFileFromResourceDirToDir(TemplateFiles.MATHJAX_DIR,
+					new File(systemDir, TemplateFiles.MATHJAX_DIR.getName()), null);
+		}
 	}
 
 	public static InputStream getFileFromResources(File fileFromResource) {
