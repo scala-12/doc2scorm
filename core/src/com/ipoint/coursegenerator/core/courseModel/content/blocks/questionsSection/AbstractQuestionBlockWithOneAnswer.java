@@ -5,12 +5,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Blo
 public abstract class AbstractQuestionBlockWithOneAnswer<T extends AbstractQuestionItem<?>>
 		extends AbstractQuestionBlock<T> {
 
-	protected AbstractQuestionBlockWithOneAnswer(T item) throws BlockCreationException {
-		super(item);
-	}
-
-	protected AbstractQuestionBlockWithOneAnswer(T item, String task) throws BlockCreationException {
-		super(item, task);
+	protected AbstractQuestionBlockWithOneAnswer(T item, String task, String answer) throws BlockCreationException {
+		super(item, task, new String[] { answer });
 	}
 
 	@Override

@@ -8,16 +8,17 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 public abstract class QuestionWithSortableItems<T extends SortableItem> extends AbstractQuestionBlockWithAnswers<T> {
 
 	protected QuestionWithSortableItems(List<T> items, String task) throws BlockCreationException {
-		super(items, task);
+		super(items, task, null, item -> String.valueOf(item.getIndex()));
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder text = new StringBuilder();
 		int i = -1;
+		final String[] correctAnswers = this.getCorrect();
 		for (String item : this.getItems().stream().map(T::getText).toArray(String[]::new)) {
 			i += 1;
-			text.append(this.correctAnswers[i]).append(". ").append(item).append('\n');
+			text.append(correctAnswers[i]).append(". ").append(item).append('\n');
 		}
 
 		return text.toString();

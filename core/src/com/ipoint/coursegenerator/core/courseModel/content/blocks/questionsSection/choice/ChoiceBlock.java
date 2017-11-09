@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -27,34 +26,14 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 
 	private final boolean isOneChoice;
 
-	public ChoiceBlock(List<ChoiceItem> items) throws BlockCreationException {
-		this(items, null);
-	}
-
 	public ChoiceBlock(List<ChoiceItem> items, String task) throws BlockCreationException {
-		super(items, task);
-
-		boolean isOneChoice = true;
-
-		boolean hasCorrect = false;
-		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
-
-		for (ChoiceItem item : this.getItems()) {
-			if (item.isCorrect()) {
-				correctAnswers.add(String.valueOf(item.getIndex()));
-				if (hasCorrect) {
-					isOneChoice = false;
-				}
-				hasCorrect = true;
-			}
-		}
-
-		if (!hasCorrect) {
+		super(items, task, ChoiceItem::isCorrect, item -> String.valueOf(item.getIndex()));
+		String[] correctAnswers = this.getCorrect();
+		if (correctAnswers.length == 0) {
 			throw new ChoiceBlockCreationException(this, items);
+		} else {
+			this.isOneChoice = (correctAnswers.length == 1);
 		}
-
-		this.isOneChoice = isOneChoice;
-		this.correctAnswers = correctAnswers.stream().toArray(String[]::new);
 	}
 
 	/**

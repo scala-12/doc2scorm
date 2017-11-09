@@ -439,7 +439,8 @@ public class CourseParser extends AbstractParser {
 									List<TableItem> rows = block.getItems();
 									if (rows.get(0).getValue().size() == 1) {
 										if (rows.size() == 1) {
-											questBlock = new FillInBlock(new FillInItem(block.getText()));
+											questBlock = new FillInBlock(new FillInItem(block.getText()),
+													question.getTask());
 										} else {
 											questBlock = new SequenceBlock(rows.stream().map(row -> {
 												try {
@@ -448,13 +449,13 @@ public class CourseParser extends AbstractParser {
 													e.printStackTrace();
 												}
 												return null;
-											}).collect(Collectors.toList()));
+											}).collect(Collectors.toList()), question.getTask());
 										}
 									} else if (rows.get(0).getValue().size() == 2) {
 										questBlock = new MatchBlock(rows.stream()
 												.map(row -> new Label2Answer(row.getValue().get(0).getItem().getValue(),
 														row.getValue().get(1).getItem().getValue()))
-												.collect(Collectors.toList()));
+												.collect(Collectors.toList()), question.getTask());
 									}
 								} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
 									questBlock = new ChoiceBlock(((ListSectionBlock) question.getAnswersBlocks().get(0))
@@ -467,14 +468,13 @@ public class CourseParser extends AbstractParser {
 													e1.printStackTrace();
 												}
 												return null;
-											}).collect(Collectors.toList()));
+											}).collect(Collectors.toList()), question.getTask());
 								}
 							} catch (BlockCreationException e) {
 								e.printStackTrace();
 							}
 
 							if (questBlock != null) {
-								questBlock.setTask(question.getTask());
 								questionsBlocks.add(questBlock);
 							}
 						}

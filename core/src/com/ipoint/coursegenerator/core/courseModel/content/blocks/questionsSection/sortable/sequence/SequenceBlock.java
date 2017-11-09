@@ -18,14 +18,8 @@ public class SequenceBlock extends QuestionWithSortableItems<SequenceItem> {
 
 	public static final String SEQUENCE_ANSWERS_BLOCK_ID = "sequence_answers_block";
 
-	public SequenceBlock(List<SequenceItem> items) throws BlockCreationException {
-		this(items, null);
-	}
-
 	public SequenceBlock(List<SequenceItem> items, String task) throws BlockCreationException {
 		super(items, task);
-
-		this.correctAnswers = items.stream().map(item -> String.valueOf(item.getIndex())).toArray(String[]::new);
 	}
 
 	/**
