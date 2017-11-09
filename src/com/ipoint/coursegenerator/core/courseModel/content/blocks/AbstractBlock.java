@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
@@ -20,6 +22,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Ite
  *            Type of item that included in block
  */
 public abstract class AbstractBlock<T extends AbstractItem<?>> implements Convertable {
+
+	private final static Logger LOG = Logger.getLogger(AbstractBlock.class.getName());
 
 	public static abstract class AbstractItem<T extends Object> implements Convertable {
 
@@ -81,11 +85,17 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 
 	protected AbstractBlock(List<T> items) throws BlockCreationException {
 		if (items != null) {
-			LinkedList<T> checkedItems = new LinkedList<>(
-					items.stream().filter(item -> item != null).collect(Collectors.toList()));
+			Map<Boolean, List<T>> nullAndItems = items.stream()
+					.collect(Collectors.partitioningBy(item -> item == null));
+
+			LinkedList<T> checkedItems = new LinkedList<>(nullAndItems.get(false));
 			if (checkedItems.isEmpty()) {
 				throw new BlockCreationException(this, checkedItems);
 			} else {
+				if (!nullAndItems.get(true).isEmpty()) {
+					LOG.warning("Block has nullable items on create");
+				}
+
 				int index = -1;
 				for (T item : checkedItems) {
 					index += 1;
