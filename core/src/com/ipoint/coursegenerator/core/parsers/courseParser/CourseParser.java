@@ -102,8 +102,7 @@ public class CourseParser extends AbstractParser {
 	private static final String MATH_END = MATH_START.replace("<", "</");
 
 	/**
-	 * Returns all formulas in MathML notation from OMML formuls of
-	 * docx-document
+	 * Returns all formulas in MathML notation from OMML formuls of docx-document
 	 *
 	 * @param stream
 	 *            Docx document stream
@@ -231,9 +230,8 @@ public class CourseParser extends AbstractParser {
 	 * @param courseName
 	 *            Course name
 	 * @param maxHeaderLevel
-	 *            Max level of header that is paragraph. Max value is 1 that
-	 *            first level of header. If this value is no more than 1 then
-	 *            first level
+	 *            Max level of header that is paragraph. Max value is 1 that first
+	 *            level of header. If this value is no more than 1 then first level
 	 * @return {@link CourseModel} of course
 	 */
 	public static CourseModel parse(InputStream stream, String courseName, int maxHeaderLevel) {
