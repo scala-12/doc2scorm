@@ -2,8 +2,8 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions;
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchItem;
 
 public class MatchQuestionBlockCreationException extends BlockCreationException {
 
