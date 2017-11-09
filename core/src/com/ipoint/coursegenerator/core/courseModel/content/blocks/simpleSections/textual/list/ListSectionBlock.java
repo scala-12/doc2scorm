@@ -112,7 +112,7 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 
 	@Override
 	public String getText() {
-		return String.join("\n", this.getItems().stream().map(li -> li.getText()).collect(Collectors.toList()));
+		return String.join("\n", this.getItems().stream().map(ListSectionItem::getText).collect(Collectors.toList()));
 	}
 
 }
