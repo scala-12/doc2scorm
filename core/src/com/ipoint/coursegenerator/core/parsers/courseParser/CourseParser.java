@@ -51,6 +51,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.TreeNodeCreationException;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
@@ -262,10 +263,10 @@ public class CourseParser extends AbstractParser {
 			courseModel.setFormulasStatus((mathInfo != null) && (mathInfo.count() != 0));
 
 			List<XWPFParagraph> trueHeaders = document.getBodyElements().stream()
-					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH)
-							&& HeaderParser.HeaderInfo.isHeader((XWPFParagraph) elem)
-							&& (HeaderInfo.getHeaderInfo((XWPFParagraph) elem).getLevel() <= maxHeader))
-					.map(elem -> (XWPFParagraph) elem).collect(Collectors.toList());
+					.filter(elem -> elem.getElementType().equals(BodyElementType.PARAGRAPH))
+					.map(elem -> (XWPFParagraph) elem)
+					.filter(par -> HeaderInfo.isHeader(par) && (HeaderInfo.getHeaderInfo(par).getLevel() <= maxHeader))
+					.collect(Collectors.toList());
 
 			int lastHeaderNum = trueHeaders.size() - 1;
 			int lastDocElemNum = document.getBodyElements().size() - 1;
@@ -327,11 +328,16 @@ public class CourseParser extends AbstractParser {
 
 						int chapterElemNum = 0;
 						while (chapterElemNum < chapterParsAndTables.size()) {
-							BlockWithShifting blockAndShift = getBlockWithShifting(
-									chapterParsAndTables.get(chapterElemNum), mathInfo, maxHeader);
-							chapterBlocks.add(blockAndShift.getBlock());
+							BlockWithShifting blockAndShift;
+							try {
+								blockAndShift = getBlockWithShifting(chapterParsAndTables.get(chapterElemNum), mathInfo,
+										maxHeader);
+								chapterBlocks.add(blockAndShift.getBlock());
 
-							chapterElemNum += (1 + blockAndShift.getShift());
+								chapterElemNum += (1 + blockAndShift.getShift());
+							} catch (BlockCreationException | ItemCreationException e) {
+								e.printStackTrace();
+							}
 						}
 
 						if (!chapterBlocks.isEmpty()) {
@@ -372,45 +378,52 @@ public class CourseParser extends AbstractParser {
 
 								questionTask.append(par.getText());
 							} else {
-								BlockWithShifting blockWithShift = getBlockWithShifting(chapterElem, mathInfo,
-										maxHeader);
-								if (blockWithShift.getBlock() != null) {
-									if (hasQuestion) {
-										questionsWithAnswers
-												.add(new QuestionWithAnswers(questionTask.toString(), questionAnswers));
+								BlockWithShifting blockWithShift;
+								try {
+									blockWithShift = getBlockWithShifting(chapterElem, mathInfo, maxHeader);
 
-										// TODO: check all
-										if (blockWithShift.getBlock() instanceof ListSectionBlock) {
-											ListSectionBlock listBlock = (ListSectionBlock) blockWithShift.getBlock();
-											int shift = blockWithShift.getShift();
+									if (blockWithShift.getBlock() != null) {
+										if (hasQuestion) {
+											questionsWithAnswers.add(
+													new QuestionWithAnswers(questionTask.toString(), questionAnswers));
 
-											int i = 0;
-											int count = 0;
-											int lastChapterParElementShift = chapterParsAndTables.size()
-													- chapterElemNum;
-											while ((count <= shift) && (i < lastChapterParElementShift)) {
-												IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
-												if (elem instanceof XWPFParagraph) {
-													htmlAnswer2RealPar.put(
-															Tools.getNodeString(
-																	listBlock.getItems().get(i).toHtml(html)),
-															(XWPFParagraph) elem);
-													count += 1;
+											// TODO: check all
+											if (blockWithShift.getBlock() instanceof ListSectionBlock) {
+												ListSectionBlock listBlock = (ListSectionBlock) blockWithShift
+														.getBlock();
+												int shift = blockWithShift.getShift();
+
+												int i = 0;
+												int count = 0;
+												int lastChapterParElementShift = chapterParsAndTables.size()
+														- chapterElemNum;
+												while ((count <= shift) && (i < lastChapterParElementShift)) {
+													IBodyElement elem = chapterParsAndTables.get(chapterElemNum + i);
+													if (elem instanceof XWPFParagraph) {
+														htmlAnswer2RealPar.put(
+																Tools.getNodeString(
+																		listBlock.getItems().get(i).toHtml(html)),
+																(XWPFParagraph) elem);
+														count += 1;
+													}
+
+													i += 1;
 												}
 
-												i += 1;
+												chapterElemNum += shift;
+											} else if (null != par) {
+												htmlAnswer2RealPar.put(
+														Tools.getNodeString(blockWithShift.getBlock().toHtml(html)),
+														par);
 											}
 
-											chapterElemNum += shift;
-										} else if (null != par) {
-											htmlAnswer2RealPar.put(
-													Tools.getNodeString(blockWithShift.getBlock().toHtml(html)), par);
+											questionAnswers.add(blockWithShift.getBlock());
+										} else {
+											introBlocks.add(blockWithShift.getBlock());
 										}
-
-										questionAnswers.add(blockWithShift.getBlock());
-									} else {
-										introBlocks.add(blockWithShift.getBlock());
 									}
+								} catch (BlockCreationException | ItemCreationException e) {
+									e.printStackTrace();
 								}
 							}
 
@@ -427,21 +440,46 @@ public class CourseParser extends AbstractParser {
 								List<TableItem> rows = block.getItems();
 								if (rows.get(0).getValue().size() == 1) {
 									if (rows.size() == 1) {
-										questBlock = new FillInBlock(new FillInItem(block.getText()));
+										try {
+											questBlock = new FillInBlock(new FillInItem(block.getText()));
+										} catch (BlockCreationException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									} else {
 										ArrayList<SequenceItem> items = new ArrayList<>();
 										for (TableItem row : rows) {
-											items.add(new SequenceItem(row.getValue().get(0).getItem().getValue()));
+											try {
+												items.add(new SequenceItem(row.getValue().get(0).getItem().getValue()));
+											} catch (ItemCreationException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
 										}
 
-										questBlock = new SequenceBlock(items);
+										try {
+											questBlock = new SequenceBlock(items);
+										} catch (BlockCreationException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									}
 								} else if (rows.size() == 1) {
 									ArrayList<SequenceItem> items = new ArrayList<>();
 									for (CellBlock cell : rows.get(0).getValue()) {
-										items.add(new SequenceItem(cell.getItem().getValue()));
+										try {
+											items.add(new SequenceItem(cell.getItem().getValue()));
+										} catch (ItemCreationException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									}
-									questBlock = new SequenceBlock(items);
+									try {
+										questBlock = new SequenceBlock(items);
+									} catch (BlockCreationException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 
 								} else if (rows.get(0).getValue().size() == 2) {
 									ArrayList<Label2Answer> items = new ArrayList<>();
@@ -449,17 +487,32 @@ public class CourseParser extends AbstractParser {
 										items.add(new Label2Answer(row.getValue().get(0).getItem().getValue(),
 												row.getValue().get(1).getItem().getValue()));
 									}
-									questBlock = new MatchBlock(items);
+									try {
+										questBlock = new MatchBlock(items);
+									} catch (BlockCreationException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 								}
 							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
 								ArrayList<ChoiceItem> items = new ArrayList<>();
 								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0))
 										.getItems()) {
-									items.add(new ChoiceItem((ParagraphBlock) item.getValue(),
-											HeaderParser.HeaderInfo.isCorrectAnswer(
-													htmlAnswer2RealPar.get(Tools.getNodeString(item.toHtml(html))))));
+									try {
+										items.add(new ChoiceItem((ParagraphBlock) item.getValue(),
+												HeaderParser.HeaderInfo.isCorrectAnswer(htmlAnswer2RealPar
+														.get(Tools.getNodeString(item.toHtml(html))))));
+									} catch (ItemCreationException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 								}
-								questBlock = new ChoiceBlock(items);
+								try {
+									questBlock = new ChoiceBlock(items);
+								} catch (BlockCreationException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
 
 							if (questBlock != null) {
@@ -483,12 +536,10 @@ public class CourseParser extends AbstractParser {
 					}
 				}
 			}
-		} catch (
-
-		IOException e) {
+		} catch (IOException e) {
 			System.err.println("Error : Cannot convert create XWPFDocument from input stream!");
 			e.printStackTrace();
-		} catch (Exception e) {
+		} catch (TreeNodeCreationException e) {
 			e.printStackTrace();
 		}
 
