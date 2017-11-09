@@ -50,10 +50,6 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 
 	private List<List<AbstractSectionBlock<?>>> labels;
 
-	public MatchBlock(List<Label2Answer> pairs) throws BlockCreationException {
-		this(pairs, null);
-	}
-
 	public MatchBlock(List<Label2Answer> pairs, String task) throws BlockCreationException {
 		this(pairs.stream().map(pair -> pair.getLabelSections()).collect(Collectors.toList()),
 				pairs.stream().map(pair -> {
@@ -72,8 +68,6 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 		super(items, task);
 
 		this.labels = labels;
-
-		this.correctAnswers = items.stream().map(item -> String.valueOf(item.getIndex())).toArray(String[]::new);
 
 		if (items.size() != labels.size()) {
 			throw new MatchQuestionBlockCreationException(this, items);

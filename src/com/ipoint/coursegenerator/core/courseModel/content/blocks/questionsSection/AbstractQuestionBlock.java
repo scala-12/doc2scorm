@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,33 +33,29 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 
 	private String task;
 
-	protected String[] correctAnswers;
+	private final String[] correctAnswers;
 
 	public String[] getCorrect() {
-		return correctAnswers;
+		return Arrays.copyOf(correctAnswers, correctAnswers.length);
 	}
 
-	protected AbstractQuestionBlock(T item) throws BlockCreationException {
-		this(item, null);
-	}
-
-	protected AbstractQuestionBlock(T item, String task) throws BlockCreationException {
+	protected AbstractQuestionBlock(T item, String task, String[] correctAnswers) throws BlockCreationException {
 		super(item);
-		this.setQuestionFields(task);
-	}
-
-	private final void setQuestionFields(String task) {
+		this.correctAnswers = correctAnswers;
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
-		this.correctAnswers = null;
 	}
 
-	protected AbstractQuestionBlock(List<T> items) throws BlockCreationException {
-		this(items, null);
-	}
-
-	protected AbstractQuestionBlock(List<T> items, String task) throws BlockCreationException {
+	protected AbstractQuestionBlock(List<T> items, String task, Predicate<T> filter, Function<T, String> selector)
+			throws BlockCreationException {
 		super((items.size() > 1) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
-		this.setQuestionFields(task);
+
+		Stream<T> stream = items.stream();
+		if (filter != null) {
+			stream = stream.filter(filter);
+		}
+
+		this.correctAnswers = stream.map(selector).toArray(String[]::new);
+		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 
 	private static <T extends AbstractQuestionItem<?>> List<T> shuffledItems(List<T> items) {
@@ -74,20 +73,10 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return this.task = null;
 	}
 
-	public boolean setTask(String task) {
-		if ((task != null) && !task.isEmpty()) {
-			this.task = task;
-
-			return true;
-		}
-
-		return false;
-	}
-
 	@Override
 	/**
-	 * @return div that contained 2 element: div with id and task text + form
-	 *         with div of answers
+	 * @return div that contained 2 element: div with id and task text + form with
+	 *         div of answers
 	 */
 	public Element toHtml(Document creatorTags) {
 		Element div = creatorTags.createElement("div");
