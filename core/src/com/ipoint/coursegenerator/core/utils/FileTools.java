@@ -34,10 +34,10 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match.MatchItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence.SequenceItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
 import freemarker.template.Configuration;

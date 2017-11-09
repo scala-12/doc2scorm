@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,28 +11,20 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Ite
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
-/**
- * 
- * @author Kalashnikov Vladislav
- *
- */
-public class MatchItem extends AbstractQuestionItem<List<AbstractSectionBlock<?>>> {
+public abstract class SortableItem extends AbstractQuestionItem<List<AbstractSectionBlock<?>>> {
+	
+	public static final String[] ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
-	public static final String MATCH_ANSWER_CLASS = "match_answer";
-	public static final String MATCH_ANSWER_CLASSES = String.join(" ",
-			new String[] { MATCH_ANSWER_CLASS, "ui-state-default" });
-	public static final String MATCH_ANSWER_ID_PREFIX = MATCH_ANSWER_CLASS + '_';
-
-	MatchItem(List<AbstractSectionBlock<?>> answer) throws ItemCreationException {
-		super(answer);
+	public SortableItem(List<AbstractSectionBlock<?>> content) throws ItemCreationException {
+		super(content);
 	}
 
 	/** @return answer li-element with id of answer class */
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element input = creatorTags.createElement("li");
-		input.setAttribute("class", MATCH_ANSWER_CLASSES);
-		input.setAttribute("id", MATCH_ANSWER_ID_PREFIX + String.valueOf(this.getIndex()));
+		input.setAttribute("class", this.getItemClasses());
+		input.setAttribute("id", this.getItemIdPrefix() + String.valueOf(this.getIndex()));
 
 		int i = 0;
 		for (AbstractSectionBlock<?> answerSection : this.getValue()) {
@@ -51,11 +43,15 @@ public class MatchItem extends AbstractQuestionItem<List<AbstractSectionBlock<?>
 		return input;
 	}
 
+	abstract protected String getItemClasses();
+
+	abstract protected String getItemIdPrefix();
+
 	@Override
 	public String getText() {
 
 		return super.getText() + String.join(" ",
-				this.getValue().stream().map(section -> section.getText()).collect(Collectors.toList()));
+				this.getValue().stream().map(AbstractSectionBlock::getText).collect(Collectors.toList()));
 	}
 
 }

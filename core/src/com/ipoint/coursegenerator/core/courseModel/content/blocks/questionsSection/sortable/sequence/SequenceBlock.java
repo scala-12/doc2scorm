@@ -1,6 +1,5 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sequence;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -8,14 +7,14 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.QuestionWithSortableItems;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
  *
  */
-public class SequenceBlock extends AbstractQuestionBlockWithAnswers<SequenceItem> {
+public class SequenceBlock extends QuestionWithSortableItems<SequenceItem> {
 
 	public static final String SEQUENCE_ANSWERS_BLOCK_ID = "sequence_answers_block";
 
@@ -26,13 +25,7 @@ public class SequenceBlock extends AbstractQuestionBlockWithAnswers<SequenceItem
 	public SequenceBlock(List<SequenceItem> items, String task) throws BlockCreationException {
 		super(items, task);
 
-		ArrayList<String> correctAnswers = new ArrayList<>(items.size());
-
-		for (SequenceItem item : items) {
-			correctAnswers.add(String.valueOf(item.getIndex()));
-		}
-
-		this.correctAnswers = correctAnswers.stream().toArray(String[]::new);
+		this.correctAnswers = items.stream().map(item -> String.valueOf(item.getIndex())).toArray(String[]::new);
 	}
 
 	/**
@@ -60,18 +53,6 @@ public class SequenceBlock extends AbstractQuestionBlockWithAnswers<SequenceItem
 	@Override
 	public QuestionType getType() {
 		return QuestionType.SEQUENCING;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder text = new StringBuilder();
-		int i = -1;
-		for (String item : this.getItems().stream().map(item -> item.getText() + " ").toArray(String[]::new)) {
-			i += 1;
-			text.append(this.correctAnswers[i]).append(". ").append(item);
-		}
-
-		return text.toString();
 	}
 
 }

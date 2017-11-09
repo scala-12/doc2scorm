@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.match;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Blo
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.MatchQuestionBlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.QuestionWithSortableItems;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
@@ -26,7 +26,7 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  * @author Kalashnikov Vladislav
  *
  */
-public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
+public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 
 	public static class Label2Answer extends Pair<List<AbstractSectionBlock<?>>, List<AbstractSectionBlock<?>>> {
 
@@ -64,7 +64,7 @@ public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 					}
 
 					return null;
-				}).filter(item -> item != null).collect(Collectors.toList()), task);
+				}).collect(Collectors.toList()), task);
 	}
 
 	private MatchBlock(List<List<AbstractSectionBlock<?>>> labels, List<MatchItem> items, String task)
@@ -85,8 +85,7 @@ public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 	}
 
 	/**
-	 * add table to answer block that included list of labels and list of
-	 * answers
+	 * add table to answer block that included list of labels and list of answers
 	 */
 	@Override
 	public Element toHtml(final Document creatorTags) {
@@ -132,18 +131,6 @@ public class MatchBlock extends AbstractQuestionBlockWithAnswers<MatchItem> {
 	@Override
 	public QuestionType getType() {
 		return QuestionType.MATCHING;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder text = new StringBuilder();
-		int i = -1;
-		for (String item : this.getItems().stream().map(item -> item.getText() + " ").toArray(String[]::new)) {
-			i += 1;
-			text.append(this.correctAnswers[i]).append(". ").append(item);
-		}
-
-		return text.toString();
 	}
 
 }
