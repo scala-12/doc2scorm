@@ -1,6 +1,5 @@
 package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,15 +83,10 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
 	@Override
 	public String getText() {
-		StringBuilder text = new StringBuilder();
-		ArrayList<TextRunItem> items = new ArrayList<>();
+		final StringBuilder text = new StringBuilder();
 		for (ParagraphItem parItem : this.getItems()) {
 			parItem.getValue().getItems().stream().filter(item -> item instanceof TextRunItem)
-					.forEach(item -> items.add((TextRunItem) item));
-		}
-
-		for (TextRunItem item : items) {
-			text.append(item.getValue());
+					.forEach(item -> text.append(((TextRunItem) item).getValue()));
 		}
 
 		return text.toString();
