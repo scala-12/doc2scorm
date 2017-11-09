@@ -44,9 +44,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
@@ -435,84 +433,44 @@ public class CourseParser extends AbstractParser {
 						for (QuestionWithAnswers question : questionsWithAnswers) {
 							AbstractQuestionBlock<?> questBlock = null;
 
-							if (question.getAnswersBlocks().get(0) instanceof TableBlock) {
-								TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
-								List<TableItem> rows = block.getItems();
-								if (rows.get(0).getValue().size() == 1) {
-									if (rows.size() == 1) {
-										try {
+							try {
+								if (question.getAnswersBlocks().get(0) instanceof TableBlock) {
+									TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
+									List<TableItem> rows = block.getItems();
+									if (rows.get(0).getValue().size() == 1) {
+										if (rows.size() == 1) {
 											questBlock = new FillInBlock(new FillInItem(block.getText()));
-										} catch (BlockCreationException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
+										} else {
+											questBlock = new SequenceBlock(rows.stream().map(row -> {
+												try {
+													return new SequenceItem(row.getValue().get(0).getItem().getValue());
+												} catch (ItemCreationException e) {
+													e.printStackTrace();
+												}
+												return null;
+											}).collect(Collectors.toList()));
 										}
-									} else {
-										ArrayList<SequenceItem> items = new ArrayList<>();
-										for (TableItem row : rows) {
-											try {
-												items.add(new SequenceItem(row.getValue().get(0).getItem().getValue()));
-											} catch (ItemCreationException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
-											}
-										}
-
-										try {
-											questBlock = new SequenceBlock(items);
-										} catch (BlockCreationException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
+									} else if (rows.get(0).getValue().size() == 2) {
+										questBlock = new MatchBlock(rows.stream()
+												.map(row -> new Label2Answer(row.getValue().get(0).getItem().getValue(),
+														row.getValue().get(1).getItem().getValue()))
+												.collect(Collectors.toList()));
 									}
-								} else if (rows.size() == 1) {
-									ArrayList<SequenceItem> items = new ArrayList<>();
-									for (CellBlock cell : rows.get(0).getValue()) {
-										try {
-											items.add(new SequenceItem(cell.getItem().getValue()));
-										} catch (ItemCreationException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
-									}
-									try {
-										questBlock = new SequenceBlock(items);
-									} catch (BlockCreationException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-
-								} else if (rows.get(0).getValue().size() == 2) {
-									ArrayList<Label2Answer> items = new ArrayList<>();
-									for (TableItem row : rows) {
-										items.add(new Label2Answer(row.getValue().get(0).getItem().getValue(),
-												row.getValue().get(1).getItem().getValue()));
-									}
-									try {
-										questBlock = new MatchBlock(items);
-									} catch (BlockCreationException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+								} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
+									questBlock = new ChoiceBlock(((ListSectionBlock) question.getAnswersBlocks().get(0))
+											.getItems().stream().map(item -> {
+												try {
+													return new ChoiceItem((ParagraphBlock) item.getValue(),
+															HeaderParser.HeaderInfo.isCorrectAnswer(htmlAnswer2RealPar
+																	.get(Tools.getNodeString(item.toHtml(html)))));
+												} catch (ItemCreationException e1) {
+													e1.printStackTrace();
+												}
+												return null;
+											}).collect(Collectors.toList()));
 								}
-							} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {
-								ArrayList<ChoiceItem> items = new ArrayList<>();
-								for (ListSectionItem item : ((ListSectionBlock) question.getAnswersBlocks().get(0))
-										.getItems()) {
-									try {
-										items.add(new ChoiceItem((ParagraphBlock) item.getValue(),
-												HeaderParser.HeaderInfo.isCorrectAnswer(htmlAnswer2RealPar
-														.get(Tools.getNodeString(item.toHtml(html))))));
-									} catch (ItemCreationException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-								try {
-									questBlock = new ChoiceBlock(items);
-								} catch (BlockCreationException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+							} catch (BlockCreationException e) {
+								e.printStackTrace();
 							}
 
 							if (questBlock != null) {
