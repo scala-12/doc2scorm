@@ -8,7 +8,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 public abstract class QuestionWithSortableItems<T extends SortableItem> extends AbstractQuestionBlockWithAnswers<T> {
 
 	protected QuestionWithSortableItems(List<T> items, String task) throws BlockCreationException {
-		super(items, task, null, item -> String.valueOf(item.getIndex()));
+		super(items, task, item -> String.valueOf(item.getIndex()));
 	}
 
 	@Override

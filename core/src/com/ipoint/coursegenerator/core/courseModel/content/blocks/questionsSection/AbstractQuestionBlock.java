@@ -45,16 +45,16 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 
-	protected AbstractQuestionBlock(List<T> items, String task, Predicate<T> filter, Function<T, String> selector)
-			throws BlockCreationException {
+	protected AbstractQuestionBlock(List<T> items, String task, Function<T, String> correctAnswersSelector,
+			Predicate<T> correctAnswersFilterBeforeSelect) throws BlockCreationException {
 		super((items.size() > 1) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
 
 		Stream<T> stream = items.stream();
-		if (filter != null) {
-			stream = stream.filter(filter);
+		if (correctAnswersFilterBeforeSelect != null) {
+			stream = stream.filter(correctAnswersFilterBeforeSelect);
 		}
 
-		this.correctAnswers = stream.map(selector).toArray(String[]::new);
+		this.correctAnswers = stream.map(correctAnswersSelector).toArray(String[]::new);
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 
