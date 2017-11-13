@@ -9,9 +9,14 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Blo
 public abstract class AbstractQuestionBlockWithAnswers<T extends AbstractQuestionItem<?>>
 		extends AbstractQuestionBlock<T> {
 
-	protected AbstractQuestionBlockWithAnswers(List<T> items, String task, Predicate<T> filter,
-			Function<T, String> selector) throws BlockCreationException {
-		super(items, task, filter, selector);
+	protected AbstractQuestionBlockWithAnswers(List<T> items, String task, Function<T, String> correctAnswersSelector,
+			Predicate<T> correctAnswersFilterBeforeSelect) throws BlockCreationException {
+		super(items, task, correctAnswersSelector, correctAnswersFilterBeforeSelect);
+	}
+
+	protected AbstractQuestionBlockWithAnswers(List<T> items, String task, Function<T, String> correctAnswersSelector)
+			throws BlockCreationException {
+		this(items, task, correctAnswersSelector, null);
 	}
 
 	@Override

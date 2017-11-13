@@ -27,7 +27,7 @@ public class ChoiceBlock extends AbstractQuestionBlockWithAnswers<ChoiceItem> {
 	private final boolean isOneChoice;
 
 	public ChoiceBlock(List<ChoiceItem> items, String task) throws BlockCreationException {
-		super(items, task, ChoiceItem::isCorrect, item -> String.valueOf(item.getIndex()));
+		super(items, task, item -> String.valueOf(item.getIndex()), ChoiceItem::isCorrect);
 		String[] correctAnswers = this.getCorrect();
 		if (correctAnswers.length == 0) {
 			throw new ChoiceBlockCreationException(this, items);
