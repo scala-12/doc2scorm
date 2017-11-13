@@ -39,9 +39,9 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return Arrays.copyOf(correctAnswers, correctAnswers.length);
 	}
 
-	protected AbstractQuestionBlock(T item, String task, String[] correctAnswers) throws BlockCreationException {
+	protected AbstractQuestionBlock(T item, String task, String correctAnswers) throws BlockCreationException {
 		super(item);
-		this.correctAnswers = correctAnswers;
+		this.correctAnswers = new String[] { correctAnswers };
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 

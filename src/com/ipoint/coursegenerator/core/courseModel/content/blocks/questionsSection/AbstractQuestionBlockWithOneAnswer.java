@@ -6,7 +6,7 @@ public abstract class AbstractQuestionBlockWithOneAnswer<T extends AbstractQuest
 		extends AbstractQuestionBlock<T> {
 
 	protected AbstractQuestionBlockWithOneAnswer(T item, String task, String answer) throws BlockCreationException {
-		super(item, task, new String[] { answer });
+		super(item, task, answer);
 	}
 
 	@Override
