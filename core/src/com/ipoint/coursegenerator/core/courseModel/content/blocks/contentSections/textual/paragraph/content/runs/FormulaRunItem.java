@@ -33,7 +33,7 @@ public class FormulaRunItem extends AbstractContentRunItem<Node> {
 	}
 
 	@Override
-	protected Node getValueAsHtml(Document creatorTags) {
+	public Element toHtml(Document creatorTags) {
 		Element mathML = (Element) creatorTags.importNode(this.getValue(), true);
 
 		mathML.removeAttribute("display");

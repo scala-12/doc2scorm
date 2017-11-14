@@ -6,7 +6,6 @@ import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
@@ -105,8 +104,7 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 	 * Returns size in pixels from other style
 	 * 
 	 * @param nonPxSize
-	 *            Size in other style that includes name of style (look like
-	 *            "12pt")
+	 *            Size in other style that includes name of style (look like "12pt")
 	 * @return Size in pixels as Integer or null if error
 	 */
 	public static Float toPxSize(String nonPxSize) {
@@ -214,7 +212,7 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 	 * @return html element img
 	 */
 	@Override
-	protected Node getValueAsHtml(Document creatorTags) {
+	public Element toHtml(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
 		img.setAttribute("src",
 				new File(FileTools.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));
