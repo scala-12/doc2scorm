@@ -80,6 +80,20 @@ public class Tools {
 		}
 	}
 
+	public static final class SimplePair<LT, RT> extends Pair<LT, RT> {
+		public SimplePair(LT left, RT right) {
+			super(left, right);
+		}
+
+		public LT getLeft() {
+			return this.left;
+		}
+
+		public RT getRight() {
+			return this.right;
+		}
+	}
+
 	public static final BigDecimal BIG_ZERO = new BigDecimal(0);
 
 	private static Transformer TRANSFORMER = _getTransformer();
