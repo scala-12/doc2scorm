@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
@@ -20,7 +20,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Ite
  * @author Kalashnikov Vladislav
  *
  */
-public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionBlock<?>>>> {
+public class CellItem extends AbstractSectionItem<Optional<List<AbstractContentSectionBlock<?>>>> {
 
 	/**
 	 * Count of cells which combined in row
@@ -32,7 +32,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionB
 	 */
 	private Integer colSpan;
 
-	public CellItem(List<AbstractSectionBlock<?>> sections) throws ItemCreationException {
+	public CellItem(List<AbstractContentSectionBlock<?>> sections) throws ItemCreationException {
 		this(Optional.of(sections));
 	}
 
@@ -40,7 +40,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionB
 		this(Optional.empty());
 	}
 
-	private CellItem(Optional<List<AbstractSectionBlock<?>>> optSections) throws ItemCreationException {
+	private CellItem(Optional<List<AbstractContentSectionBlock<?>>> optSections) throws ItemCreationException {
 		super(optSections);
 
 		this.setRowSpan(1);
@@ -102,7 +102,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionB
 	}
 
 	@Override
-	public boolean isValidValue(Optional<List<AbstractSectionBlock<?>>> sections) {
+	public boolean isValidValue(Optional<List<AbstractContentSectionBlock<?>>> sections) {
 
 		return (!sections.isPresent()) || !sections.get().isEmpty();
 	}
@@ -124,7 +124,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionB
 			}
 
 			if (this.getValue().isPresent()) {
-				for (AbstractSectionBlock<?> par : this.getValue().get()) {
+				for (AbstractContentSectionBlock<?> par : this.getValue().get()) {
 					tCell.appendChild(par.toHtml(creatorTags));
 				}
 			}
@@ -138,7 +138,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractSectionB
 		StringBuilder text = new StringBuilder();
 
 		if (this.getValue().isPresent()) {
-			for (AbstractSectionBlock<?> block : this.getValue().get()) {
+			for (AbstractContentSectionBlock<?> block : this.getValue().get()) {
 				text.append(block.getText());
 			}
 		}

@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionBlock;
@@ -66,13 +66,13 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  */
 public class CourseParser extends AbstractParser {
 
-	private static class BlockWithShifting extends Pair<AbstractSectionBlock<?>, Integer> {
+	private static class BlockWithShifting extends Pair<AbstractContentSectionBlock<?>, Integer> {
 
-		public BlockWithShifting(AbstractSectionBlock<?> block, int shift) {
+		public BlockWithShifting(AbstractContentSectionBlock<?> block, int shift) {
 			super(block, (shift > 0) ? shift : 0);
 		}
 
-		public AbstractSectionBlock<?> getBlock() {
+		public AbstractContentSectionBlock<?> getBlock() {
 			return this.left;
 		}
 
@@ -81,9 +81,9 @@ public class CourseParser extends AbstractParser {
 		}
 	}
 
-	private static class QuestionWithAnswers extends Pair<String, List<AbstractSectionBlock<?>>> {
+	private static class QuestionWithAnswers extends Pair<String, List<AbstractContentSectionBlock<?>>> {
 
-		public QuestionWithAnswers(String task, List<AbstractSectionBlock<?>> answersBlocks) {
+		public QuestionWithAnswers(String task, List<AbstractContentSectionBlock<?>> answersBlocks) {
 			super(task, answersBlocks);
 		}
 
@@ -91,7 +91,7 @@ public class CourseParser extends AbstractParser {
 			return this.left;
 		}
 
-		public List<AbstractSectionBlock<?>> getAnswersBlocks() {
+		public List<AbstractContentSectionBlock<?>> getAnswersBlocks() {
 			return this.right;
 		}
 	}
@@ -322,7 +322,7 @@ public class CourseParser extends AbstractParser {
 
 					if (headerInfo.isTheoryNoneTestHeader()) {
 						// is not test
-						ArrayList<AbstractSectionBlock<?>> chapterBlocks = new ArrayList<>();
+						ArrayList<AbstractContentSectionBlock<?>> chapterBlocks = new ArrayList<>();
 
 						int chapterElemNum = 0;
 						while (chapterElemNum < chapterParsAndTables.size()) {
@@ -346,10 +346,10 @@ public class CourseParser extends AbstractParser {
 					} else {
 						// is test
 
-						ArrayList<AbstractSectionBlock<?>> introBlocks = new ArrayList<>();
+						ArrayList<AbstractContentSectionBlock<?>> introBlocks = new ArrayList<>();
 						ArrayList<QuestionWithAnswers> questionsWithAnswers = new ArrayList<>();
 
-						ArrayList<AbstractSectionBlock<?>> questionAnswers = null;
+						ArrayList<AbstractContentSectionBlock<?>> questionAnswers = null;
 						StringBuilder questionTask = null;
 
 						HashMap<String, XWPFParagraph> htmlAnswer2RealPar = new HashMap<>();
@@ -512,7 +512,7 @@ public class CourseParser extends AbstractParser {
 
 	private static BlockWithShifting getBlockWithShifting(IBodyElement elem, MathInfo mathInfo, int maxHeader)
 			throws BlockCreationException, ItemCreationException {
-		AbstractSectionBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
+		AbstractContentSectionBlock<?> block = AbstractParagraphParser.parse(elem, mathInfo);
 		int shift = 0;
 
 		XWPFParagraph par = (elem instanceof XWPFParagraph) ? (XWPFParagraph) elem : null;

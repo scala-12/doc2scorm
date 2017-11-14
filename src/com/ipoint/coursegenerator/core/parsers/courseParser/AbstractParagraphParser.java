@@ -6,6 +6,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
@@ -24,18 +25,18 @@ public abstract class AbstractParagraphParser extends AbstractParser {
 	/**
 	 * 
 	 * 
-	 * Parsing to one {@link AbstractSectionBlock} from list of
+	 * Parsing to one {@link AbstractContentSectionBlock} from list of
 	 * {@link IBodyElement}
 	 * 
 	 * @param bodyElement
 	 *            Paragraph
 	 * @param mathInfo
 	 *            Info about MathML formulas
-	 * @return {@link AbstractSectionBlock} of paragraph
+	 * @return {@link AbstractContentSectionBlock} of paragraph
 	 */
-	public static AbstractSectionBlock<?> parse(IBodyElement bodyElement, MathInfo mathInfo)
+	public static AbstractContentSectionBlock<?> parse(IBodyElement bodyElement, MathInfo mathInfo)
 			throws BlockCreationException, ItemCreationException {
-		AbstractSectionBlock<?> block = null;
+		AbstractContentSectionBlock<?> block = null;
 
 		if (bodyElement.getElementType().equals(BodyElementType.PARAGRAPH)) {
 			block = AbstractTextualParagraphParser.parse((XWPFParagraph) bodyElement, mathInfo);

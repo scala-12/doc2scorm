@@ -7,15 +7,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionItem;
 
-public abstract class SortableItem extends AbstractQuestionSectionItem<List<AbstractSectionBlock<?>>> {
-	
+public abstract class SortableItem extends AbstractQuestionSectionItem<List<AbstractContentSectionBlock<?>>> {
+
 	public static final String[] ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 
-	public SortableItem(List<AbstractSectionBlock<?>> content) throws ItemCreationException {
+	public SortableItem(List<AbstractContentSectionBlock<?>> content) throws ItemCreationException {
 		super(content);
 	}
 
@@ -27,7 +27,7 @@ public abstract class SortableItem extends AbstractQuestionSectionItem<List<Abst
 		input.setAttribute("id", this.getItemIdPrefix() + String.valueOf(this.getIndex()));
 
 		int i = 0;
-		for (AbstractSectionBlock<?> answerSection : this.getValue()) {
+		for (AbstractContentSectionBlock<?> answerSection : this.getValue()) {
 			if (i == 0) {
 				i = 1;
 			} else {
@@ -51,7 +51,7 @@ public abstract class SortableItem extends AbstractQuestionSectionItem<List<Abst
 	public String getText() {
 
 		return super.getText() + String.join(" ",
-				this.getValue().stream().map(AbstractSectionBlock::getText).collect(Collectors.toList()));
+				this.getValue().stream().map(AbstractContentSectionBlock::getText).collect(Collectors.toList()));
 	}
 
 }

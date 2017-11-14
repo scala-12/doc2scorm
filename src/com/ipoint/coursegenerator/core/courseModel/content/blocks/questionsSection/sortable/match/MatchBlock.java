@@ -8,7 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.HyperlinkRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
@@ -28,17 +28,18 @@ import com.ipoint.coursegenerator.core.utils.Tools.Pair;
  */
 public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 
-	public static class Label2Answer extends Pair<List<AbstractSectionBlock<?>>, List<AbstractSectionBlock<?>>> {
+	public static class Label2Answer
+			extends Pair<List<AbstractContentSectionBlock<?>>, List<AbstractContentSectionBlock<?>>> {
 
-		public Label2Answer(List<AbstractSectionBlock<?>> label, List<AbstractSectionBlock<?>> answer) {
+		public Label2Answer(List<AbstractContentSectionBlock<?>> label, List<AbstractContentSectionBlock<?>> answer) {
 			super(label, answer);
 		}
 
-		public List<AbstractSectionBlock<?>> getLabelSections() {
+		public List<AbstractContentSectionBlock<?>> getLabelSections() {
 			return this.left;
 		}
 
-		public List<AbstractSectionBlock<?>> getAnswerSections() {
+		public List<AbstractContentSectionBlock<?>> getAnswerSections() {
 			return this.right;
 		}
 	}
@@ -48,7 +49,7 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 	public static final String MATCH_LABEL_BLOCK_ID = "match_labels_block";
 	public static final String MATCH_LABEL_4_ANSWER_CLASS = "match_label4answer";
 
-	private List<List<AbstractSectionBlock<?>>> labels;
+	private List<List<AbstractContentSectionBlock<?>>> labels;
 
 	public MatchBlock(List<Label2Answer> pairs, String task) throws BlockCreationException {
 		this(pairs.stream().map(pair -> pair.getLabelSections()).collect(Collectors.toList()),
@@ -63,7 +64,7 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 				}).collect(Collectors.toList()), task);
 	}
 
-	private MatchBlock(List<List<AbstractSectionBlock<?>>> labels, List<MatchItem> items, String task)
+	private MatchBlock(List<List<AbstractContentSectionBlock<?>>> labels, List<MatchItem> items, String task)
 			throws BlockCreationException {
 		super(items, task);
 
@@ -74,7 +75,7 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 		}
 	}
 
-	public List<List<AbstractSectionBlock<?>>> getLabels() {
+	public List<List<AbstractContentSectionBlock<?>>> getLabels() {
 		return new ArrayList<>(this.labels);
 	}
 
