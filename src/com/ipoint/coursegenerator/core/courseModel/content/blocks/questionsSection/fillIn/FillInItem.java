@@ -20,13 +20,9 @@ public class FillInItem extends AbstractQuestionItem<String> {
 		super((answer == null) ? null : Tools.removeExtraSpaces(answer));
 	}
 
-	public String getCorrectAnswer() {
-		return this.getValue();
-	}
-
 	@Override
 	public boolean isValidValue(String value) {
-		return (value != null) && !value.isEmpty();
+		return (this.value == null) && (value != null) && !value.isEmpty();
 	}
 
 	@Override

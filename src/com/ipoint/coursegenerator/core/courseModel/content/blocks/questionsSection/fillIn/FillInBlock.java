@@ -11,7 +11,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 public class FillInBlock extends AbstractQuestionBlockWithOneAnswer<FillInItem> {
 
 	public FillInBlock(FillInItem answerItem, String task) throws BlockCreationException {
-		super(answerItem, task, answerItem.getCorrectAnswer());
+		super(answerItem, task, answerItem.getValue());
 	}
 
 	@Override
