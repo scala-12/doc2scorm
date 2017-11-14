@@ -439,12 +439,17 @@ public class CourseParser extends AbstractParser {
 									List<TableItem> rows = block.getItems();
 									if (rows.get(0).getValue().size() == 1) {
 										if (rows.size() == 1) {
-											questBlock = new FillInBlock(new FillInItem(block.getText()),
-													question.getTask());
+											try {
+												questBlock = new FillInBlock(new FillInItem(block.getText()),
+														question.getTask());
+											} catch (ItemCreationException e) {
+												e.printStackTrace();
+											}
 										} else {
 											questBlock = new SequenceBlock(rows.stream().map(row -> {
 												try {
-													return new SequenceItem(row.getValue().get(0).getItem().getValue());
+													return new SequenceItem(
+															row.getValue().get(0).getItem().getValue().get());
 												} catch (ItemCreationException e) {
 													e.printStackTrace();
 												}
@@ -453,8 +458,9 @@ public class CourseParser extends AbstractParser {
 										}
 									} else if (rows.get(0).getValue().size() == 2) {
 										questBlock = new MatchBlock(rows.stream()
-												.map(row -> new Label2Answer(row.getValue().get(0).getItem().getValue(),
-														row.getValue().get(1).getItem().getValue()))
+												.map(row -> new Label2Answer(
+														row.getValue().get(0).getItem().getValue().get(),
+														row.getValue().get(1).getItem().getValue().get()))
 												.collect(Collectors.toList()), question.getTask());
 									}
 								} else if (question.getAnswersBlocks().get(0) instanceof ListSectionBlock) {

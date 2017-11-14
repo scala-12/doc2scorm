@@ -38,10 +38,6 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 			}
 		}
 
-		protected AbstractItem() {
-			this.value = null;
-		}
-
 		/**
 		 * Returns value of item
 		 * 

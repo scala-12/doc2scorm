@@ -140,8 +140,8 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 		} else if (block instanceof TableBlock) {
 			for (TableItem row : ((TableBlock) block).getItems()) {
 				for (List<AbstractSectionBlock<?>> blocks : row.getValue().stream()
-						.filter(cell -> cell.getItem().getValue() != null).map(cell -> cell.getItem().getValue())
-						.collect(Collectors.toList())) {
+						.filter(cell -> cell.getItem().getValue().isPresent())
+						.map(cell -> cell.getItem().getValue().get()).collect(Collectors.toList())) {
 					images.addAll(getImagesRecursive(blocks));
 				}
 			}

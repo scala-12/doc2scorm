@@ -1,6 +1,7 @@
 package com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
@@ -137,7 +138,7 @@ public class TableParser extends AbstractParser {
 								}
 							}
 
-							cell.setValue(blocks);
+							cell.setValue(Optional.of(blocks));
 						}
 					}
 

@@ -83,14 +83,14 @@ public class TableBlockTest extends AbstractBlockTest {
 					assertEquals(htmlCell.getAttribute("rowspan"),
 							(cell.getRowSpan() == 1) ? "" : cell.getRowSpan().toString());
 
-					if (cell.getValue() == null) {
-						assertTrue(htmlCell.getTextContent().isEmpty());
-					} else {
-						for (AbstractSectionBlock<?> content : cell.getValue()) {
+					if (cell.getValue().isPresent()) {
+						for (AbstractSectionBlock<?> content : cell.getValue().get()) {
 							if (content instanceof ParagraphBlock) {
 								assertEquals(htmlCell.getTextContent(), ((ParagraphBlock) content).getText());
 							}
 						}
+					} else {
+						assertTrue(htmlCell.getTextContent().isEmpty());
 					}
 				}
 			}
