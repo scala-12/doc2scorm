@@ -23,8 +23,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.ipoint.coursegenerator.core.Parser;
@@ -219,9 +217,9 @@ public class FileTools {
 				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
 	}
 
-	private static boolean saveHtmlDocument(File tmplFile, Map<String, String> extraVars, Document doc, File destFile) {
+	private static boolean saveNodes2Document(NodeList bodyChilds, boolean isTheoryPage, Map<String, String> extraVars,
+			File destFile) {
 		StringBuilder content = new StringBuilder();
-		NodeList bodyChilds = doc.getElementsByTagName("body").item(0).getChildNodes();
 		for (int i = 0; i < bodyChilds.getLength(); i++) {
 			content.append(Tools.getNodeString(bodyChilds.item(i)));
 		}
@@ -230,7 +228,8 @@ public class FileTools {
 
 		vars.put("body_content", content.toString());
 
-		return saveTemplateFileWithVariables(tmplFile, destFile, vars);
+		return saveTemplateFileWithVariables((isTheoryPage) ? TemplateFiles.SCO4THEORY : TemplateFiles.SCO4TEST,
+				destFile, vars);
 	}
 
 	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, File courseDir, File sOfficeFile) {
@@ -239,20 +238,8 @@ public class FileTools {
 
 		boolean successful = true;
 		if (page instanceof TheoryPage) {
-			StringBuilder content = new StringBuilder();
-
-			Document html = Tools.createNewHTMLDocument();
-			html.getElementsByTagName("body").item(0).appendChild(page.toHtml(html));
-
-			NodeList bodyChilds = html.getElementsByTagName("body").item(0).getChildNodes();
-			for (int i = 0; i < bodyChilds.getLength(); i++) {
-				content.append(Tools.getNodeString(bodyChilds.item(i)));
-			}
-
-			scoVars.put("body_content", content.toString());
-
-			successful = saveTemplateFileWithVariables(TemplateFiles.SCO4THEORY,
-					new File(courseDir, page.getParent().getPageLocation()), scoVars);
+			successful = saveNodes2Document(page.toHtml(Tools.createNewHTMLDocument()).getChildNodes(), true, scoVars,
+					new File(courseDir, page.getParent().getPageLocation()));
 		} else {
 			TestingPage testingPage = (TestingPage) page;
 
@@ -287,15 +274,9 @@ public class FileTools {
 					vars.put("answer_id_prefix", SequenceItem.SEQUENCE_ANSWER_ID_PREFIX);
 				}
 
-				Document html = Tools.createNewHTMLDocument();
-				NodeList nodes = question.toHtml(html).getChildNodes();
-				Node body = html.getElementsByTagName("body").item(0);
-				while (nodes.getLength() != 0) {
-					body.appendChild(nodes.item(0));
-				}
-
-				if (saveHtmlDocument(TemplateFiles.SCO4TEST, vars, html, new File(courseDir,
-						page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
+				if (saveNodes2Document(question.toHtml(Tools.createNewHTMLDocument()).getChildNodes(), false, vars,
+						new File(courseDir,
+								page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
 				} else {
 					successful = false;
 				}
