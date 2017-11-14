@@ -3,7 +3,9 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * 
@@ -14,15 +16,17 @@ public class FillInItem extends AbstractQuestionItem<String> {
 
 	public static final String FILL_IN_ID = "fill_in_field";
 
-	private final String answer;
-
-	public FillInItem(String answer) {
-		super();
-		this.answer = answer;
+	public FillInItem(String answer) throws ItemCreationException {
+		super((answer == null) ? null : Tools.removeExtraSpaces(answer));
 	}
 
 	public String getCorrectAnswer() {
-		return this.answer;
+		return this.getValue();
+	}
+
+	@Override
+	public boolean isValidValue(String value) {
+		return (value != null) && !value.isEmpty();
 	}
 
 	@Override

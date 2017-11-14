@@ -16,10 +16,6 @@ public abstract class AbstractQuestionItem<T> extends AbstractSectionItem<T> {
 		super(value);
 	}
 
-	protected AbstractQuestionItem() {
-		super();
-	}
-
 	@Override
 	public String getText() {
 		return this.getIndex() + ". ";

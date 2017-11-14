@@ -13,10 +13,6 @@ public abstract class AbstractSectionItem<T> extends AbstractItem<T> implements 
 		super(value);
 	}
 
-	protected AbstractSectionItem() {
-		super();
-	}
-
 	@Override
 	public NodeList toSimpleHtml(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
