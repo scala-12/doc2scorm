@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -39,6 +41,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.utils.Tools.SimplePair;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -53,7 +56,20 @@ public class FileTools {
 	public final static String FILETYPE_DOCX = ".docx";
 	public final static Charset STANDARD_ENCODING = StandardCharsets.UTF_8;
 	public final static String IMAGE_DIR_NAME = "img";
-	private final static Map<String, String> DEFAULT_TMPL_VARS = _getDefaultVars();
+	private final static Map<String, String> DEFAULT_TMPL_VARS = Arrays.stream(new String[][] {
+			{ "system_dir", Parser.COURSE_SYSTEM_DIR }, { "theory_css", TemplateFiles.CSS4THEORY.getName() },
+			{ "course_css", TemplateFiles.CSS4COURSE.getName() }, { "test_css", TemplateFiles.CSS4TEST.getName() },
+			{ "jquery_ver", TemplateFiles.JQUERY_VERSION }, { "jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION },
+			{ "answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID },
+			{ "companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS },
+			{ "answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID },
+			{ "fill_in_field_id", FillInItem.FILL_IN_ID }, { "choice", String.valueOf(QuestionType.CHOICE.ordinal()) },
+			{ "multiple", String.valueOf(QuestionType.MULTIPLE_CHOICE.ordinal()) },
+			{ "fill_in", String.valueOf(QuestionType.FILL_IN.ordinal()) },
+			{ "match", String.valueOf(QuestionType.MATCHING.ordinal()) },
+			{ "sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()) } })
+			.map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
+			.collect(Collectors.toMap(SimplePair::getLeft, SimplePair::getRight));
 
 	private static final Version CFG_VERSION = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
 
@@ -85,32 +101,6 @@ public class FileTools {
 
 		public static final String JQUERY_VERSION = "3.1.1";
 		public static final String JQUERY_UI_VERSION = "1.12.1";
-	}
-
-	private static Map<String, String> _getDefaultVars() {
-		HashMap<String, String> vars = new HashMap<>();
-
-		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-
-		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
-		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
-
-		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
-		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
-
-		vars.put("answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID);
-		vars.put("companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS);
-		vars.put("answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID);
-		vars.put("fill_in_field_id", FillInItem.FILL_IN_ID);
-
-		vars.put("choice", String.valueOf(QuestionType.CHOICE.ordinal()));
-		vars.put("multiple", String.valueOf(QuestionType.MULTIPLE_CHOICE.ordinal()));
-		vars.put("fill_in", String.valueOf(QuestionType.FILL_IN.ordinal()));
-		vars.put("match", String.valueOf(QuestionType.MATCHING.ordinal()));
-		vars.put("sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()));
-
-		return vars;
 	}
 
 	private static boolean saveFile(InputStream is, File outFile, boolean isText) {
@@ -237,15 +227,6 @@ public class FileTools {
 		}
 
 		Map<String, String> vars = new HashMap<>(extraVars);
-
-		vars.put("system_dir", Parser.COURSE_SYSTEM_DIR);
-
-		vars.put("theory_css", TemplateFiles.CSS4THEORY.getName());
-		vars.put("course_css", TemplateFiles.CSS4COURSE.getName());
-		vars.put("test_css", TemplateFiles.CSS4TEST.getName());
-
-		vars.put("jquery_ver", TemplateFiles.JQUERY_VERSION);
-		vars.put("jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION);
 
 		vars.put("body_content", content.toString());
 
