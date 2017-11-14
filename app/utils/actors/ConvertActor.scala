@@ -1,7 +1,7 @@
 package utils.actors
 
 import java.text.SimpleDateFormat
-import java.util.{Calendar, UUID}
+import java.util.{Calendar, UUID, Optional}
 
 import akka.actor.{Actor, ActorLogging}
 import com.ipoint.coursegenerator.core.Parser
@@ -95,7 +95,7 @@ object ConvertActor {
   private val parser: Parser = if (ipointConf.getIsNull("libreoffice.program.soffice")) {
     new Parser()
   } else {
-    new Parser(ipointConf getString "libreoffice.program.soffice")
+    new Parser(Optional.of(ipointConf.getString("libreoffice.program.soffice")))
   }
 
   case class Conversion(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
