@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -232,7 +233,8 @@ public class FileTools {
 				destFile, vars);
 	}
 
-	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, File courseDir, File sOfficeFile) {
+	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, File courseDir,
+			Optional<File> sOfficeFile) {
 		HashMap<String, String> scoVars = new HashMap<>(DEFAULT_TMPL_VARS);
 		scoVars.put("page_title", page.getParent().getTitle());
 
@@ -358,7 +360,7 @@ public class FileTools {
 		return false;
 	}
 
-	private static Set<PictureInfo> savePageImages(AbstractPage<?> page, File courseDir, File sOfficeFile) {
+	private static Set<PictureInfo> savePageImages(AbstractPage<?> page, File courseDir, Optional<File> sOfficeFile) {
 		Set<PictureInfo> images = page.getImages();
 		HashSet<PictureInfo> result = null;
 		if (!images.isEmpty()) {

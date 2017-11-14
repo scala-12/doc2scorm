@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -72,7 +73,7 @@ public class ImageFormatConverter {
 	 *            Path to LibreOffice
 	 * @return PNG as byte array
 	 */
-	public static byte[] transcodeWmfToPng(byte[] data, File pathToSOffice) {
+	public static byte[] transcodeWmfToPng(byte[] data, Optional<File> pathToSOffice) {
 		byte[] pngData = null;
 		try {
 			final SvgGdi gdi = new SvgGdi(false);
@@ -84,7 +85,7 @@ public class ImageFormatConverter {
 			float width = ImageRunItem
 					.toPxSize(gdi.getDocument().getFirstChild().getAttributes().getNamedItem("width").getNodeValue());
 
-			if ((pathToSOffice != null) && pathToSOffice.exists()) {
+			if (pathToSOffice.isPresent() && pathToSOffice.get().exists()) {
 				pngData = transcodeImgToPng(data, "wmf", width, height, pathToSOffice);
 			} else {
 				// Do it when LibreOffice is not installed (internal tools)
@@ -123,13 +124,13 @@ public class ImageFormatConverter {
 	 *            Path to LibreOffice
 	 * @return PNG as byte array
 	 */
-	public static byte[] transcodeEmfToPng(byte[] data, File pathToSOffice) {
+	public static byte[] transcodeEmfToPng(byte[] data, Optional<File> pathToSOffice) {
 		byte[] pngData = null;
 		try (ByteArrayInputStream emfBIS = new ByteArrayInputStream(data)) {
 			EMFInputStream emfIS = new EMFInputStream(emfBIS);
 			float width = (float) emfIS.readHeader().getBounds().getWidth();
 			float height = (float) emfIS.readHeader().getBounds().getHeight();
-			if ((pathToSOffice != null) && pathToSOffice.exists()) {
+			if (pathToSOffice.isPresent() && pathToSOffice.get().exists()) {
 				pngData = transcodeImgToPng(data, "emf", width, height, pathToSOffice);
 			} else {
 				EMFRenderer emfRenderer = new EMFRenderer(emfIS);
@@ -160,9 +161,9 @@ public class ImageFormatConverter {
 		return pngData;
 	}
 
-	private static byte[] transcodeImg(byte[] data, String sourceExt, String destExt, File pathToSOffice) {
+	private static byte[] transcodeImg(byte[] data, String sourceExt, String destExt, Optional<File> pathToSOffice) {
 		byte[] destData = null;
-		if ((pathToSOffice != null) && pathToSOffice.exists()) {
+		if (pathToSOffice.isPresent() && pathToSOffice.get().exists()) {
 			File imgFile = null;
 			File destFile = null;
 			try {
@@ -176,7 +177,7 @@ public class ImageFormatConverter {
 				destFile.createNewFile();
 
 				ArrayList<String> cmd = new ArrayList<>();
-				cmd.add(pathToSOffice.getAbsolutePath());
+				cmd.add(pathToSOffice.get().getAbsolutePath());
 				cmd.add("--invisible");
 				cmd.add("--convert-to");
 				cmd.add(destExt);
@@ -211,7 +212,7 @@ public class ImageFormatConverter {
 	}
 
 	private static byte[] transcodeImgToPng(byte[] data, String sourceExt, float realWidth, float realHeight,
-			File pathToSOffice) {
+			Optional<File> pathToSOffice) {
 		byte[] destImgData = null;
 		try {
 			String destExt = "png";
@@ -258,7 +259,7 @@ public class ImageFormatConverter {
 
 	// TODO: Remove this annotation if used
 	@SuppressWarnings("unused")
-	private static Document transcodeImgToSvg(byte[] data, String sourceExt, File pathToSOffice) {
+	private static Document transcodeImgToSvg(byte[] data, String sourceExt, Optional<File> pathToSOffice) {
 		Document svgDoc = null;
 		byte[] svgData = transcodeImg(data, sourceExt, "svg", pathToSOffice);
 		if (svgData != null) {

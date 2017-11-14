@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
@@ -40,26 +41,25 @@ public class Parser {
 			+ "adlnav_v1p3.xsd\"><metadata><schema>ADL SCORM</schema><schemaversion>2004 4th "
 			+ "Edition</schemaversion></metadata>";
 
-	private final File sOfficeFile;
+	private final Optional<File> sOfficeFile;
 
 	/** From iLogos */
 	public static final String COURSE_SYSTEM_DIR = "system_files";
 
-	public Parser(String pathToSOffice) {
+	public Parser(Optional<String> pathToSOffice) {
 		File sOfficeFile = null;
-		if ((null == pathToSOffice) || pathToSOffice.isEmpty()) {
-			sOfficeFile = null;
-		} else {
-			File path = new File(pathToSOffice);
+		if (pathToSOffice.isPresent()) {
+			File path = new File(pathToSOffice.get());
 			if (path.exists()) {
 				sOfficeFile = path;
 			}
 		}
-		this.sOfficeFile = sOfficeFile;
+
+		this.sOfficeFile = (sOfficeFile == null) ? Optional.empty() : Optional.of(sOfficeFile);
 	}
 
 	public Parser() {
-		this(null);
+		this(Optional.empty());
 	}
 
 	private String tuneManifest(ManifestDocument manifestDocument) {
@@ -122,7 +122,7 @@ public class Parser {
 		nodes.stream().forEach(node -> {
 			organizationProcessor.createItem(node);
 			resourcesProcessor.createItem(node);
-			FileTools.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, sOfficeFile);
+			FileTools.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, this.sOfficeFile);
 
 			if (!node.getChilds().isEmpty()) {
 				this.createManifestScoUnitAndSavePage(courseDir, node.getChilds(), organizationProcessor,
