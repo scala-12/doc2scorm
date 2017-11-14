@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
  * List block which may includes several {@link TextualRunsBlock} or
@@ -56,7 +56,7 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 		int size = 0;
 
 		for (ListSectionItem item : this.getItems()) {
-			if (item.getValue() instanceof ParagraphBlock) {
+			if (item.getValue() instanceof ParagraphSectionBlock) {
 				++size;
 			} else if (item.getValue() instanceof ListSectionBlock) {
 				size += ((ListSectionBlock) item.getValue()).getSize();

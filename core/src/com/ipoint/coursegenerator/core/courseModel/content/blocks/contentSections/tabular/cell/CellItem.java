@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,16 +6,16 @@ import java.util.Optional;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 
 /**
  * This item may includes {@link TextualRunsBlock}, {@link HyperlinkRunsBlock}
- * or {@link TableBlock} blocks or null
+ * or {@link TableSectionBlock} blocks or null
  * 
  * @author Kalashnikov Vladislav
  *

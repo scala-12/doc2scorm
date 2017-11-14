@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.QuestionWithSortableItems;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -28,7 +28,7 @@ public class SequenceBlock extends QuestionWithSortableItems<SequenceItem> {
 	@Override
 	public Element toHtml(Document creatorTags) {
 		Element div = super.toHtml(creatorTags);
-		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionBlock.ANSWER_BLOCK_ID);
+		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionSectionBlock.ANSWER_BLOCK_ID);
 
 		Element list = creatorTags.createElement("ul");
 		list.setAttribute("id", SEQUENCE_ANSWERS_BLOCK_ID);

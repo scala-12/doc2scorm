@@ -9,12 +9,12 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.junit.Test;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
 import test.utils.TestTools;
@@ -27,7 +27,7 @@ public class TableParserTest {
 			List<List<int[]>> tblInfo = TestTools.getSpecialTableContentCellsInfo(table);
 			assertNotNull(tblInfo);
 
-			TableBlock block = null;
+			TableSectionBlock block = null;
 			try {
 				block = TableParser.parse(table, TestTools.getMathMLFormulas());
 			} catch (BlockCreationException | ItemCreationException e) {
@@ -36,7 +36,7 @@ public class TableParserTest {
 
 			assertNotNull(block);
 
-			List<TableItem> rows = block.getItems();
+			List<TableSectionItem> rows = block.getItems();
 			assertEquals(rows.size(), TestTools.getSpecialTableRowCount(table).intValue());
 
 			for (int rowNum = TestTools.CONTENT_FROM_ROW; rowNum < rows.size(); rowNum++) {

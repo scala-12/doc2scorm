@@ -1,12 +1,12 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -15,9 +15,9 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class TableBlock extends AbstractSectionBlock<TableItem> {
+public class TableSectionBlock extends AbstractSectionBlock<TableSectionItem> {
 
-	public TableBlock(List<TableItem> rows) throws BlockCreationException {
+	public TableSectionBlock(List<TableSectionItem> rows) throws BlockCreationException {
 		super(rows);
 	}
 
@@ -30,7 +30,7 @@ public class TableBlock extends AbstractSectionBlock<TableItem> {
 		Element tBody = creatorTags.createElement("tbody");
 		table.appendChild(tBody);
 
-		for (TableItem row : this.getItems()) {
+		for (TableSectionItem row : this.getItems()) {
 			tBody.appendChild(row.toHtml(creatorTags));
 		}
 
@@ -40,7 +40,7 @@ public class TableBlock extends AbstractSectionBlock<TableItem> {
 	@Override
 	public String getText() {
 		StringBuilder text = new StringBuilder();
-		for (TableItem row : this.getItems()) {
+		for (TableSectionItem row : this.getItems()) {
 			text.append(row.getText()).append('\n');
 		}
 
@@ -48,7 +48,7 @@ public class TableBlock extends AbstractSectionBlock<TableItem> {
 	}
 
 	@Override
-	public List<TableItem> getItems() {
+	public List<TableSectionItem> getItems() {
 		return super.getItems();
 	}
 

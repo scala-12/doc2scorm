@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
@@ -20,7 +20,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
+public class TestingPage extends AbstractPage<AbstractQuestionSectionBlock<?>> {
 
 	private final ArrayList<AbstractSectionBlock<?>> introBlocks;
 	private BigDecimal maxTimeAllowed;
@@ -75,7 +75,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionBlock<?>> {
 		launchDate.append("3|1-").append(this.getBlocks().size());
 
 		for (int i = 0; i < this.getBlocks().size(); i++) {
-			AbstractQuestionBlock<?> block = this.getBlocks().get(i);
+			AbstractQuestionSectionBlock<?> block = this.getBlocks().get(i);
 			launchDate.append('\n').append(i + 1).append("|").append(String.join("~", block.getCorrect()));
 		}
 

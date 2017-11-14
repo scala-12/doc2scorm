@@ -9,18 +9,18 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.openxmlformats.schemas.officeDocument.x2006.math.CTOMathPara;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser.HyperlinkParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.contentParser.TextParser;
 
 /**
- * Parsing to {@link ParagraphBlock}
+ * Parsing to {@link ParagraphSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -99,18 +99,18 @@ public class ParagraphParser extends AbstractParser {
 	}
 
 	/**
-	 * Parse to {@link ParagraphBlock} which includes only text and images from
+	 * Parse to {@link ParagraphSectionBlock} which includes only text and images from
 	 * {@link XWPFParagraph}
 	 * 
 	 * @param paragraph
 	 *            Paragraph with text and images
 	 * @param mathInfo
 	 *            Info about MathML formulas
-	 * @return {@link ParagraphBlock}
+	 * @return {@link ParagraphSectionBlock}
 	 */
-	public static ParagraphBlock parse(XWPFParagraph paragraph, MathInfo mathInfo)
+	public static ParagraphSectionBlock parse(XWPFParagraph paragraph, MathInfo mathInfo)
 			throws BlockCreationException, ItemCreationException {
-		ArrayList<ParagraphItem> itemsOfParagraph = new ArrayList<ParagraphItem>();
+		ArrayList<ParagraphSectionItem> itemsOfParagraph = new ArrayList<ParagraphSectionItem>();
 		boolean hasFormuls = mathInfo != null;
 		if (hasFormuls) {
 			hasFormuls = !mathInfo.isReed();
@@ -120,7 +120,7 @@ public class ParagraphParser extends AbstractParser {
 			for (CTOMathPara mathPara : paragraph.getCTP().getOMathParaList()) {
 				for (int i = 0; i < mathPara.getOMathList().size(); ++i) {
 					TextualRunsBlock block = TextParser.parse(mathInfo, true);
-					itemsOfParagraph.add(new ParagraphItem(block));
+					itemsOfParagraph.add(new ParagraphSectionItem(block));
 				}
 			}
 		} else {
@@ -139,13 +139,13 @@ public class ParagraphParser extends AbstractParser {
 				}
 
 				if (block != null) {
-					itemsOfParagraph.add(new ParagraphItem(block));
+					itemsOfParagraph.add(new ParagraphSectionItem(block));
 				}
 			}
 		}
 
 		return (itemsOfParagraph.isEmpty()) ? null
-				: new ParagraphBlock(itemsOfParagraph, ParagraphBlock.convertAlignValue(paragraph.getAlignment()));
+				: new ParagraphSectionBlock(itemsOfParagraph, ParagraphSectionBlock.convertAlignValue(paragraph.getAlignment()));
 	}
 
 }

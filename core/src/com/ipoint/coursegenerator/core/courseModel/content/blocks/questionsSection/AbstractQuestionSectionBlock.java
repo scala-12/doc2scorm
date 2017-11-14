@@ -12,14 +12,15 @@ import java.util.stream.Stream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
  * @author Kalashnikov Vladislav
  */
-public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> extends AbstractSectionBlock<T> {
+public abstract class AbstractQuestionSectionBlock<T extends AbstractQuestionSectionItem<?>>
+		extends AbstractSectionBlock<T> {
 
 	public static final String TASK_BLOCK_ID = "task_block";
 	public static final String FORM_NAME = "examForm";
@@ -39,15 +40,15 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		return Arrays.copyOf(correctAnswers, correctAnswers.length);
 	}
 
-	protected AbstractQuestionBlock(T item, String task, String correctAnswers) throws BlockCreationException {
+	protected AbstractQuestionSectionBlock(T item, String task, String correctAnswers) throws BlockCreationException {
 		super(item);
 		this.correctAnswers = new String[] { correctAnswers };
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 
-	protected AbstractQuestionBlock(List<T> items, String task, Function<T, String> correctAnswersSelector,
+	protected AbstractQuestionSectionBlock(List<T> items, String task, Function<T, String> correctAnswersSelector,
 			Predicate<T> correctAnswersFilterBeforeSelect) throws BlockCreationException {
-		super((items.size() > 1) ? AbstractQuestionBlock.<T>shuffledItems(items) : items);
+		super((items.size() > 1) ? AbstractQuestionSectionBlock.<T>shuffledItems(items) : items);
 
 		Stream<T> stream = items.stream();
 		if (correctAnswersFilterBeforeSelect != null) {
@@ -58,7 +59,7 @@ public abstract class AbstractQuestionBlock<T extends AbstractQuestionItem<?>> e
 		this.task = ((task == null) || task.isEmpty()) ? null : task;
 	}
 
-	private static <T extends AbstractQuestionItem<?>> List<T> shuffledItems(List<T> items) {
+	private static <T extends AbstractQuestionSectionItem<?>> List<T> shuffledItems(List<T> items) {
 		ArrayList<T> shuffledItems = new ArrayList<>(items);
 		Collections.shuffle(shuffledItems);
 

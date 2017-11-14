@@ -7,11 +7,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionItem;
 
-public abstract class SortableItem extends AbstractQuestionItem<List<AbstractSectionBlock<?>>> {
+public abstract class SortableItem extends AbstractQuestionSectionItem<List<AbstractSectionBlock<?>>> {
 	
 	public static final String[] ANSWER_OTHER_CLASSES = new String[] { "ui-state-default" };
 

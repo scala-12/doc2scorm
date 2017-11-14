@@ -12,16 +12,16 @@ import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.ImageRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.ImageRunItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
@@ -33,7 +33,7 @@ import com.ipoint.coursegenerator.core.utils.PictureInfo;
  * @author Kalashnikov Vladislav
  *
  */
-public abstract class AbstractPage<T extends AbstractBlock<?>> implements Convertable {
+public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements Convertable {
 
 	private final ArrayList<T> blocks;
 
@@ -126,19 +126,19 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 		HashSet<PictureInfo> images = new HashSet<>();
 
 		if (block instanceof AbstractTextualSectionBlock) {
-			if (block instanceof ParagraphBlock) {
-				images.addAll(getImagesOfParagraph((ParagraphBlock) block));
+			if (block instanceof ParagraphSectionBlock) {
+				images.addAll(getImagesOfParagraph((ParagraphSectionBlock) block));
 			} else if (block instanceof ListSectionBlock) {
 				for (ListSectionItem listItem : ((ListSectionBlock) block).getItems()) {
-					images.addAll((listItem.getValue() instanceof ParagraphBlock)
-							? getImagesOfParagraph((ParagraphBlock) listItem.getValue())
+					images.addAll((listItem.getValue() instanceof ParagraphSectionBlock)
+							? getImagesOfParagraph((ParagraphSectionBlock) listItem.getValue())
 							: (listItem.getValue() instanceof ListSectionBlock)
 									? getImagesRecursive(listItem.getValue())
 									: Collections.emptySet());
 				}
 			}
-		} else if (block instanceof TableBlock) {
-			for (TableItem row : ((TableBlock) block).getItems()) {
+		} else if (block instanceof TableSectionBlock) {
+			for (TableSectionItem row : ((TableSectionBlock) block).getItems()) {
 				for (List<AbstractSectionBlock<?>> blocks : row.getValue().stream()
 						.filter(cell -> cell.getItem().getValue().isPresent())
 						.map(cell -> cell.getItem().getValue().get()).collect(Collectors.toList())) {
@@ -150,10 +150,10 @@ public abstract class AbstractPage<T extends AbstractBlock<?>> implements Conver
 		return images;
 	}
 
-	private static Set<PictureInfo> getImagesOfParagraph(ParagraphBlock paragraph) {
+	private static Set<PictureInfo> getImagesOfParagraph(ParagraphSectionBlock paragraph) {
 		HashSet<PictureInfo> images = new HashSet<PictureInfo>();
 
-		for (ParagraphItem parItem : paragraph.getItems()) {
+		for (ParagraphSectionItem parItem : paragraph.getItems()) {
 			for (AbstractContentRunItem<?> item : parItem.getValue().getItems()) {
 				if (item instanceof ImageRunItem) {
 					ImageRunItem imageItem = (ImageRunItem) item;

@@ -6,16 +6,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionItem;
 
 /**
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
+public class ChoiceItem extends AbstractQuestionSectionItem<ParagraphSectionBlock> {
 
 	private final boolean isCorrect;
 
@@ -23,7 +23,7 @@ public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 
 	public static final String CLASS = "choice_answer";
 
-	public ChoiceItem(ParagraphBlock content, boolean isCorrect) throws ItemCreationException {
+	public ChoiceItem(ParagraphSectionBlock content, boolean isCorrect) throws ItemCreationException {
 		super(content);
 		this.isCorrect = isCorrect;
 	}

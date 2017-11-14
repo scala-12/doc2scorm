@@ -3,9 +3,9 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 import java.util.List;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlockWithAnswers;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionMultipleAnswerSectionBlock;
 
-public abstract class QuestionWithSortableItems<T extends SortableItem> extends AbstractQuestionBlockWithAnswers<T> {
+public abstract class QuestionWithSortableItems<T extends SortableItem> extends AbstractQuestionMultipleAnswerSectionBlock<T> {
 
 	protected QuestionWithSortableItems(List<T> items, String task) throws BlockCreationException {
 		super(items, task, item -> String.valueOf(item.getIndex()));

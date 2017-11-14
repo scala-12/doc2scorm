@@ -1,16 +1,16 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 
 /**
- * Item includes {@link ParagraphBlock} or {@link ListSectionBlock}
+ * Item includes {@link ParagraphSectionBlock} or {@link ListSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -28,7 +28,7 @@ public class ListSectionItem extends AbstractSectionItem<AbstractTextualSectionB
 	public Element toHtml(Document creatorTags) {
 		Element listItem = creatorTags.createElement("li");
 		Node itemValue = this.getValue().toHtml(creatorTags);
-		if (this.getValue() instanceof ParagraphBlock) {
+		if (this.getValue() instanceof ParagraphSectionBlock) {
 			// because in this situation tag p equal tag li
 			while (itemValue.hasChildNodes()) {
 				listItem.appendChild(itemValue.getFirstChild());

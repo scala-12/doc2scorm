@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph;
 
 import java.util.Collections;
 import java.util.List;
@@ -7,16 +7,16 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.AbstractTextualSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.AbstractTextualSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
 /**
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
+public class ParagraphSectionBlock extends AbstractTextualSectionBlock<ParagraphSectionItem> {
 
 	public static enum TextAlign {
 		LEFT, CENTER, RIGHT, JUSTIFY, UNDEFINED
@@ -32,12 +32,12 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 
 	private TextAlign alignment;
 
-	public ParagraphBlock(List<ParagraphItem> items, TextAlign align) throws BlockCreationException {
+	public ParagraphSectionBlock(List<ParagraphSectionItem> items, TextAlign align) throws BlockCreationException {
 		super(items);
 		this.alignment = align;
 	}
 
-	public ParagraphBlock(ParagraphItem item, TextAlign align) throws BlockCreationException {
+	public ParagraphSectionBlock(ParagraphSectionItem item, TextAlign align) throws BlockCreationException {
 		this(Collections.singletonList(item), align);
 	}
 
@@ -66,7 +66,7 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 	public Element toHtml(Document creatorTags) {
 		Element par = creatorTags.createElement("p");
 
-		for (ParagraphItem item : this.getItems()) {
+		for (ParagraphSectionItem item : this.getItems()) {
 			par.appendChild(item.toHtml(creatorTags));
 		}
 
@@ -84,7 +84,7 @@ public class ParagraphBlock extends AbstractTextualSectionBlock<ParagraphItem> {
 	@Override
 	public String getText() {
 		final StringBuilder text = new StringBuilder();
-		for (ParagraphItem parItem : this.getItems()) {
+		for (ParagraphSectionItem parItem : this.getItems()) {
 			parItem.getValue().getItems().stream().filter(item -> item instanceof TextRunItem)
 					.forEach(item -> text.append(((TextRunItem) item).getValue()));
 		}

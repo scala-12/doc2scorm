@@ -30,8 +30,9 @@ import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock.QuestionType;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock.QuestionType;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
@@ -39,7 +40,6 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools.SimplePair;
 
 import freemarker.template.Configuration;
@@ -59,7 +59,7 @@ public class FileTools {
 			{ "system_dir", Parser.COURSE_SYSTEM_DIR }, { "theory_css", TemplateFiles.CSS4THEORY.getName() },
 			{ "course_css", TemplateFiles.CSS4COURSE.getName() }, { "test_css", TemplateFiles.CSS4TEST.getName() },
 			{ "jquery_ver", TemplateFiles.JQUERY_VERSION }, { "jquery_ui_ver", TemplateFiles.JQUERY_UI_VERSION },
-			{ "answer_block_id", AbstractQuestionBlock.ANSWER_BLOCK_ID },
+			{ "answer_block_id", AbstractQuestionSectionBlock.ANSWER_BLOCK_ID },
 			{ "companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS },
 			{ "answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID },
 			{ "fill_in_field_id", FillInItem.FILL_IN_ID }, { "choice", String.valueOf(QuestionType.CHOICE.ordinal()) },
@@ -249,7 +249,7 @@ public class FileTools {
 
 			for (int i = 0; i < page.getBlocks().size(); i++) {
 				HashMap<String, String> vars = new HashMap<>(scoVars);
-				AbstractQuestionBlock<?> question = testingPage.getBlocks().get(i);
+				AbstractQuestionSectionBlock<?> question = testingPage.getBlocks().get(i);
 
 				vars.put("type", String.valueOf(question.getType().ordinal()));
 

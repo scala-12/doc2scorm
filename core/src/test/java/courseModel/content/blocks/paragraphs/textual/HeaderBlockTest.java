@@ -6,9 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.HeaderSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 
 import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
@@ -19,7 +19,7 @@ public class HeaderBlockTest extends AbstractBlockTest {
 	@Override
 	public void toHtml() {
 		for (XWPFParagraph par : TestTools.getHeaderParagraphs()) {
-			HeaderParagraphBlock block = null;
+			HeaderSectionBlock block = null;
 			try {
 				block = HeaderParser.parse(par, 10);
 			} catch (BlockCreationException | ItemCreationException e) {
@@ -29,7 +29,7 @@ public class HeaderBlockTest extends AbstractBlockTest {
 			Element htmlBlock = block.toHtml(getHtmlDocument());
 
 			assertEquals(htmlBlock.getNodeName().toLowerCase(),
-					"h" + String.valueOf(block.getLevel() + HeaderParagraphBlock.LEVEL_OFFSET));
+					"h" + String.valueOf(block.getLevel() + HeaderSectionBlock.LEVEL_OFFSET));
 			assertEquals(htmlBlock.getTextContent(), block.getText());
 		}
 	}

@@ -9,20 +9,20 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 
 /**
- * Parsing to {@link TableBlock}
+ * Parsing to {@link TableSectionBlock}
  * 
  * @author Kalashnikov Vladislav
  *
@@ -81,17 +81,17 @@ public class TableParser extends AbstractParser {
 	}
 
 	/**
-	 * Parse to {@link TableBlock} from {@link XWPFTable}
+	 * Parse to {@link TableSectionBlock} from {@link XWPFTable}
 	 * 
 	 * @param table
 	 *            Table for parsing
 	 * @param mathInfo
 	 *            Info about MathML formulas
-	 * @return {@link TableBlock}
+	 * @return {@link TableSectionBlock}
 	 */
-	public static TableBlock parse(XWPFTable table, MathInfo mathInfo)
+	public static TableSectionBlock parse(XWPFTable table, MathInfo mathInfo)
 			throws BlockCreationException, ItemCreationException {
-		ArrayList<TableItem> block = new ArrayList<TableItem>();
+		ArrayList<TableSectionItem> block = new ArrayList<TableSectionItem>();
 
 		for (int i = 0; i < table.getNumberOfRows(); i++) {
 			XWPFTableRow tableRow = table.getRow(i);
@@ -146,9 +146,9 @@ public class TableParser extends AbstractParser {
 				}
 
 			}
-			block.add(new TableItem(cells));
+			block.add(new TableSectionItem(cells));
 		}
 
-		return (block.isEmpty()) ? null : new TableBlock(block);
+		return (block.isEmpty()) ? null : new TableSectionBlock(block);
 	}
 }

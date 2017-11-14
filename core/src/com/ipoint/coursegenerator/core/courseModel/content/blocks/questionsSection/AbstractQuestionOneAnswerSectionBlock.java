@@ -2,10 +2,10 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 
-public abstract class AbstractQuestionBlockWithOneAnswer<T extends AbstractQuestionItem<?>>
-		extends AbstractQuestionBlock<T> {
+public abstract class AbstractQuestionOneAnswerSectionBlock<T extends AbstractQuestionSectionItem<?>>
+		extends AbstractQuestionSectionBlock<T> {
 
-	protected AbstractQuestionBlockWithOneAnswer(T item, String task, String answer) throws BlockCreationException {
+	protected AbstractQuestionOneAnswerSectionBlock(T item, String task, String answer) throws BlockCreationException {
 		super(item, task, answer);
 	}
 

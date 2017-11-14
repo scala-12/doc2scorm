@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph;
 
 import java.util.List;
 
@@ -6,19 +6,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.AbstractContentRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.AbstractContentRunItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 
 /**
  * This block is an analogue of paragraph header.
  * 
- * @see ParagraphBlock
+ * @see ParagraphSectionBlock
  * 
  * @author Kalashnikov Vladislav
  *
  */
-public class HeaderParagraphBlock extends ParagraphBlock {
+public class HeaderSectionBlock extends ParagraphSectionBlock {
 
 	private int level;
 
@@ -31,11 +31,11 @@ public class HeaderParagraphBlock extends ParagraphBlock {
 	 */
 	public static final int LEVEL_OFFSET = 1;
 
-	public HeaderParagraphBlock(List<ParagraphItem> items) throws BlockCreationException {
+	public HeaderSectionBlock(List<ParagraphSectionItem> items) throws BlockCreationException {
 		this(items, 1);
 	}
 
-	public HeaderParagraphBlock(List<ParagraphItem> items, int level) throws BlockCreationException {
+	public HeaderSectionBlock(List<ParagraphSectionItem> items, int level) throws BlockCreationException {
 		super(items, null);
 		if (!this.setLevel(level)) {
 			this.setLevel(MIN_HEADER_LEVEL);

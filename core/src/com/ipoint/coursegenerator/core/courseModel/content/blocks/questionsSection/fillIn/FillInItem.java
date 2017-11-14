@@ -4,7 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionItem;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -12,7 +12,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class FillInItem extends AbstractQuestionItem<String> {
+public class FillInItem extends AbstractQuestionSectionItem<String> {
 
 	public static final String FILL_IN_ID = "fill_in_field";
 

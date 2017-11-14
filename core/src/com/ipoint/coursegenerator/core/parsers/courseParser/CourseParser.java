@@ -30,9 +30,14 @@ import org.xml.sax.SAXException;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInBlock;
@@ -41,11 +46,6 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchBlock.Label2Answer;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.AbstractTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
@@ -428,15 +428,15 @@ public class CourseParser extends AbstractParser {
 							chapterElemNum += 1;
 						}
 
-						ArrayList<AbstractQuestionBlock<?>> questionsBlocks = new ArrayList<>(
+						ArrayList<AbstractQuestionSectionBlock<?>> questionsBlocks = new ArrayList<>(
 								questionsWithAnswers.size());
 						for (QuestionWithAnswers question : questionsWithAnswers) {
-							AbstractQuestionBlock<?> questBlock = null;
+							AbstractQuestionSectionBlock<?> questBlock = null;
 
 							try {
-								if (question.getAnswersBlocks().get(0) instanceof TableBlock) {
-									TableBlock block = (TableBlock) question.getAnswersBlocks().get(0);
-									List<TableItem> rows = block.getItems();
+								if (question.getAnswersBlocks().get(0) instanceof TableSectionBlock) {
+									TableSectionBlock block = (TableSectionBlock) question.getAnswersBlocks().get(0);
+									List<TableSectionItem> rows = block.getItems();
 									if (rows.get(0).getValue().size() == 1) {
 										if (rows.size() == 1) {
 											try {
@@ -467,7 +467,7 @@ public class CourseParser extends AbstractParser {
 									questBlock = new ChoiceBlock(((ListSectionBlock) question.getAnswersBlocks().get(0))
 											.getItems().stream().map(item -> {
 												try {
-													return new ChoiceItem((ParagraphBlock) item.getValue(),
+													return new ChoiceItem((ParagraphSectionBlock) item.getValue(),
 															HeaderParser.HeaderInfo.isCorrectAnswer(htmlAnswer2RealPar
 																	.get(Tools.getNodeString(item.toHtml(html)))));
 												} catch (ItemCreationException e1) {
