@@ -16,13 +16,13 @@ import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Test;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.list.ListSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.HeaderSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.list.ListSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
@@ -42,7 +42,7 @@ public class ParagraphParserTest {
 				Set<Set<String>> stylesFromDoc = par.getRuns().stream().map(run -> TestTools.getRunStyles(run))
 						.filter(style -> style != null).collect(Collectors.toSet());
 
-				ParagraphBlock block = null;
+				ParagraphSectionBlock block = null;
 				try {
 					block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
 				} catch (BlockCreationException | ItemCreationException e) {
@@ -93,7 +93,7 @@ public class ParagraphParserTest {
 		for (XWPFParagraph par : TestTools.getOnlyTextParagraphs()) {
 			if (TestTools.getHeaderParagraphs().contains(par)) {
 				assertTrue(HeaderInfo.isHeader(par));
-				HeaderParagraphBlock block = null;
+				HeaderSectionBlock block = null;
 				try {
 					block = HeaderParser.parse(par, 0);
 				} catch (BlockCreationException | ItemCreationException e) {
@@ -112,7 +112,7 @@ public class ParagraphParserTest {
 	@Test
 	public void parseTextParagraphs() {
 		for (XWPFParagraph par : TestTools.getOnlyTextParagraphs()) {
-			ParagraphBlock block = null;
+			ParagraphSectionBlock block = null;
 			try {
 				block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
 			} catch (BlockCreationException | ItemCreationException e) {
@@ -139,8 +139,8 @@ public class ParagraphParserTest {
 
 				assertNotNull(block);
 
-				if (block instanceof ParagraphBlock) {
-					assertEquals(((XWPFParagraph) elem).getText(), ((ParagraphBlock) block).getText());
+				if (block instanceof ParagraphSectionBlock) {
+					assertEquals(((XWPFParagraph) elem).getText(), ((ParagraphSectionBlock) block).getText());
 				} else if (block instanceof ListSectionBlock) {
 					// TODO: Change API - use one method for paragraphs
 					// conversion in CourseParser (now is two similar)

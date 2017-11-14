@@ -19,13 +19,13 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.HyperlinkRunsBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.FormulaRunItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.HyperlinkRunsBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.FormulaRunItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content.runs.TextRunItem;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.ParagraphParser;
 
 import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
@@ -51,7 +51,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 	@Override
 	public void toHtml() {
 		for (XWPFParagraph par : this.pars) {
-			ParagraphBlock block = null;
+			ParagraphSectionBlock block = null;
 			try {
 				block = ParagraphParser.parse(par, TestTools.getMathMLFormulas());
 			} catch (BlockCreationException | ItemCreationException e) {
@@ -82,7 +82,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 					assertEquals(htmlBlock.getFirstChild().getNodeName().toLowerCase(), "span");
 					assertEquals(htmlBlock.getFirstChild().getFirstChild().getNodeName().toLowerCase(), "span");
 				} else if (TestTools.STYLED_TEXT_PAR.equals(content[0])) {
-					for (ParagraphItem pItem : block.getItems()) {
+					for (ParagraphSectionItem pItem : block.getItems()) {
 						assertTrue(htmlStyles.containsAll(
 								pItem.getValue().getItems().stream().filter(item -> item instanceof TextRunItem)
 										.map(item -> ParagraphParserTest.getItemStyles((TextRunItem) item))
@@ -111,9 +111,9 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 		return links;
 	}
 
-	private static List<String> getBlockLinks(ParagraphBlock block, boolean textIsLink) {
+	private static List<String> getBlockLinks(ParagraphSectionBlock block, boolean textIsLink) {
 		ArrayList<String> links = new ArrayList<>();
-		for (ParagraphItem pItem : block.getItems()) {
+		for (ParagraphSectionItem pItem : block.getItems()) {
 			if (pItem.getValue() instanceof HyperlinkRunsBlock) {
 				HyperlinkRunsBlock linkBlock = (HyperlinkRunsBlock) pItem.getValue();
 				if (textIsLink) {

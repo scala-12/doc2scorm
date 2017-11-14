@@ -9,12 +9,12 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFStyle;
 import org.apache.poi.xwpf.usermodel.XWPFStyles;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.HeaderSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.HeaderParagraphBlock;
 
 /**
- * Parsing to {@link HeaderParagraphBlock}
+ * Parsing to {@link HeaderSectionBlock}
  *
  * @author Kalashnikov Vladislav
  */
@@ -146,20 +146,20 @@ public class HeaderParser extends ParagraphParser {
 	}
 
 	/**
-	 * Parsing to {@link HeaderParagraphBlock} from {@link XWPFParagraph}
+	 * Parsing to {@link HeaderSectionBlock} from {@link XWPFParagraph}
 	 *
 	 * @param par
 	 *            Paragraph for parsing
 	 * @param maxLevel
 	 *            Max available level of header
-	 * @return {@link HeaderParagraphBlock}
+	 * @return {@link HeaderSectionBlock}
 	 */
-	public static HeaderParagraphBlock parse(XWPFParagraph par, int maxLevel)
+	public static HeaderSectionBlock parse(XWPFParagraph par, int maxLevel)
 			throws BlockCreationException, ItemCreationException {
 		if (HeaderInfo.isHeader(par)) {
 			HeaderInfo headerInfo = new HeaderInfo(par);
 
-			return new HeaderParagraphBlock(ParagraphParser.parse(par, null).getItems(),
+			return new HeaderSectionBlock(ParagraphParser.parse(par, null).getItems(),
 					headerInfo.getLevel() - maxLevel);
 		}
 

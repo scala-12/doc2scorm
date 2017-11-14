@@ -1,13 +1,13 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular;
 
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
 
 /**
  * This item includes {@link CellBlock}).
@@ -15,7 +15,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  * @author Kalashnikov Vladislav
  *
  */
-public class TableItem extends AbstractSectionItem<List<CellBlock>> {
+public class TableSectionItem extends AbstractSectionItem<List<CellBlock>> {
 
 	/**
 	 * Create row as block item
@@ -23,7 +23,7 @@ public class TableItem extends AbstractSectionItem<List<CellBlock>> {
 	 * @param cells
 	 *            Cells of row. There cannot be null
 	 */
-	public TableItem(List<CellBlock> cells) throws ItemCreationException {
+	public TableSectionItem(List<CellBlock> cells) throws ItemCreationException {
 		super(cells);
 	}
 

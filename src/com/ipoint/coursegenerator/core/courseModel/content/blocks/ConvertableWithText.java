@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

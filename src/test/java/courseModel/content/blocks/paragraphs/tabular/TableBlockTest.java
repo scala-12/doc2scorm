@@ -10,13 +10,13 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellItem;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.ParagraphSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.TableBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.tabular.cell.CellItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.ParagraphBlock;
 import com.ipoint.coursegenerator.core.parsers.courseParser.tabularParagraphParser.TableParser;
 
 import test.java.courseModel.content.blocks.paragraphs.AbstractBlockTest;
@@ -47,7 +47,7 @@ public class TableBlockTest extends AbstractBlockTest {
 	@Override
 	public void toHtml() {
 		for (XWPFTable table : TestTools.getTestTables()) {
-			TableBlock block = null;
+			TableSectionBlock block = null;
 			try {
 				block = TableParser.parse(table, TestTools.getMathMLFormulas());
 			} catch (BlockCreationException | ItemCreationException e) {
@@ -85,8 +85,8 @@ public class TableBlockTest extends AbstractBlockTest {
 
 					if (cell.getValue().isPresent()) {
 						for (AbstractSectionBlock<?> content : cell.getValue().get()) {
-							if (content instanceof ParagraphBlock) {
-								assertEquals(htmlCell.getTextContent(), ((ParagraphBlock) content).getText());
+							if (content instanceof ParagraphSectionBlock) {
+								assertEquals(htmlCell.getTextContent(), ((ParagraphSectionBlock) content).getText());
 							}
 						}
 					} else {

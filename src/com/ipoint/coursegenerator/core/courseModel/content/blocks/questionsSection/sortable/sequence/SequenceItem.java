@@ -2,9 +2,9 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import java.util.List;
 
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.SortableItem;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.AbstractSectionBlock;
 
 /**
  * 

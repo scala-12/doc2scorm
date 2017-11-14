@@ -1,4 +1,4 @@
-package com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections.textual.paragraph.content;
+package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content;
 
 import java.util.List;
 

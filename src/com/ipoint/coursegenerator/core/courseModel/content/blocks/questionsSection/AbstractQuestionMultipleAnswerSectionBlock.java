@@ -6,15 +6,15 @@ import java.util.function.Predicate;
 
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 
-public abstract class AbstractQuestionBlockWithAnswers<T extends AbstractQuestionItem<?>>
-		extends AbstractQuestionBlock<T> {
+public abstract class AbstractQuestionMultipleAnswerSectionBlock<T extends AbstractQuestionSectionItem<?>>
+		extends AbstractQuestionSectionBlock<T> {
 
-	protected AbstractQuestionBlockWithAnswers(List<T> items, String task, Function<T, String> correctAnswersSelector,
+	protected AbstractQuestionMultipleAnswerSectionBlock(List<T> items, String task, Function<T, String> correctAnswersSelector,
 			Predicate<T> correctAnswersFilterBeforeSelect) throws BlockCreationException {
 		super(items, task, correctAnswersSelector, correctAnswersFilterBeforeSelect);
 	}
 
-	protected AbstractQuestionBlockWithAnswers(List<T> items, String task, Function<T, String> correctAnswersSelector)
+	protected AbstractQuestionMultipleAnswerSectionBlock(List<T> items, String task, Function<T, String> correctAnswersSelector)
 			throws BlockCreationException {
 		this(items, task, correctAnswersSelector, null);
 	}
