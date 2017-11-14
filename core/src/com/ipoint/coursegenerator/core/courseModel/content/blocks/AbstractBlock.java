@@ -88,10 +88,11 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 			Map<Boolean, List<T>> nullAndItems = items.stream()
 					.collect(Collectors.partitioningBy(item -> item == null));
 
-			LinkedList<T> checkedItems = new LinkedList<>(nullAndItems.get(false));
-			if (checkedItems.isEmpty()) {
-				throw new BlockCreationException(this, checkedItems);
+			if (nullAndItems.get(false).isEmpty()) {
+				throw new BlockCreationException(this, nullAndItems.get(false));
 			} else {
+				LinkedList<T> checkedItems = new LinkedList<>(nullAndItems.get(false));
+
 				if (!nullAndItems.get(true).isEmpty()) {
 					LOG.warning("Block has nullable items on create");
 				}
