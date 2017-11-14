@@ -17,7 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.simpleSections
  */
 public class ChoiceItem extends AbstractQuestionItem<ParagraphBlock> {
 
-	private boolean isCorrect;
+	private final boolean isCorrect;
 
 	public static final String NAME = "answerGrp";
 
