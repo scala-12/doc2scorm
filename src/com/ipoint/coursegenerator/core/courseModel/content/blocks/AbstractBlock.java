@@ -27,7 +27,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 
 	public static abstract class AbstractItem<T extends Object> implements Convertable {
 
-		protected T value;
+		protected T value = null;
 
 		int index = -1;
 		AbstractBlock<?> parent = null;
