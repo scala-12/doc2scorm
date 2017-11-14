@@ -47,7 +47,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 		 * 
 		 * @return value of item
 		 */
-		public T getValue() {
+		public final T getValue() {
 			return this.value;
 		}
 
@@ -71,7 +71,7 @@ public abstract class AbstractBlock<T extends AbstractItem<?>> implements Conver
 			return (value != null);
 		}
 
-		public int getIndex() {
+		public final int getIndex() {
 			return this.index;
 		}
 
