@@ -5,7 +5,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -15,7 +15,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  *
  */
-public class TableSectionBlock extends AbstractSectionBlock<TableSectionItem> {
+public class TableSectionBlock extends AbstractContentSectionBlock<TableSectionItem> {
 
 	public TableSectionBlock(List<TableSectionItem> rows) throws BlockCreationException {
 		super(rows);

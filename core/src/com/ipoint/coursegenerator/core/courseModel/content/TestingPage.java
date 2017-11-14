@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.utils.PictureInfo;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
- * Page. These includes {@link AbstractSectionBlock}
+ * Page. These includes {@link AbstractContentSectionBlock}
  * 
  * @see CourseModel
  * @author Kalashnikov Vladislav
@@ -22,7 +22,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  */
 public class TestingPage extends AbstractPage<AbstractQuestionSectionBlock<?>> {
 
-	private final ArrayList<AbstractSectionBlock<?>> introBlocks;
+	private final ArrayList<AbstractContentSectionBlock<?>> introBlocks;
 	private BigDecimal maxTimeAllowed;
 	private int percents4markA = 90;
 	private int percents4markB = 80;
@@ -38,7 +38,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionSectionBlock<?>> {
 		return new TestingPage(null);
 	}
 
-	public List<AbstractSectionBlock<?>> getIntroBlocks() {
+	public List<AbstractContentSectionBlock<?>> getIntroBlocks() {
 		return new ArrayList<>(this.introBlocks);
 	}
 
@@ -46,9 +46,9 @@ public class TestingPage extends AbstractPage<AbstractQuestionSectionBlock<?>> {
 		this.introBlocks.clear();
 	}
 
-	public boolean setIntroBlocks(List<AbstractSectionBlock<?>> blocks) {
-		ArrayList<AbstractSectionBlock<?>> newBlocks = new ArrayList<>();
-		for (AbstractSectionBlock<?> block : blocks) {
+	public boolean setIntroBlocks(List<AbstractContentSectionBlock<?>> blocks) {
+		ArrayList<AbstractContentSectionBlock<?>> newBlocks = new ArrayList<>();
+		for (AbstractContentSectionBlock<?> block : blocks) {
 			if (block != null) {
 				newBlocks.add(block);
 			}

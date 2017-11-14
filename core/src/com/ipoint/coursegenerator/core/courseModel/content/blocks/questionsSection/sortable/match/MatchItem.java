@@ -2,7 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.SortableItem;
 
@@ -18,7 +18,7 @@ public class MatchItem extends SortableItem {
 			+ String.join(" ", SortableItem.ANSWER_OTHER_CLASSES);
 	public static final String MATCH_ANSWER_ID_PREFIX = MATCH_ANSWER_CLASS + '_';
 
-	MatchItem(List<AbstractSectionBlock<?>> answer) throws ItemCreationException {
+	MatchItem(List<AbstractContentSectionBlock<?>> answer) throws ItemCreationException {
 		super(answer);
 	}
 

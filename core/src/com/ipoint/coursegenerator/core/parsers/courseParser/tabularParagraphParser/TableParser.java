@@ -9,7 +9,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.cell.CellBlock;
@@ -118,9 +118,9 @@ public class TableParser extends AbstractParser {
 						if (!tableCell.getBodyElements().isEmpty()) {
 							// TODO: Change API - use one method for paragraphs
 							// conversion in CourseParser (now is two similar)
-							ArrayList<AbstractSectionBlock<?>> blocks = new ArrayList<>();
+							ArrayList<AbstractContentSectionBlock<?>> blocks = new ArrayList<>();
 							for (int k = 0; k < tableCell.getBodyElements().size(); k++) {
-								AbstractSectionBlock<?> paragraphBlock = AbstractParagraphParser
+								AbstractContentSectionBlock<?> paragraphBlock = AbstractParagraphParser
 										.parse(tableCell.getBodyElements().get(k), mathInfo);
 
 								if (paragraphBlock != null) {

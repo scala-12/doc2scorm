@@ -30,7 +30,7 @@ import com.ipoint.coursegenerator.core.Parser;
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock.QuestionType;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
@@ -319,7 +319,7 @@ public class FileTools {
 					.append("/4.gif\" align=\"absmiddle\"> &#8211; при нажатии на стрелку откроется список с ответами, выберите правильный (на Ваш взгляд) вариант.</p>");
 			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(scoDir, IMAGE_DIR_NAME), null);
 		} else {
-			for (AbstractSectionBlock<?> block : page.getIntroBlocks()) {
+			for (AbstractContentSectionBlock<?> block : page.getIntroBlocks()) {
 				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
 			}
 		}

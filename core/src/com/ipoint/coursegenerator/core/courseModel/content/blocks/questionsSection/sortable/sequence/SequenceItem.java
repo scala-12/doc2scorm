@@ -2,7 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSect
 
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ItemCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.SortableItem;
 
@@ -18,7 +18,7 @@ public class SequenceItem extends SortableItem {
 			+ String.join(" ", SortableItem.ANSWER_OTHER_CLASSES);
 	public static final String SEQUENCE_ANSWER_ID_PREFIX = SequenceItem.SEQUENCE_ANSWER_CLASS + '_';
 
-	public SequenceItem(List<AbstractSectionBlock<?>> content) throws ItemCreationException {
+	public SequenceItem(List<AbstractContentSectionBlock<?>> content) throws ItemCreationException {
 		super(content);
 	}
 

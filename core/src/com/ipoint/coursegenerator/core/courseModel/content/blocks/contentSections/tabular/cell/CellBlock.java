@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSectio
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 
 /**
@@ -13,7 +13,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.Blo
  * @author Kalashnikov Vladislav
  *
  */
-public class CellBlock extends AbstractSectionBlock<CellItem> {
+public class CellBlock extends AbstractContentSectionBlock<CellItem> {
 
 	public CellBlock(CellItem item) throws BlockCreationException {
 		super(item);

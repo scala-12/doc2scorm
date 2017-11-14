@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 import com.ipoint.coursegenerator.core.courseModel.Convertable;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.tabular.TableSectionItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.AbstractTextualSectionBlock;
@@ -139,7 +140,7 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 			}
 		} else if (block instanceof TableSectionBlock) {
 			for (TableSectionItem row : ((TableSectionBlock) block).getItems()) {
-				for (List<AbstractSectionBlock<?>> blocks : row.getValue().stream()
+				for (List<AbstractContentSectionBlock<?>> blocks : row.getValue().stream()
 						.filter(cell -> cell.getItem().getValue().isPresent())
 						.map(cell -> cell.getItem().getValue().get()).collect(Collectors.toList())) {
 					images.addAll(getImagesRecursive(blocks));
