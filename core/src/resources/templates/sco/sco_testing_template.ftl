@@ -128,6 +128,26 @@
 				
 				$( '#${sortable_block_id}' ).disableSelection();
 			</#if>
+
+			<#if isSomeChoice || isMatch || isSequence>
+				<#assign tagName><#if isSomeChoice>input<#else>li</#if></#assign>
+				var answerBlock = $( '#<#if isSomeChoice>choice_answers_fieldset<#elseif isMatch>match_answers_block<#elseif isSequence>sequence_answers_block</#if>' );
+				var answerBlockCopy = answerBlock.clone();
+				var shuffeledAnswersCopy = $('<div></div>');
+				var answersCount = answerBlock.find('${tagName}').length;
+				for (var i = answersCount; i > 0; --i) {
+					var randomInd = Math.floor(Math.random() * i);
+					shuffeledAnswersCopy.append(answerBlockCopy.find('${tagName}').eq(randomInd));
+				}
+				
+				shuffeledAnswersCopy.find('${tagName}').each(function() {
+					var answerId = this.id;
+					answerBlock.prepend(answerBlock.find('#' + answerId).eq(0));
+					<#if isSomeChoice>
+						answerBlock.prepend(answerBlock.find('[for=' + answerId + ']').eq(0));
+					</#if>
+				});
+			</#if>
 		});
 	</script>
 	<script type="text/javascript">
