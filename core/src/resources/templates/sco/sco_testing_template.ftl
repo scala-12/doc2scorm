@@ -133,7 +133,8 @@
 				<#assign tagName><#if isSomeChoice>input<#else>li</#if></#assign>
 				var answerBlock = $( '#<#if isSomeChoice>choice_answers_fieldset<#elseif isMatch>match_answers_block<#elseif isSequence>sequence_answers_block</#if>' );
 				var answerBlockCopy = answerBlock.clone();
-				var shuffeledAnswersCopy = $('<div></div>');
+				// dont change this string - need for iLogos
+				var shuffeledAnswersCopy = $('<' + 'div' + '><' + '/div' + '>');
 				var answersCount = answerBlock.find('${tagName}').length;
 				for (var i = answersCount; i > 0; --i) {
 					var randomInd = Math.floor(Math.random() * i);
