@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.ModelTreeNodeCreationException;
+import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.SimpleModelNodeCreationException;
 
 /**
  * Tree as list of nodes that may includes several {@link ModelTreeNode}
@@ -15,14 +15,36 @@ import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.ModelTre
 public abstract class AbstractTreeNode {
 
 	private ArrayList<ModelTreeNode> childs;
+	protected String title;
 	AbstractTreeNode parent;
 
-	public AbstractTreeNode() {
+	public AbstractTreeNode(String title) throws SimpleModelNodeCreationException {
 		this.childs = new ArrayList<>();
 		this.parent = null;
+		if (!this.setTitle(title)) {
+			throw new SimpleModelNodeCreationException(title);
+		}
 	}
 
-	public AbstractTreeNode createChild(String title) throws ModelTreeNodeCreationException {
+	public String getTitle() {
+		return this.title;
+	}
+
+	public boolean setTitle(String title) {
+		if (this.isCorrectTitle(title)) {
+			this.title = title;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	protected boolean isCorrectTitle(String title) {
+		return (title != null) && !title.isEmpty();
+	}
+
+	public AbstractTreeNode createChild(String title) throws SimpleModelNodeCreationException {
 		ModelTreeNode child = new ModelTreeNode(title);
 		this.childs.add(child);
 		child.parent = this;
@@ -30,7 +52,7 @@ public abstract class AbstractTreeNode {
 		return child;
 	}
 
-	public AbstractTreeNode createAfter(String title) throws ModelTreeNodeCreationException {
+	public AbstractTreeNode createAfter(String title) throws SimpleModelNodeCreationException {
 		ModelTreeNode child = new ModelTreeNode(title);
 		this.parent.childs.add(child);
 		child.parent = this.parent;
