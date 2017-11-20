@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileTools;
 import com.ipoint.coursegenerator.core.utils.Tools;
@@ -117,7 +117,7 @@ public class Parser {
 		FileTools.saveTextFile(manContent, manFile);
 	}
 
-	private void createManifestScoUnitAndSavePage(File courseDir, List<CourseTreeNode> nodes,
+	private void createManifestScoUnitAndSavePage(File courseDir, List<ModelTreeNode> nodes,
 			OrganizationProcessor organizationProcessor, ResourcesProcessor resourcesProcessor) {
 		nodes.stream().forEach(node -> {
 			organizationProcessor.createItem(node);
