@@ -31,4 +31,9 @@ public class CourseModel extends AbstractTreeNode {
 		this.hasFormulas = hasFormulas;
 	}
 
+	@Override
+	protected String getNodeType() {
+		return "root";
+	}
+
 }
