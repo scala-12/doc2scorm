@@ -93,9 +93,9 @@ public class Parser {
 
 	/**
 	 * @return JSON of map(map(node-id, title, type) to parent-node-id).<br>
-	 * 		Type may be from enum: root, theory, test, header
+	 *         Type may be from enum: root, theory, test, header
 	 */
-	public String getJsonCourseModel(InputStream stream, int headerLevel, String path) throws IOException {
+	public String getJsonCourseModel(InputStream stream, int headerLevel) throws IOException {
 		return new GsonBuilder().create()
 				.toJson(CourseParser.parseHeadersOnly(stream, "Empty model", headerLevel).getHierarchyInfo());
 	}
