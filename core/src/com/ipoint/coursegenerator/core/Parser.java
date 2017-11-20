@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.imsproject.xsd.imscpRootv1P1P2.ManifestDocument;
 
+import com.google.gson.GsonBuilder;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
 import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
@@ -88,6 +89,15 @@ public class Parser {
 		zip.addToZip(new String[] { zipCourseFileName });
 
 		return zipCourseFileName;
+	}
+
+	/**
+	 * @return JSON of map(map(node-id, title, type) to parent-node-id).<br>
+	 * 		Type may be from enum: root, theory, test, header
+	 */
+	public String getJsonCourseModel(InputStream stream, int headerLevel, String path) throws IOException {
+		return new GsonBuilder().create()
+				.toJson(CourseParser.parseHeadersOnly(stream, "Empty model", headerLevel).getHierarchyInfo());
 	}
 
 	private void saveImsManifestFile(CourseModel courseModel, File courseDir) throws IOException {
