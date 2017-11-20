@@ -2,7 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.structure;
 
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.ModelTreeNodeCreationException;
+import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.SimpleModelNodeCreationException;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -14,8 +14,6 @@ import com.ipoint.coursegenerator.core.utils.Tools;
 public class ModelTreeNode extends AbstractTreeNode {
 
 	private AbstractPage<?> page;
-
-	private String title;
 	private String systemName;
 
 	/**
@@ -25,21 +23,18 @@ public class ModelTreeNode extends AbstractTreeNode {
 	 *            Page of node
 	 * @param title
 	 *            Title of node. These can't be null.
-	 * @throws TreeNodeCreationException
+	 * @throws SimpleModelNodeCreationException
 	 */
-	public ModelTreeNode(TheoryPage page, String title) throws ModelTreeNodeCreationException {
-		super();
-		if (!this.setTitle(title)) {
-			throw new ModelTreeNodeCreationException(page, title);
-		}
+	public ModelTreeNode(TheoryPage page, String title) throws SimpleModelNodeCreationException {
+		super(title);
 		this.setPage(page);
 	}
 
 	/**
-	 * @throws TreeNodeCreationException
-	 * @see ModelTreeNode#ModelTreeNode(TheoryPage, String)
+	 * @throws SimpleModelNodeCreationException
+	 * @see ModelTreeNode#CourseTreeNode(TheoryPage, String)
 	 */
-	public ModelTreeNode(String title) throws ModelTreeNodeCreationException {
+	public ModelTreeNode(String title) throws SimpleModelNodeCreationException {
 		this(null, title);
 	}
 
@@ -47,25 +42,13 @@ public class ModelTreeNode extends AbstractTreeNode {
 		return this.page;
 	}
 
-	public String getTitle() {
-		return this.title;
-	}
-
 	public String getSystemName() {
 		return this.systemName;
 	}
 
-	/**
-	 * Set page title
-	 *
-	 * @param title
-	 *            New title of page. If it is not string with chars then return
-	 *            false
-	 * @return If successful then false
-	 */
+	@Override
 	public boolean setTitle(String title) {
-		if ((title != null) && !title.isEmpty()) {
-			this.title = title;
+		if (super.setTitle(title)) {
 			this.systemName = Tools.generateSystemName(title);
 
 			return true;
