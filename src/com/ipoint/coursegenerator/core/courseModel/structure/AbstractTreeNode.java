@@ -82,4 +82,25 @@ public abstract class AbstractTreeNode {
 		return new ArrayList<>(this.childs);
 	}
 
+	protected String getInfoAsJsonContext() {
+		return "'title': " + this.title;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder childs = new StringBuilder();
+
+		boolean hasOne = false;
+		for (ModelTreeNode node : this.childs) {
+			if (hasOne) {
+				childs.append(", ");
+			} else {
+				hasOne = true;
+			}
+			childs.append(node.toString());
+		}
+
+		return "{" + this.getInfoAsJsonContext() + ((hasOne) ? ", 'childs': [" + childs.toString() + "]" : "") + "}";
+	}
+
 }
