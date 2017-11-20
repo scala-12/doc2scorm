@@ -2,7 +2,7 @@ package com.ipoint.coursegenerator.core.courseModel.structure;
 
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
-import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.TreeNodeCreationException;
+import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.ModelTreeNodeCreationException;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -11,7 +11,7 @@ import com.ipoint.coursegenerator.core.utils.Tools;
  * @author Kalashnikov Vladislav
  * @see AbstractTreeNode
  */
-public class CourseTreeNode extends AbstractTreeNode {
+public class ModelTreeNode extends AbstractTreeNode {
 
 	private AbstractPage<?> page;
 
@@ -27,19 +27,19 @@ public class CourseTreeNode extends AbstractTreeNode {
 	 *            Title of node. These can't be null.
 	 * @throws TreeNodeCreationException
 	 */
-	public CourseTreeNode(TheoryPage page, String title) throws TreeNodeCreationException {
+	public ModelTreeNode(TheoryPage page, String title) throws ModelTreeNodeCreationException {
 		super();
 		if (!this.setTitle(title)) {
-			throw new TreeNodeCreationException(page, title);
+			throw new ModelTreeNodeCreationException(page, title);
 		}
 		this.setPage(page);
 	}
 
 	/**
 	 * @throws TreeNodeCreationException
-	 * @see CourseTreeNode#CourseTreeNode(TheoryPage, String)
+	 * @see ModelTreeNode#ModelTreeNode(TheoryPage, String)
 	 */
-	public CourseTreeNode(String title) throws TreeNodeCreationException {
+	public ModelTreeNode(String title) throws ModelTreeNodeCreationException {
 		this(null, title);
 	}
 

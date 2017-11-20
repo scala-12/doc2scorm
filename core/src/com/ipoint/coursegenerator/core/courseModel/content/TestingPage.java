@@ -9,7 +9,7 @@ import java.util.Set;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
@@ -28,7 +28,7 @@ public class TestingPage extends AbstractPage<AbstractQuestionSectionBlock<?>> {
 	private int percents4markB = 80;
 	private int percents4markC = 60;
 
-	private TestingPage(CourseTreeNode parentNode) {
+	private TestingPage(ModelTreeNode parentNode) {
 		super(parentNode);
 		this.introBlocks = new ArrayList<>();
 		maxTimeAllowed = null;

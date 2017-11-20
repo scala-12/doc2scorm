@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 
 import test.utils.TestTools;
@@ -58,7 +58,7 @@ public class CourseParserTest {
 	@Ignore
 	public void hasExtraLevels() {
 		boolean hasChilds = false;
-		for (CourseTreeNode node : this.courseModel.getChilds()) {
+		for (ModelTreeNode node : this.courseModel.getChilds()) {
 			hasChilds = hasChilds || !node.getChilds().isEmpty();
 		}
 	}
