@@ -1,8 +1,14 @@
 package com.ipoint.coursegenerator.core.courseModel.structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.google.gson.GsonBuilder;
 import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.SimpleModelNodeCreationException;
 
 /**
@@ -17,6 +23,7 @@ public abstract class AbstractTreeNode {
 	private ArrayList<ModelTreeNode> childs;
 	protected String title;
 	AbstractTreeNode parent;
+	private final String id;
 
 	public AbstractTreeNode(String title) throws SimpleModelNodeCreationException {
 		if (!this.setTitle(title)) {
@@ -24,6 +31,7 @@ public abstract class AbstractTreeNode {
 		}
 		this.childs = new ArrayList<>();
 		this.parent = null;
+		this.id = UUID.randomUUID().toString();
 	}
 
 	public String getTitle() {
@@ -100,6 +108,22 @@ public abstract class AbstractTreeNode {
 
 		return "{ \"title\": \"" + this.title + "\", \"type\": \"" + this.getNodeType() + "\""
 				+ ((hasOne) ? ", \"childs\": [" + childs.toString() + "]" : "") + "}";
+	}
+
+	public Map<String, String> getHierarchyInfo() {
+		Map<String, String> hierarchy = new HashMap<>();
+
+		hierarchy.put(
+				new GsonBuilder().create()
+						.toJson(Arrays.stream(new String[][] { { "type", this.getNodeType() }, { "title", this.title },
+								{ "id", this.id } }).collect(Collectors.toMap(e -> e[0], e -> e[1]))),
+				(this.parent == null) ? "" : this.parent.id);
+
+		for (ModelTreeNode node : this.childs) {
+			hierarchy.putAll(node.getHierarchyInfo());
+		}
+
+		return hierarchy;
 	}
 
 }
