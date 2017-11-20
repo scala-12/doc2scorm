@@ -15,7 +15,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.TreeNode
 public abstract class AbstractTreeNode {
 
 	private ArrayList<CourseTreeNode> childs;
-	protected AbstractTreeNode parent;
+	AbstractTreeNode parent;
 
 	public AbstractTreeNode() {
 		this.childs = new ArrayList<>();
