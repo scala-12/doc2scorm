@@ -7,7 +7,7 @@ import org.imsproject.xsd.imscpRootv1P1P2.ResourcesType;
 import org.w3c.dom.Node;
 
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 
 public class ResourcesProcessor {
 
@@ -28,7 +28,7 @@ public class ResourcesProcessor {
 		return this.manifest.addNewResources();
 	}
 
-	public void createItem(CourseTreeNode node) {
+	public void createItem(ModelTreeNode node) {
 		AbstractPage<?> page = node.getPage();
 		if (null != page) {
 			ResourceType resourse = this.getResources().addNewResource();

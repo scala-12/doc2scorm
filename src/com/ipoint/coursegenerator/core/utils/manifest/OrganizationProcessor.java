@@ -6,7 +6,7 @@ import org.imsproject.xsd.imscpRootv1P1P2.OrganizationType;
 
 import com.ipoint.coursegenerator.core.courseModel.content.AbstractPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 public class OrganizationProcessor {
@@ -48,7 +48,7 @@ public class OrganizationProcessor {
 		return organization;
 	}
 
-	public void createItem(CourseTreeNode node) {
+	public void createItem(ModelTreeNode node) {
 		ItemType itemType = getOrganization().addNewItem();
 		itemType.setIdentifier("RES_" + node.getSystemName());
 		itemType.setTitle(node.getTitle());

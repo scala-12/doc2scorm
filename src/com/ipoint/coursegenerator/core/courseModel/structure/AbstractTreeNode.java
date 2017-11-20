@@ -3,10 +3,10 @@ package com.ipoint.coursegenerator.core.courseModel.structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.TreeNodeCreationException;
+import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.ModelTreeNodeCreationException;
 
 /**
- * Tree as list of nodes that may includes several {@link CourseTreeNode}
+ * Tree as list of nodes that may includes several {@link ModelTreeNode}
  *
  *
  * @author Kalashnikov Vladislav
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.TreeNode
  */
 public abstract class AbstractTreeNode {
 
-	private ArrayList<CourseTreeNode> childs;
+	private ArrayList<ModelTreeNode> childs;
 	AbstractTreeNode parent;
 
 	public AbstractTreeNode() {
@@ -22,23 +22,23 @@ public abstract class AbstractTreeNode {
 		this.parent = null;
 	}
 
-	public AbstractTreeNode createChild(String title) throws TreeNodeCreationException {
-		CourseTreeNode child = new CourseTreeNode(title);
+	public AbstractTreeNode createChild(String title) throws ModelTreeNodeCreationException {
+		ModelTreeNode child = new ModelTreeNode(title);
 		this.childs.add(child);
 		child.parent = this;
 
 		return child;
 	}
 
-	public AbstractTreeNode createAfter(String title) throws TreeNodeCreationException {
-		CourseTreeNode child = new CourseTreeNode(title);
+	public AbstractTreeNode createAfter(String title) throws ModelTreeNodeCreationException {
+		ModelTreeNode child = new ModelTreeNode(title);
 		this.parent.childs.add(child);
 		child.parent = this.parent;
 
 		return child;
 	}
 
-	public boolean removeChild(CourseTreeNode node) {
+	public boolean removeChild(ModelTreeNode node) {
 		if (this.childs.remove(node)) {
 			node.parent = null;
 
@@ -52,11 +52,11 @@ public abstract class AbstractTreeNode {
 		return this.parent;
 	}
 
-	public CourseTreeNode getChild(int index) {
+	public ModelTreeNode getChild(int index) {
 		return ((this.childs.size() <= index) || this.childs.isEmpty()) ? null : this.childs.get(index);
 	}
 
-	public List<CourseTreeNode> getChilds() {
+	public List<ModelTreeNode> getChilds() {
 		return new ArrayList<>(this.childs);
 	}
 

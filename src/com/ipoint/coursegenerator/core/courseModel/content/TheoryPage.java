@@ -3,7 +3,7 @@ package com.ipoint.coursegenerator.core.courseModel.content;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.AbstractSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 
 /**
  * Page. These includes {@link AbstractSectionBlock}
@@ -14,7 +14,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
  */
 public class TheoryPage extends AbstractPage<AbstractContentSectionBlock<?>> {
 
-	private TheoryPage(CourseTreeNode parentNode) {
+	private TheoryPage(ModelTreeNode parentNode) {
 		super(parentNode);
 	}
 

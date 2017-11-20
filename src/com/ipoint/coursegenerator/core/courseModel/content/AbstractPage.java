@@ -24,7 +24,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSection
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.AbstractContentRunItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.runs.ImageRunItem;
 import com.ipoint.coursegenerator.core.courseModel.structure.CourseModel;
-import com.ipoint.coursegenerator.core.courseModel.structure.CourseTreeNode;
+import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.utils.PictureInfo;
 
 /**
@@ -38,11 +38,11 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 
 	private final ArrayList<T> blocks;
 
-	private CourseTreeNode parentNode;
+	private ModelTreeNode parentNode;
 
 	public final static String CONTENT_DIV_ID = "page_content";
 
-	protected AbstractPage(CourseTreeNode parentNode) {
+	protected AbstractPage(ModelTreeNode parentNode) {
 		this.blocks = new ArrayList<>();
 		this.setParent(parentNode);
 	}
@@ -72,7 +72,7 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 		this.blocks.clear();
 	}
 
-	public void setParent(CourseTreeNode node) {
+	public void setParent(ModelTreeNode node) {
 		if (node != this.parentNode) {
 			// because class CourseTreeNode have call of this method
 			// method that below need for set link between page and node
@@ -84,7 +84,7 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 		}
 	}
 
-	public CourseTreeNode getParent() {
+	public ModelTreeNode getParent() {
 		return this.parentNode;
 	}
 
