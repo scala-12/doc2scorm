@@ -86,9 +86,8 @@ public class ModelTreeNode extends AbstractTreeNode {
 	}
 
 	@Override
-	protected String getInfoAsJsonContext() {
-		return super.getInfoAsJsonContext() + ", 'type': "
-				+ ((this.page == null) ? "header" : ((this.page instanceof TheoryPage) ? "theory" : "test"));
+	protected String getNodeType() {
+		return ((this.page == null) ? "header" : ((this.page instanceof TheoryPage) ? "theory" : "test"));
 	}
 
 }

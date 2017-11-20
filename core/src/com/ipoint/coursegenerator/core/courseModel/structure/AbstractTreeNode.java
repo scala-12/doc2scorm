@@ -19,11 +19,11 @@ public abstract class AbstractTreeNode {
 	AbstractTreeNode parent;
 
 	public AbstractTreeNode(String title) throws SimpleModelNodeCreationException {
-		this.childs = new ArrayList<>();
-		this.parent = null;
 		if (!this.setTitle(title)) {
 			throw new SimpleModelNodeCreationException(title);
 		}
+		this.childs = new ArrayList<>();
+		this.parent = null;
 	}
 
 	public String getTitle() {
@@ -82,9 +82,7 @@ public abstract class AbstractTreeNode {
 		return new ArrayList<>(this.childs);
 	}
 
-	protected String getInfoAsJsonContext() {
-		return "'title': " + this.title;
-	}
+	abstract protected String getNodeType();
 
 	@Override
 	public String toString() {
@@ -100,7 +98,8 @@ public abstract class AbstractTreeNode {
 			childs.append(node.toString());
 		}
 
-		return "{" + this.getInfoAsJsonContext() + ((hasOne) ? ", 'childs': [" + childs.toString() + "]" : "") + "}";
+		return "{ \"title\": \"" + this.title + "\", \"type\": \"" + this.getNodeType() + "\""
+				+ ((hasOne) ? ", \"childs\": [" + childs.toString() + "]" : "") + "}";
 	}
 
 }
