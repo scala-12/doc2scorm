@@ -18,6 +18,7 @@ POST        /signUp                          controllers.SignUpController.signUp
 # REST Services
 POST		/rest/converter/upload			 controllers.ConverterController.upload
 POST		/rest/converter/download	     controllers.ConverterController.download
+POST		/rest/converter/preview	         controllers.ConverterController.preview
 GET         /rest/current/user               controllers.UserController.getCurrentUser
 GET         /rest/users                      controllers.UserController.getUsers
 GET         /rest/users/:id                  controllers.UserController.getUserById(id: Long)
