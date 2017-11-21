@@ -36,6 +36,10 @@ class MockConverterService extends ConverterService {
         return Promise.resolve("");
     }
 
+    public previewScorm(headerLevel: number): Promise<string> {
+        return Promise.resolve("");
+    }
+
 }
 
 describe('DashboardComponent', () => {
