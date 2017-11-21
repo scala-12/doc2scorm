@@ -24,6 +24,8 @@ export class DashboardComponent implements OnInit {
     public courseName: String = '';
     public disableInput: any;
     public uploadStatus: String = '';
+    public last_preview_result: String = '';
+    public preview_updated: boolean = false;
     public conversionStatus: String = '';
     public inputFile: any;
     public filename: String = '';
@@ -43,6 +45,8 @@ export class DashboardComponent implements OnInit {
         this.uploadStatus = ''
         var files: Array<File> = files = event.srcElement.files;
         if (files.length > 0) {
+            this.last_preview_result = '';
+            this.preview_updated = false;
             this.uploadStatus = "loading";
             this.filename = files[0].name;
             this.conversionStatus = "";
@@ -77,6 +81,40 @@ export class DashboardComponent implements OnInit {
             .catch(error => {
                 this.conversionStatus = "fail";
             });
+    }
+
+    preview() {
+        if ((this.last_preview_result === '') || !this.preview_updated) {
+            this.conversionStatus = "running";
+
+            var header = 0
+            for (var i = 0; i < this.headers.length; i++) {
+                if (this.selectedHeader === this.headers[i]) {
+                    header = (i + 1)
+                }
+            }
+
+            this._converterService.previewScorm(header)
+                .then(data => {
+                    this.conversionStatus = "";
+                    this.last_preview_result = data;
+                    this.preview_updated = true;
+                    this.openPreview();
+                })
+                .catch(error => {
+                    this.conversionStatus = "fail";
+                });
+        } else {
+            this.openPreview();
+        }
+    }
+
+    openPreview() {
+        return true;
+    }
+
+    onChangeHeader() {
+        this.preview_updated = false;
     }
 
 }

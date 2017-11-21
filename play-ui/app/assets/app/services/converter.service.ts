@@ -8,6 +8,7 @@ export class ConverterService extends BrowserXhr {
 
     uploadUrl = "/rest/converter/upload";
     downloadUrl = "/rest/converter/download";
+    previewUrl = "/rest/converter/preview";
 
     public uploadDoc(file: File): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -29,6 +30,27 @@ export class ConverterService extends BrowserXhr {
 
             xhr.open('POST', this.uploadUrl, true);
             xhr.send(formData);
+        });
+    }
+
+    public previewScorm(headerLevel: number): Promise<string> {
+       return new Promise((resolve, reject) => {
+            let xhr: XMLHttpRequest = new XMLHttpRequest();
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        resolve(xhr.responseText);
+                    } else {
+                        reject("fail");
+                    }
+                }
+            };
+
+            xhr.open('POST', this.previewUrl, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            let data = JSON.stringify({ header: "" + headerLevel });
+            xhr.send(data);
         });
     }
 
