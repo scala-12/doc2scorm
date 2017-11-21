@@ -1,42 +1,49 @@
 package utils.actors
 
+import java.io.StringWriter
 import java.text.SimpleDateFormat
-import java.util.{Calendar, UUID, Optional}
+import java.util
+import java.util.{Calendar, Comparator, Optional, UUID}
+import javax.xml.parsers.{DocumentBuilderFactory, ParserConfigurationException}
+import javax.xml.transform._
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 import akka.actor.{Actor, ActorLogging}
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ipoint.coursegenerator.core.Parser
 import com.typesafe.config.ConfigFactory
+import org.w3c.dom.{Document, Element, Node, Text}
 import utils.actors.ConvertActor._
 
 import scala.reflect.io.{Directory, File}
 import scala.util.Try
+
 
 /**
   * Created by kalas on 13.05.2016.
   */
 class ConvertActor extends Actor with ActorLogging {
 
-  val sdf = new SimpleDateFormat("dd-MM-yyyy")
-  val calendar = Calendar.getInstance()
-
   override def receive = {
     case ConvertActor.Conversion(courseDocBytes, maxHeader, courseName) =>
-      var result: CourseResult = CourseResult(None, None, false, converterHost)
+      var result: ConvertResultAsCourse = ConvertResultAsCourse(None, None, converterHost)
 
-      if (!localDocsDir.exists) {
-        localDocsDir createDirectory()
+      if (!localDocs4ConvertDir.exists) {
+        localDocs4ConvertDir createDirectory()
       }
 
       val tmpCourseName = convertRU2ENString(courseName).replaceAll("\\s+", "_").replaceAll("(^_)|(_$)", "") +
-        "_" + sdf.format(calendar.getTime) +
+        "_" + sdf.format(Calendar.getInstance().getTime) +
         "_" + UUID.randomUUID().toString
 
-      val docFile = File(localDocsDir / tmpCourseName + ".docx")
+      val docFile = File(localDocs4ConvertDir / tmpCourseName + ".docx")
       val docOS = docFile bufferedOutput()
       Stream.continually(docOS write courseDocBytes)
       docOS close()
 
-      log.info(s"Word document was copied (${docFile.name})")
+      log.info(s"Word document was copied for convert (${docFile.name})")
 
       val courseDir = Directory(actorsDir / tmpCourseName).createDirectory()
       log.info(s"Work in ${courseDir.path})")
@@ -59,12 +66,11 @@ class ConvertActor extends Actor with ActorLogging {
         log.info(s"Word doc (${docFile.name}) was converted in ${courseFile.path})")
 
         val courseIS = courseFile bufferedInput()
-        result = CourseResult(
+        result = ConvertResultAsCourse(
           Some(
             Stream.continually(courseIS read()).
               takeWhile(_ != -1).map(_.toByte).toArray),
           Some(tmpCourseName),
-          true,
           converterHost)
         courseIS close()
 
@@ -87,11 +93,12 @@ object ConvertActor {
 
   private val ipointConf = ConfigFactory.load().getObject("ipoint-conf").toConfig
 
-  private val localDocsDir = Directory(ipointConf getString "tmp.doc.dir.local")
+  private val localDocs4ConvertDir = Directory(ipointConf.getString("tmp.doc.dir.local") + "/convert")
   private val actorsDir = Directory(ipointConf getString "tmp.course.dir.actors")
   private val sentCoursesDir = Directory(ipointConf getString "tmp.course.dir.sent")
   private val converterHost = (ipointConf getString "akka-cluster.host") + ':' + (ipointConf getString "akka-cluster.port")
 
+  private val sdf = new SimpleDateFormat("dd-MM-yyyy")
   private val parser: Parser = if (ipointConf.getIsNull("libreoffice.program.soffice")) {
     new Parser()
   } else {

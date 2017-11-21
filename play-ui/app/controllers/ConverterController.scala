@@ -1,5 +1,6 @@
 package controllers
 
+import java.nio.file.Files
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -9,16 +10,15 @@ import akka.util.Timeout
 import com.mohiva.play.silhouette.api.{Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import com.mohiva.play.silhouette.impl.providers.SocialProviderRegistry
-import com.typesafe.config.ConfigFactory
 import db.models.DBConversion
 import db.models.daos.ConversionDao
 import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.MessagesApi
 import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.{__, _}
 import play.api.mvc._
-import utils.actors.{CourseResult, HostConvertSupervisor}
+import utils.actors.{ConvertResultAsCourse, HostConvertSupervisor}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -68,7 +68,7 @@ class ConverterController @Inject()(
     }
   }
 
-  def download = SecuredAction.async(parse.json) { implicit request =>
+  def download: Action[JsValue] = SecuredAction.async(parse.json) { implicit request =>
     if (!"GUEST".equals(request.identity.role.get)) {
       request.body.validate[(String, String)].map {
         case (courseName, header) =>
@@ -82,29 +82,29 @@ class ConverterController @Inject()(
               docFile = uploadDocFile
             }
 
-            implicit val timeout = Timeout(2.minutes)
+            implicit val timeout: Timeout = Timeout(2.minutes)
             val courseResultFuture = pattern.ask(
               hostSupervisor,
               HostConvertSupervisor.ConversionInCluster(
                 docFile toByteArray(),
                 header toInt,
                 courseName)
-            ).asInstanceOf[Future[CourseResult]]
+            ).asInstanceOf[Future[ConvertResultAsCourse]]
 
-            courseResultFuture flatMap { courseResult =>
+            courseResultFuture flatMap { convertResult =>
               Future successful {
-                val localCourse = File(coursesDir / courseResult.fileName.getOrElse("") + ".zip")
-                if (courseResult successful) {
+                val localCourse = File(coursesDir / convertResult.fileName.getOrElse("") + ".zip")
+                if (convertResult.result.isDefined) {
                   if (!coursesDir.exists) {
                     coursesDir.createDirectory()
                   }
 
                   val bos = localCourse bufferedOutput()
-                  Stream.continually(bos write courseResult.bytes.get)
+                  Stream.continually(bos write convertResult.result.get)
                   bos close()
 
-                  val sentCourse = File(sentDir / courseResult.fileName.get + ".zip")
-                  val remoteDoc = File(remoteDocsDir / courseResult.fileName.get + ".docx")
+                  val sentCourse = File(sentDir / convertResult.fileName.get + ".zip")
+                  val remoteDoc = File(remoteDocsDir / convertResult.fileName.get + ".docx")
                   if (sentCourse exists) {
                     sentCourse delete()
                     docFile delete()
@@ -117,13 +117,13 @@ class ConverterController @Inject()(
                 }
 
                 //TODO: what do if error (haven't answer)?
-                conversionDao addConversion new DBConversion(
+                conversionDao.addConversion(DBConversion(
                   0,
                   request.identity.dbId.get,
-                  courseResult.fileName getOrElse docFile.name,
-                  courseResult successful,
+                  convertResult.fileName getOrElse docFile.name,
+                  convertResult.result.isDefined,
                   Calendar.getInstance() getTimeInMillis(),
-                  courseResult converterHost)
+                  convertResult converterHost))
                 Ok.sendFile(
                   localCourse.jfile,
                   inline = true).withHeaders(CACHE_CONTROL -> "max-age=3600", CONTENT_DISPOSITION -> "attachment; filename=".concat(localCourse.name), CONTENT_TYPE -> "application/x-download")
@@ -135,18 +135,16 @@ class ConverterController @Inject()(
           })
 
       }.recoverTotal {
-        e => Future.successful {
-          BadRequest("Detected error: " + e)
-        }
+        e =>
+          Future.successful {
+            BadRequest("Detected error: " + e)
+          }
       }
-    }
-
-    else {
+    } else {
       Future.successful {
         BadRequest("Permission denied")
       }
     }
-
   }
 
 }
