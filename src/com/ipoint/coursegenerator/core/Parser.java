@@ -92,7 +92,7 @@ public class Parser {
 	}
 
 	/**
-	 * @return JSON of map(map(node-id, title, type) to parent-node-id).<br>
+	 * @return JSON of map(map(node-id, title, index, type) to parent-node-id).<br>
 	 *         Type may be from enum: root, theory, test, header
 	 */
 	public String getJsonHierarchyInfo(InputStream stream, int headerLevel) throws IOException {

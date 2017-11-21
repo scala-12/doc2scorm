@@ -111,16 +111,23 @@ public abstract class AbstractTreeNode {
 	}
 
 	public Map<String, String> getHierarchyInfo() {
+		return this.getHierarchyInfo(0);
+	}
+
+	Map<String, String> getHierarchyInfo(int index) {
 		Map<String, String> hierarchy = new HashMap<>();
 
 		hierarchy.put(
 				new GsonBuilder().create()
-						.toJson(Arrays.stream(new String[][] { { "type", this.getNodeType() }, { "title", this.title },
-								{ "id", this.id } }).collect(Collectors.toMap(e -> e[0], e -> e[1]))),
+						.toJson(Arrays.stream(new String[][] { { "type", this.getNodeType() },
+								{ "index", String.valueOf(index) }, { "title", this.title }, { "id", this.id } })
+								.collect(Collectors.toMap(e -> e[0], e -> e[1]))),
 				(this.parent == null) ? "" : this.parent.id);
 
+		int i = -1;
 		for (ModelTreeNode node : this.childs) {
-			hierarchy.putAll(node.getHierarchyInfo());
+			i += 1;
+			hierarchy.putAll(node.getHierarchyInfo(i));
 		}
 
 		return hierarchy;
