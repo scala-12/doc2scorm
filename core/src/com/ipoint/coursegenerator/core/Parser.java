@@ -80,7 +80,7 @@ public class Parser {
 		courseDir.mkdirs();
 
 		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
-		saveImsManifestFile(courseModel, courseDir);
+		saveImsManifestFileAndPages(courseModel, courseDir);
 
 		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR), courseModel.hasFormulas());
 
@@ -100,7 +100,7 @@ public class Parser {
 				.toJson(CourseParser.parseHeadersOnly(stream, "Empty model", headerLevel).getHierarchyInfo());
 	}
 
-	private void saveImsManifestFile(CourseModel courseModel, File courseDir) throws IOException {
+	private void saveImsManifestFileAndPages(CourseModel courseModel, File courseDir) throws IOException {
 		ManifestDocument manDocument = ManifestDocument.Factory.newInstance();
 
 		// Create Manifest for Manifest Document
