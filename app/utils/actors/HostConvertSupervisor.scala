@@ -84,14 +84,29 @@ object HostConvertSupervisor extends Actor with ActorLogging {
         workerRouter.route(ConvertActor.Conversion(courseDocBytes, maxHeader, courseName), sender())
       }
 
+    case PreviewOnHost(courseDocBytes, maxHeader) =>
+      if (akkaClusterConf.getInt("converter-count") > 0) {
+        workerRouter.route(ConvertActor.Preview(courseDocBytes, maxHeader), sender())
+      }
+
     case ConversionInCluster(courseDocBytes, maxHeader, courseName) =>
       self ! DelayConversionInCluster(sender(), courseDocBytes, maxHeader, courseName)
+
+    case PreviewInCluster(courseDocBytes, maxHeader) =>
+      self ! DelayPreviewInCluster(sender(), courseDocBytes, maxHeader)
 
     case DelayConversionInCluster(waiter, courseDocBytes, maxHeader, courseName) =>
       if (hostRouter.routees.isEmpty) {
         context.system.scheduler.scheduleOnce(1.seconds, self, DelayConversionInCluster(waiter, courseDocBytes, maxHeader, courseName))
       } else {
         hostRouter.route(ConversionOnHost(courseDocBytes, maxHeader, courseName), waiter)
+      }
+
+    case DelayPreviewInCluster(waiter, courseDocBytes, maxHeader) =>
+      if (hostRouter.routees.isEmpty) {
+        context.system.scheduler.scheduleOnce(1.seconds, self, DelayPreviewInCluster(waiter, courseDocBytes, maxHeader))
+      } else {
+        hostRouter.route(PreviewOnHost(courseDocBytes, maxHeader), waiter)
       }
 
     case ThisHost => sender() ! (if (akkaClusterConf.getInt("converter-count") == 0) None else Some(self))
@@ -136,10 +151,13 @@ object HostConvertSupervisor extends Actor with ActorLogging {
 
 
   case class ConversionOnHost(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
+  case class PreviewOnHost(courseDocBytes: Array[Byte], maxHeader: Int)
 
   case class ConversionInCluster(courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
+  case class PreviewInCluster(courseDocBytes: Array[Byte], maxHeader: Int)
 
   private case class DelayConversionInCluster(waiter: ActorRef, courseDocBytes: Array[Byte], maxHeader: Int, courseName: String)
+  private case class DelayPreviewInCluster(waiter: ActorRef, courseDocBytes: Array[Byte], maxHeader: Int)
 
   case object ThisHost
 

@@ -120,3 +120,6 @@ mappings in Universal := {
   val origMappings = (mappings in Universal).value
   origMappings.filterNot { case (_, file) => file.endsWith("local.conf") }
 }
+
+// for work with json
+libraryDependencies += "com.google.code.gson" % "gson" % "2.8.2"

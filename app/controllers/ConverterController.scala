@@ -18,7 +18,7 @@ import play.api.i18n.MessagesApi
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{__, _}
 import play.api.mvc._
-import utils.actors.{ConvertResultAsCourse, HostConvertSupervisor}
+import utils.actors.{ConvertResultAsCourse, ConvertResultAsPreview, HostConvertSupervisor}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -65,6 +65,56 @@ class ConverterController @Inject()(
         "lastDoc" -> target.path))
     }.getOrElse {
       Future.successful(Results.NotFound("File [doc] not found"))
+    }
+  }
+
+  def preview: Action[JsValue] = SecuredAction.async(parse.json) { implicit request =>
+    if (!"GUEST".equals(request.identity.role.get)) {
+      val headerValidator = (JsPath \ "header").read[String]
+      request.body.validate[String](headerValidator).map {
+        case (header) => {
+          val headerLevel = header.toInt
+          request.session.get("lastDoc").map { lastDoc => {
+            val uploadDocFile = File(lastDoc)
+            var docFile = File(unconvertedDocs / uploadDocFile.name)
+            if (!unconvertedDocs.exists) {
+              unconvertedDocs.createDirectory()
+            }
+
+            Files.copy(uploadDocFile.jfile.toPath, docFile.outputStream(false))
+
+            implicit val timeout: Timeout = Timeout(2.minutes)
+            val courseResultFuture = pattern.ask(
+              hostSupervisor,
+              HostConvertSupervisor.PreviewInCluster(
+                docFile toByteArray(),
+                headerLevel)
+            ).asInstanceOf[Future[ConvertResultAsPreview]]
+
+            courseResultFuture flatMap { convertResult =>
+              Future successful {
+                if (convertResult.result.isDefined) {
+                  Ok(convertResult.result.get)
+                } else {
+                  BadRequest("Cannot convert for preview")
+                }
+              }
+            }
+          }
+          }.getOrElse(Future.successful {
+            BadRequest("File was not uploaded")
+          })
+        }
+      }.recoverTotal {
+        e =>
+          Future.successful {
+            BadRequest("Detected error: " + e)
+          }
+      }
+    } else {
+      Future.successful {
+        BadRequest("Permission denied")
+      }
     }
   }
 

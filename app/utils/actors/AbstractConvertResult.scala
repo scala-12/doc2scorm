@@ -15,3 +15,10 @@ case class ConvertResultAsCourse(
                                   converterHost: String
                                 ) extends AbstractConvertResult[Array[Byte]] {
 }
+
+case class ConvertResultAsPreview(
+                                   result: Option[String],
+                                   converterHost: String
+                                 ) extends AbstractConvertResult[String] {
+}
+
