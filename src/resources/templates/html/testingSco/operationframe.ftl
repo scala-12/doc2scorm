@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<title>Тест</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
 <script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
@@ -189,18 +190,18 @@
 				<tbody style='vertical-align:top'>
 					<tr>
 						<td style='text-align:right'>Затрачено времени&nbsp;&nbsp;<strong>на вопрос:</strong></td>
-						<td><input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question_time" size="8" disabled /></td>
+						<td><input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question_time" size="8" disabled></td>
 						<td rowspan='2'>
 							<strong>Вопрос:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question" size="10" value="" disabled />
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question" size="10" value="" disabled>
 						</td>
 						<td rowspan='2' class='admin_info'>
 							<strong>Правильных ответов:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="percents" size="4" value="" disabled />
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="percents" size="4" value="" disabled>
 						</td>
 						<td rowspan='2' class='admin_info'>
 							<strong>ID:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="qid" size="4" value="" disabled />
+							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="qid" size="4" value="" disabled>
 						</td>
 					</tr>
 					<tr>
@@ -209,15 +210,15 @@
 							<strong class='with_timeout' style='display:none;'>Осталось времени:</strong>
 						</td>
 						<td>
-							<input class='without_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="total_time" size="8" value="" disabled />
-							<input class='with_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="balance_time" size="8" value="" disabled />
+							<input class='without_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="total_time" size="8" value="" disabled>
+							<input class='with_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="balance_time" size="8" value="" disabled>
 						</td>
 					</tr>
 				</tbody>
 				</table>
 			</td>
 		</tr>
-	<tbody>
+	</tbody>
 	</table>
 </body>
 </html>
