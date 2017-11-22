@@ -80,7 +80,7 @@ public class Parser {
 		courseDir.mkdirs();
 
 		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
-		saveImsManifestFileAndPages(courseModel, courseDir);
+		saveModelAsCourse(courseModel, courseDir);
 
 		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR), courseModel.hasFormulas());
 
@@ -100,7 +100,7 @@ public class Parser {
 				.toJson(CourseParser.parseHeadersOnly(stream, "Empty model", headerLevel).getHierarchyInfo());
 	}
 
-	private void saveImsManifestFileAndPages(CourseModel courseModel, File courseDir) throws IOException {
+	private void saveModelAsCourse(CourseModel courseModel, File destDir) throws IOException {
 		ManifestDocument manDocument = ManifestDocument.Factory.newInstance();
 
 		// Create Manifest for Manifest Document
@@ -116,12 +116,12 @@ public class Parser {
 			OrganizationProcessor organizationProcessor = new OrganizationProcessor(manDocument.getManifest(),
 					courseModel.getTitle(), courseSysName);
 			ResourcesProcessor resourcesProcessor = new ResourcesProcessor(manDocument.getManifest());
-			createManifestScoUnitAndSavePage(courseDir, courseModel.getChilds(), organizationProcessor,
+			createManifestScoUnitAndSavePage(destDir, courseModel.getChilds(), organizationProcessor,
 					resourcesProcessor);
 		}
 
 		String manContent = tuneManifest(manDocument);
-		File manFile = new File(courseDir, "imsmanifest.xml");
+		File manFile = new File(destDir, "imsmanifest.xml");
 		manFile.createNewFile();
 
 		FileTools.saveTextFile(manContent, manFile);
