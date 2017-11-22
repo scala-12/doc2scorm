@@ -4,8 +4,8 @@
 <title>Тестирование</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Pragma" CONTENT="no-cache">
-<meta http-equiv="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Cache-Control" CONTENT="no-cache">
 <meta NAME="Pragma" CONTENT="no-cache">
 <meta NAME="Cache-Control" CONTENT="no-cache">
 
@@ -425,7 +425,7 @@
 	});
 </script>
 </head>
-<frameset rows="*,80" frameborder="NO" border="0" framespacing="0"
+<frameset rows="*,80" frameborder="0" border="0" framespacing="0"
 	onLoad="start()" onunload="finish(isTerminate)">
 	<frame src="intro.html" name="question">
 	<frame src="operationframe.html" name="botton" scrolling="NO" noresize style='border-top:1px solid gray'>
