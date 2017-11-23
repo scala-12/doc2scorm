@@ -80,11 +80,11 @@ public class Parser {
 		courseDir.mkdirs();
 
 		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
-		saveModelAsCourse(courseModel, courseDir);
+		this.saveModelAsCourse(courseModel, courseDir);
 
 		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR), courseModel.hasFormulas());
 
-		String zipCourseFileName = getCourseZipFilename(courseName);
+		String zipCourseFileName = this.getCourseZipFilename(courseName);
 		Zipper zip = new Zipper(path + File.separator + zipCourseFileName, courseDir.getPath());
 		zip.addToZip(new String[] { zipCourseFileName });
 
@@ -116,11 +116,11 @@ public class Parser {
 			OrganizationProcessor organizationProcessor = new OrganizationProcessor(manDocument.getManifest(),
 					courseModel.getTitle(), courseSysName);
 			ResourcesProcessor resourcesProcessor = new ResourcesProcessor(manDocument.getManifest());
-			createManifestScoUnitAndSavePage(destDir, courseModel.getChilds(), organizationProcessor,
+			this.createManifestScoUnitAndSavePage(destDir, courseModel.getChilds(), organizationProcessor,
 					resourcesProcessor);
 		}
 
-		String manContent = tuneManifest(manDocument);
+		String manContent = this.tuneManifest(manDocument);
 		File manFile = new File(destDir, "imsmanifest.xml");
 		manFile.createNewFile();
 
