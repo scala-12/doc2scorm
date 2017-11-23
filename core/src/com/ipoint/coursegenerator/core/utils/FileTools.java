@@ -40,6 +40,7 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSecti
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.match.MatchItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.sortable.sequence.SequenceItem;
+import com.ipoint.coursegenerator.core.utils.Tools.HtmlType;
 import com.ipoint.coursegenerator.core.utils.Tools.SimplePair;
 
 import freemarker.template.Configuration;
@@ -66,7 +67,8 @@ public class FileTools {
 			{ "multiple", String.valueOf(QuestionType.MULTIPLE_CHOICE.ordinal()) },
 			{ "fill_in", String.valueOf(QuestionType.FILL_IN.ordinal()) },
 			{ "match", String.valueOf(QuestionType.MATCHING.ordinal()) },
-			{ "sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()) } })
+			{ "sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()) },
+			{ "html_type_4_01", HtmlType.HTML4_01.name() }, { "html_type_5", HtmlType.HTML5.name() } })
 			.map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
 			.collect(Collectors.toMap(SimplePair::getLeft, SimplePair::getRight));
 
@@ -218,30 +220,30 @@ public class FileTools {
 				(path.startsWith(File.separator)) ? path.substring(File.separator.length()) : path);
 	}
 
-	private static boolean saveNodes2Document(NodeList bodyChilds, boolean isTheoryPage, Map<String, String> extraVars,
-			File destFile) {
+	private static boolean saveNodes2Document(NodeList bodyChilds, boolean isTheoryPage, HtmlType htmlType,
+			Map<String, String> extraVars, File destFile) {
 		StringBuilder content = new StringBuilder();
 		for (int i = 0; i < bodyChilds.getLength(); i++) {
-			content.append(Tools.convertNodeToString(bodyChilds.item(i)));
+			content.append(Tools.convertNodeToString(bodyChilds.item(i), htmlType));
 		}
 
 		Map<String, String> vars = new HashMap<>(extraVars);
-
 		vars.put("body_content", content.toString());
 
 		return saveTemplateFileWithVariables((isTheoryPage) ? TemplateFiles.SCO4THEORY : TemplateFiles.SCO4TEST,
 				destFile, vars);
 	}
 
-	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, File courseDir,
+	public static boolean saveCoursePageAsHtmlDocument(AbstractPage<?> page, HtmlType htmlType, File courseDir,
 			Optional<File> sOfficeFile) {
 		HashMap<String, String> scoVars = new HashMap<>(DEFAULT_TMPL_VARS);
 		scoVars.put("page_title", page.getParent().getTitle());
+		scoVars.put("html_type", htmlType.name());
 
 		boolean successful = true;
 		if (page instanceof TheoryPage) {
 			successful = saveNodes2Document(page.toHtmlModel(Tools.createNewHTMLDocument()).getChildNodes(), true,
-					scoVars, new File(courseDir, page.getParent().getPageLocation()));
+					htmlType, scoVars, new File(courseDir, page.getParent().getPageLocation()));
 		} else {
 			TestingPage testingPage = (TestingPage) page;
 
@@ -276,8 +278,8 @@ public class FileTools {
 					vars.put("answer_id_prefix", SequenceItem.SEQUENCE_ANSWER_ID_PREFIX);
 				}
 
-				if (saveNodes2Document(question.toHtmlModel(Tools.createNewHTMLDocument()).getChildNodes(), false, vars,
-						new File(courseDir,
+				if (saveNodes2Document(question.toHtmlModel(Tools.createNewHTMLDocument()).getChildNodes(), false,
+						htmlType, vars, new File(courseDir,
 								page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
 				} else {
 					successful = false;

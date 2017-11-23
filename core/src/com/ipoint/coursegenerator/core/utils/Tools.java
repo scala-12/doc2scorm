@@ -113,6 +113,10 @@ public class Tools {
 		}
 	}).get();
 
+	public static enum HtmlType {
+		HTML4_01, HTML5
+	}
+
 	public static byte[] convertStream2ByteArray(InputStream stream) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] buf = new byte[1024];
@@ -164,7 +168,7 @@ public class Tools {
 		return result;
 	}
 
-	public static String convertNodeToString(Node node) {
+	public static String convertNodeToString(Node node, HtmlType htmlType) {
 		if (node instanceof Text) {
 
 			return node.getTextContent();
@@ -173,6 +177,10 @@ public class Tools {
 				StringWriter writer = new StringWriter();
 				TRANSFORMER.transform(new DOMSource(node), new StreamResult(writer));
 				String output = writer.toString();
+
+				if (htmlType == HtmlType.HTML4_01) {
+					output = output.replace("/>", ">");
+				}
 
 				return (output.indexOf(">") < output.indexOf("?>")) ? output.substring(output.indexOf("?>") + 2)
 						: output;

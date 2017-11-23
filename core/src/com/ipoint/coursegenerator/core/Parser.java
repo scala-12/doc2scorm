@@ -17,6 +17,7 @@ import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.parsers.courseParser.CourseParser;
 import com.ipoint.coursegenerator.core.utils.FileTools;
 import com.ipoint.coursegenerator.core.utils.Tools;
+import com.ipoint.coursegenerator.core.utils.Tools.HtmlType;
 import com.ipoint.coursegenerator.core.utils.TransliterationTool;
 import com.ipoint.coursegenerator.core.utils.Zipper;
 import com.ipoint.coursegenerator.core.utils.manifest.ManifestProcessor;
@@ -80,7 +81,7 @@ public class Parser {
 		courseDir.mkdirs();
 
 		CourseModel courseModel = CourseParser.parse(stream, courseName, headerLevel);
-		this.saveModelAsCourse(courseModel, courseDir);
+		this.saveModelAsCourse(courseModel, HtmlType.HTML4_01, courseDir);
 
 		FileTools.saveSystemDir(new File(courseDir, COURSE_SYSTEM_DIR), courseModel.hasFormulas());
 
@@ -100,7 +101,7 @@ public class Parser {
 				.toJson(CourseParser.parseHeadersOnly(stream, "Empty model", headerLevel).getHierarchyInfo());
 	}
 
-	private void saveModelAsCourse(CourseModel courseModel, File destDir) throws IOException {
+	private void saveModelAsCourse(CourseModel courseModel, HtmlType htmlType, File destDir) throws IOException {
 		ManifestDocument manDocument = ManifestDocument.Factory.newInstance();
 
 		// Create Manifest for Manifest Document
@@ -116,7 +117,7 @@ public class Parser {
 			OrganizationProcessor organizationProcessor = new OrganizationProcessor(manDocument.getManifest(),
 					courseModel.getTitle(), courseSysName);
 			ResourcesProcessor resourcesProcessor = new ResourcesProcessor(manDocument.getManifest());
-			this.createManifestScoUnitAndSavePage(destDir, courseModel.getChilds(), organizationProcessor,
+			this.createManifestScoUnitAndSavePage(destDir, htmlType, courseModel.getChilds(), organizationProcessor,
 					resourcesProcessor);
 		}
 
@@ -127,15 +128,15 @@ public class Parser {
 		FileTools.saveTextFile(manContent, manFile);
 	}
 
-	private void createManifestScoUnitAndSavePage(File courseDir, List<ModelTreeNode> nodes,
+	private void createManifestScoUnitAndSavePage(File courseDir, HtmlType htmlType, List<ModelTreeNode> nodes,
 			OrganizationProcessor organizationProcessor, ResourcesProcessor resourcesProcessor) {
 		nodes.stream().forEach(node -> {
 			organizationProcessor.createItem(node);
 			resourcesProcessor.createItem(node);
-			FileTools.saveCoursePageAsHtmlDocument(node.getPage(), courseDir, this.sOfficeFile);
+			FileTools.saveCoursePageAsHtmlDocument(node.getPage(), htmlType, courseDir, this.sOfficeFile);
 
 			if (!node.getChilds().isEmpty()) {
-				this.createManifestScoUnitAndSavePage(courseDir, node.getChilds(), organizationProcessor,
+				this.createManifestScoUnitAndSavePage(courseDir, htmlType, node.getChilds(), organizationProcessor,
 						resourcesProcessor);
 			}
 		});
