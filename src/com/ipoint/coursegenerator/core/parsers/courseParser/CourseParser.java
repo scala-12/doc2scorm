@@ -56,6 +56,7 @@ import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphPars
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
 import com.ipoint.coursegenerator.core.utils.FileTools;
 import com.ipoint.coursegenerator.core.utils.Tools;
+import com.ipoint.coursegenerator.core.utils.Tools.HtmlType;
 import com.ipoint.coursegenerator.core.utils.Tools.Pair;
 
 /**
@@ -398,7 +399,7 @@ public class CourseParser extends AbstractParser {
 														if (elem instanceof XWPFParagraph) {
 															htmlAnswer2RealPar.put(
 																	Tools.convertNodeToString(listBlock.getItems()
-																			.get(i).toHtmlModel(html)),
+																			.get(i).toHtmlModel(html), HtmlType.HTML5),
 																	(XWPFParagraph) elem);
 															count += 1;
 														}
@@ -409,7 +410,8 @@ public class CourseParser extends AbstractParser {
 													chapterElemNum += shift;
 												} else if (null != par) {
 													htmlAnswer2RealPar.put(Tools.convertNodeToString(
-															blockWithShift.getBlock().toHtmlModel(html)), par);
+															blockWithShift.getBlock().toHtmlModel(html),
+															HtmlType.HTML5), par);
 												}
 
 												questionAnswers.add(blockWithShift.getBlock());
@@ -469,9 +471,10 @@ public class CourseParser extends AbstractParser {
 																return new ChoiceItem(
 																		(ParagraphSectionBlock) item.getValue(),
 																		HeaderParser.HeaderInfo
-																				.isCorrectAnswer(htmlAnswer2RealPar.get(
-																						Tools.convertNodeToString(item
-																								.toHtmlModel(html)))));
+																				.isCorrectAnswer(htmlAnswer2RealPar
+																						.get(Tools.convertNodeToString(
+																								item.toHtmlModel(html),
+																								HtmlType.HTML5))));
 															} catch (ItemCreationException e1) {
 																e1.printStackTrace();
 															}
