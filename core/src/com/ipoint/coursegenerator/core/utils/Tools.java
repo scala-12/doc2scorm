@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -96,20 +97,21 @@ public class Tools {
 
 	public static final BigDecimal BIG_ZERO = new BigDecimal(0);
 
-	private static Transformer TRANSFORMER = _getTransformer();
+	private static final Transformer TRANSFORMER = (new Supplier<Transformer>() {
+		@Override
+		public Transformer get() {
+			try {
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
-	private static Transformer _getTransformer() {
-		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				return transformer;
+			} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
+				e.printStackTrace();
+			}
 
-			return transformer;
-		} catch (TransformerConfigurationException | TransformerFactoryConfigurationError e) {
-			e.printStackTrace();
+			return null;
 		}
-
-		return null;
-	}
+	}).get();
 
 	public static byte[] convertStream2ByteArray(InputStream stream) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
