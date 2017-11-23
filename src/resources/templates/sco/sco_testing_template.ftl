@@ -4,10 +4,10 @@
 	<title>${page_title}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	
-	<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
-	<script type="text/javascript" src="../${system_dir}/APIWrapper.js"></script>
-	<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
-	<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"></script>
+	<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"> </script>
+	<script type="text/javascript" src="../${system_dir}/APIWrapper.js"> </script>
+	<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"> </script>
+	<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"> </script>
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.css">
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
 	<link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">

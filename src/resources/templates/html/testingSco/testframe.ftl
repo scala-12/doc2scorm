@@ -9,10 +9,10 @@
 <meta NAME="Pragma" CONTENT="no-cache">
 <meta NAME="Cache-Control" CONTENT="no-cache">
 
-<script type="text/javascript" src="../${system_dir}/APIWrapper.js">-</script>
-<script type="text/javascript" src="../${system_dir}/SCOFunctions.js">-</script>
-<script type="text/javascript" src="../${system_dir}/parser.js">-</script>
-<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
+<script type="text/javascript" src="../${system_dir}/APIWrapper.js"> </script>
+<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"> </script>
+<script type="text/javascript" src="../${system_dir}/parser.js"> </script>
+<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"> </script>
 <script type="text/javascript">
 	String.prototype.trim=function(){
 		return this.replace(/^[\s\n\t]*|[\s\n\t]*$/g,"");

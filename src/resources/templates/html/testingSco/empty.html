@@ -80,13 +80,35 @@
 		err.showErrors(errorList);
 	}
 </script>
+<style type="text/css">
+table {
+	text-align: center;
+	width: 100%;
+	border: 0;
+}
+
+td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+#error {
+	text-align: center;
+	display: none;
+}
+
+body {
+	height: 100%;
+}
+</style>
 </head>
-<body onload="showErr(parent.errorList);" style="height: 100%;">
-	<table align="center" width="100%" border="0">
-		<tr>
-			<td align="center" valign="middle"><div id="error"
-					align="center" style="display: none;"></div></td>
-		</tr>
+<body onload="showErr(parent.errorList);">
+	<table>
+		<tbody>
+			<tr>
+				<td><div id="error"></div></td>
+			</tr>
+		</tbody>
 	</table>
 </body>
 </html>
