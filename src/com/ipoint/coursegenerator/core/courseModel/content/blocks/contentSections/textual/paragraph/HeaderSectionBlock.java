@@ -72,12 +72,12 @@ public class HeaderSectionBlock extends ParagraphSectionBlock {
 	 * Returns html-element of header
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element header = creatorTags.createElement("h".concat(String.valueOf(this.getLevel() + LEVEL_OFFSET)));
 
 		for (AbstractContentRunItem<?> item : this.getItems().get(0).getValue().getItems()) {
 			if (item instanceof TextRunItem) {
-				Node text = item.toHtml(creatorTags).getFirstChild();
+				Node text = item.toHtmlModel(creatorTags).getFirstChild();
 				while (text.hasChildNodes()) {
 					// remove all tags for text style - only text
 					text = text.getFirstChild();

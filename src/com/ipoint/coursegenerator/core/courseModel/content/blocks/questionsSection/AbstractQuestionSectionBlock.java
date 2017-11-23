@@ -79,7 +79,7 @@ public abstract class AbstractQuestionSectionBlock<T extends AbstractQuestionSec
 	 * @return div that contained 2 element: div with id and task text + form with
 	 *         div of answers
 	 */
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element div = creatorTags.createElement("div");
 
 		Element task = creatorTags.createElement("div");
@@ -94,7 +94,7 @@ public abstract class AbstractQuestionSectionBlock<T extends AbstractQuestionSec
 		div.appendChild(form);
 
 		for (T answer : this.getItems()) {
-			answers.appendChild(answer.toHtml(creatorTags));
+			answers.appendChild(answer.toHtmlModel(creatorTags));
 		}
 
 		return div;

@@ -212,7 +212,7 @@ public class ImageRunItem extends AbstractContentRunItem<XWPFPictureData> {
 	 * @return html element img
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element img = creatorTags.createElement("img");
 		img.setAttribute("src",
 				new File(FileTools.IMAGE_DIR_NAME, this.getImageFullName()).getPath().replace(File.separatorChar, '/'));

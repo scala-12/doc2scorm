@@ -139,7 +139,7 @@ public class TextRunItem extends AbstractContentRunItem<String> {
 	}
 
 	@Override
-	public NodeList toSimpleHtml(Document creatorTags) {
+	public NodeList toSimpleHtmlModel(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 		span.appendChild(toHtml(creatorTags, false));
 
@@ -223,7 +223,7 @@ public class TextRunItem extends AbstractContentRunItem<String> {
 	}
 
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Node result = toHtml(creatorTags, true);
 		if (result.getNodeType() == Node.TEXT_NODE) {
 			Element span = creatorTags.createElement("span");

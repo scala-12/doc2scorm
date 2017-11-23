@@ -111,7 +111,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractContentS
 	 * @return html element td
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element tCell = creatorTags.createElement("td");
 
 		if ((this.getColSpan() != null) && (this.getRowSpan() != null)) {
@@ -125,7 +125,7 @@ public class CellItem extends AbstractSectionItem<Optional<List<AbstractContentS
 
 			if (this.getValue().isPresent()) {
 				for (AbstractContentSectionBlock<?> par : this.getValue().get()) {
-					tCell.appendChild(par.toHtml(creatorTags));
+					tCell.appendChild(par.toHtmlModel(creatorTags));
 				}
 			}
 		}

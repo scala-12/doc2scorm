@@ -31,10 +31,10 @@ public abstract class AbstractSectionBlock<T extends AbstractSectionItem<?>> ext
 	}
 
 	@Override
-	public NodeList toSimpleHtml(Document creatorTags) {
+	public NodeList toSimpleHtmlModel(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 		for (T item : this.getItems()) {
-			NodeList subItems = item.toSimpleHtml(creatorTags);
+			NodeList subItems = item.toSimpleHtmlModel(creatorTags);
 			while (subItems.getLength() != 0) {
 				span.appendChild(subItems.item(0));
 			}

@@ -37,10 +37,10 @@ public class TextualRunsBlock extends AbstractTextualSectionBlock<AbstractConten
 	 * @return html-element span container of runs
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element paragraph = creatorTags.createElement("span");
 		for (AbstractContentRunItem<?> run : this.getItems()) {
-			paragraph.appendChild(run.toHtml(creatorTags));
+			paragraph.appendChild(run.toHtmlModel(creatorTags));
 		}
 
 		return paragraph;

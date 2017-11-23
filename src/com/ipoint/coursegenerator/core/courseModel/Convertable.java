@@ -18,6 +18,6 @@ public interface Convertable {
 	 *            html-document
 	 * @return html element
 	 */
-	public Element toHtml(Document creatorTags);
+	public Element toHtmlModel(Document creatorTags);
 
 }

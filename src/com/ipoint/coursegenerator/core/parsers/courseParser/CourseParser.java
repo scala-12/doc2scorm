@@ -52,7 +52,6 @@ import com.ipoint.coursegenerator.core.courseModel.structure.ModelTreeNode;
 import com.ipoint.coursegenerator.core.courseModel.structure.exceptions.SimpleModelNodeCreationException;
 import com.ipoint.coursegenerator.core.parsers.AbstractParser;
 import com.ipoint.coursegenerator.core.parsers.MathInfo;
-import com.ipoint.coursegenerator.core.parsers.courseParser.AbstractParagraphParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser;
 import com.ipoint.coursegenerator.core.parsers.courseParser.textualParagraphParser.HeaderParser.HeaderInfo;
 import com.ipoint.coursegenerator.core.utils.FileTools;
@@ -397,9 +396,8 @@ public class CourseParser extends AbstractParser {
 														IBodyElement elem = chapterParsAndTables
 																.get(chapterElemNum + i);
 														if (elem instanceof XWPFParagraph) {
-															htmlAnswer2RealPar.put(
-																	Tools.getNodeString(
-																			listBlock.getItems().get(i).toHtml(html)),
+															htmlAnswer2RealPar.put(Tools.getNodeString(
+																	listBlock.getItems().get(i).toHtmlModel(html)),
 																	(XWPFParagraph) elem);
 															count += 1;
 														}
@@ -409,9 +407,8 @@ public class CourseParser extends AbstractParser {
 
 													chapterElemNum += shift;
 												} else if (null != par) {
-													htmlAnswer2RealPar.put(
-															Tools.getNodeString(blockWithShift.getBlock().toHtml(html)),
-															par);
+													htmlAnswer2RealPar.put(Tools.getNodeString(
+															blockWithShift.getBlock().toHtmlModel(html)), par);
 												}
 
 												questionAnswers.add(blockWithShift.getBlock());
@@ -472,8 +469,8 @@ public class CourseParser extends AbstractParser {
 																		(ParagraphSectionBlock) item.getValue(),
 																		HeaderParser.HeaderInfo
 																				.isCorrectAnswer(htmlAnswer2RealPar
-																						.get(Tools.getNodeString(
-																								item.toHtml(html)))));
+																						.get(Tools.getNodeString(item
+																								.toHtmlModel(html)))));
 															} catch (ItemCreationException e1) {
 																e1.printStackTrace();
 															}

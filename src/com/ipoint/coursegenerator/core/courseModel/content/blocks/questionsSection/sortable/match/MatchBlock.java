@@ -83,8 +83,8 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 	 * add table to answer block that included list of labels and list of answers
 	 */
 	@Override
-	public Element toHtml(final Document creatorTags) {
-		Element div = super.toHtml(creatorTags);
+	public Element toHtmlModel(final Document creatorTags) {
+		Element div = super.toHtmlModel(creatorTags);
 		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionSectionBlock.ANSWER_BLOCK_ID);
 
 		Element table = creatorTags.createElement("table");
@@ -100,7 +100,7 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 			final Element labelHtml = creatorTags.createElement("li");
 			labelHtml.setAttribute("class", MATCH_LABEL_4_ANSWER_CLASS);
 			label.stream().forEach(labelBlock -> {
-				NodeList labelNodes = labelBlock.toSimpleHtml(creatorTags);
+				NodeList labelNodes = labelBlock.toSimpleHtmlModel(creatorTags);
 				while (labelNodes.getLength() != 0) {
 					labelHtml.appendChild(labelNodes.item(0));
 					labelHtml.appendChild(creatorTags.createTextNode(" "));

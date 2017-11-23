@@ -63,11 +63,11 @@ public class ParagraphSectionBlock extends AbstractTextualSectionBlock<Paragraph
 	 * @return html-element p
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element par = creatorTags.createElement("p");
 
 		for (ParagraphSectionItem item : this.getItems()) {
-			par.appendChild(item.toHtml(creatorTags));
+			par.appendChild(item.toHtmlModel(creatorTags));
 		}
 
 		if (this.getAlignment() != TextAlign.UNDEFINED) {

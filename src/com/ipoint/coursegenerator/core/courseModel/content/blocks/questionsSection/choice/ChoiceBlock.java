@@ -41,8 +41,8 @@ public class ChoiceBlock extends AbstractQuestionMultipleAnswerSectionBlock<Choi
 	 * labels
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
-		Element div = super.toHtml(creatorTags);
+	public Element toHtmlModel(Document creatorTags) {
+		Element div = super.toHtmlModel(creatorTags);
 		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionSectionBlock.ANSWER_BLOCK_ID);
 
 		String type = (isOneChoice) ? "radio" : "checkbox";

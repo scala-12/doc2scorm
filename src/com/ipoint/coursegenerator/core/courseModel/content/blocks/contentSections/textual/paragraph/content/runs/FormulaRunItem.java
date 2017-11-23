@@ -33,7 +33,7 @@ public class FormulaRunItem extends AbstractContentRunItem<Node> {
 	}
 
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element mathML = (Element) creatorTags.importNode(this.getValue(), true);
 
 		mathML.removeAttribute("display");
@@ -49,7 +49,7 @@ public class FormulaRunItem extends AbstractContentRunItem<Node> {
 	@Override
 	public String getText() {
 		try {
-			return this.toHtml(Tools.createEmptyDocument()).getTextContent();
+			return this.toHtmlModel(Tools.createEmptyDocument()).getTextContent();
 		} catch (DOMException e) {
 			return " ";
 		}

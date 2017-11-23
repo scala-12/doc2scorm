@@ -21,7 +21,7 @@ public abstract class SortableItem extends AbstractQuestionSectionItem<List<Abst
 
 	/** @return answer li-element with id of answer class */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element input = creatorTags.createElement("li");
 		input.setAttribute("class", this.getItemClasses());
 		input.setAttribute("id", this.getItemIdPrefix() + String.valueOf(this.getIndex()));
@@ -34,7 +34,7 @@ public abstract class SortableItem extends AbstractQuestionSectionItem<List<Abst
 				input.appendChild(creatorTags.createTextNode(" "));
 			}
 
-			NodeList answerNodes = answerSection.toSimpleHtml(creatorTags);
+			NodeList answerNodes = answerSection.toSimpleHtmlModel(creatorTags);
 			while (answerNodes.getLength() != 0) {
 				input.appendChild(answerNodes.item(0));
 			}

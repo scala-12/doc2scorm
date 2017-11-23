@@ -34,7 +34,7 @@ public class ListBlockTest extends AbstractBlockTest {
 
 			assertNotNull(block);
 
-			Element htmlBlock = block.toHtml(getHtmlDocument());
+			Element htmlBlock = block.toHtmlModel(getHtmlDocument());
 
 			if (lastList != null) {
 				assertFalse(lastList.contains(list.get(0)));

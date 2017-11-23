@@ -26,7 +26,7 @@ public class HeaderBlockTest extends AbstractBlockTest {
 				e.printStackTrace();
 			}
 			assertNotNull(block);
-			Element htmlBlock = block.toHtml(getHtmlDocument());
+			Element htmlBlock = block.toHtmlModel(getHtmlDocument());
 
 			assertEquals(htmlBlock.getNodeName().toLowerCase(),
 					"h" + String.valueOf(block.getLevel() + HeaderSectionBlock.LEVEL_OFFSET));

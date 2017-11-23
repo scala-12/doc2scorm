@@ -31,10 +31,10 @@ public class TableSectionItem extends AbstractSectionItem<List<CellBlock>> {
 	 * @return html-element tr
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element tRow = creatorTags.createElement("tr");
 		for (CellBlock cell : this.getValue()) {
-			tRow.appendChild(cell.toHtml(creatorTags));
+			tRow.appendChild(cell.toHtmlModel(creatorTags));
 		}
 
 		return tRow;
