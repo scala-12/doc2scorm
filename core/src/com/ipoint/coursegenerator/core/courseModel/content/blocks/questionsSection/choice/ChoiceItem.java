@@ -36,7 +36,7 @@ public class ChoiceItem extends AbstractQuestionSectionItem<ParagraphSectionBloc
 	 * @return span with pair input-label
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 		Element input = creatorTags.createElement("input");
 		input.setAttribute("name", NAME);
@@ -44,7 +44,7 @@ public class ChoiceItem extends AbstractQuestionSectionItem<ParagraphSectionBloc
 
 		Element label = creatorTags.createElement("label");
 		label.setAttribute("class", CLASS);
-		NodeList labelItems = this.getValue().toSimpleHtml(creatorTags);
+		NodeList labelItems = this.getValue().toSimpleHtmlModel(creatorTags);
 		while (labelItems.getLength() != 0) {
 			label.appendChild(labelItems.item(0));
 		}

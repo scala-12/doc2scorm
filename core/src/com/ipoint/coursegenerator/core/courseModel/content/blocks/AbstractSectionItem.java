@@ -14,16 +14,16 @@ public abstract class AbstractSectionItem<T> extends AbstractItem<T> implements 
 	}
 
 	@Override
-	public NodeList toSimpleHtml(Document creatorTags) {
+	public NodeList toSimpleHtmlModel(Document creatorTags) {
 		Element span = creatorTags.createElement("span");
 
 		if (this.getValue() instanceof AbstractSectionBlock) {
-			NodeList items = ((AbstractSectionBlock<?>) this.getValue()).toSimpleHtml(creatorTags);
+			NodeList items = ((AbstractSectionBlock<?>) this.getValue()).toSimpleHtmlModel(creatorTags);
 			while (items.getLength() != 0) {
 				span.appendChild(items.item(0));
 			}
 		} else {
-			span.appendChild(this.toHtml(creatorTags));
+			span.appendChild(this.toHtmlModel(creatorTags));
 		}
 
 		return span.getChildNodes();

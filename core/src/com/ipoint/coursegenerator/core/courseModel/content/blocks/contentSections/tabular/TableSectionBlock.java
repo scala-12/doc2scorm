@@ -25,13 +25,13 @@ public class TableSectionBlock extends AbstractContentSectionBlock<TableSectionI
 	 * @return html-element table
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element table = creatorTags.createElement("table");
 		Element tBody = creatorTags.createElement("tbody");
 		table.appendChild(tBody);
 
 		for (TableSectionItem row : this.getItems()) {
-			tBody.appendChild(row.toHtml(creatorTags));
+			tBody.appendChild(row.toHtmlModel(creatorTags));
 		}
 
 		return table;

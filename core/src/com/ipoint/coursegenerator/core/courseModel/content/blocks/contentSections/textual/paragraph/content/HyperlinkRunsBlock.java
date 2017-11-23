@@ -55,9 +55,9 @@ public class HyperlinkRunsBlock extends TextualRunsBlock {
 	 * @return html-element a
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element hyperlink = creatorTags.createElement("a");
-		hyperlink.appendChild(super.toHtml(creatorTags));
+		hyperlink.appendChild(super.toHtmlModel(creatorTags));
 		hyperlink.setAttribute("href", this.getUrl());
 		hyperlink.setAttribute("target", "_blank");
 

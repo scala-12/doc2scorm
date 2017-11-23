@@ -26,7 +26,7 @@ public class FillInItem extends AbstractQuestionSectionItem<String> {
 	}
 
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element input = creatorTags.createElement("input");
 		input.setAttribute("id", FILL_IN_ID);
 		input.setAttribute("name", FILL_IN_ID);

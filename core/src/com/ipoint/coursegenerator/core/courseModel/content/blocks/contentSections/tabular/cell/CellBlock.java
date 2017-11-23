@@ -20,12 +20,12 @@ public class CellBlock extends AbstractContentSectionBlock<CellItem> {
 	}
 
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		return toHtml(creatorTags, true);
 	}
 
 	private Element toHtml(Document creatorTags, boolean styled) {
-		return this.getItem().toHtml(creatorTags);
+		return this.getItem().toHtmlModel(creatorTags);
 	}
 
 	@Override

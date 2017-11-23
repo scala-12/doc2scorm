@@ -60,7 +60,7 @@ public class ParagraphBlockTest extends AbstractBlockTest {
 
 			assertNotNull(block);
 
-			Element htmlBlock = block.toHtml(getHtmlDocument());
+			Element htmlBlock = block.toHtmlModel(getHtmlDocument());
 
 			String blockText = block.getText();
 			Set<Set<String>> htmlStyles = getHtmlStyles((Element) htmlBlock.getFirstChild());

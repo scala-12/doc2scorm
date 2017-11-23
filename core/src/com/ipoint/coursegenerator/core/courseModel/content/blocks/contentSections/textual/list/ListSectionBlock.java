@@ -70,7 +70,7 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 	 * @return html element ol (if there is numbered) or ul (if another)
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element list = null;
 		if (this.getMarkerType() == MarkerType.SIMPLE_MARKER) {
 			list = creatorTags.createElement("ul");
@@ -93,7 +93,7 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 		}
 
 		for (int i = 0; i < this.getItems().size(); ++i) {
-			Element listItem = this.getItems().get(i).toHtml(creatorTags);
+			Element listItem = this.getItems().get(i).toHtmlModel(creatorTags);
 			list.appendChild(listItem);
 			if ((i + 1) < this.getItems().size()) {
 				if (this.getItems().get(i + 1).getValue() instanceof ListSectionBlock) {
@@ -102,7 +102,7 @@ public class ListSectionBlock extends AbstractTextualSectionBlock<ListSectionIte
 					// another list inserted into new list item - It is looks
 					// not correct.
 					ListSectionItem item = this.getItems().get(++i);
-					listItem.appendChild(item.toHtml(creatorTags).getFirstChild());
+					listItem.appendChild(item.toHtmlModel(creatorTags).getFirstChild());
 				}
 			}
 		}

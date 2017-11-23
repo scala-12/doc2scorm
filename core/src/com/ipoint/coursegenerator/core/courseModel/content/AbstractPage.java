@@ -92,7 +92,7 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 	 * @return html-element div
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element pageBody = creatorTags.createElement("div");
 		pageBody.setAttribute("id", CONTENT_DIV_ID);
 
@@ -103,7 +103,7 @@ public abstract class AbstractPage<T extends AbstractSectionBlock<?>> implements
 		}
 
 		for (T par : this.getBlocks()) {
-			pageBody.appendChild(par.toHtml(creatorTags));
+			pageBody.appendChild(par.toHtmlModel(creatorTags));
 		}
 
 		return pageBody;

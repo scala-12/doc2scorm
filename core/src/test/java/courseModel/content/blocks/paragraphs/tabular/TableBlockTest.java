@@ -56,7 +56,7 @@ public class TableBlockTest extends AbstractBlockTest {
 
 			assertNotNull(block);
 
-			Element htmlBlock = block.toHtml(getHtmlDocument());
+			Element htmlBlock = block.toHtmlModel(getHtmlDocument());
 			Node htmlTBody = htmlBlock.getFirstChild();
 
 			assertEquals(htmlBlock.getNodeName().toLowerCase(), "table");

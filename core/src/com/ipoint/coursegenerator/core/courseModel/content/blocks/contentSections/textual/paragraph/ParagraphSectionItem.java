@@ -21,12 +21,12 @@ public class ParagraphSectionItem extends AbstractSectionItem<TextualRunsBlock> 
 	}
 
 	/**
-	 * @see TextualRunsBlock#toHtml(Document)
-	 * @see HyperlinkRunsBlock#toHtml(Document)
+	 * @see TextualRunsBlock#toHtmlModel(Document)
+	 * @see HyperlinkRunsBlock#toHtmlModel(Document)
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
-		return this.getValue().toHtml(creatorTags);
+	public Element toHtmlModel(Document creatorTags) {
+		return this.getValue().toHtmlModel(creatorTags);
 	}
 
 	@Override

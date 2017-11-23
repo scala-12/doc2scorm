@@ -240,8 +240,8 @@ public class FileTools {
 
 		boolean successful = true;
 		if (page instanceof TheoryPage) {
-			successful = saveNodes2Document(page.toHtml(Tools.createNewHTMLDocument()).getChildNodes(), true, scoVars,
-					new File(courseDir, page.getParent().getPageLocation()));
+			successful = saveNodes2Document(page.toHtmlModel(Tools.createNewHTMLDocument()).getChildNodes(), true,
+					scoVars, new File(courseDir, page.getParent().getPageLocation()));
 		} else {
 			TestingPage testingPage = (TestingPage) page;
 
@@ -276,7 +276,7 @@ public class FileTools {
 					vars.put("answer_id_prefix", SequenceItem.SEQUENCE_ANSWER_ID_PREFIX);
 				}
 
-				if (saveNodes2Document(question.toHtml(Tools.createNewHTMLDocument()).getChildNodes(), false, vars,
+				if (saveNodes2Document(question.toHtmlModel(Tools.createNewHTMLDocument()).getChildNodes(), false, vars,
 						new File(courseDir,
 								page.getParent().getSystemName() + File.separator + String.valueOf(i + 1) + ".html"))) {
 				} else {
@@ -320,7 +320,7 @@ public class FileTools {
 			copyFileFromResourceDirToDir(TemplateFiles.IMG_TEST_SCO_DIR, new File(scoDir, IMAGE_DIR_NAME), null);
 		} else {
 			for (AbstractContentSectionBlock<?> block : page.getIntroBlocks()) {
-				intro.append(block.toHtml(Tools.createNewHTMLDocument()));
+				intro.append(block.toHtmlModel(Tools.createNewHTMLDocument()));
 			}
 		}
 

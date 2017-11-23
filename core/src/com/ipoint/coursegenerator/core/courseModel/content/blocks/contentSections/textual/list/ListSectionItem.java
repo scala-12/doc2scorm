@@ -25,9 +25,9 @@ public class ListSectionItem extends AbstractSectionItem<AbstractTextualSectionB
 	 * @return html-element li
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
+	public Element toHtmlModel(Document creatorTags) {
 		Element listItem = creatorTags.createElement("li");
-		Node itemValue = this.getValue().toHtml(creatorTags);
+		Node itemValue = this.getValue().toHtmlModel(creatorTags);
 		if (this.getValue() instanceof ParagraphSectionBlock) {
 			// because in this situation tag p equal tag li
 			while (itemValue.hasChildNodes()) {

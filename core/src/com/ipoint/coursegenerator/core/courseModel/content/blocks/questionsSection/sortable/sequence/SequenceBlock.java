@@ -26,8 +26,8 @@ public class SequenceBlock extends QuestionWithSortableItems<SequenceItem> {
 	 * add list to answer block that included items with id
 	 */
 	@Override
-	public Element toHtml(Document creatorTags) {
-		Element div = super.toHtml(creatorTags);
+	public Element toHtmlModel(Document creatorTags) {
+		Element div = super.toHtmlModel(creatorTags);
 		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionSectionBlock.ANSWER_BLOCK_ID);
 
 		Element list = creatorTags.createElement("ul");
