@@ -3,9 +3,9 @@
 <head>
 <title>Тест</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
-<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
-<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"></script>
+<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"> </script>
+<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"> </script>
+<script type="text/javascript" src="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.js"> </script>
 <link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.css">
 <link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.structure.css">
 <link rel="stylesheet" href="../${system_dir}/jquery-ui-${jquery_ui_ver}.custom/jquery-ui.theme.css">
@@ -177,41 +177,51 @@
 		$('input[type=submit],input[type=button],button').button();
 	});
 </script>
+<style type="text/css">
+.hidden {
+	display: none;
+}
+
+#timer input {
+	border-width: 0px;
+	background-color: #FFFFFF;
+}
+</style>
 </head>
 <body onUnload="stopTimer()">
-	<table border="0" style="width:100%">
+	<table style="width: 100%;border: 0">
 	<tbody>
 		<tr>
-			<td align="left" style="vertical-align: middle;">
-				<input id="btn" style="display: none;" type="button" onClick="next()" value="Продолжить">
+			<td style="vertical-align: middle;">
+				<input id="btn" class="hidden" type="button" onClick="next()" value="Продолжить">
 			</td>
-			<td align="right" style="font: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; text-align: left;">
-				<table id="timer" style="display: none;">
+			<td style="font: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; text-align: left;">
+				<table id="timer" class="hidden">
 				<tbody style='vertical-align:top'>
 					<tr>
 						<td style='text-align:right'>Затрачено времени&nbsp;&nbsp;<strong>на вопрос:</strong></td>
-						<td><input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question_time" size="8" disabled></td>
+						<td><input type="text" id="question_time" size="8" disabled></td>
 						<td rowspan='2'>
 							<strong>Вопрос:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="question" size="10" value="" disabled>
+							<input type="text" id="question" size="10" value="" disabled>
 						</td>
 						<td rowspan='2' class='admin_info'>
 							<strong>Правильных ответов:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="percents" size="4" value="" disabled>
+							<input type="text" id="percents" size="4" value="" disabled>
 						</td>
 						<td rowspan='2' class='admin_info'>
 							<strong>ID:</strong>
-							<input style="border-width: 0px; background-color: #FFFFFF" type="text" id="qid" size="4" value="" disabled>
+							<input type="text" id="qid" size="4" value="" disabled>
 						</td>
 					</tr>
 					<tr>
 						<td style='text-align:right'>
-							<strong class='without_timeout' style='display:none;'>всего:</strong>
-							<strong class='with_timeout' style='display:none;'>Осталось времени:</strong>
+							<strong class='without_timeout hidden'>всего:</strong>
+							<strong class='with_timeout hidden'>Осталось времени:</strong>
 						</td>
 						<td>
-							<input class='without_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="total_time" size="8" value="" disabled>
-							<input class='with_timeout' style="border-width:0px;background-color:#FFFFFF;display:none;" type="text" id="balance_time" size="8" value="" disabled>
+							<input class='without_timeout hidden' type="text" id="total_time" size="8" value="" disabled>
+							<input class='with_timeout hidden' type="text" id="balance_time" size="8" value="" disabled>
 						</td>
 					</tr>
 				</tbody>

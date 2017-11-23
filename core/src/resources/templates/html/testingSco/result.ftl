@@ -9,9 +9,9 @@
 	<link type="text/css" rel="stylesheet" href="../user_test.css">
 	<link type="text/css" rel="stylesheet" href="user_test.css">
 	
-	<script type="text/javascript" src="../${system_dir}/APIWrapper.js"></script>
-	<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"></script>
-	<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"></script>
+	<script type="text/javascript" src="../${system_dir}/APIWrapper.js"> </script>
+	<script type="text/javascript" src="../${system_dir}/SCOFunctions.js"> </script>
+	<script type="text/javascript" src="../${system_dir}/jquery-${jquery_ver}.min.js"> </script>
 	<script type="text/javascript">
 		var markText;
 		var percents = 0;
