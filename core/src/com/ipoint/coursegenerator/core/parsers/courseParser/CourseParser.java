@@ -396,8 +396,9 @@ public class CourseParser extends AbstractParser {
 														IBodyElement elem = chapterParsAndTables
 																.get(chapterElemNum + i);
 														if (elem instanceof XWPFParagraph) {
-															htmlAnswer2RealPar.put(Tools.getNodeString(
-																	listBlock.getItems().get(i).toHtmlModel(html)),
+															htmlAnswer2RealPar.put(
+																	Tools.convertNodeToString(listBlock.getItems()
+																			.get(i).toHtmlModel(html)),
 																	(XWPFParagraph) elem);
 															count += 1;
 														}
@@ -407,7 +408,7 @@ public class CourseParser extends AbstractParser {
 
 													chapterElemNum += shift;
 												} else if (null != par) {
-													htmlAnswer2RealPar.put(Tools.getNodeString(
+													htmlAnswer2RealPar.put(Tools.convertNodeToString(
 															blockWithShift.getBlock().toHtmlModel(html)), par);
 												}
 
@@ -468,8 +469,8 @@ public class CourseParser extends AbstractParser {
 																return new ChoiceItem(
 																		(ParagraphSectionBlock) item.getValue(),
 																		HeaderParser.HeaderInfo
-																				.isCorrectAnswer(htmlAnswer2RealPar
-																						.get(Tools.getNodeString(item
+																				.isCorrectAnswer(htmlAnswer2RealPar.get(
+																						Tools.convertNodeToString(item
 																								.toHtmlModel(html)))));
 															} catch (ItemCreationException e1) {
 																e1.printStackTrace();

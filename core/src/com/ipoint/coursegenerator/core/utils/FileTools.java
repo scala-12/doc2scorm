@@ -222,7 +222,7 @@ public class FileTools {
 			File destFile) {
 		StringBuilder content = new StringBuilder();
 		for (int i = 0; i < bodyChilds.getLength(); i++) {
-			content.append(Tools.getNodeString(bodyChilds.item(i)));
+			content.append(Tools.convertNodeToString(bodyChilds.item(i)));
 		}
 
 		Map<String, String> vars = new HashMap<>(extraVars);

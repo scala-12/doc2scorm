@@ -162,7 +162,7 @@ public class Tools {
 		return result;
 	}
 
-	public static String getNodeString(Node node) {
+	public static String convertNodeToString(Node node) {
 		if (node instanceof Text) {
 
 			return node.getTextContent();
