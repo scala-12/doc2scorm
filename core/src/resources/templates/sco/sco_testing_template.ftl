@@ -24,12 +24,12 @@
 	<link type="text/css" rel="stylesheet" href="../user_test.css">
 	<link type="text/css" rel="stylesheet" href="user_test.css">
 	
-<#assign isChoice = type == choice>
+<#assign isChoice = type == single>
 <#assign isMultiple = type == multiple>
 <#assign isSomeChoice = isChoice || isMultiple>
 <#assign isFillIn = type == fill_in>
-<#assign isMatch = type == match>
-<#assign isSequence = type == sequence>
+<#assign isMatching = type == matching>
+<#assign isSequencing = type == sequencing>
 	<script type="text/javascript">
 		$( function() {
 			$('input[type=submit],input[type=button],button').button();
@@ -41,8 +41,8 @@
 				});
 			</#if>
 			
-			<#if isMatch || isSequence>
-				<#if isSequence>
+			<#if isMatching || isSequencing>
+				<#if isSequencing>
 					$( '#${sortable_block_id}' ).sortable({
 					    tolerance: 'pointer',
 						axis: "y",
@@ -133,9 +133,9 @@
 				$( '#${sortable_block_id}' ).disableSelection();
 			</#if>
 
-			<#if isSomeChoice || isMatch || isSequence>
+			<#if isSomeChoice || isMatching || isSequencing>
 				<#assign tagName><#if isSomeChoice>input<#else>li</#if></#assign>
-				var answerBlock = $( '#<#if isSomeChoice>choice_answers_fieldset<#elseif isMatch>match_answers_block<#elseif isSequence>sequence_answers_block</#if>' );
+				var answerBlock = $( '#<#if isSomeChoice>choice_answers_fieldset<#elseif isMatching>match_answers_block<#elseif isSequencing>sequence_answers_block</#if>' );
 				var answerBlockCopy = answerBlock.clone();
 				// dont change this string - need for iLogos
 				var shuffeledAnswersCopy = $('<' + 'div' + '><' + '/div' + '>');
@@ -159,7 +159,7 @@
 		function getAllAnswers(){ 
 			<#if isSomeChoice>
 				return {${answers_text}};
-			<#elseif isMatch || isSequence>
+			<#elseif isMatching || isSequencing>
 				var result = {};
 				
 				var answerPrefix = '${answer_id_prefix}';
@@ -178,11 +178,7 @@
 		}
 	
 		function getType(){
-			return <#if isSomeChoice>"choice"
-					<#elseif isFillIn>"fill-in"
-					<#elseif isMatch>"matching"
-					<#elseif isSequence>"sequencing"
-					</#if>;
+			return "${scorm_type}";
 		}
 		
 		function isProbabilistic() {
@@ -192,7 +188,7 @@
 		function selectedAnswer(){
 			var value = null;
 			
-			<#if (isSequence || isMatch)>
+			<#if (isSequencing || isMatching)>
 				var answerPrefix = '${answer_id_prefix}';
 				var shift = answerPrefix.length;
 				$('#${sortable_block_id} .${sortable_elem_class}').each(
@@ -225,6 +221,8 @@
 	</script>
 </head>
 <body>
+<input type='hidden' id='question_description' value=''>
+<input type='hidden' id='question_type' value='${type}'>
 ${body_content}
 <div id="correct" style="display:none"><p>Правильно!</p></div>
 <div id="incorrect" style="display:none"><p>Неправильно!</p></div>
