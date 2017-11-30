@@ -24,15 +24,19 @@ public class ChoiceBlock extends AbstractQuestionMultipleAnswerSectionBlock<Choi
 
 	public static final String CHOICE_ANSWERS_FIELDSET_ID = "choice_answers_fieldset";
 
-	private final boolean isOneChoice;
+	private final ChoiceQuestionType type;
 
 	public ChoiceBlock(List<ChoiceItem> items, String task) throws BlockCreationException {
 		super(items, task, item -> String.valueOf(item.getIndex()), ChoiceItem::isCorrect);
 		String[] correctAnswers = this.getCorrect();
 		if (correctAnswers.length == 0) {
 			throw new ChoiceBlockCreationException(this, items);
+		} else if (correctAnswers.length != 1) {
+			this.type = ChoiceQuestionType.MULTIPLE;
 		} else {
-			this.isOneChoice = (correctAnswers.length == 1);
+			this.type = ((items.size() == 2) && (items.get(0).getValue().toString().trim().equals("Да")
+					&& items.get(1).getValue().toString().trim().equals("Нет"))) ? ChoiceQuestionType.TRUE_FALSE
+							: ChoiceQuestionType.SINGLE;
 		}
 	}
 
@@ -45,7 +49,7 @@ public class ChoiceBlock extends AbstractQuestionMultipleAnswerSectionBlock<Choi
 		Element div = super.toHtmlModel(creatorTags);
 		Element answersBlock = (Element) Tools.getElementById(div, AbstractQuestionSectionBlock.ANSWER_BLOCK_ID);
 
-		String type = (isOneChoice) ? "radio" : "checkbox";
+		String type = (this.type == ChoiceQuestionType.MULTIPLE) ? "checkbox" : "radio";
 
 		Element fieldset = creatorTags.createElement("fieldset");
 		fieldset.setAttribute("id", CHOICE_ANSWERS_FIELDSET_ID);
@@ -68,7 +72,7 @@ public class ChoiceBlock extends AbstractQuestionMultipleAnswerSectionBlock<Choi
 
 	@Override
 	public ChoiceQuestionType getType() {
-		return (isOneChoice) ? ChoiceQuestionType.SINGLE : ChoiceQuestionType.MULTIPLE;
+		return type;
 	}
 
 }
