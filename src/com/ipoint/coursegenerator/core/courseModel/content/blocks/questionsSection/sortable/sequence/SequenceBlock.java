@@ -45,8 +45,8 @@ public class SequenceBlock extends QuestionWithSortableItems<SequenceItem> {
 	}
 
 	@Override
-	public QuestionType getType() {
-		return QuestionType.SEQUENCING;
+	public ComplexQuestionType getType() {
+		return ComplexQuestionType.SEQUENCING;
 	}
 
 }

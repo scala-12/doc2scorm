@@ -26,8 +26,38 @@ public abstract class AbstractQuestionSectionBlock<T extends AbstractQuestionSec
 	public static final String FORM_NAME = "examForm";
 	public static final String ANSWER_BLOCK_ID = "answers_block";
 
-	public static enum QuestionType {
-		TRUE_FALSE, CHOICE, MULTIPLE_CHOICE, FILL_IN, LONG_FILL_IN, MATCHING, SEQUENCING
+	public interface QuestionType {
+		public String name();
+
+		public String getScormName();
+	}
+
+	public static enum ComplexQuestionType implements QuestionType {
+		FILL_IN, LONG_FILL_IN, MATCHING, SEQUENCING;
+
+		@Override
+		public String getScormName() {
+			if (this == FILL_IN) {
+				return "fill-in";
+			} else if (this == LONG_FILL_IN) {
+				return "long-fill-in";
+			} else if (this == MATCHING) {
+				return "matching";
+			} else if (this == SEQUENCING) {
+				return "sequencing";
+			} else {
+				return null;
+			}
+		}
+	}
+
+	public static enum ChoiceQuestionType implements QuestionType {
+		TRUE_FALSE, SINGLE, MULTIPLE;
+
+		@Override
+		public String getScormName() {
+			return "choice";
+		}
 	}
 
 	abstract public QuestionType getType();

@@ -32,7 +32,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.TestingPage;
 import com.ipoint.coursegenerator.core.courseModel.content.TheoryPage;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.AbstractContentSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock.QuestionType;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock.ChoiceQuestionType;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock.ComplexQuestionType;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.choice.ChoiceItem;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.fillIn.FillInItem;
@@ -63,13 +64,11 @@ public class FileTools {
 			{ "answer_block_id", AbstractQuestionSectionBlock.ANSWER_BLOCK_ID },
 			{ "companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS },
 			{ "answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID },
-			{ "fill_in_field_id", FillInItem.FILL_IN_ID }, { "choice", String.valueOf(QuestionType.CHOICE.ordinal()) },
-			{ "multiple", String.valueOf(QuestionType.MULTIPLE_CHOICE.ordinal()) },
-			{ "fill_in", String.valueOf(QuestionType.FILL_IN.ordinal()) },
-			{ "match", String.valueOf(QuestionType.MATCHING.ordinal()) },
-			{ "sequence", String.valueOf(QuestionType.SEQUENCING.ordinal()) },
-			{ "html_type_4_01", HtmlType.HTML4_01.name() }, { "html_type_5", HtmlType.HTML5.name() } })
-			.map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
+			{ "fill_in_field_id", FillInItem.FILL_IN_ID }, { "choice", ChoiceQuestionType.SINGLE.name() },
+			{ "multiple", ChoiceQuestionType.MULTIPLE.name() }, { "fill_in", ComplexQuestionType.FILL_IN.name() },
+			{ "match", ComplexQuestionType.MATCHING.name() },
+			{ "sequence", ComplexQuestionType.SEQUENCING.name() }, { "html_type_4_01", HtmlType.HTML4_01.name() },
+			{ "html_type_5", HtmlType.HTML5.name() } }).map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
 			.collect(Collectors.toMap(SimplePair::getLeft, SimplePair::getRight));
 
 	private static final Version CFG_VERSION = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
@@ -253,7 +252,7 @@ public class FileTools {
 				HashMap<String, String> vars = new HashMap<>(scoVars);
 				AbstractQuestionSectionBlock<?> question = testingPage.getBlocks().get(i);
 
-				vars.put("type", String.valueOf(question.getType().ordinal()));
+				vars.put("type", question.getType().name());
 
 				if (question instanceof ChoiceBlock) {
 					List<ChoiceItem> answerItems = ((ChoiceBlock) question).getItems();

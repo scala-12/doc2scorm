@@ -15,8 +15,8 @@ public class FillInBlock extends AbstractQuestionOneAnswerSectionBlock<FillInIte
 	}
 
 	@Override
-	public QuestionType getType() {
-		return QuestionType.FILL_IN;
+	public ComplexQuestionType getType() {
+		return ComplexQuestionType.FILL_IN;
 	}
 
 }
