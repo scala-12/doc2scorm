@@ -64,11 +64,16 @@ public class FileTools {
 			{ "answer_block_id", AbstractQuestionSectionBlock.ANSWER_BLOCK_ID },
 			{ "companion_class", MatchBlock.MATCH_LABEL_4_ANSWER_CLASS },
 			{ "answer_fieldset_id", ChoiceBlock.CHOICE_ANSWERS_FIELDSET_ID },
-			{ "fill_in_field_id", FillInItem.FILL_IN_ID }, { "single", ChoiceQuestionType.SINGLE.name() },
+
+			{ "true_false", ChoiceQuestionType.TRUE_FALSE.name() }, { "single", ChoiceQuestionType.SINGLE.name() },
 			{ "multiple", ChoiceQuestionType.MULTIPLE.name() }, { "fill_in", ComplexQuestionType.FILL_IN.name() },
+			{ "fill_in_field_id", FillInItem.FILL_IN_ID },
+
 			{ "matching", ComplexQuestionType.MATCHING.name() },
-			{ "sequencing", ComplexQuestionType.SEQUENCING.name() }, { "html_type_4_01", HtmlType.HTML4_01.name() },
-			{ "html_type_5", HtmlType.HTML5.name() } }).map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
+			{ "sequencing", ComplexQuestionType.SEQUENCING.name() },
+
+			{ "html_type_4_01", HtmlType.HTML4_01.name() }, { "html_type_5", HtmlType.HTML5.name() } })
+			.map(pair -> new SimplePair<String, String>(pair[0], pair[1]))
 			.collect(Collectors.toMap(SimplePair::getLeft, SimplePair::getRight));
 
 	private static final Version CFG_VERSION = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
