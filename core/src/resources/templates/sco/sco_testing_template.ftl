@@ -24,9 +24,10 @@
 	<link type="text/css" rel="stylesheet" href="../user_test.css">
 	<link type="text/css" rel="stylesheet" href="user_test.css">
 	
-<#assign isChoice = type == single>
+<#assign isSingle = type == single>
+<#assign isTrueFalse = type == true_false>
 <#assign isMultiple = type == multiple>
-<#assign isSomeChoice = isChoice || isMultiple>
+<#assign isSomeChoice = isSingle || isMultiple || isTrueFalse>
 <#assign isFillIn = type == fill_in>
 <#assign isMatching = type == matching>
 <#assign isSequencing = type == sequencing>
@@ -133,7 +134,7 @@
 				$( '#${sortable_block_id}' ).disableSelection();
 			</#if>
 
-			<#if isSomeChoice || isMatching || isSequencing>
+			<#if isSingle || isMultiple || isMatching || isSequencing>
 				<#assign tagName><#if isSomeChoice>input<#else>li</#if></#assign>
 				var answerBlock = $( '#<#if isSomeChoice>choice_answers_fieldset<#elseif isMatching>match_answers_block<#elseif isSequencing>sequence_answers_block</#if>' );
 				var answerBlockCopy = answerBlock.clone();
@@ -205,7 +206,7 @@
 				);
 			<#else>
 				$('form #${answer_block_id} [type=' +
-						<#if isChoice>'radio'
+						<#if isSingle || isTrueFalse>'radio'
 						<#elseif isMultiple>'checkbox'
 						</#if>
 						+ ']:checked').each(
