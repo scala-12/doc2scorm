@@ -124,8 +124,8 @@ public class MatchBlock extends QuestionWithSortableItems<MatchItem> {
 	}
 
 	@Override
-	public QuestionType getType() {
-		return QuestionType.MATCHING;
+	public ComplexQuestionType getType() {
+		return ComplexQuestionType.MATCHING;
 	}
 
 }

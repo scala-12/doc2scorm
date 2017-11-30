@@ -9,8 +9,8 @@ import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSection
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.contentSections.textual.paragraph.content.TextualRunsBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.BlockCreationException;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.exceptions.ChoiceBlockCreationException;
-import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionMultipleAnswerSectionBlock;
+import com.ipoint.coursegenerator.core.courseModel.content.blocks.questionsSection.AbstractQuestionSectionBlock;
 import com.ipoint.coursegenerator.core.utils.Tools;
 
 /**
@@ -67,8 +67,8 @@ public class ChoiceBlock extends AbstractQuestionMultipleAnswerSectionBlock<Choi
 	}
 
 	@Override
-	public QuestionType getType() {
-		return (isOneChoice) ? QuestionType.CHOICE : QuestionType.MULTIPLE_CHOICE;
+	public ChoiceQuestionType getType() {
+		return (isOneChoice) ? ChoiceQuestionType.SINGLE : ChoiceQuestionType.MULTIPLE;
 	}
 
 }
