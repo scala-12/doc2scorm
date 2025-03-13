@@ -1,4 +1,4 @@
-/target/
-/*.log
-/ilogos-course-generator-core.iml
-/.settings/
+target/
+*.log
+ilogos-course-generator-core.iml
+.settings/
