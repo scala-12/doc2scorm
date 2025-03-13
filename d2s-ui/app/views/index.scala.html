@@ -1,0 +1,10 @@
+@(form: Form[controllers.FormData])(implicit request: MessagesRequestHeader)
+
+@main("Welcome to Play") {
+  <h1>Welcome to Play!</h1>
+  @helper.form(action = routes.ConverterController.upload, 'enctype -> "multipart/form-data") {
+      @helper.inputFile(form("ms_word"), '_label -> "Выберите документ MS Word (Вы можете загружать файлы размером до 20 мегабайт): ")
+    @helper.CSRF.formField
+    <input type="submit" id="upload" value="upload file"/>
+  }
+}
