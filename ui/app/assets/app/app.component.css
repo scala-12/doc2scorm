@@ -1,0 +1,80 @@
+﻿h1 {
+  font-size: 1.2em;
+  color: #999;
+  margin-bottom: 0;
+}
+h2 {
+  font-size: 2em;
+  margin-top: 0;
+  padding-top: 0;
+}
+nav a {
+  padding: 5px 10px;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+  background-color: #eee;
+  border-radius: 4px;
+}
+nav a:visited, a:link {
+  color: #607D8B;
+}
+nav a:hover {
+  color: #039be5;
+  background-color: #CFD8DC;
+}
+nav a.router-link-active {
+  color: #039be5;
+}
+
+.user-info {
+	position: absolute;
+	right: 15px;
+	top: 16px;
+	color: #3f42a9;
+	cursor: pointer;
+	
+}
+
+.user-info:hover {
+	color: #aa558c;
+	text-decoration: none;
+}
+
+hr {
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+
+.dropdown-menu {
+	left: initial;
+	right: 0;
+	margin: 20px 0 0
+}
+
+* {
+	margin: 0;
+}
+html, body {
+	height: 100%;
+}
+.page-wrap {
+  min-height: 100%;
+  /* equal to footer height */
+	margin-bottom: -67px; 
+}
+.page-wrap:after {
+  content: "";
+  display: block;
+}
+footer, .page-wrap:after {
+  /* .push must be the same height as footer */
+  	
+	min-height: 53px; 
+}
+footer {
+  background: white;
+  text-align: center;
+  
+}
+

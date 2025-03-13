@@ -1,0 +1,33 @@
+﻿
+<div class="page-wrap">
+	<ul class="nav nav-tabs">
+		<li [ngClass]="{active: isRouteActive('/Dashboard')}"><a
+			(click)="goto('Dashboard')">Doc2SCORM</a></li>
+
+		<li *ngIf="user && user.role=='ADMIN'"
+			[ngClass]="{active: isRouteActive('/Admin')}"><a
+			(click)="goto('Admin')">Администрирование</a></li>
+
+	</ul>
+
+	<div *ngIf="user" class="user-info">
+		<span  [ngClass]="{open: showMenu}"> <a id="simple-dropdown" (click)="showMenu=!showMenu">
+				{{user.name}} </a>
+			<ul class="dropdown-menu" role="menu" aria-labelledby="split-button">
+				<li role="menuitem"><a class="dropdown-item"
+					[routerLink]="['Profile']" (click)="showMenu=false">Профиль</a></li>
+				<li class="divider dropdown-divider"></li>
+				<li role="menuitem"><a class="dropdown-item" href="/signOut">Выход</a></li>
+			</ul>
+		</span>
+	</div>
+
+	<router-outlet></router-outlet>
+</div>
+<footer>
+	<hr />
+	<div>
+		Все права защищены, ООО НПК "Ай-Поинт рус" 2012-2016, <a
+			href="http://ipoint.ru">ipoint.ru</a>
+	</div>
+</footer>

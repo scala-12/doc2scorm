@@ -1,0 +1,10 @@
+@* signInGoogle Template File *@
+@()(implicit request: RequestHeader, messages: Messages)
+
+@mainLight(Messages("sign.in.title")) {
+	<div class="header">Doc2SCORM</div>
+	<div class="description">Сервис Doc2SCORM предназначен для того, чтобы на основе документа MS Word (DOCX) сформировать учебный курс для систем дистанционного обучения (СДО). Сформированный курс соответствует стандартам SCORM и может быть импортирован в любую СДО, обеспечивающую совместимость со SCORM 2004.</div>
+	
+	<div class="sign-in-text">Войти/зарегистрироваться через аккаунт Google</div>
+	<div><a href="/authenticate/google" class="provider google"  title="Google"><img src="@routes.Assets.at(s"images/providers/google.png")" width="64px" height="64px" alt="Google"></a></div>
+}
