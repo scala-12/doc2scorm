@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:t='urn:import:com.github.gwtbootstrap.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	ui:generateLocales='default'>
+
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	<ui:style>
+		.like_buttons {
+			float: left;
+			margin-top: 3px;
+		}
+		.d2s_likes {
+			vertical-align: left;
+		}
+	</ui:style>
+	<g:HTMLPanel ui:field="panel">
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen" />
+		<link href="css/main.css" rel="stylesheet" media="screen" />
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<t:Modal ui:field="lockScreen">
+			<t:Well>
+				<ui:text from='{msg.waitMessage}' />
+			</t:Well>
+			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
+				percent="100" />
+		</t:Modal>
+		<t:Navbar position="TOP" ui:field="navbar">
+			<t:Brand>Doc2SCORM</t:Brand>
+			<t:Nav ui:field="buyProNav" alignment="RIGHT">
+				<t:DropdownContainer text="{msg.buyPro}"
+					rightDropdown="true" ui:field="dropdown">
+					<t:FluidContainer ui:field="buyPanel" styleName="buyPanel">
+					</t:FluidContainer>
+				</t:DropdownContainer>
+			</t:Nav>
+			<t:Nav alignment="RIGHT">
+				<t:NavText ui:field="subscriptionStatus"></t:NavText>
+			</t:Nav>
+			<t:Nav alignment="RIGHT">
+				<t:NavText ui:field="username"></t:NavText>
+			</t:Nav>
+		</t:Navbar>
+		<div class="container-narrow">
+			<div class="row-fluid">
+				<div class="span9">
+					<t:PageHeader>Doc2SCORM</t:PageHeader>
+				</div>
+				<div class="span3">
+					<g:HTMLPanel styleName="{style.d2s_likes}">
+						<iframe
+							src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.doc2scorm.com&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=21"
+							scrolling="no" frameborder="0"
+							style="border:none; overflow:hidden; width:450px; height:21px;"
+							allowTransparency="true"></iframe>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.d2s_likes}">
+						<iframe allowtransparency="true" frameborder="0" scrolling="no"
+							src="https://platform.twitter.com/widgets/tweet_button.html?url=http%3A%2F%2Fwww.doc2scorm.com&amp;text=Doc2SCORM"
+							style="width:85px; height:20px; float:left; margin-bottom: 3px;"
+							title="Doc2SCORM">
+						</iframe>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.d2s_likes}">
+						<div id="vk_like"></div>
+					</g:HTMLPanel>
+				</div>
+			</div>
+			<g:HTMLPanel ui:field="mainContent"></g:HTMLPanel>
+		</div>
+		<t:ResponsiveNavbar position="BOTTOM">
+			<g:Label styleName="{style.like_buttons}">
+				&copy;
+				<ui:text from='{msg.copyrightMessage}' />
+				,&nbsp;&nbsp;&nbsp;
+			</g:Label>
+			<g:Anchor styleName="{style.like_buttons}" href="http://ipoint-consulting.com/">ipoint-consulting.com</g:Anchor>
+		</t:ResponsiveNavbar>
+	</g:HTMLPanel>
+</ui:UiBinder>
+

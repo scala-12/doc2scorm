@@ -1,0 +1,85 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:t='urn:import:com.github.gwtbootstrap.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	ui:generateLocales='default'>
+	
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	
+	<g:HTMLPanel>
+		<t:Row>
+			<t:Column size="3" offset="1">
+				<g:HTMLPanel>
+					<p><ui:text from='{msg.guide}' /></p>
+				</g:HTMLPanel>
+			</t:Column>
+
+			<t:Column size="6">
+				<t:Form styleName="form-horizontal" action="/rest/file/form"
+					method="post" ui:field="sourceDocUploadForm">
+					<t:HelpBlock visible="true" ui:field="elementsPopup"></t:HelpBlock>
+					<t:ControlGroup ui:field="fileUploadControlGroup">
+						<t:ControlLabel for="sourceDocFile"><ui:text from='{msg.chooseDoc}' />:</t:ControlLabel>
+						<t:Controls>
+							<t:FileUpload ui:field="sourceDocFile" name="sourceDocFile"></t:FileUpload>
+							<t:HelpBlock ui:field="helpBlock" visible="false"></t:HelpBlock>
+						</t:Controls>
+					</t:ControlGroup>
+				</t:Form>
+				<t:ProgressBar visible="false" type="ANIMATED" color="DEFAULT"
+					percent="100" ui:field="fileUploadProgressBar" />
+				<t:Form styleName="form-horizontal" action="" method="get">
+					<g:Hidden ui:field="uuidFileName"></g:Hidden>
+					<g:Hidden ui:field="sourceFileName"></g:Hidden>
+					<t:ControlGroup>
+						<t:ControlLabel for="headerLevel"><ui:text from='{msg.depth}' /></t:ControlLabel>
+						<t:Controls>
+							<t:ListBox ui:field="headerLevel">
+								<g:item value="1"><ui:text from='{msg.heading1}' /></g:item>
+								<g:item value="2"><ui:text from='{msg.heading2}' /></g:item>
+								<g:item value="3"><ui:text from='{msg.heading3}' /></g:item>
+								<g:item value="4"><ui:text from='{msg.heading4}' /></g:item>
+								<g:item value="5"><ui:text from='{msg.heading5}' /></g:item>
+								<g:item value="6"><ui:text from='{msg.heading6}' /></g:item>
+								<g:item value="7"><ui:text from='{msg.heading7}' /></g:item>
+								<g:item value="8"><ui:text from='{msg.heading8}' /></g:item>
+								<g:item value="9"><ui:text from='{msg.heading9}' /></g:item>
+							</t:ListBox>
+						</t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup visible="false">
+						<t:ControlLabel for="templateForCoursePages"><ui:text from='{msg.template}' /></t:ControlLabel>
+						<t:Controls>
+							<t:ListBox ui:field="templateForCoursePages">
+								<g:item value="default"><ui:text from='{msg.defaultTemplate}' /></g:item>
+							</t:ListBox>
+						</t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup>
+						<t:ControlLabel for="courseName"><ui:text from='{msg.courseName}' />:</t:ControlLabel>
+						<t:Controls>
+							<t:TextBox ui:field="courseName" placeholder="{msg.courseNamePlaceholder}"></t:TextBox>
+						</t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup>
+						<t:Controls>
+							<t:CheckBox ui:field="useFilenameAsCourseName" inline="true"><ui:text from='{msg.useFilename}' /></t:CheckBox>
+						</t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup>
+						<t:Controls>
+							<t:SubmitButton styleName="btn" ui:field="generateButton"
+								enabled="false"><ui:text from='{msg.process}' /></t:SubmitButton>
+						</t:Controls>
+					</t:ControlGroup>
+				</t:Form>
+				<t:ProgressBar visible="false" type="ANIMATED" color="DEFAULT"
+					percent="100" ui:field="generateProgressBar" />
+				<t:Label visible="false" ui:field="waitMessageLabel"></t:Label>
+			</t:Column>
+		</t:Row>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

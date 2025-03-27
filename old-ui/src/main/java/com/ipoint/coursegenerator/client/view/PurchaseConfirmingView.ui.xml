@@ -1,0 +1,55 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:t='urn:import:com.github.gwtbootstrap.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	ui:generateLocales='default'>
+
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	<g:HTMLPanel>
+		<t:Modal ui:field="lockScreen">
+			<t:Well>
+				<ui:text from='{msg.waitMessage}' />
+			</t:Well>
+			<t:ProgressBar visible="true" type="ANIMATED" color="DEFAULT"
+				percent="100" />
+		</t:Modal>
+		<t:Form styleName="form-horizontal">
+			<t:ControlGroup>
+				<t:ControlLabel>
+					<ui:text from='{msg.planName}' />
+					:
+				</t:ControlLabel>
+				<t:Controls>
+					<t:Container ui:field="name"></t:Container>
+				</t:Controls>
+			</t:ControlGroup>
+			<t:ControlGroup>
+				<t:ControlLabel>
+					<ui:text from='{msg.planDescription}' />
+					:
+				</t:ControlLabel>
+				<t:Controls>
+					<t:Container ui:field="description"></t:Container>
+				</t:Controls>
+			</t:ControlGroup>
+			<t:ControlGroup>
+				<t:ControlLabel>
+					<ui:text from='{msg.planPrice}' />
+					:
+				</t:ControlLabel>
+				<t:Controls>
+					<t:Container ui:field="price"></t:Container>
+				</t:Controls>
+			</t:ControlGroup>
+			<t:ControlGroup>
+				<t:Controls>
+					<t:Button ui:field="submit" text="{msg.buyNow}" />
+				</t:Controls>
+			</t:ControlGroup>
+		</t:Form>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

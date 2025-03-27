@@ -1,0 +1,28 @@
+[ {
+	"id" : "trial",
+	"name" : "Trial",
+	"type" : "TIME",
+	"amount" : 0.0,
+	"expiresIn" : 3,
+	"expiresAfter" : 0,
+	"description" : "It is free trial plan.",
+	"active" : false
+}, {
+	"id" : "doc2scorm_week_ru",
+	"name" : "One Week",
+	"type" : "TIME",
+	"amount" : 10.0,
+	"expiresIn" : 7,
+	"expiresAfter" : 0,
+	"description" : "It is for one week use.",
+	"active" : true
+}, {
+	"id" : "doc2scorm_month_ru",
+	"name" : "One Month",
+	"type" : "TIME",
+	"amount" : 30.0,
+	"expiresIn" : 31,
+	"expiresAfter" : 0,	
+	"description" : "It is for one month use.",
+	"active" : true
+} ]

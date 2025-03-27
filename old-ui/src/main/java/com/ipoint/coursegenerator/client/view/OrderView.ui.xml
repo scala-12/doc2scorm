@@ -1,0 +1,63 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:t='urn:import:com.github.gwtbootstrap.client.ui'
+	ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+	ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+	ui:generateLocales='default'>
+
+	<ui:with field='msg' type='com.ipoint.coursegenerator.client.Messages' />
+	<g:HTMLPanel>
+		<t:Row>
+			<t:Column offset="4" size="4">
+				<g:HTMLPanel ui:field="subscribe" visible="true">
+
+					<t:ControlGroup>
+						<t:ControlLabel>
+							<ui:text from='{msg.weekSubscription}' />
+						</t:ControlLabel>
+						<t:Controls>
+							<g:HTMLPanel>
+								<form id="weekForm" action="https://www.paypal.com/cgi-bin/webscr"
+									method="post">
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="{msg.payPalWeekButtonId}" />
+									<input type="image" src="{msg.subscriptionButtonUrl}"
+										border="0" name="submit" alt="{msg.payPalAlt}" />
+									<img alt="" border="0"
+										src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+										width="1" height="1" />
+								</form>
+							</g:HTMLPanel>
+						</t:Controls>
+					</t:ControlGroup>
+					<t:ControlGroup>
+						<t:ControlLabel>
+							<ui:text from='{msg.monthSubscription}' />
+						</t:ControlLabel>
+						<t:Controls>
+							<g:HTMLPanel>
+								<form id="monthForm" action="https://www.paypal.com/cgi-bin/webscr"
+									method="post">
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="{msg.payPalMonthButtonId}" />
+									<input type="image" src="{msg.subscriptionButtonUrl}"
+										border="0" name="submit" alt="{msg.payPalAlt}" />
+									<img alt="" border="0"
+										src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+										width="1" height="1" />
+								</form>
+							</g:HTMLPanel>
+						</t:Controls>
+					</t:ControlGroup>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="unsubscribe" visible="false">
+					<a href="{msg.unsubscribeUrl}">
+						<img SRC="{msg.unsubscribeButtonUrl}" BORDER="0" />
+					</a>
+				</g:HTMLPanel>
+			</t:Column>
+		</t:Row>
+	</g:HTMLPanel>
+
+</ui:UiBinder>
