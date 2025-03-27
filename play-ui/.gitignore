@@ -1,0 +1,13 @@
+/.settings/
+/bin/
+/logs/
+*.log
+/target/
+/project/project/
+/project/target/
+/.cache-main
+/.cache-tests
+/.classpath
+/.project
+/conf/local.conf
+/.idea

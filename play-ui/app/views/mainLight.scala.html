@@ -1,0 +1,25 @@
+@(title: String, user: Option[models.User] = None)(content: Html)(implicit messages: Messages)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="@routes.Assets.at("styles/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("styles/sign-in.css")">
+        <link rel="icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    </head>
+    <body>
+        <main class="container">
+            <div class="starter-template row">
+                @content
+            </div>
+        </main>
+        <footer>
+        	<hr/>
+        	<div>
+        	Все права защищены, ООО НПК "Ай-Поинт рус" 2012-2016, <a href="http://ipoint.ru">ipoint.ru</a>	
+        	</div>
+        </footer>
+    </body>
+</html>
